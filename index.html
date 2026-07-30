@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>StudyMate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   B. DESIGN SYSTEM — tokens, exactly as Phase Four Section T
+   ============================================================ */
+:root{
+  /* color */
+  --background:#F4F5F7;
+  --surface:#FFFFFF;
+  --ink:#1A2333;
+  --ink-muted:#5B6472;
+  --accent:#C98A2E;
+  --accent-soft:#F6E9D3;
+  --attention:#C97452;
+  --attention-soft:#F7E7DF;
+  --line:#E4E6EA;
+
+  /* type scale (px) */
+  --fs-display:28px;
+  --fs-heading:20px;
+  --fs-subheading:17px;
+  --fs-body:15px;
+  --fs-caption:13px;
+
+  /* spacing scale */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px;
+
+  /* radius */
+  --r-sm:8px; --r-md:14px; --r-lg:20px;
+
+  /* motion */
+  --m-micro:180ms; --m-transition:300ms; --m-reflective:450ms;
+  --ease:cubic-bezier(.25,.8,.35,1);
+
+  --shadow-card:0 1px 2px rgba(26,35,51,.04), 0 6px 18px -10px rgba(26,35,51,.12);
+
+  --font-ar:'Cairo', sans-serif;
+  --font-en:'Inter', sans-serif;
+  --lh-ar:1.6;
+  --lh-en:1.4;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{
+  background:var(--background);
+  color:var(--ink);
+  font-family:var(--font-ar);
+  line-height:var(--lh-ar);
+  font-size:var(--fs-body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+html[lang="en"] body{ font-family:var(--font-en); line-height:var(--lh-en); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+
+button, input, select, textarea{ font:inherit; color:inherit; }
+button{ cursor:pointer; border:none; background:none; }
+a{ color:inherit; text-decoration:none; }
+ul,ol{ list-style:none; }
+
+.type-display{ font-size:var(--fs-display); font-weight:600; }
+.type-body{ font-size:var(--fs-body); font-weight:400; }
+.type-caption{ font-size:var(--fs-caption); font-weight:400; color:var(--ink-muted); }
+
+/* ---------- App shell ---------- */
+#app{ min-height:100vh; min-height:100dvh; max-width:480px; margin:0 auto; position:relative; }
+
+.screen{
+  min-height:100vh; min-height:100dvh;
+  display:flex; flex-direction:column;
+  padding-bottom:calc(72px + env(safe-area-inset-bottom));
+  animation:fadeIn var(--m-transition) var(--ease);
+}
+.screen.no-tabbar{ padding-bottom:var(--sp-5); }
+@keyframes fadeIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+
+/* ---------- C. Screen template zones ---------- */
+.screen-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--sp-5) var(--sp-4) var(--sp-3);
+}
+.screen-header-title{ font-size:var(--fs-heading); font-weight:600; flex:1; min-width:0; overflow-wrap:break-word; }
+.screen-header-sub{ font-size:var(--fs-caption); color:var(--ink-muted); margin-top:2px; }
+
+.screen-content{ flex:1; padding:0 var(--sp-4); }
+
+.screen-action{
+  position:sticky; bottom:0; padding:var(--sp-4); background:linear-gradient(to top, var(--background) 65%, transparent);
+}
+
+/* ---------- D. Components ---------- */
+
+/* Buttons */
+.btn{
+  display:flex; align-items:center; justify-content:center; gap:var(--sp-2);
+  width:100%; padding:14px var(--sp-4); border-radius:999px;
+  font-size:var(--fs-body); font-weight:600;
+  transition:transform var(--m-micro) var(--ease), opacity var(--m-micro);
+}
+.btn:active{ transform:scale(.97); }
+.btn-primary{ background:var(--ink); color:var(--surface); }
+.btn-primary:disabled{ opacity:.4; }
+.btn-secondary{ background:transparent; color:var(--ink-muted); font-weight:500; }
+.btn-icon{
+  width:40px; height:40px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink-muted);
+  transition:background var(--m-micro), transform var(--m-micro) var(--ease);
+}
+.btn-icon:active{ background:var(--line); transform:scale(.92); }
+
+/* Card */
+.card{
+  display:flex; align-items:center; gap:var(--sp-3); width:100%; text-align:start;
+  background:var(--surface); border-radius:var(--r-md); box-shadow:var(--shadow-card);
+  padding:var(--sp-3) var(--sp-4);
+  transition:transform var(--m-micro) var(--ease);
+}
+.card:active{ transform:scale(.985); }
+.card-icon{
+  width:42px; height:42px; border-radius:var(--r-sm); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--accent-soft); color:var(--accent);
+}
+.card-body{ flex:1; min-width:0; }
+.card-title{ font-size:var(--fs-subheading); font-weight:500; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.card-meta{ font-size:var(--fs-caption); color:var(--ink-muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.card-chevron{ color:var(--ink-muted); flex-shrink:0; opacity:.6; }
+
+/* List row (lighter than card) */
+.list-row{
+  display:flex; align-items:center; gap:var(--sp-3);
+  padding:var(--sp-3) var(--sp-1);
+  border-bottom:1px solid var(--line);
+}
+.list-row:last-child{ border-bottom:none; }
+
+/* Status pill */
+.pill{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:var(--fs-caption); font-weight:600;
+  padding:4px 10px; border-radius:999px; white-space:nowrap;
+}
+.pill-attention{ background:var(--attention-soft); color:var(--attention); }
+
+/* Learning Skills */
+.skill-entry-card{
+  display:flex; align-items:center; gap:var(--sp-3); width:100%; text-align:start;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:var(--sp-3) var(--sp-4); margin-top:var(--sp-5);
+}
+.callout{
+  background:var(--background); border-radius:var(--r-md);
+  padding:var(--sp-4); margin-bottom:var(--sp-4);
+}
+.callout-label{ font-size:var(--fs-caption); font-weight:700; color:var(--ink-muted); margin-bottom:var(--sp-2); }
+.tip-list{ display:flex; flex-direction:column; gap:var(--sp-2); }
+.tip-row{ display:flex; align-items:flex-start; gap:var(--sp-2); }
+.tip-row-current{ background:var(--accent-soft); margin:0 calc(-1 * var(--sp-2)); padding:var(--sp-2); border-radius:var(--r-sm); }
+.tip-bullet{ width:6px; height:6px; border-radius:50%; background:var(--accent); flex-shrink:0; margin-top:8px; }
+.waypoint-marker{
+  width:24px; height:24px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:var(--accent);
+  border:2px solid var(--accent); background:transparent;
+}
+.waypoint-marker-current{ background:var(--accent); color:#fff; }
+
+/* Input field */
+.field-label{ display:block; font-size:var(--fs-caption); font-weight:600; color:var(--ink); margin-bottom:var(--sp-2); }
+.field{
+  width:100%; padding:13px var(--sp-4); border-radius:var(--r-md);
+  border:1.5px solid var(--line); background:var(--surface); color:var(--ink);
+  font-size:var(--fs-body);
+  transition:border-color var(--m-micro);
+}
+.field:focus{ outline:none; border-color:var(--accent); }
+.field-error{ font-size:var(--fs-caption); color:var(--attention); margin-top:var(--sp-2); display:none; }
+.field-error.show{ display:block; }
+.field-group{ margin-bottom:var(--sp-4); }
+
+/* Picker trigger — looks like a field, opens a Sheet with a selectable list */
+.picker-trigger{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:var(--sp-2);
+  padding:13px var(--sp-4); border-radius:var(--r-md);
+  border:1.5px solid var(--line); background:var(--surface); color:var(--ink);
+  font-size:var(--fs-body); text-align:start;
+  transition:border-color var(--m-micro);
+}
+.picker-trigger:disabled{ opacity:.5; }
+.picker-value{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.picker-value.placeholder{ color:var(--ink-muted); }
+.picker-chevron{ color:var(--ink-muted); flex-shrink:0; }
+
+.picker-search-wrap{ margin-bottom:var(--sp-3); }
+.picker-list{ max-height:50vh; overflow-y:auto; -webkit-overflow-scrolling:touch; display:flex; flex-direction:column; gap:var(--sp-2); }
+.picker-option{
+  width:100%; text-align:start; padding:13px var(--sp-4); border-radius:var(--r-md);
+  border:1.5px solid var(--line); background:var(--surface); font-size:var(--fs-body); color:var(--ink);
+  transition:border-color var(--m-micro), background var(--m-micro);
+}
+.picker-option.selected{ border-color:var(--accent); background:var(--accent-soft); color:var(--ink); font-weight:600; }
+.picker-option.other-option{ color:var(--ink-muted); }
+
+/* Sheet */
+.sheet-overlay{
+  position:fixed; inset:0; z-index:90;
+  display:flex; align-items:flex-end; justify-content:center;
+  background:rgba(26,35,51,.4);
+  opacity:0; transition:opacity var(--m-transition) var(--ease);
+}
+.sheet-overlay.show{ opacity:1; }
+.sheet{
+  width:100%; max-width:480px; background:var(--surface);
+  border-radius:var(--r-lg) var(--r-lg) 0 0;
+  padding:var(--sp-2) var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
+  transform:translateY(100%); transition:transform var(--m-transition) var(--ease);
+  max-height:88vh; overflow-y:auto;
+}
+.sheet-overlay.show .sheet{ transform:translateY(0); }
+.sheet-handle{ width:36px; height:4px; border-radius:99px; background:var(--line); margin:var(--sp-2) auto var(--sp-4); }
+.sheet-title{ font-size:var(--fs-heading); font-weight:600; margin-bottom:var(--sp-4); }
+
+/* Tab bar */
+.tab-bar{
+  position:fixed; bottom:0; left:0; right:0; z-index:50;
+  max-width:480px; margin:0 auto;
+  background:var(--surface); border-top:1px solid var(--line);
+  padding:var(--sp-2) var(--sp-2) calc(var(--sp-2) + env(safe-area-inset-bottom));
+  display:flex;
+}
+.tab-item{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:var(--sp-2); border-radius:var(--r-sm); color:var(--ink-muted);
+  transition:color var(--m-micro), transform var(--m-micro) var(--ease);
+}
+.tab-item:active{ transform:scale(.94); }
+.tab-item.active{ color:var(--accent); }
+.tab-label{ font-size:11px; font-weight:600; }
+
+/* Empty state */
+.empty-state{
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:var(--sp-7) var(--sp-5); color:var(--ink-muted); flex:1; justify-content:center;
+}
+.empty-icon{
+  width:56px; height:56px; border-radius:var(--r-md); background:var(--surface);
+  border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; color:var(--ink-muted);
+  margin-bottom:var(--sp-4);
+}
+.empty-title{ font-size:var(--fs-subheading); font-weight:600; color:var(--ink); margin-bottom:var(--sp-2); }
+.empty-text{ font-size:var(--fs-body); line-height:1.55; max-width:280px; }
+
+/* Hero (Today) */
+.hero{
+  background:var(--surface); border-radius:var(--r-lg); box-shadow:var(--shadow-card);
+  padding:var(--sp-5) var(--sp-4); margin-bottom:var(--sp-4);
+}
+.hero-eyebrow{ font-size:var(--fs-caption); color:var(--ink-muted); font-weight:600; margin-bottom:var(--sp-1); }
+.hero-title{ font-size:var(--fs-display); font-weight:600; margin-bottom:var(--sp-1); }
+.hero-sub{ font-size:var(--fs-body); color:var(--ink-muted); margin-bottom:var(--sp-4); }
+
+.section-label{ font-size:var(--fs-caption); font-weight:600; color:var(--ink-muted); margin:0 0 var(--sp-3); }
+
+/* Reflection — the one screen allowed to move slower, deliberately */
+.pace-reflective{ animation-duration:var(--m-reflective); }
+.pace-reflective textarea.field{ line-height:1.6; }
+
+/* utility */
+.stack{ display:flex; flex-direction:column; gap:var(--sp-3); }
+.hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   E. LOCALIZATION (scaffolded now; Stage 14 completes the switch UI)
+   Arabic is the default and native direction.
+   ============================================================ */
+const STR = {
+  ar:{
+    welcomeTitle:"أهلًا وسهلًا",
+    welcomeBody:"قبل أن نبدأ، تعرّف على StudyMate: لست مجرد تطبيق، بل رفيقك طوال رحلتك الجامعية، من أول يوم وحتى التخرج. لن نثقل عليك بالخيارات — فقط نقف بجانبك، ونرشدك في اللحظة التي تحتاجنا فيها.",
+    welcomeStartBtn:"لنبدأ رحلتنا معًا",
+    flagshipJazanCS:"جامعة جازان وعلوم الحاسب — نعرف هذا الطريق جيدًا. من أولى مقررات البرمجة إلى مشروع التخرج، بنينا مهارات هذا القسم وأنت في بالنا تحديدًا.",
+    flagshipIauTranslation:"جامعة الإمام عبدالرحمن بن فيصل واللغة الإنجليزية والترجمة — نعرف أن السنة التحضيرية تبني أساسك اللغوي، وأن المستوى الثالث نقطة تحول حقيقية في رحلتك. صممنا هذه التجربة وأنتِ في بالنا.",
+    flagshipJazanME:"جامعة جازان والهندسة الميكانيكية — نعرف أن رحلتك تبدأ بأساس رياضي وفيزيائي متين قبل أن تصل لتصميم الآلات والأنظمة، وأن التدريب التعاوني محطة أساسية قبل التخرج. صممنا هذه التجربة وأنت في بالنا.",
+    milestoneJazanCS:"بدأت الفصول الوسطى — من الآن تبدأ جوهر تخصصك في علوم الحاسب.",
+    milestoneIauTranslation:"وصلتِ للمستوى الثالث — نقطة التحول الحقيقية في رحلتك، حيث تبدأ مقررات الترجمة واللسانيات فعليًا.",
+    milestoneJazanME:"وصلت للمستوى الخامس — أتممت الأساس الرياضي والفيزيائي، ومن الآن يبدأ التصميم الهندسي الحقيقي.",
+    onboardTitle:"لنبدأ رحلتك",
+    companionSectionLabel:"اختر رفيقك",
+    companionMaleLabel:"رفيق تعلم",
+    companionFemaleLabel:"رفيقة تعلم",
+    companionRequired:"اختر رفيقك للمتابعة",
+    onboardSub:"بضع معلومات سريعة لنفهم مسارك الأكاديمي.",
+    universityLabel:"الجامعة",
+    collegeLabel:"الكلية",
+    majorLabel:"التخصص",
+    levelLabel:"المستوى الدراسي",
+    startBtn:"ابدأ",
+    nameRequired:"هذا الحقل مطلوب",
+    selectPh:"اختر...",
+    searchPh:"ابحث...",
+    otherOption:"أخرى",
+    otherUniversityPh:"اكتب اسم جامعتك أو معهدك",
+    otherMajorPh:"اكتب اسم تخصصك",
+    pickCollegeFirst:"اختر الكلية أولاً",
+
+    tabToday:"اليوم", tabSemester:"الفصل", tabJourney:"المسار",
+    settingsBtn:"الإعدادات",
+
+    todayGreeting:"أهلاً بك",
+    todayEyebrow:"موقعك الآن",
+    todayNoSemester:"لم يبدأ فصل بعد",
+    coursesCount:(n)=> n===0 ? "لا مقررات بعد" : n===1 ? "مقرر واحد" : `${n} مقررات`,
+    clusterObservation:(n)=>`عندك ${n} مواعيد تقترب من بعضها هذا الأسبوع — قد يكون وقتًا جيدًا لتنظيم وقتك.`,
+    addFirstCourse:"أضف مقررك الأول",
+    todayEmptyTitle:"لا شيء يحتاج انتباهك الآن",
+    todayEmptyText:"عندما يقترب موعد مهم، سيظهر هنا.",
+    reminderLabel:"تذكير",
+    recommendationLabel:"ملاحظة",
+
+    addCourseBtn:"إضافة مقرر",
+    courseNameLabel:"اسم المقرر", courseNamePh:"مثال: هياكل البيانات",
+    professorLabel:"اسم الدكتور (اختياري)", professorPh:"مثال: د. أحمد",
+    saveBtn:"حفظ",
+
+    semesterTitle:"الفصل الحالي",
+    semesterEmptyTitle:"لا مقررات في هذا الفصل",
+    semesterEmptyText:"أضف أول مقرر لتبدأ متابعته.",
+    coursesLabel:"المقررات",
+    semesterEventsLabel:"أحداث عامة للفصل",
+    semesterEventsEmpty:"لا أحداث عامة بعد — مثل مواعيد التسجيل أو الجدول.",
+    closeLabel:"إغلاق",
+    reflectionEmptyView:"لم يُكتب تأمل لهذا الفصل.",
+    achievementCelebrateTitle:"إنجاز جديد",
+    continueLabel:"متابعة",
+    newSemesterHint:"بدأت فصلاً جديدًا. يمكنك مراجعة تأملك عن الفصل السابق من مسارك الأكاديمي.",
+
+    journeyTitle:"مسارك الأكاديمي",
+    journeyEmptyTitle:"رحلتك تبدأ هنا",
+    journeyEmptyText:"مع كل فصل تُنهيه، سيُضاف هنا كفصل من قصتك الأكاديمية.",
+
+    settingsTitle:"الإعدادات",
+    languageLabel:"اللغة", resetLabel:"إعادة الضبط",
+    resetConfirmTitle:"إعادة ضبط كل شيء؟", resetConfirmText:"سيُحذف كل ما أدخلته. لا يمكن التراجع عن هذا.",
+    confirmDelete:"حذف", cancel:"إلغاء",
+
+    editProfileLabel:"الملف الأكاديمي",
+    saveChangesBtn:"حفظ التغييرات",
+
+    addEventBtn:"إضافة حدث",
+    editEventTitle:"تعديل الحدث", addEventTitle:"إضافة حدث",
+    eventTitleLabel:"عنوان الحدث", eventTitlePh:"مثال: اختبار الفصل الأول",
+    eventDateLabel:"التاريخ (اختياري)",
+    eventIsEvaluativeLabel:"هذا تقييم (اختبار أو درجة)",
+    courseEmptyTitle:"لا أحداث بعد",
+    courseEmptyText:"أضف أول حدث لمتابعته.",
+    editCourseTitle:"تعديل المقرر",
+    deleteCourseBtn:"حذف المقرر",
+    deleteCourseConfirmTitle:"حذف هذا المقرر؟",
+    deleteCourseConfirmText:"سيُحذف كل ما يتعلق به. لا يمكن التراجع عن هذا.",
+    deleteEventBtn:"حذف الحدث",
+    deleteEventConfirmTitle:"حذف هذا الحدث؟",
+    deleteEventConfirmText:"لا يمكن التراجع عن هذا.",
+
+    endSemesterAction:"إنهاء الفصل",
+    endSemesterConfirmTitle:"إنهاء هذا الفصل؟",
+    endSemesterConfirmText:"سيُطلب منك كتابة تأمل قصير، ثم يبدأ فصل جديد تلقائيًا.",
+    reflectionEyebrow:"إغلاق فصل",
+    reflectionTitle:"كيف كان هذا الفصل؟",
+    reflectionPrompt:"خذ لحظة للتأمل — ما الذي سار جيدًا؟ وما الذي تريد فعله بشكل مختلف في الفصل القادم؟",
+    reflectionPh:"اكتب بضع كلمات عن هذا الفصل...",
+    reflectionSave:"إكمال الفصل",
+    achievementCompleted:(label)=>`أنهيت ${label}`,
+    eventPastLabel:"مضى",
+
+    skillsEntryLabel:"مهارات التعلم",
+    skillsEntryDesc:"تقنيات عملية لتساعدك على الدراسة بذكاء",
+    skillsHubTitle:"مهارات التعلم",
+    skillsHubSub:"تقنيات عملية، لا نظريات — اختر ما تحتاجه الآن.",
+    skillsSpecificLabel:"خاص بتخصصك",
+    skillsUniversalLabel:"مهارات عامة لكل الطلاب",
+
+    glossaryEntryLabel:"مصطلحاتي",
+    glossaryEntryDesc:"اجمع الكلمات الجديدة التي تتعلمها",
+    glossaryTitle:"مصطلحاتي",
+    glossarySub:"كل مصطلح جديد تسمعه ولا تعرفه — دوّنه هنا، وارجع له متى احتجت.",
+    glossaryEmptyTitle:"لا مصطلحات بعد",
+    glossaryEmptyText:"في المرة القادمة التي تسمع فيها كلمة لا تعرفها، أضفها هنا.",
+    glossaryAddBtn:"إضافة مصطلح",
+    glossaryAddTitle:"إضافة مصطلح",
+    glossaryEditTitle:"تعديل المصطلح",
+    glossaryDeleteBtn:"حذف المصطلح",
+    glossaryDeleteConfirmTitle:"حذف هذا المصطلح؟",
+    glossaryDeleteConfirmText:"لا يمكن التراجع عن هذا.",
+    termTextLabel:"المصطلح",
+    termTextPh:"مثال: Algorithm",
+    termNoteLabel:"المعنى أو ملاحظة (اختياري)",
+    termNotePh:"مثال: سلسلة خطوات لحل مسألة",
+    tipsLabel:"نصائح عملية",
+    youAreHereLabel:"أنت هنا الآن",
+    mistakeLabel:"خطأ شائع",
+    exerciseLabel:"جرّب الآن"
+  },
+  en:{
+    welcomeTitle:"Welcome",
+    welcomeBody:"Before we begin, meet StudyMate: not just an app, but your companion throughout your university journey, from day one to graduation. We won't overwhelm you with choices — we'll simply stand beside you, and guide you the moment you need it.",
+    welcomeStartBtn:"Let's begin our journey together",
+    flagshipJazanCS:"Jazan University, Computer Science — we know this path well. From your very first programming course to your graduation project, we built this program's skills with you specifically in mind.",
+    flagshipIauTranslation:"Imam Abdulrahman Bin Faisal University, English Language & Translation — we know your foundation year builds your language base, and that Level 3 is a real turning point in your journey. We designed this experience with you in mind.",
+    flagshipJazanME:"Jazan University, Mechanical Engineering — we know your journey starts with a solid foundation in math and physics before you reach designing machines and systems, and that cooperative training is a key stop before graduation. We designed this experience with you in mind.",
+    milestoneJazanCS:"You've reached the middle terms — from here, the true core of your Computer Science specialty begins.",
+    milestoneIauTranslation:"You've reached Level 3 — the real turning point in your journey, where translation and linguistics coursework actually begins.",
+    milestoneJazanME:"You've reached Level 5 — you've completed your math and physics foundation, and real engineering design begins from here.",
+    onboardTitle:"Let's begin your journey",
+    companionSectionLabel:"Choose your study companion",
+    companionMaleLabel:"Male Companion",
+    companionFemaleLabel:"Female Companion",
+    companionRequired:"Choose a companion to continue",
+    onboardSub:"A few quick details to understand your academic path.",
+    universityLabel:"University",
+    collegeLabel:"College",
+    majorLabel:"Major",
+    levelLabel:"Academic Level",
+    startBtn:"Start",
+    nameRequired:"This field is required",
+    selectPh:"Select...",
+    searchPh:"Search...",
+    otherOption:"Other",
+    otherUniversityPh:"Type your university or institute",
+    otherMajorPh:"Type your major",
+    pickCollegeFirst:"Select a college first",
+
+    tabToday:"Today", tabSemester:"Semester", tabJourney:"Journey",
+    settingsBtn:"Settings",
+
+    todayGreeting:"Welcome",
+    todayEyebrow:"Where you stand",
+    todayNoSemester:"No semester started yet",
+    coursesCount:(n)=> n===0 ? "No courses yet" : n===1 ? "1 course" : `${n} courses`,
+    clusterObservation:(n)=>`You have ${n} dates approaching close together this week — might be a good time to plan ahead.`,
+    addFirstCourse:"Add your first course",
+    todayEmptyTitle:"Nothing needs your attention right now",
+    todayEmptyText:"When something important is approaching, it will appear here.",
+    reminderLabel:"Reminder",
+    recommendationLabel:"Note",
+
+    addCourseBtn:"Add Course",
+    courseNameLabel:"Course name", courseNamePh:"e.g. Data Structures",
+    professorLabel:"Professor (optional)", professorPh:"e.g. Dr. Ahmed",
+    saveBtn:"Save",
+
+    semesterTitle:"Current Semester",
+    semesterEmptyTitle:"No courses in this semester",
+    semesterEmptyText:"Add your first course to start tracking it.",
+    coursesLabel:"Courses",
+    semesterEventsLabel:"General Semester Events",
+    semesterEventsEmpty:"No general events yet — like registration or schedule dates.",
+    closeLabel:"Close",
+    reflectionEmptyView:"No reflection was written for this semester.",
+    achievementCelebrateTitle:"New Achievement",
+    continueLabel:"Continue",
+    newSemesterHint:"You've started a new semester. You can revisit your reflection on the last one from your Academic Journey.",
+
+    journeyTitle:"Your Academic Journey",
+    journeyEmptyTitle:"Your journey starts here",
+    journeyEmptyText:"As you complete each semester, it will be added here as a chapter of your academic story.",
+
+    settingsTitle:"Settings",
+    languageLabel:"Language", resetLabel:"Reset",
+    resetConfirmTitle:"Reset everything?", resetConfirmText:"Everything you've entered will be deleted. This can't be undone.",
+    confirmDelete:"Delete", cancel:"Cancel",
+
+    editProfileLabel:"Academic Profile",
+    saveChangesBtn:"Save Changes",
+
+    addEventBtn:"Add Event",
+    editEventTitle:"Edit Event", addEventTitle:"Add Event",
+    eventTitleLabel:"Event title", eventTitlePh:"e.g. Midterm Exam",
+    eventDateLabel:"Date (optional)",
+    eventIsEvaluativeLabel:"This is graded (exam or assignment)",
+    courseEmptyTitle:"Nothing here yet",
+    courseEmptyText:"Add your first event to start tracking it.",
+    editCourseTitle:"Edit Course",
+    deleteCourseBtn:"Delete Course",
+    deleteCourseConfirmTitle:"Delete this course?",
+    deleteCourseConfirmText:"Everything related to it will be deleted. This can't be undone.",
+    deleteEventBtn:"Delete Event",
+    deleteEventConfirmTitle:"Delete this event?",
+    deleteEventConfirmText:"This can't be undone.",
+
+    endSemesterAction:"End Semester",
+    endSemesterConfirmTitle:"End this semester?",
+    endSemesterConfirmText:"You'll be asked to write a short reflection, then a new semester begins automatically.",
+    reflectionEyebrow:"Closing a chapter",
+    reflectionTitle:"How did this semester go?",
+    reflectionPrompt:"Take a moment to reflect — what went well, and what would you do differently next semester?",
+    reflectionPh:"Write a few words about this semester...",
+    reflectionSave:"Complete Semester",
+    achievementCompleted:(label)=>`Completed ${label}`,
+    eventPastLabel:"Past",
+
+    skillsEntryLabel:"Learning Skills",
+    skillsEntryDesc:"Practical techniques to help you study smarter",
+    skillsHubTitle:"Learning Skills",
+    skillsHubSub:"Practical techniques, not theory — pick what you need right now.",
+    skillsSpecificLabel:"Specific to Your Major",
+    skillsUniversalLabel:"General Skills for Every Student",
+
+    glossaryEntryLabel:"My Terms",
+    glossaryEntryDesc:"Collect new words as you learn them",
+    glossaryTitle:"My Terms",
+    glossarySub:"Every new term you hear and don't know — note it here, and come back to it whenever you need.",
+    glossaryEmptyTitle:"No terms yet",
+    glossaryEmptyText:"Next time you hear a word you don't know, add it here.",
+    glossaryAddBtn:"Add Term",
+    glossaryAddTitle:"Add Term",
+    glossaryEditTitle:"Edit Term",
+    glossaryDeleteBtn:"Delete Term",
+    glossaryDeleteConfirmTitle:"Delete this term?",
+    glossaryDeleteConfirmText:"This can't be undone.",
+    termTextLabel:"Term",
+    termTextPh:"e.g. Algorithm",
+    termNoteLabel:"Meaning or note (optional)",
+    termNotePh:"e.g. A sequence of steps to solve a problem",
+    tipsLabel:"Practical Tips",
+    youAreHereLabel:"You are here now",
+    mistakeLabel:"Common Mistake",
+    exerciseLabel:"Try It Now"
+  }
+};
+
+/* ============================================================
+   ICONS — single-weight line icons, per Phase 4 Section G
+   ============================================================ */
+const ICON = {
+  today:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V19a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9"/></svg>`,
+  semester:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>`,
+  journey:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c3-6 5-2 8-8s5-2 8-8"/></svg>`,
+  settings:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="9" cy="7" r="1.8" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.8" fill="currentColor" stroke="none"/><circle cx="11" cy="17" r="1.8" fill="currentColor" stroke="none"/></svg>`,
+  book:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.2"/><line x1="9" y1="7.5" x2="15" y2="7.5"/><line x1="9" y1="11.5" x2="15" y2="11.5"/><line x1="9" y1="15.5" x2="13" y2="15.5"/></svg>`,
+  event:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>`,
+  bell:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
+  compass:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 2 2-5 5-2z"/></svg>`,
+  chevronBack:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
+  chevronBackRtl:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+  chevronFwd:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+  chevronFwdRtl:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
+  plus:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  check:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  laurel:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M12 6c-3 1-5 3-5 6M12 10c-2.5 1-4 2.5-4 5M12 6c3 1 5 3 5 6M12 10c2.5 1 4 2.5 4 5"/></svg>`,
+  spark:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/></svg>`,
+  lens:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.3"/></svg>`,
+  openBook:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5c2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><line x1="12" y1="6.5" x2="12" y2="19.5"/></svg>`,
+  code:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/></svg>`,
+  chevronDown:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`
+};
+
+/* ============================================================
+   ACADEMIC REFERENCE DATA — real Saudi institutions, colleges,
+   majors, and levels, offered as selection lists instead of free
+   text wherever a real catalog exists (per Simplicity First:
+   minimize typing, maximize selection).
+   ============================================================ */
+const SAUDI_UNIVERSITIES = [
+  {id:"ksu", ar:"جامعة الملك سعود", en:"King Saud University"},
+  {id:"kau", ar:"جامعة الملك عبدالعزيز", en:"King Abdulaziz University"},
+  {id:"kfupm", ar:"جامعة الملك فهد للبترول والمعادن", en:"King Fahd University of Petroleum & Minerals"},
+  {id:"imamu", ar:"جامعة الإمام محمد بن سعود الإسلامية", en:"Imam Mohammad Ibn Saud Islamic University"},
+  {id:"uqu", ar:"جامعة أم القرى", en:"Umm Al-Qura University"},
+  {id:"iu", ar:"الجامعة الإسلامية بالمدينة المنورة", en:"Islamic University of Madinah"},
+  {id:"kku", ar:"جامعة الملك خالد", en:"King Khalid University"},
+  {id:"qu", ar:"جامعة القصيم", en:"Qassim University"},
+  {id:"taibah", ar:"جامعة طيبة", en:"Taibah University"},
+  {id:"jazan", ar:"جامعة جازان", en:"Jazan University"},
+  {id:"najran", ar:"جامعة نجران", en:"Najran University"},
+  {id:"nbu", ar:"جامعة الحدود الشمالية", en:"Northern Border University"},
+  {id:"tabuk", ar:"جامعة تبوك", en:"University of Tabuk"},
+  {id:"hail", ar:"جامعة حائل", en:"University of Ha'il"},
+  {id:"albaha", ar:"جامعة الباحة", en:"Al-Baha University"},
+  {id:"jouf", ar:"جامعة الجوف", en:"Jouf University"},
+  {id:"majmaah", ar:"جامعة المجمعة", en:"Majmaah University"},
+  {id:"shaqra", ar:"جامعة شقراء", en:"Shaqra University"},
+  {id:"taif", ar:"جامعة الطائف", en:"Taif University"},
+  {id:"iau", ar:"جامعة الإمام عبدالرحمن بن فيصل", en:"Imam Abdulrahman Bin Faisal University"},
+  {id:"pnu", ar:"جامعة الأميرة نورة بنت عبدالرحمن", en:"Princess Nourah bint Abdulrahman University"},
+  {id:"ksauhs", ar:"جامعة الملك سعود بن عبدالعزيز للعلوم الصحية", en:"King Saud bin Abdulaziz University for Health Sciences"},
+  {id:"psau", ar:"جامعة الأمير سطام بن عبدالعزيز", en:"Prince Sattam bin Abdulaziz University"},
+  {id:"kfu", ar:"جامعة الملك فيصل", en:"King Faisal University"},
+  {id:"uj", ar:"جامعة جدة", en:"University of Jeddah"},
+  {id:"seu", ar:"الجامعة السعودية الإلكترونية", en:"Saudi Electronic University"},
+  {id:"nauss", ar:"جامعة نايف العربية للعلوم الأمنية", en:"Naif Arab University for Security Sciences"},
+  {id:"alfaisal", ar:"جامعة الفيصل", en:"Alfaisal University"},
+  {id:"psu", ar:"جامعة الأمير سلطان", en:"Prince Sultan University"},
+  {id:"effat", ar:"جامعة عفت", en:"Effat University"},
+  {id:"dau", ar:"جامعة دار العلوم", en:"Dar Al Uloom University"},
+  {id:"yu", ar:"جامعة اليمامة", en:"Al Yamamah University"},
+  {id:"pmu", ar:"جامعة الأمير محمد بن فهد", en:"Prince Mohammad Bin Fahd University"},
+  {id:"aou", ar:"الجامعة العربية المفتوحة", en:"Arab Open University"},
+  {id:"fbsu", ar:"جامعة فهد بن سلطان", en:"Fahad Bin Sultan University"}
+];
+const SAUDI_INSTITUTES = [
+  {id:"tvtc", ar:"الكليات التقنية (المؤسسة العامة للتدريب التقني والمهني)", en:"Technical College (TVTC)"},
+  {id:"ipa", ar:"معهد الإدارة العامة", en:"Institute of Public Administration"},
+  {id:"hji", ar:"المعهد العالي للقضاء", en:"Higher Judicial Institute"},
+  {id:"psaa", ar:"كلية الأمير سلطان للطيران المدني", en:"Prince Sultan Aviation Academy"},
+  {id:"mohc", ar:"الكليات الصحية (وزارة الصحة)", en:"Health Sciences College (Ministry of Health)"},
+  {id:"idsi", ar:"معهد الدراسات الدبلوماسية", en:"Institute of Diplomatic Studies"},
+  {id:"rcj", ar:"الكليات التقنية بالهيئة الملكية بالجبيل وينبع", en:"Royal Commission Technical College (Jubail/Yanbu)"},
+  {id:"nghc", ar:"كليات الحرس الوطني للعلوم الصحية", en:"National Guard Health Affairs College"}
+];
+const INSTITUTIONS = SAUDI_UNIVERSITIES.concat(SAUDI_INSTITUTES);
+
+const COLLEGES = [
+  {id:"eng", ar:"كلية الهندسة", en:"College of Engineering"},
+  {id:"cs", ar:"كلية الحاسبات وتقنية المعلومات", en:"College of Computing & Information Technology"},
+  {id:"bus", ar:"كلية إدارة الأعمال", en:"College of Business Administration"},
+  {id:"med", ar:"كلية الطب", en:"College of Medicine"},
+  {id:"dent", ar:"كلية طب الأسنان", en:"College of Dentistry"},
+  {id:"pharm", ar:"كلية الصيدلة", en:"College of Pharmacy"},
+  {id:"ams", ar:"كلية العلوم الطبية التطبيقية", en:"College of Applied Medical Sciences"},
+  {id:"sci", ar:"كلية العلوم", en:"College of Science"},
+  {id:"arts", ar:"كلية الآداب والعلوم الإنسانية", en:"College of Arts & Humanities"},
+  {id:"edu", ar:"كلية التربية", en:"College of Education"},
+  {id:"law", ar:"كلية الشريعة والقانون", en:"College of Law & Sharia"},
+  {id:"arch", ar:"كلية العمارة والتخطيط", en:"College of Architecture & Planning"},
+  {id:"design", ar:"كلية التصميم والفنون", en:"College of Design & Arts"}
+];
+const COLLEGE_MAJORS = {
+  eng: [["الهندسة المدنية","Civil Engineering"],["الهندسة الكهربائية","Electrical Engineering"],["الهندسة الميكانيكية","Mechanical Engineering"],["الهندسة الكيميائية","Chemical Engineering"],["هندسة الصناعات","Industrial Engineering"],["هندسة الحاسب","Computer Engineering"]],
+  cs: [["علوم الحاسب","Computer Science"],["تقنية المعلومات","Information Technology"],["هندسة البرمجيات","Software Engineering"],["نظم المعلومات","Information Systems"],["الذكاء الاصطناعي","Artificial Intelligence"],["الأمن السيبراني","Cybersecurity"]],
+  bus: [["إدارة الأعمال","Business Administration"],["التمويل","Finance"],["المحاسبة","Accounting"],["التسويق","Marketing"],["نظم المعلومات الإدارية","Management Information Systems"],["إدارة الموارد البشرية","Human Resources Management"]],
+  med: [["الطب والجراحة","Medicine & Surgery"]],
+  dent: [["طب الأسنان","Dentistry"]],
+  pharm: [["الصيدلة","Pharmacy"],["الصيدلة الإكلينيكية","Clinical Pharmacy"]],
+  ams: [["التمريض","Nursing"],["الأشعة","Radiological Sciences"],["المختبرات الطبية","Medical Laboratory Sciences"],["العلاج الطبيعي","Physical Therapy"],["الصحة العامة","Public Health"]],
+  sci: [["الفيزياء","Physics"],["الكيمياء","Chemistry"],["الرياضيات","Mathematics"],["الأحياء","Biology"],["الإحصاء","Statistics"]],
+  arts: [["اللغة الإنجليزية","English Language"],["الترجمة","Translation"],["التاريخ","History"],["الجغرافيا","Geography"],["الإعلام والاتصال","Media & Communication"]],
+  edu: [["رياض الأطفال","Early Childhood Education"],["التربية الخاصة","Special Education"],["المناهج وطرق التدريس","Curriculum & Instruction"]],
+  law: [["القانون","Law"],["الشريعة الإسلامية","Islamic Studies (Sharia)"]],
+  arch: [["العمارة","Architecture"],["التخطيط العمراني","Urban Planning"],["التصميم الداخلي","Interior Design"]],
+  design: [["التصميم الجرافيكي","Graphic Design"],["تصميم الأزياء","Fashion Design"]]
+};
+function majorList(collegeId){
+  const list = COLLEGE_MAJORS[collegeId];
+  if(!list) return [];
+  return list.map((pair,i)=>({ id:collegeId+"-"+i, ar:pair[0], en:pair[1] }));
+}
+const LEVELS = [
+  {id:"l1", ar:"المستوى الأول (مستجد)", en:"Level 1 (New Student)"},
+  {id:"l2", ar:"المستوى الثاني", en:"Level 2"},
+  {id:"l3", ar:"المستوى الثالث", en:"Level 3"},
+  {id:"l4", ar:"المستوى الرابع", en:"Level 4"},
+  {id:"l5", ar:"المستوى الخامس", en:"Level 5"},
+  {id:"l6", ar:"المستوى السادس", en:"Level 6"},
+  {id:"l7", ar:"المستوى السابع", en:"Level 7"},
+  {id:"l8", ar:"المستوى الثامن", en:"Level 8"},
+  {id:"l9", ar:"دراسات عليا", en:"Graduate"}
+];
+const OTHER_ID = "__other__";
+
+/* ============================================================
+   LEARNING SKILLS — real, practical content (not a locked
+   module/lesson framework). Kept simple per Simplicity First:
+   one clear guide per skill, immediately useful, no gating.
+   ============================================================ */
+const SKILLS = [
+
+  {
+    id:"transition-mindset", icon:"journey",
+    title:{ar:"الانتقال من الثانوية إلى الجامعة", en:"Moving from High School to University"},
+    desc:{ar:"اعرف الفروقات قبل أن تفاجئك", en:"Know the differences before they surprise you"},
+    intro:{
+      ar:"الجامعة نظام مختلف كليًا عن الثانوية — لا نسخة أصعب منها.",
+      en:"University isn't a harder high school. It's a different system."
+    },
+    tips:{
+      ar:["في الثانوية ينجحك المعلم؛ في الجامعة تنجح نفسك","كل دكتور له طريقة اختبار مختلفة — لا تتوقع نمطًا واحدًا","الكتب أثقل؛ اقرأ بنفسك خارج المحاضرة","المنهج أسرع؛ التأخر أسبوعًا يصعب تعويضه"],
+      en:["In high school the teacher gets you through; in university you get yourself through","Every professor tests differently — don't expect one pattern","Textbooks are heavier; read on your own outside class","The pace is faster; falling behind a week is hard to recover"]
+    },
+    mistake:{
+      ar:"التعامل مع أول فصل جامعي بنفس عادات الثانوية — انتظار توجيه المعلم خطوة بخطوة بدل بناء استقلالية مبكرة.",
+      en:"Approaching your first semester with high-school habits — waiting for step-by-step guidance instead of building independence early."
+    },
+    exercise:{
+      ar:"بعد أول أسبوع دراسي، اكتب ٣ فروقات لاحظتها بين المحاضرة الجامعية والحصة الثانوية، وكيف ستتعامل معها.",
+      en:"After your first week of classes, write down 3 differences you noticed between a university lecture and a high school class, and how you'll adapt."
+    }
+  },
+  {
+    id:"how-to-learn", icon:"spark",
+    title:{ar:"كيف تتعلم", en:"How to Learn"},
+    desc:{ar:"اكتشف أفضل طريقة تتعلم بها", en:"Discover how you learn best"},
+    intro:{
+      ar:"التعلم الحقيقي يحدث عند الاسترجاع، لا أثناء القراءة.",
+      en:"Real learning happens when you recall, not while you read."
+    },
+    tips:{
+      ar:["اختبر نفسك بدل إعادة القراءة — أغلق الكتاب وحاول تذكر ما فهمته","وزّع المذاكرة على أيام متعددة بدل جلسة واحدة طويلة","اشرح ما تعلمته لشخص آخر بكلماتك الخاصة","ذاكر في جلسات قصيرة ومركزة (٢٥–٣٠ دقيقة) مع فواصل راحة"],
+      en:["Test yourself instead of re-reading — close the book and try to recall what you understood","Spread study sessions across several days instead of one long session","Explain what you learned to someone else, in your own words","Study in short, focused sessions (25–30 minutes) with breaks between them"]
+    },
+    mistake:{
+      ar:"إعادة قراءة الملزمة عدة مرات مع الشعور بالألفة، وهذا الشعور يخدعك — الألفة ليست فهمًا.",
+      en:"Re-reading notes repeatedly and feeling familiar with them — that feeling is deceptive. Familiarity is not the same as understanding."
+    },
+    exercise:{
+      ar:"بعد قراءة أي فصل اليوم، أغلق الكتاب واكتب على ورقة ٣ نقاط رئيسية تتذكرها دون النظر.",
+      en:"After reading any chapter today, close the book and write down 3 key points you remember, without looking back."
+    }
+  },
+  {
+    id:"study-plan", icon:"journey",
+    title:{ar:"كيف تبني خطة دراسية ذكية", en:"Build a Smart Study Plan"},
+    desc:{ar:"خطط لفصلك الدراسي باحتراف", en:"Plan your semester like a pro"},
+    intro:{
+      ar:"الخطة الجيدة واقعية ومرنة، لا مثالية ومزدحمة.",
+      en:"A good plan is realistic and flexible, not perfect and packed."
+    },
+    tips:{
+      ar:["رتّب مهامك حسب الموعد والأهمية معًا، لا حسب الموعد فقط","خصص وقتًا ثابتًا يوميًا للمذاكرة بدل الاعتماد على الحماس اللحظي","اترك مساحة فارغة في خطتك للطوارئ — الخطة المزدحمة تنهار بسرعة","راجع خطتك أسبوعيًا وعدّلها بدل الالتزام بخطة لم تعد تناسب واقعك"],
+      en:["Order your tasks by both deadline and importance, not deadline alone","Set a fixed daily study time instead of relying on momentary motivation","Leave empty space in your plan for emergencies — an overpacked plan collapses quickly","Review your plan weekly and adjust it, instead of sticking to one that no longer fits reality"]
+    },
+    mistake:{
+      ar:"وضع خطة مثالية تفترض أن كل يوم سيسير كما هو متوقع تمامًا — وهذا نادرًا ما يحدث.",
+      en:"Making a perfect plan that assumes every day will go exactly as expected — which rarely happens."
+    },
+    exercise:{
+      ar:"خطط ليوم غد فقط، بثلاث مهام دراسية واقعية يمكنك إنجازها فعلًا.",
+      en:"Plan only for tomorrow, with three realistic study tasks you can genuinely complete."
+    }
+  },
+  {
+    id:"gpa-credit-weight", icon:"spark",
+    title:{ar:"فهم المعدل التراكمي ووزن الساعات", en:"Understanding GPA & Credit-Hour Weight"},
+    desc:{ar:"اعرف كيف تُحسب المواد، لا لتقلق أكثر بل لتهدأ", en:"Know how courses are weighted — not to worry more, but to worry less"},
+    intro:{
+      ar:"المعدل ليس متوسطًا بسيطًا — كل مادة تزن بحسب ساعاتها.",
+      en:"Your GPA isn't a simple average — each course weighs by its hours."
+    },
+    tips:{
+      ar:["مادة الثلاث ساعات تؤثر أكثر من مادة الساعتين","وزّع وقتك بنسبة الساعات، لا بالتساوي","الهدف أن تعرف أين تركّز، لا أن تحسب باستمرار","لا تُهمل المواد الخفيفة كليًا؛ وزنها أقل، لا معدوم"],
+      en:["A 3-hour course affects your GPA more than a 2-hour one","Split your time by hour-weight, not equally","The goal is knowing where to focus, not constant calculating","Don't fully neglect lighter courses; less weight, not zero"]
+    },
+    mistake:{
+      ar:"توزيع وقت المذاكرة بالتساوي بين كل المواد بغض النظر عن عدد ساعاتها، فيضيع مجهود إضافي على مواد تأثيرها أقل بينما تحتاج مادة أثقل وقتًا أكبر.",
+      en:"Splitting study time equally across all courses regardless of credit hours, wasting extra effort on lower-impact courses while a heavier one needs more time."
+    },
+    exercise:{
+      ar:"اكتب عدد ساعات كل مادة عندك هذا الفصل، ولاحظ أيها يستحق نسبة أكبر من وقتك.",
+      en:"Write down the credit hours of each course you have this term, and notice which ones deserve a bigger share of your time."
+    }
+  },
+  {
+    id:"focus-distraction", icon:"lens",
+    title:{ar:"التركيز في عصر التشتت", en:"Focus in the Age of Distraction"},
+    desc:{ar:"واجه أكبر عدو للمذاكرة اليوم", en:"Face today's biggest enemy of studying"},
+    intro:{
+      ar:"أكبر عدو للمذاكرة اليوم هاتفك، لا صعوبة المادة.",
+      en:"Your phone is studying's biggest enemy today, not the material."
+    },
+    tips:{
+      ar:["ضع الهاتف في غرفة أخرى، لا بجانبك","خصص وقتًا محددًا لوسائل التواصل، لا طوال اليوم","ذاكر بفترات قصيرة (٢٥ دقيقة) — أسهل من ساعة كاملة","خذ راحتك قبل أن يتشتت انتباهك، لا بعده"],
+      en:["Put your phone in another room, not beside you","Set a specific time for social media, not all day","Study in short blocks (25 min) — easier than a full hour","Take your break before you lose focus, not after"]
+    },
+    mistake:{
+      ar:"الاعتماد على قوة الإرادة وحدها لمقاومة الهاتف، بدل تغيير البيئة نفسها بإبعاد مصدر التشتت.",
+      en:"Relying on willpower alone to resist your phone, instead of changing the environment by removing the source of distraction."
+    },
+    exercise:{
+      ar:"في جلسة مذاكرتك القادمة، ضع الهاتف بعيدًا عن مرأى عينك تمامًا، ولاحظ الفرق.",
+      en:"In your next study session, put your phone completely out of sight, and notice the difference."
+    }
+  },
+  {
+    id:"academic-pressure", icon:"compass",
+    title:{ar:"التعامل مع ضغط الدراسة", en:"Managing Academic Pressure"},
+    desc:{ar:"مهارة عملية، لا مجرد تحمّل", en:"A practical skill, not just endurance"},
+    intro:{
+      ar:"الضغط طبيعي، لكنه ليس حالتك الدائمة.",
+      en:"Pressure is normal. It shouldn't be your default state."
+    },
+    tips:{
+      ar:["فرّق بين ضغط مؤقت (اختبار) وضغط مستمر — الثاني يستدعي تغيير خطتك","خذ راحات قصيرة فعلية، ٥–١٠ دقائق تكفي غالبًا","شارك ما تشعر به مع شخص تثق به؛ الضغط المشترك أخف","لا تقارن تقدمك بغيرك؛ رحلتك وحدها المقياس"],
+      en:["Temporary pressure (an exam) differs from constant pressure — the latter needs a plan change","Take real short breaks, 5–10 minutes is usually enough","Share how you feel with someone you trust; shared pressure feels lighter","Don't compare your progress to others; your journey is the only measure"]
+    },
+    mistake:{
+      ar:"التعامل مع الضغط بمزيد من الضغط على النفس (مذاكرة متواصلة بلا راحة)، بدل التعامل معه كإشارة تستدعي تعديل الخطة لا تجاهلها.",
+      en:"Responding to pressure with even more self-pressure (nonstop studying with no rest), instead of treating it as a signal to adjust the plan, not ignore it."
+    },
+    exercise:{
+      ar:"حدد الآن مصدر ضغط واحد تشعر به هذا الأسبوع، واكتب خطوة صغيرة واحدة يمكنك اتخاذها للتخفيف منه.",
+      en:"Identify one source of pressure you're feeling this week, and write down one small step you can take to ease it."
+    }
+  },
+  {
+    id:"read-textbooks", icon:"openBook",
+    title:{ar:"كيف تقرأ الكتب الجامعية", en:"How to Read Textbooks"},
+    desc:{ar:"اقرأ أسرع وتذكّر أكثر", en:"Read faster, retain more"},
+    intro:{
+      ar:"القراءة الفعالة تعرف أين تبحث، لا تقرأ كل كلمة.",
+      en:"Effective reading knows where to look, not every word in order."
+    },
+    tips:{
+      ar:["تصفح العناوين والملخصات أولاً لتكوّن صورة عامة قبل القراءة التفصيلية","اقرأ أسئلة نهاية الفصل قبل البدء — ستوجه انتباهك أثناء القراءة","توقف كل صفحتين واسأل نفسك: هل فهمت ما قرأته للتو؟","لا تحاول حفظ كل التفاصيل من أول قراءة — ركّز على الفكرة العامة أولاً"],
+      en:["Skim headings and summaries first to form a general picture before detailed reading","Read the end-of-chapter questions before you start — they'll guide your attention while reading","Pause every couple of pages and ask: did I actually understand what I just read?","Don't try to memorize every detail on the first pass — focus on the general idea first"]
+    },
+    mistake:{
+      ar:"القراءة الخطية البطيئة لكل كلمة من البداية للنهاية دون توقف للفهم أو المراجعة.",
+      en:"Slow, linear reading of every single word from start to finish, without pausing to check understanding."
+    },
+    exercise:{
+      ar:"قبل قراءة فصلك القادم، تصفحه لمدة دقيقتين فقط ثم اكتب توقعك عن محتواه.",
+      en:"Before reading your next chapter, skim it for just two minutes, then write down what you expect it covers."
+    }
+  },
+  {
+    id:"summarize", icon:"book",
+    title:{ar:"كيف تلخص", en:"How to Summarize"},
+    desc:{ar:"حوّل الفصول الطويلة إلى ملخصات قصيرة", en:"Turn long chapters into short notes"},
+    intro:{
+      ar:"الملخص الجيد صياغة جديدة للفكرة، لا نسخ مختصر.",
+      en:"A good summary rewrites the idea — it doesn't just shorten the text."
+    },
+    tips:{
+      ar:["اقرأ الفصل كاملاً أولاً قبل أن تبدأ بالتلخيص","لخص بعد كل قسم فرعي وليس بعد الفصل كاملاً","استخدم عناوين وتسلسلًا منطقيًا بدل الفقرات الطويلة","اسأل نفسك: ما الفكرة الوحيدة التي يجب أن أتذكرها من هذا الجزء؟"],
+      en:["Read the whole chapter first before you start summarizing","Summarize after each sub-section, not just at the end of the chapter","Use headings and a logical order instead of long paragraphs","Ask yourself: what's the one idea I must remember from this part?"]
+    },
+    mistake:{
+      ar:"نسخ الجمل حرفيًا من الكتاب — هذا يوفر وقتك الآن لكنه لا يبني فهمًا حقيقيًا.",
+      en:"Copying sentences word-for-word from the book — it saves time now but builds no real understanding."
+    },
+    exercise:{
+      ar:"اختر صفحة واحدة من مقرر حالي، ولخصها في ٥ أسطر فقط بكلماتك الخاصة.",
+      en:"Pick one page from a current course and summarize it in just 5 lines, in your own words."
+    }
+  },
+  {
+    id:"lecture-notes", icon:"openBook",
+    title:{ar:"تدوين المحاضرة وتبييضها", en:"Lecture Note-Taking & Cleanup"},
+    desc:{ar:"وفّر على نفسك ساعات مذاكرة لاحقًا", en:"Save yourself hours of studying later"},
+    intro:{
+      ar:"الإنصات وتدوين النقاط يوفر عليك ساعات لاحقًا.",
+      en:"Good listening and notes save you hours later."
+    },
+    tips:{
+      ar:["لا تكتب كل كلمة؛ ركّز على الأفكار الرئيسية","الحضور المنتظم يربط ملاحظاتك ببعضها","بيّض ملاحظاتك بخط منظم بعد المحاضرة بوقت قصير","أي أداة تناسبك تكفي؛ العادة أهم من الأداة"],
+      en:["Don't write every word; focus on the main ideas","Regular attendance keeps your notes connected","Clean up your notes shortly after the lecture","Any tool works; the habit matters more than the tool"]
+    },
+    mistake:{
+      ar:"تدوين ملاحظات كثيفة دون تنظيم، ثم عدم العودة إليها إطلاقًا حتى قرب الاختبار، فتصبح غير مفهومة وقتها.",
+      en:"Taking dense, disorganized notes and never revisiting them until right before the exam, by which point they no longer make sense."
+    },
+    exercise:{
+      ar:"بعد محاضرتك القادمة، خصص عشر دقائق فقط لإعادة تنظيم ملاحظاتك قبل الانتقال لأي شيء آخر.",
+      en:"After your next lecture, spend just ten minutes reorganizing your notes before moving on to anything else."
+    }
+  },
+  {
+    id:"professor-style", icon:"lens",
+    title:{ar:"كيف تحلل أسلوب الدكتور", en:"Analyze Your Professor's Style"},
+    desc:{ar:"افهم ما يركز عليه كل دكتور", en:"Understand what each professor values"},
+    intro:{
+      ar:"كل دكتور نمط تقييم مختلف — تعرّف عليه مبكرًا.",
+      en:"Every professor grades differently — learn the pattern early."
+    },
+    tips:{
+      ar:["لاحظ ما يكرره الدكتور أكثر من مرة في المحاضرة — غالبًا سيظهر في الاختبار","راجع أسئلة اختبارات سابقة لنفس الدكتور إن توفرت","اسأل زملاء درسوا معه سابقًا عن طبيعة أسئلته","انتبه هل يفضّل الحفظ الدقيق أم الفهم والتطبيق العملي"],
+      en:["Notice what the professor repeats more than once in lecture — it often appears on the exam","Review past exams from the same professor if available","Ask peers who took the course before about the nature of their questions","Notice whether they favor precise memorization or understanding and application"]
+    },
+    mistake:{
+      ar:"افتراض أن كل الدكاترة يقيّمون بنفس الطريقة، فتذاكر بأسلوب واحد لكل المقررات.",
+      en:"Assuming every professor evaluates the same way, and studying with one approach for every course."
+    },
+    exercise:{
+      ar:"بعد آخر محاضرة حضرتها، اكتب ٣ أشياء لاحظت أن الدكتور ركّز عليها أكثر من غيرها.",
+      en:"After your last lecture, write down 3 things you noticed the professor emphasized more than others."
+    }
+  },
+  {
+    id:"exam-prep", icon:"event",
+    title:{ar:"كيف تستعد للاختبارات", en:"Exam Preparation"},
+    desc:{ar:"ادخل الاختبارات بثقة", en:"Walk into exams with confidence"},
+    intro:{
+      ar:"الثقة تأتي من استعداد موزّع، لا ليلة قبل الاختبار.",
+      en:"Confidence comes from spread-out prep, not a night before."
+    },
+    tips:{
+      ar:["ابدأ المراجعة قبل الاختبار بأيام كافية، لا في الليلة السابقة فقط","وزّع المراجعة على جلسات قصيرة متعددة بدل جلسة طويلة واحدة","حل أسئلة سابقة إن توفرت — فهي أقرب صورة لما ستواجهه","اشرح المادة بصوت عالٍ أو لصديق كأنك تُدرّسها"],
+      en:["Start reviewing days before the exam, not just the night before","Spread review across several short sessions instead of one long one","Solve past exam questions if available — they're the closest picture of what to expect","Explain the material out loud or to a friend, as if you were teaching it"]
+    },
+    mistake:{
+      ar:"الحشو الليلي (المذاكرة المكثفة في آخر ليلة) — يرهقك ويقلل قدرتك على التركيز في الاختبار نفسه.",
+      en:"Cramming the night before — it exhausts you and reduces your ability to focus during the exam itself."
+    },
+    exercise:{
+      ar:"اكتب جدول مراجعة بسيطًا للأيام القادمة قبل أقرب اختبار لديك، بحصص قصيرة يوميًا.",
+      en:"Write a simple review schedule for the days leading up to your nearest exam, with short daily sessions."
+    }
+  },
+  {
+    id:"cs-roadmap", icon:"journey",
+    scope:{type:"college", collegeIds:["cs"]},
+    phaseLevels:[["l1","l2"],["l3","l4"],["l5","l6"],["l7","l8","l9"]],
+    title:{ar:"خارطة تخصصك: علوم الحاسب", en:"Your Roadmap: Computer Science"},
+    desc:{ar:"الصورة العامة لرحلتك — قد تختلف التفاصيل قليلًا حسب جامعتك", en:"The big picture of your journey — exact details may vary slightly by university"},
+    intro:{
+      ar:"معرفة شكل رحلتك يقلل الحيرة. هذا الشكل العام، لا خطة جامعة بعينها.",
+      en:"Knowing your journey's shape cuts confusion. This is the general shape, not one university's plan."
+    },
+    tips:{
+      ar:["الفصول الأولى: أساسيات رياضية وبرمجة مبدئية","الفصول الوسطى: هياكل البيانات وتنظيم الحاسب — هنا يتحدد فهمك للباقي","الفصول المتقدمة: خوارزميات، قواعد بيانات، أنظمة تشغيل","الفصول الأخيرة: اختياريات ومشروع التخرج"],
+      en:["Early terms: math foundations and intro programming","Middle terms: data structures, computer organization — this shapes everything after","Advanced terms: algorithms, databases, operating systems","Final terms: electives and your graduation project"]
+    },
+    mistake:{
+      ar:"افتراض أن كل الفصول بنفس درجة الصعوبة، فتُفاجأ بقفزة الصعوبة عند بداية المواد الجوهرية دون استعداد مسبق.",
+      en:"Assuming every term is equally difficult, then being caught off guard by the jump in difficulty when the core subjects begin."
+    },
+    exercise:{
+      ar:"حدد الآن أي مرحلة من هذه المراحل الأربع أنت فيها، واكتب شيئًا واحدًا تتطلع إليه في المرحلة القادمة.",
+      en:"Identify which of these four stages you're in right now, and write down one thing you're looking forward to in the next one."
+    }
+  },
+  {
+    id:"cs-english-barrier", icon:"openBook",
+    scope:{type:"college", collegeIds:["cs"]},
+    title:{ar:"كيف تتعامل مع اللغة الإنجليزية في مقررات الحاسب", en:"Handling English in CS Courses"},
+    desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
+    intro:{
+      ar:"أغلب مصطلحات الحاسب بالإنجليزية — تحدٍّ يُدار لا يُنتظر حله.",
+      en:"Most CS terms are in English — a challenge you manage, not wait out."
+    },
+    tips:{
+      ar:["دوّن كل مصطلح جديد في «مصطلحاتي» أثناء المحاضرة","اقرأ عناوين الشرائح قبل المحاضرة بخمس دقائق","لا تترجم كل كلمة؛ افهم الفكرة العامة أولاً","رسائل الخطأ فرصة لتعلم مفردات، لا شيء تخافه"],
+      en:["Add every new term to 'My Terms' during the lecture","Skim slide titles five minutes before class","Don't translate every word; get the general idea first","Error messages teach vocabulary — don't fear them"]
+    },
+    mistake:{
+      ar:"الشعور بالإحباط من عدم فهم كل كلمة، والتوقف عن المتابعة بدل التركيز على الفكرة العامة للشرح.",
+      en:"Feeling discouraged by not understanding every word, and disengaging instead of focusing on the overall idea being explained."
+    },
+    exercise:{
+      ar:"بعد محاضرتك القادمة، اكتب ٣ مصطلحات إنجليزية جديدة سمعتها، وابحث عن معناها.",
+      en:"After your next lecture, write down 3 new English terms you heard, and look up their meaning."
+    }
+  },
+  {
+    id:"cs-study-programming", icon:"code",
+    scope:{type:"college", collegeIds:["cs"]},
+    title:{ar:"كيف تذاكر مادة برمجة", en:"How to Study a Programming Course"},
+    desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
+    intro:{
+      ar:"في البرمجة، الفهم وحده لا يكفي — يجب أن تكتب الكود بيدك.",
+      en:"In programming, understanding alone isn't enough — you must write the code yourself."
+    },
+    tips:{
+      ar:["لا تكتفِ بمشاهدة حل المسائل؛ أغلق الحل وحاول كتابته بنفسك من الصفر","اكتب كودًا كل يوم ولو لعشر دقائق — أفضل من جلسة طويلة مرة أسبوعيًا","عند ظهور خطأ (Error)، اقرأ الرسالة كاملة قبل البحث عنها — غالبًا تخبرك بالمشكلة مباشرة","اربط كل مفهوم برمجي بمثال عملي صغير تكتبه بنفسك، لا تكتفِ بالفهم النظري"],
+      en:["Don't just watch solutions; close them and try writing the code yourself from scratch","Write code every day, even for ten minutes — better than one long session a week","When an error appears, read the full message before searching for it — it usually tells you the problem directly","Tie every programming concept to a small practical example you write yourself, not just theoretical understanding"]
+    },
+    mistake:{
+      ar:"قراءة كود مكتوب من آخرين وفهمه، والاعتقاد أن هذا يعني أنك تستطيع كتابته بنفسك في الاختبار.",
+      en:"Reading someone else's code and understanding it, then assuming that means you can write it yourself in the exam."
+    },
+    exercise:{
+      ar:"اختر مفهومًا برمجيًا تعلمته هذا الأسبوع، واكتب برنامجًا صغيرًا يستخدمه من الصفر دون فتح أي مرجع.",
+      en:"Pick a programming concept you learned this week, and write a small program that uses it from scratch, without opening any reference."
+    }
+  },
+  {
+    id:"cs-code-notes", icon:"code",
+    scope:{type:"college", collegeIds:["cs"]},
+    title:{ar:"كيف تدوّن ملاحظات في محاضرات البرمجة", en:"Taking Notes in Programming Lectures"},
+    desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
+    intro:{
+      ar:"تدوين محاضرة برمجة مختلف — الكود نفسه أهم من وصفه.",
+      en:"Notes in a programming lecture differ — the code matters more than describing it."
+    },
+    tips:{
+      ar:["انسخ الكود المكتوب على السبورة أو الشاشة حرفيًا، لا بصياغتك الخاصة — أي تغيير بسيط قد يكسر منطقه","بجانب كل جزء كود، اكتب سطرًا واحدًا بلغتك يشرح \"لماذا\" لا \"ماذا\" — الكود يوضح ماذا يفعل، أنت تحتاج تتذكر لماذا كُتب هكذا","التقط صورة للشاشة إن أمكن كنسخة احتياطية، لكن لا تعتمد عليها بديلاً عن الفهم أثناء المحاضرة","أضف أي مصطلح تقني جديد سمعته إلى \"مصطلحاتي\" مباشرة أثناء المحاضرة، لا بعدها"],
+      en:["Copy code written on the board or screen exactly as-is, not in your own words — even a small change can break its logic","Beside each piece of code, write one line in your own words explaining \"why\", not \"what\" — the code shows what it does, you need to remember why it was written that way","Take a photo of the screen if possible as a backup, but don't rely on it as a substitute for understanding during the lecture itself","Add any new technical term you hear straight to \"My Terms\" during the lecture itself, not afterward"]
+    },
+    mistake:{
+      ar:"محاولة إعادة صياغة الكود بأسلوبك الخاص أثناء التدوين السريع، مما ينتج كودًا لا يعمل عند مراجعته لاحقًا.",
+      en:"Trying to rephrase code in your own style while taking quick notes, producing code that doesn't actually work when you review it later."
+    },
+    exercise:{
+      ar:"في محاضرتك القادمة، انسخ مثالاً برمجيًا واحدًا حرفيًا، واكتب بجانبه سطرًا يشرح الفكرة العامة وراءه.",
+      en:"In your next lecture, copy one code example exactly, and write one line beside it explaining the general idea behind it."
+    }
+  },
+  {
+    id:"cs-debugging", icon:"lens",
+    scope:{type:"college", collegeIds:["cs"]},
+    title:{ar:"كيف تصحح أخطاء برمجية بمنهجية", en:"How to Debug Systematically"},
+    desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
+    intro:{
+      ar:"الأخطاء طبيعية. الفرق هو منهجية البحث عنها، لا تجنبها.",
+      en:"Bugs are normal. The difference is having a method to find them, not avoiding them."
+    },
+    tips:{
+      ar:["اقرأ رسالة الخطأ كاملة أولًا؛ غالبًا تخبرك بالسطر ونوع المشكلة مباشرة","اعزل المشكلة بتصغير الكود إلى أقل جزء ممكن يُنتج الخطأ نفسه","اطبع قيم المتغيرات في نقاط مختلفة من الكود لمعرفة أين تنحرف النتيجة عمّا تتوقعه","لا تخمّن الحل عشوائيًا؛ تحقق من افتراضاتك خطوة بخطوة قبل تغيير أي سطر"],
+      en:["Read the full error message first; it usually tells you the exact line and type of problem","Isolate the problem by shrinking the code down to the smallest piece that still produces the same error","Print variable values at different points in the code to see where the result diverges from what you expect","Don't guess randomly at a fix; check your assumptions step by step before changing any line"]
+    },
+    mistake:{
+      ar:"تغيير أسطر عشوائية على أمل أن يعمل الكود، دون فهم السبب الحقيقي للخطأ.",
+      en:"Changing random lines hoping the code will work, without understanding the actual cause of the error."
+    },
+    exercise:{
+      ar:"في المرة القادمة التي يظهر لك خطأ، اكتب أولًا ماذا كنت تتوقع أن يحدث، ثم قارنه بما حدث فعلًا قبل البحث عن الحل.",
+      en:"Next time you get an error, first write down what you expected to happen, then compare it to what actually happened before searching for a fix."
+    }
+  },
+  {
+    id:"cs-algorithms", icon:"spark",
+    scope:{type:"college", collegeIds:["cs"]},
+    title:{ar:"كيف تحل مسائل البرمجة والخوارزميات", en:"How to Solve Programming & Algorithm Problems"},
+    desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
+    intro:{
+      ar:"حل مسائل الخوارزميات مهارة منفصلة عن معرفة اللغة.",
+      en:"Solving algorithm problems is a separate skill from knowing the language."
+    },
+    tips:{
+      ar:["افهم المسألة كاملة واكتب أمثلة يدوية على ورقة قبل كتابة أي سطر كود","فكّر في الحل بلغة بسيطة (خطوات عادية) قبل الانتقال لكتابته ببرمجة حقيقية","ابدأ بحل بسيط يعمل ولو كان بطيئًا، ثم حسّنه بعد أن يعمل","تدرّب على مسائل متنوعة بانتظام؛ التعرّف على الأنماط الشائعة يأتي مع التكرار لا الحفظ"],
+      en:["Understand the full problem and write manual examples on paper before writing a single line of code","Think through the solution in plain steps before translating it into actual code","Start with a simple solution that works, even if slow, then improve it once it works","Practice a variety of problems regularly; recognizing common patterns comes from repetition, not memorization"]
+    },
+    mistake:{
+      ar:"القفز لكتابة الكود مباشرة دون فهم المسألة أو التخطيط للحل، مما يؤدي لحلول مرتبكة يصعب تصحيحها.",
+      en:"Jumping straight into writing code without understanding the problem or planning the solution, leading to tangled solutions that are hard to fix."
+    },
+    exercise:{
+      ar:"اختر مسألة برمجية بسيطة، واكتب خطوات حلها بجمل عادية على ورقة قبل أن تفتح المحرر البرمجي.",
+      en:"Pick a simple programming problem, and write its solution steps in plain sentences on paper before opening your code editor."
+    }
+  },
+  {
+    id:"cs-comparison-pressure", icon:"spark",
+    scope:{type:"college", collegeIds:["cs"]},
+    title:{ar:"التعامل مع مقارنة نفسك بالمبرمجين \"الموهوبين\"", en:"Dealing with Comparing Yourself to \"Gifted\" Programmers"},
+    desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
+    intro:{
+      ar:"من يبدو \"موهوبًا\" غالبًا تدرّب أكثر، لا أنه أذكى.",
+      en:"Someone who seems \"gifted\" usually practiced more, not that they're smarter."
+    },
+    tips:{
+      ar:["من يبدو \"سريع الفهم\" غالبًا تدرّب من قبل، لا أنه أذكى","قارن نفسك بنفسك قبل شهر، لا بزميلك","طلب المساعدة ليس ضعفًا؛ حتى المحترفون يسألون باستمرار","الإحباط بعد ساعات تصحيح خطأ أمر طبيعي تمامًا"],
+      en:["Someone who \"gets it\" fast usually practiced before, not that they're smarter","Compare yourself to your own past, not a classmate","Asking for help isn't weakness; even pros ask constantly","Frustration after hours debugging one error is completely normal"]
+    },
+    mistake:{
+      ar:"الحكم على قدرتك في التخصص بناءً على سرعة زميل واحد، بدل النظر لتقدمك الفعلي عبر الوقت.",
+      en:"Judging your ability in the field based on one classmate's speed, instead of looking at your own actual progress over time."
+    },
+    exercise:{
+      ar:"اكتب شيئًا واحدًا تستطيعه برمجيًا الآن ولم تكن تستطيعه قبل شهر.",
+      en:"Write down one thing you can do in code now that you couldn't do a month ago."
+    }
+  },
+  {
+    id:"translation-roadmap", icon:"journey",
+    scope:{type:"college", collegeIds:["arts"]},
+    phaseLevels:[["l1","l2"],["l3"],["l4","l5","l6"],["l7","l8","l9"]],
+    title:{ar:"خارطة تخصصك: اللغة الإنجليزية والترجمة", en:"Your Roadmap: English Language & Translation"},
+    desc:{ar:"الصورة العامة لرحلتك، مبنية على واقع البرنامج", en:"The big picture of your journey, grounded in how the program actually runs"},
+    intro:{
+      ar:"معرفة شكل رحلتك يقلل الحيرة — إليك الصورة العامة لتخصصك.",
+      en:"Knowing your journey's shape cuts confusion — here's the big picture."
+    },
+    tips:{
+      ar:["المستويان الأول والثاني: تركيز مكثف على المهارات اللغوية الأربع","المستوى الثالث: نقطة تحول — أول مقررات الترجمة واللسانيات","المستوى الرابع فما فوق: توسع في الترجمة والأدب","الفصول الأخيرة: ترجمة تخصصية ومشروع التخرج"],
+      en:["Levels 1–2: intensive focus on the four core language skills","Level 3: the turning point — translation and linguistics begin","Level 4 onward: translation and literature expand","Final terms: specialized translation and your graduation project"]
+    },
+    mistake:{
+      ar:"توقع أن التخصص كله عن الترجمة منذ اليوم الأول، ثم الشعور بالإحباط من كثرة مقررات اللغة العامة في البداية دون فهم أنها الأساس الذي يُبنى عليه لاحقًا.",
+      en:"Expecting the program to be all about translation from day one, then feeling discouraged by the general language courses early on, without realizing they're the foundation everything later is built on."
+    },
+    exercise:{
+      ar:"إذا كنتِ في السنة التحضيرية، اكتبي هدفًا لغويًا واحدًا تريدين تحقيقه قبل وصولك للمستوى الثالث.",
+      en:"If you're in the preparatory year, write down one language goal you want to reach before you get to Level 3."
+    }
+  },
+  {
+    id:"translation-hours-reality", icon:"lens",
+    scope:{type:"college", collegeIds:["arts"]},
+    title:{ar:"لماذا ساعات السنة التحضيرية أثقل مما تبدو", en:"Why the Foundation Year's Hours Feel Heavier Than They Look"},
+    desc:{ar:"مهارة خاصة بطلاب اللغات", en:"A skill specific to Language students"},
+    intro:{
+      ar:"أعباء السنة التحضيرية أثقل من ساعاتها المعتمدة — وهذا صحيح فعلًا.",
+      en:"The prep year's load is heavier than its credit hours — and that's accurate."
+    },
+    tips:{
+      ar:["مقررات المهارات اللغوية تدريبها الفعلي أكثر من ساعاتها المعتمدة","لا تقيسي المجهود بالساعات وحدها؛ اسألي طالبات أكبر","خصصي وقتًا إضافيًا لمقررات اللغة تحديدًا","الحمل الأثقل من المتوقع لا يعني أنكِ متأخرة"],
+      en:["Language-skill courses train more hours than credited","Don't measure effort by credit hours alone; ask senior students","Set aside extra time specifically for language courses","A heavier-than-expected load doesn't mean you're behind"]
+    },
+    mistake:{
+      ar:"الحكم على مدى صعوبة الفصل بعدد ساعاته المعتمدة فقط، ثم الشعور بالمفاجأة من حجم المجهود الفعلي المطلوب.",
+      en:"Judging how demanding a term will be by credit hours alone, then being caught off guard by the real amount of effort required."
+    },
+    exercise:{
+      ar:"اكتبي عدد الساعات الفعلية (لا المعتمدة) التي تقضينها فعليًا في كل مقرر لغوي هذا الأسبوع.",
+      en:"Write down the actual hours (not credit hours) you're really spending on each language course this week."
+    }
+  },
+  {
+    id:"translation-confidence", icon:"spark",
+    scope:{type:"college", collegeIds:["arts"]},
+    title:{ar:"التعامل مع صعوبة اللغة رغم أنها تخصصك", en:"Facing Language Difficulty Even in Your Own Major"},
+    desc:{ar:"مهارة خاصة بطلاب اللغات", en:"A skill specific to Language students"},
+    intro:{
+      ar:"صعوبة اللغة رغم أنها تخصصك أمر طبيعي جدًا، لا استثناء.",
+      en:"Struggling with the language despite it being your major is normal, not the exception."
+    },
+    tips:{
+      ar:["السنة التحضيرية موجودة لبناء أساسك، لا لاختبار مستوى سابق","لا تقارني نفسك بزميلاتك؛ كل طالبة تبدأ من نقطة مختلفة","اطلبي المساعدة بلا تردد؛ هذا طبيعي لا ضعف","احتفلي بكل تقدم صغير"],
+      en:["The prep year builds your foundation, not tests a prior level","Don't compare yourself to classmates; everyone starts differently","Ask for help without hesitation; that's normal, not weakness","Celebrate every small step forward"]
+    },
+    mistake:{
+      ar:"الاعتقاد أن الصعوبة في اللغة تعني أن هذا التخصص خطأ بالنسبة لكِ، بدل رؤيتها كجزء طبيعي من بداية الرحلة.",
+      en:"Believing that struggling with the language means this major was the wrong choice, instead of seeing it as a normal part of the beginning of the journey."
+    },
+    exercise:{
+      ar:"اكتبي شيئًا واحدًا تحسّن في لغتك الإنجليزية منذ بداية هذا الفصل، مهما بدا صغيرًا.",
+      en:"Write down one thing about your English that has improved since the start of this term, no matter how small it seems."
+    }
+  },
+  {
+    id:"language-practice", icon:"openBook",
+    scope:{type:"college", collegeIds:["arts"]},
+    title:{ar:"كيف تطوّر لغتك خارج المحاضرة", en:"Developing Your Language Outside the Lecture"},
+    desc:{ar:"مهارة خاصة بطلاب اللغات والترجمة", en:"A skill specific to Languages & Translation students"},
+    intro:{
+      ar:"إتقان اللغة يحدث في التعرض اليومي، لا داخل قاعة المحاضرة وحدها.",
+      en:"Language mastery happens in daily exposure, not the lecture hall alone."
+    },
+    tips:{
+      ar:["غيّر لغة هاتفك وتطبيقاتك اليومية إلى اللغة التي تدرسها لتزيد تعرضك لها","اقرأ نصوصًا قصيرة يوميًا (مقالة، خبر) بدل الاكتفاء بنصوص المقرر فقط","سجّل صوتك وأنت تتحدث اللغة، واستمع له لاكتشاف أخطائك الفعلية","لا تترجم كلمة بكلمة في ذهنك؛ حاول التفكير مباشرة باللغة التي تتعلمها"],
+      en:["Switch your phone and daily apps to the language you're studying to increase your exposure","Read short texts daily (an article, a news piece) instead of relying only on course texts","Record yourself speaking the language, and listen back to catch your actual mistakes","Don't translate word-by-word in your head; try thinking directly in the language you're learning"]
+    },
+    mistake:{
+      ar:"الاعتماد فقط على حفظ القواعد النحوية دون ممارسة فعلية للاستماع والتحدث.",
+      en:"Relying only on memorizing grammar rules without actual listening and speaking practice."
+    },
+    exercise:{
+      ar:"غيّر لغة تطبيق واحد على هاتفك إلى اللغة التي تدرسها، والتزم بذلك لمدة أسبوع.",
+      en:"Switch the language of one app on your phone to the language you're studying, and stick with it for a week."
+    }
+  },
+  {
+    id:"vocabulary-building", icon:"openBook",
+    scope:{type:"college", collegeIds:["arts"]},
+    title:{ar:"كيف توسّع مفرداتك بفعالية", en:"Building Vocabulary Effectively"},
+    desc:{ar:"مهارة خاصة بطلاب اللغات", en:"A skill specific to Language students"},
+    intro:{
+      ar:"الكلمات المحفوظة منفردة تُنسى بسرعة؛ المفردات تُتقن بالسياق.",
+      en:"Words memorized in isolation fade fast; vocabulary sticks with context."
+    },
+    tips:{
+      ar:["تعلّم الكلمة الجديدة داخل جملة كاملة، لا ككلمة منفردة مترجمة فقط","راجع الكلمات الجديدة بعد يوم، ثم بعد أسبوع، ثم بعد شهر — التكرار المتباعد أفضل من التكرار المتلاحق","استخدم الكلمة الجديدة بنفسك في جملة تكتبها أو تقولها خلال نفس اليوم","جمّع الكلمات حسب الموضوع (مثلًا كلمات متعلقة بالسفر معًا) بدل قوائم عشوائية غير مترابطة"],
+      en:["Learn a new word inside a full sentence, not just as an isolated translated word","Review new words after a day, then a week, then a month — spaced repetition beats cramming","Use the new word yourself in a sentence you write or say the same day","Group words by topic (e.g. travel-related words together) instead of unrelated random lists"]
+    },
+    mistake:{
+      ar:"حفظ قوائم طويلة من الكلمات المترجمة دون استخدامها فعليًا، فتُنسى خلال أيام قليلة.",
+      en:"Memorizing long lists of translated words without ever actually using them, so they're forgotten within days."
+    },
+    exercise:{
+      ar:"اختر ٥ كلمات جديدة تعلمتها هذا الأسبوع، واكتب جملة واحدة تستخدم كل كلمة منها بشكل صحيح.",
+      en:"Pick 5 new words you learned this week, and write one sentence correctly using each one."
+    }
+  },
+  {
+    id:"translation-nuance-notes", icon:"openBook",
+    scope:{type:"college", collegeIds:["arts"]},
+    title:{ar:"تدوين الفروق اللغوية الدقيقة في المحاضرة", en:"Capturing Fine Language Nuances in Lecture"},
+    desc:{ar:"مهارة خاصة بطلاب الترجمة", en:"A skill specific to Translation students"},
+    intro:{
+      ar:"أدق تفاصيل اللغة تُقال شفهيًا ولا تُكتب إلا إن دوّنتِها.",
+      en:"The finest language details are spoken, not written — unless you write them down."
+    },
+    tips:{
+      ar:["دوّني كل بدائل الترجمة التي يذكرها الأستاذ، لا واحدًا فقط","اكتبي أي تصحيح لخطأ شائع — يتكرر غالبًا في الاختبار","دوّني السياق مع الكلمة؛ المعنى يتغير بتغيره","راجعي ملاحظاتك بصوت عالٍ لا بالقراءة الصامتة"],
+      en:["Write down every alternative translation the professor mentions, not just one","Note any correction to a common mistake — it often reappears on exams","Write the context with the word; meaning shifts with it","Review your notes out loud, not silently"]
+    },
+    mistake:{
+      ar:"تدوين الترجمة النهائية فقط دون البدائل التي ناقشها الأستاذ، فتفقدين فهم \"لماذا\" هذه الترجمة هي الأفضل.",
+      en:"Writing down only the final translation without the alternatives the professor discussed, losing your understanding of \"why\" that translation was the best one."
+    },
+    exercise:{
+      ar:"في محاضرتك القادمة، دوّني بديلين على الأقل لأي كلمة يناقش الأستاذ ترجمتها.",
+      en:"In your next lecture, write down at least two alternatives for any word whose translation the professor discusses."
+    }
+  },
+  {
+    id:"translation-meaning", icon:"lens",
+    scope:{type:"college", collegeIds:["arts"]},
+    title:{ar:"كيف تترجم بالمعنى لا بالكلمة", en:"Translating Meaning, Not Words"},
+    desc:{ar:"مهارة خاصة بطلاب الترجمة", en:"A skill specific to Translation students"},
+    intro:{
+      ar:"الترجمة الجيدة تنقل المعنى، لا الكلمات حرفيًا.",
+      en:"Good translation carries meaning, not literal words."
+    },
+    tips:{
+      ar:["اقرأ الجملة كاملة وافهم معناها العام قبل أن تبدأ ترجمتها كلمة بكلمة","بعد الترجمة، اقرأ النص المترجم وحده دون الرجوع للأصل — هل يبدو طبيعيًا بهذه اللغة؟","انتبه للتعبيرات الاصطلاحية؛ ترجمتها الحرفية غالبًا لا تحمل نفس المعنى","قارن ترجمتك بترجمات محترفة لنفس النوع من النصوص لتتعلم أسلوب الصياغة"],
+      en:["Read the full sentence and understand its overall meaning before translating it word by word","After translating, read the translated text alone without the original — does it sound natural in this language?","Watch for idioms; translating them literally usually loses the actual meaning","Compare your translation to professional translations of similar texts to learn the style of phrasing"]
+    },
+    mistake:{
+      ar:"الترجمة الحرفية كلمة بكلمة، مما ينتج نصًا مفهومًا لكنه غريب وغير طبيعي بلغته الجديدة.",
+      en:"Translating literally word-for-word, which produces text that's understandable but sounds foreign and unnatural in its new language."
+    },
+    exercise:{
+      ar:"ترجم فقرة قصيرة، ثم اتركها يومًا كاملاً وأعد قراءتها بعين جديدة كأنك قارئ لا مترجم.",
+      en:"Translate a short paragraph, leave it for a full day, then reread it with fresh eyes as a reader, not as its translator."
+    }
+  },
+  {
+    id:"me-roadmap", icon:"journey",
+    scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
+    phaseLevels:[["l1","l2"],["l3","l4"],["l5","l6"],["l7","l8","l9"]],
+    title:{ar:"خارطة تخصصك: الهندسة الميكانيكية", en:"Your Roadmap: Mechanical Engineering"},
+    desc:{ar:"الصورة العامة لرحلتك — قد تختلف التفاصيل قليلًا حسب جامعتك", en:"The big picture of your journey — exact details may vary slightly by university"},
+    intro:{
+      ar:"معرفة شكل رحلتك يقلل الحيرة. هذا الشكل العام، لا خطة جامعة بعينها.",
+      en:"Knowing your journey's shape cuts confusion. This is the general shape, not one university's plan."
+    },
+    tips:{
+      ar:["الفصول الأولى: رياضيات وفيزياء مكثفة، رسم هندسي","الفصول الوسطى: استاتيكا وديناميكا، مقاومة مواد، ديناميكا حرارية","الفصول المتقدمة: انتقال حرارة، ميكانيكا موائع، تصميم آلات","الفصول الأخيرة: تدريب تعاوني، اختياريات، ومشروع التخرج"],
+      en:["Early terms: intensive math and physics, engineering drawing","Middle terms: statics and dynamics, strength of materials, thermodynamics","Advanced terms: heat transfer, fluid mechanics, machine design","Final terms: cooperative training, electives, graduation project"]
+    },
+    mistake:{
+      ar:"افتراض أن الفصول الأولى (رياضيات وفيزياء عامة) بعيدة عن التخصص الحقيقي، فتُهمَل رغم أنها الأساس الذي يُبنى عليه كل تصميم هندسي لاحقًا.",
+      en:"Assuming the early general math and physics terms are disconnected from the real specialty, and neglecting them even though they're the foundation every later engineering design is built on."
+    },
+    exercise:{
+      ar:"حدد الآن أي مرحلة من هذه المراحل الأربع أنت فيها، واكتب شيئًا واحدًا تتطلع إليه في المرحلة القادمة.",
+      en:"Identify which of these four stages you're in right now, and write down one thing you're looking forward to in the next one."
+    }
+  },
+  {
+    id:"me-lab-hours-reality", icon:"lens",
+    scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
+    title:{ar:"احسب وقت المعامل والورش الفعلي، لا الساعات المعتمدة فقط", en:"Accounting for Real Lab & Workshop Time, Not Just Credit Hours"},
+    desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
+    intro:{
+      ar:"مقررات المعامل تأخذ وقتًا أطول من ساعاتها المعتمدة.",
+      en:"Lab courses take longer than their credit hours suggest."
+    },
+    tips:{
+      ar:["تقارير المعمل تحتاج وقتًا خارج وقت الحضور — خطط له مسبقًا","لا تجدول وقتك بالساعات المعتمدة وحدها للمقررات العملية","وثّق ملاحظاتك أثناء التجربة نفسها، لا بعدها بأيام","احسب وقت صياغة التقرير ضمن خطتك، لا فقط النتائج"],
+      en:["Lab reports need time beyond the session — plan ahead","Don't schedule by credit hours alone for practical courses","Document observations during the experiment, not days later","Factor report write-up time into your plan, not just results"]
+    },
+    mistake:{
+      ar:"معاملة مقرر المعمل كأنه ينتهي بانتهاء وقت الحضور، دون تخصيص وقت كافٍ لكتابة التقرير بعده.",
+      en:"Treating a lab course as finished once the session ends, without setting aside enough time to write the report afterward."
+    },
+    exercise:{
+      ar:"اختر مقررًا عمليًا عندك هذا الفصل، واكتب تقديرًا واقعيًا للوقت الذي يستغرقه أسبوعيًا (حضورًا وتقارير معًا).",
+      en:"Pick a practical course you have this term, and write a realistic estimate of how many hours it takes weekly (attendance and reports combined)."
+    }
+  },
+  {
+    id:"me-spatial-drawing", icon:"lens",
+    scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
+    title:{ar:"كيف تطوّر التصور المكاني والرسم الهندسي", en:"Building Spatial Visualization & Technical Drawing"},
+    desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
+    intro:{
+      ar:"التفكير بثلاثة أبعاد أول تحدٍّ حقيقي في الهندسة الميكانيكية.",
+      en:"Thinking in three dimensions is Mechanical Engineering's first real challenge."
+    },
+    tips:{
+      ar:["تخيل الشكل ثلاثي الأبعاد من زوايا مختلفة قبل رسمه","ارسم بيدك على ورق قبل الاعتماد على برامج التصميم","قارن رسوماتك بمثال صحيح، ولاحظ الفرق بدقة","تدرّب يوميًا ولو لوقت قصير؛ التصور مهارة تُكتسب بالممارسة"],
+      en:["Imagine the 3D shape from different angles before drawing it","Draw by hand on paper before relying on CAD software","Compare your drawings to a correct example, note the difference","Practice daily even briefly; visualization is built through practice"]
+    },
+    mistake:{
+      ar:"الاعتقاد أن الرسم الهندسي \"موهبة\" يملكها البعض فقط، بدل رؤيته كمهارة تُكتسب بالتدريب مثل أي مهارة عملية أخرى.",
+      en:"Believing technical drawing is a \"talent\" only some people have, instead of seeing it as a skill built through practice like any other practical skill."
+    },
+    exercise:{
+      ar:"اختر جسمًا بسيطًا من حولك، وحاول رسمه من ثلاث زوايا مختلفة (أمامية، جانبية، علوية) على ورقة.",
+      en:"Pick a simple object around you, and try drawing it from three different views (front, side, top) on paper."
+    }
+  },
+  {
+    id:"me-diagram-notes", icon:"lens",
+    scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
+    title:{ar:"تدوين المحاضرة بالرسم لا بالنص فقط", en:"Taking Lecture Notes with Diagrams, Not Just Text"},
+    desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
+    intro:{
+      ar:"محتوى الهندسة الميكانيكية بصري — نصّه وحده يفقد معناه.",
+      en:"Mechanical Engineering content is visual — text alone loses its meaning."
+    },
+    tips:{
+      ar:["انسخ أي مخطط يرسمه الأستاذ بنفس الشكل، ولو بسرعة","احتفظ بالأسهم والاتجاهات كما رُسمت — الاتجاه جزء من المعنى","اكتب الوحدات بجانب كل رقم فور تدوينه","عند التبييض، أعد رسم المخططات لا نسخها فقط"],
+      en:["Copy any diagram the professor draws, even quickly","Keep arrows and directions as drawn — direction is part of the meaning","Write units beside every number right away","When cleaning up notes, redraw diagrams, don't just copy them"]
+    },
+    mistake:{
+      ar:"الاكتفاء بكتابة المعادلة النهائية دون الرسم التوضيحي المرافق لها، فتفقد المعادلة سياقها عند المراجعة لاحقًا.",
+      en:"Writing down only the final equation without its accompanying diagram, so the equation loses its context when you review it later."
+    },
+    exercise:{
+      ar:"في محاضرتك القادمة، انسخ مخططًا واحدًا كاملاً بكل تفاصيله (أسهم، وحدات، تسميات) لا المعادلة وحدها.",
+      en:"In your next lecture, copy one complete diagram with all its details (arrows, units, labels), not just the equation alone."
+    }
+  },
+  {
+    id:"math-theory-study", icon:"book",
+    scope:{type:"college", collegeIds:["sci"]},
+    title:{ar:"كيف تذاكر مادة رياضيات نظرية", en:"How to Study a Theoretical Math Course"},
+    desc:{ar:"مهارة خاصة بطلاب العلوم والرياضيات", en:"A skill specific to Science & Mathematics students"},
+    intro:{
+      ar:"الرياضيات الجامعية فهم البرهان، لا حل تمارين متشابهة.",
+      en:"University math is about understanding proofs, not solving similar exercises."
+    },
+    tips:{
+      ar:["لا تحفظ خطوات الحل؛ افهم لماذا كل خطوة تؤدي للتي بعدها","حل المسألة بنفسك أولًا قبل النظر إلى الحل، حتى لو استغرقت وقتًا أطول","عندما تحل مسألة صعبة، أعد حلها بعد يومين دون النظر لحلك السابق للتأكد أنك فهمتها فعلًا","اربط المفاهيم الجديدة بما درسته سابقًا؛ الرياضيات الجامعية مبنية طبقات فوق بعضها"],
+      en:["Don't memorize solution steps; understand why each step leads to the next","Try solving the problem yourself first before looking at the solution, even if it takes longer","When you solve a hard problem, redo it two days later without looking at your previous solution, to confirm you truly understood it","Connect new concepts to what you studied before; university math is built in layers on top of itself"]
+    },
+    mistake:{
+      ar:"الانتقال لحفظ أنماط حل الأسئلة دون فهم البرهان، مما ينهار عند تغيّر صياغة السؤال في الاختبار.",
+      en:"Shifting to memorizing question patterns without understanding the proof, which collapses when the exam question is phrased differently."
+    },
+    exercise:{
+      ar:"اختر مسألة حللتها الأسبوع الماضي، وحاول شرح خطوات حلها بصوت عالٍ كأنك تُدرّسها لزميل.",
+      en:"Pick a problem you solved last week, and try explaining its solution steps out loud as if teaching it to a classmate."
+    }
+  }
+
+];
+
+/* ============================================================
+   D. STORAGE LAYER — single on-device source of truth (offline-first)
+   ============================================================ */
+const DB_KEY = "studymate_p5_v1";
+const DB_VERSION = 1;
+function emptyDB(){
+  return { version:DB_VERSION, students:{}, journeys:{}, semesters:{}, courses:{}, academicEvents:{}, reflections:{}, achievements:{}, terms:{} };
+}
+let DB = null;
+function dbLoad(){
+  try{
+    const raw = localStorage.getItem(DB_KEY);
+    if(raw){
+      DB = JSON.parse(raw);
+      if(DB && DB.version){
+        const blank = emptyDB();
+        Object.keys(blank).forEach(t=>{ if(!DB[t]) DB[t] = blank[t]; });
+        return;
+      }
+    }
+  }catch(e){}
+  DB = emptyDB();
+}
+function dbSave(){ localStorage.setItem(DB_KEY, JSON.stringify(DB)); }
+function genId(){ return "id"+Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function dbInsert(table, rec){ DB[table][rec.id]=rec; dbSave(); return rec; }
+function dbUpdate(table, id, patch){ const r=DB[table][id]; if(!r) return null; Object.assign(r,patch); dbSave(); return r; }
+function dbDelete(table, id){ delete DB[table][id]; dbSave(); }
+function dbGet(table, id){ return id ? (DB[table][id]||null) : null; }
+function dbAll(table){ return Object.values(DB[table]); }
+function dbQuery(table, pred){ return dbAll(table).filter(pred); }
+
+/* ============================================================
+   ENTITY MODULES — one module per Product Design entity
+   ============================================================ */
+
+/* ---- Student (absorbs Academic Profile, per revised model) ---- */
+const StudentModule = {
+  current(){ return dbAll("students")[0] || null; },
+  create(data){
+    const rec = dbInsert("students", {
+      id:genId(), lang:data.lang||"ar", companion:data.companion||"male",
+      university:data.university, universityId:data.universityId||null,
+      college:data.college, collegeId:data.collegeId||null,
+      major:data.major, majorId:data.majorId||null, level:data.level,
+      createdAt:Date.now()
+    });
+    return rec;
+  },
+  update(data){
+    const s = this.current();
+    if(s) dbUpdate("students", s.id, { university:data.university, universityId:data.universityId||null, college:data.college, collegeId:data.collegeId||null, major:data.major, majorId:data.majorId||null, level:data.level });
+  },
+  updateLang(lang){
+    const s = this.current();
+    if(s) dbUpdate("students", s.id, { lang });
+  },
+  updateCompanion(companion){
+    const s = this.current();
+    if(s) dbUpdate("students", s.id, { companion });
+  }
+};
+
+/* ---- Academic Journey — the continuous container ---- */
+const JourneyModule = {
+  ensureFor(studentId){
+    let j = dbQuery("journeys", j=>j.studentId===studentId)[0];
+    if(!j) j = dbInsert("journeys", { id:genId(), studentId, createdAt:Date.now() });
+    return j;
+  },
+  forStudent(studentId){ return dbQuery("journeys", j=>j.studentId===studentId)[0] || null; }
+};
+
+/* ---- Semester ---- */
+function nextLevelLabel(currentLabel){
+  const idx = LEVELS.findIndex(l=> l.ar===currentLabel || l.en===currentLabel);
+  if(idx===-1 || idx===LEVELS.length-1) return currentLabel;
+  return LEVELS[idx+1][lang()];
+}
+function levelIdForLabel(label){
+  const found = LEVELS.find(l=> l.ar===label || l.en===label);
+  return found ? found.id : null;
+}
+const SemesterModule = {
+  createFirst(journeyId, label){
+    return dbInsert("semesters", { id:genId(), journeyId, index:1, label, status:"current", createdAt:Date.now() });
+  },
+  current(journeyId){ return dbQuery("semesters", s=>s.journeyId===journeyId && s.status==="current")[0] || null; },
+  listForJourney(journeyId){ return dbQuery("semesters", s=>s.journeyId===journeyId).sort((a,b)=>a.index-b.index); },
+  complete(semesterId){ dbUpdate("semesters", semesterId, { status:"done" }); },
+  /* closes the current semester and opens the next one — the moment the Academic Journey carries forward */
+  startNext(journeyId, currentSemester){
+    this.complete(currentSemester.id);
+    const newLabel = nextLevelLabel(currentSemester.label);
+    return dbInsert("semesters", { id:genId(), journeyId, index:currentSemester.index+1, label:newLabel, status:"current", createdAt:Date.now() });
+  }
+};
+
+/* ---- Course ---- */
+const CourseModule = {
+  create(semesterId, data){
+    return dbInsert("courses", { id:genId(), semesterId, name:data.name, professor:data.professor||"", createdAt:Date.now() });
+  },
+  update(id, data){ return dbUpdate("courses", id, { name:data.name, professor:data.professor||"" }); },
+  listForSemester(semesterId){ return dbQuery("courses", c=>c.semesterId===semesterId).sort((a,b)=>a.createdAt-b.createdAt); },
+  get(id){ return dbGet("courses", id); },
+  delete(id){
+    dbQuery("academicEvents", e=>e.courseId===id).forEach(e=>dbDelete("academicEvents", e.id));
+    dbDelete("courses", id);
+  }
+};
+
+/* ---- Academic Event (merges Assessment + Academic Event, per revised model) ----
+   Attaches to a Course, OR directly to a Semester when the event isn't
+   course-specific (e.g. a registration deadline) — per the approved
+   backbone amendment. Exactly one of courseId/semesterId is set. */
+const AcademicEventModule = {
+  create(owner, data){
+    return dbInsert("academicEvents", {
+      id:genId(), courseId: owner.courseId||null, semesterId: owner.semesterId||null,
+      title:data.title, date:data.date||"",
+      isEvaluative: !!data.isEvaluative, createdAt:Date.now()
+    });
+  },
+  update(id, data){
+    return dbUpdate("academicEvents", id, { title:data.title, date:data.date||"", isEvaluative: !!data.isEvaluative });
+  },
+  delete(id){ dbDelete("academicEvents", id); },
+  get(id){ return dbGet("academicEvents", id); },
+  listForCourse(courseId){ return dbQuery("academicEvents", e=>e.courseId===courseId).sort((a,b)=>(a.date||"").localeCompare(b.date||"")); },
+  listForCourses(courseIds){ return dbQuery("academicEvents", e=>courseIds.indexOf(e.courseId)!==-1); },
+  /* semester-level events only (not tied to any course) */
+  listForSemesterDirect(semesterId){ return dbQuery("academicEvents", e=>e.semesterId===semesterId && !e.courseId).sort((a,b)=>(a.date||"").localeCompare(b.date||"")); },
+  /* everything Guidance needs to consider for a semester: its own events + every course's events */
+  listAllForGuidance(semesterId, courseIds){
+    return dbQuery("academicEvents", e => e.semesterId===semesterId || courseIds.indexOf(e.courseId)!==-1);
+  }
+};
+/* Whether an event's date has already passed — a fact of the calendar, not
+   something the student manages by hand. Undated events are never "past". */
+function isEventPast(event){
+  if(!event.date) return false;
+  const d = daysUntil(event.date);
+  return d !== null && d < 0;
+}
+
+/* ---- Reflection ---- */
+const ReflectionModule = {
+  forSemester(semesterId){ return dbQuery("reflections", r=>r.semesterId===semesterId)[0] || null; },
+  create(semesterId, text){ return dbInsert("reflections", { id:genId(), semesterId, text, createdAt:Date.now() }); }
+};
+
+/* ---- Achievement ---- */
+const AchievementModule = {
+  listForJourney(journeyId){ return dbQuery("achievements", a=>a.journeyId===journeyId).sort((a,b)=>b.earnedAt-a.earnedAt); },
+  create(journeyId, type, label){ return dbInsert("achievements", { id:genId(), journeyId, type, label, earnedAt:Date.now() }); }
+};
+
+/* ---- Term (personal glossary) — a running collection the student builds
+   themselves. No dates, no priorities, no done/not-done status: this is
+   deliberately not a task list, just a growing record of what they've learned. */
+const TermModule = {
+  list(){ return dbAll("terms").sort((a,b)=>b.createdAt-a.createdAt); },
+  create(text, note){ return dbInsert("terms", { id:genId(), text, note:note||"", createdAt:Date.now() }); },
+  update(id, data){ return dbUpdate("terms", id, { text:data.text, note:data.note||"" }); },
+  delete(id){ dbDelete("terms", id); },
+  get(id){ return dbGet("terms", id); }
+};
+
+/* ============================================================
+   REMINDER ENGINE — deterministic, computed fresh, never stored
+   ============================================================ */
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const target = new Date(dateStr); target.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.round((target-today)/86400000);
+}
+const ReminderEngine = {
+  /* the single nearest event within a near-term window —
+     considers both course events and semester-level events */
+  nearest(semesterId, courseIds){
+    const events = AcademicEventModule.listAllForGuidance(semesterId, courseIds).filter(e=>e.date);
+    const withDays = events.map(e=>({ event:e, days:daysUntil(e.date) })).filter(x=>x.days!==null && x.days>=0 && x.days<=7);
+    withDays.sort((a,b)=> a.days-b.days || (b.event.isEvaluative?1:0)-(a.event.isEvaluative?1:0));
+    return withDays[0] || null;
+  }
+};
+
+/* ============================================================
+   RECOMMENDATION ENGINE — local heuristic, computed, offline
+   ============================================================ */
+const RecommendationEngine = {
+  /* notices only genuine clustering; returns null rather than forcing a note */
+  cluster(semesterId, courseIds){
+    const events = AcademicEventModule.listAllForGuidance(semesterId, courseIds).filter(e=>e.date);
+    const withDays = events.map(e=>({ event:e, days:daysUntil(e.date) })).filter(x=>x.days!==null && x.days>=0 && x.days<=7);
+    if(withDays.length < 2) return null;
+    return { count: withDays.length };
+  }
+};
+
+/* ============================================================
+   NAVIGATION / SHELL
+   ============================================================ */
+const app = document.getElementById("app");
+let activeTab = "today";
+
+function t(){ const s = StudentModule.current(); return STR[s ? s.lang : "ar"]; }
+function lang(){ const s = StudentModule.current(); return s ? s.lang : "ar"; }
+function applyDir(){
+  const l = lang();
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+}
+function chevronBack(){ return lang()==="ar" ? ICON.chevronBackRtl : ICON.chevronBack; }
+function chevronFwd(){ return lang()==="ar" ? ICON.chevronFwdRtl : ICON.chevronFwd; }
+function escapeHtml(str){
+  if(!str) return "";
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function renderTabBar(active){
+  const s = t();
+  return `
+    <div class="tab-bar">
+      <button type="button" class="tab-item ${active==='today'?'active':''}" data-tab="today">${ICON.today}<span class="tab-label">${s.tabToday}</span></button>
+      <button type="button" class="tab-item ${active==='semester'?'active':''}" data-tab="semester">${ICON.semester}<span class="tab-label">${s.tabSemester}</span></button>
+      <button type="button" class="tab-item ${active==='journey'?'active':''}" data-tab="journey">${ICON.journey}<span class="tab-label">${s.tabJourney}</span></button>
+    </div>`;
+}
+function wireTabBar(){
+  document.querySelectorAll("[data-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const tab = btn.dataset.tab;
+      if(tab === activeTab) return;
+      activeTab = tab;
+      if(tab==="today") renderToday();
+      else if(tab==="semester") renderSemester();
+      else if(tab==="journey") renderJourney();
+    });
+  });
+}
+
+/* ============================================================
+   STAGE: ONBOARDING (minimal — required before Dashboard has data)
+   ============================================================ */
+/* ============================================================
+   Reusable Picker Sheet — one component powering every
+   University/College/Major/Level selection, per Simplicity First
+   (reuse one mechanism rather than building four).
+   ============================================================ */
+function openPickerSheet({ title, options, selectedId, searchable, showOther, onSelect }){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  const optsHtml = options.map(o=>`<button type="button" class="picker-option ${selectedId===o.id?'selected':''}" data-val="${o.id}">${lang()==='ar'?o.ar:o.en}</button>`).join("");
+  const otherHtml = showOther ? `<button type="button" class="picker-option other-option ${selectedId===OTHER_ID?'selected':''}" data-val="${OTHER_ID}">${s.otherOption}</button>` : "";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${title}</div>
+      ${searchable ? `<div class="picker-search-wrap"><input type="text" class="field" id="pickerSearch" placeholder="${s.searchPh}" autocomplete="off"></div>` : ""}
+      <div class="picker-list" id="pickerList">${optsHtml}${otherHtml}</div>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+
+  function close(after){
+    overlay.classList.remove("show");
+    setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300);
+  }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+
+  const search = overlay.querySelector("#pickerSearch");
+  if(search){
+    search.addEventListener("click", e=>e.stopPropagation());
+    search.addEventListener("input", ()=>{
+      const q = search.value.trim().toLowerCase();
+      overlay.querySelectorAll(".picker-option").forEach(btn=>{
+        btn.style.display = btn.textContent.trim().toLowerCase().includes(q) ? "" : "none";
+      });
+    });
+  }
+  overlay.querySelectorAll(".picker-option").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const val = btn.dataset.val;
+      close(()=>{ onSelect(val); });
+    });
+  });
+}
+
+/* ============================================================
+   Shared Academic Profile Pickers — one mechanism reused by both
+   Onboarding and Settings (per Simplicity First: no duplicate logic).
+   `prefix` namespaces element ids so two instances never collide.
+   ============================================================ */
+function obLabel(list, id){ const item = list.find(x=>x.id===id); return item ? (lang()==='ar'?item.ar:item.en) : ""; }
+
+function buildProfilePickerFields(prefix, s){
+  return `
+    <div class="field-group">
+      <label class="field-label">${s.universityLabel}</label>
+      <button type="button" class="picker-trigger" id="${prefix}UniversityTrigger">
+        <span class="picker-value placeholder" id="${prefix}UniversityValue">${s.selectPh}</span>
+        <span class="picker-chevron">${ICON.chevronDown}</span>
+      </button>
+      <div class="hidden" id="${prefix}UniversityOtherWrap" style="margin-top:var(--sp-2);">
+        <input type="text" class="field" id="${prefix}UniversityOther" placeholder="${s.otherUniversityPh}" autocomplete="off">
+      </div>
+      <p class="field-error" id="${prefix}UniversityError">${s.nameRequired}</p>
+    </div>
+    <div class="field-group">
+      <label class="field-label">${s.collegeLabel}</label>
+      <button type="button" class="picker-trigger" id="${prefix}CollegeTrigger">
+        <span class="picker-value placeholder" id="${prefix}CollegeValue">${s.selectPh}</span>
+        <span class="picker-chevron">${ICON.chevronDown}</span>
+      </button>
+    </div>
+    <div class="field-group">
+      <label class="field-label">${s.majorLabel}</label>
+      <button type="button" class="picker-trigger" id="${prefix}MajorTrigger" disabled>
+        <span class="picker-value placeholder" id="${prefix}MajorValue">${s.pickCollegeFirst}</span>
+        <span class="picker-chevron">${ICON.chevronDown}</span>
+      </button>
+      <div class="hidden" id="${prefix}MajorOtherWrap" style="margin-top:var(--sp-2);">
+        <input type="text" class="field" id="${prefix}MajorOther" placeholder="${s.otherMajorPh}" autocomplete="off">
+      </div>
+      <p class="field-error" id="${prefix}MajorError">${s.nameRequired}</p>
+    </div>
+    <div class="field-group">
+      <label class="field-label">${s.levelLabel}</label>
+      <button type="button" class="picker-trigger" id="${prefix}LevelTrigger">
+        <span class="picker-value placeholder" id="${prefix}LevelValue">${s.selectPh}</span>
+        <span class="picker-chevron">${ICON.chevronDown}</span>
+      </button>
+    </div>`;
+}
+
+function refreshProfilePickerUI(prefix, draft){
+  const s = t();
+  const uniEl = document.getElementById(prefix+"UniversityValue");
+  uniEl.textContent = draft.universityId===OTHER_ID ? s.otherOption : (draft.university || s.selectPh);
+  uniEl.classList.toggle("placeholder", !draft.university && draft.universityId!==OTHER_ID);
+  document.getElementById(prefix+"UniversityOtherWrap").classList.toggle("hidden", draft.universityId!==OTHER_ID);
+
+  const colEl = document.getElementById(prefix+"CollegeValue");
+  colEl.textContent = draft.collegeId===OTHER_ID ? s.otherOption : (draft.college || s.selectPh);
+  colEl.classList.toggle("placeholder", !draft.college && draft.collegeId!==OTHER_ID);
+
+  const majBtn = document.getElementById(prefix+"MajorTrigger");
+  const majEl = document.getElementById(prefix+"MajorValue");
+  const collegeChosen = !!draft.collegeId;
+  const collegeIsKnown = collegeChosen && draft.collegeId!==OTHER_ID;
+  majBtn.disabled = !collegeChosen;
+  document.getElementById(prefix+"MajorOtherWrap").classList.toggle("hidden", !(collegeChosen && (draft.majorId===OTHER_ID || !collegeIsKnown)));
+  if(!collegeChosen){ majEl.textContent = s.pickCollegeFirst; majEl.classList.add("placeholder"); }
+  else if(!collegeIsKnown){ majEl.textContent = draft.major || s.selectPh; majEl.classList.toggle("placeholder", !draft.major); }
+  else{ majEl.textContent = draft.majorId===OTHER_ID ? s.otherOption : (draft.major || s.selectPh); majEl.classList.toggle("placeholder", !draft.major && draft.majorId!==OTHER_ID); }
+
+  const lvlEl = document.getElementById(prefix+"LevelValue");
+  lvlEl.textContent = draft.level || s.selectPh;
+  lvlEl.classList.toggle("placeholder", !draft.level);
+}
+
+function wireProfilePickers(prefix, draft, onChange){
+  const s = t();
+  document.getElementById(prefix+"UniversityTrigger").addEventListener("click", ()=>{
+    openPickerSheet({
+      title: s.universityLabel, options: INSTITUTIONS.map(x=>({id:x.id, ar:x.ar, en:x.en})),
+      selectedId: draft.universityId, searchable:true, showOther:true,
+      onSelect:(val)=>{
+        if(val===OTHER_ID){ draft.universityId=OTHER_ID; draft.university=""; }
+        else{ draft.universityId=val; draft.university=obLabel(INSTITUTIONS, val); }
+        refreshProfilePickerUI(prefix, draft); if(onChange) onChange();
+      }
+    });
+  });
+  document.getElementById(prefix+"UniversityOther").addEventListener("input", (e)=>{ draft.university = e.target.value.trim(); if(onChange) onChange(); });
+
+  document.getElementById(prefix+"CollegeTrigger").addEventListener("click", ()=>{
+    openPickerSheet({
+      title: s.collegeLabel, options: COLLEGES.map(x=>({id:x.id, ar:x.ar, en:x.en})),
+      selectedId: draft.collegeId, searchable:false, showOther:true,
+      onSelect:(val)=>{
+        if(val===OTHER_ID){ draft.collegeId=OTHER_ID; draft.college=""; }
+        else{ draft.collegeId=val; draft.college=obLabel(COLLEGES, val); }
+        draft.majorId=""; draft.major="";
+        refreshProfilePickerUI(prefix, draft); if(onChange) onChange();
+      }
+    });
+  });
+
+  document.getElementById(prefix+"MajorTrigger").addEventListener("click", ()=>{
+    if(!draft.collegeId || draft.collegeId===OTHER_ID) return;
+    const opts = majorList(draft.collegeId);
+    openPickerSheet({
+      title: s.majorLabel, options: opts.map(x=>({id:x.id, ar:x.ar, en:x.en})),
+      selectedId: draft.majorId, searchable:opts.length>8, showOther:true,
+      onSelect:(val)=>{
+        if(val===OTHER_ID){ draft.majorId=OTHER_ID; draft.major=""; }
+        else{ draft.majorId=val; draft.major=obLabel(opts, val); }
+        refreshProfilePickerUI(prefix, draft); if(onChange) onChange();
+      }
+    });
+  });
+  document.getElementById(prefix+"MajorOther").addEventListener("input", (e)=>{ draft.major = e.target.value.trim(); if(onChange) onChange(); });
+
+  document.getElementById(prefix+"LevelTrigger").addEventListener("click", ()=>{
+    openPickerSheet({
+      title: s.levelLabel, options: LEVELS.map(x=>({id:x.id, ar:x.ar, en:x.en})),
+      selectedId: draft.levelId, searchable:false, showOther:false,
+      onSelect:(val)=>{ draft.levelId=val; draft.level=obLabel(LEVELS, val); refreshProfilePickerUI(prefix, draft); if(onChange) onChange(); }
+    });
+  });
+}
+
+function validateProfileDraft(prefix, draft){
+  let valid = true;
+  const uniErr = document.getElementById(prefix+"UniversityError");
+  const majErr = document.getElementById(prefix+"MajorError");
+  if(!draft.university){ uniErr.classList.add("show"); valid=false; } else { uniErr.classList.remove("show"); }
+  if(!draft.major){ majErr.classList.add("show"); valid=false; } else { majErr.classList.remove("show"); }
+  return valid;
+}
+
+/* ============================================================
+   ONBOARDING — selection-first (University/Institute, College,
+   Major all chosen from real catalogs; free text only for the
+   genuinely uncommon "Other" case).
+   ============================================================ */
+function flagshipMessage(student){
+  const s = t();
+  if(student.universityId==="jazan" && student.collegeId==="cs") return s.flagshipJazanCS;
+  if(student.universityId==="iau" && student.collegeId==="arts") return s.flagshipIauTranslation;
+  if(student.universityId==="jazan" && student.collegeId==="eng" && student.majorId==="eng-2") return s.flagshipJazanME;
+  return null;
+}
+function showFlagshipMoment(message, onDone){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet" style="text-align:center; padding-top:var(--sp-5);">
+      <div class="empty-icon" style="margin:0 auto var(--sp-4); color:var(--accent); background:var(--accent-soft); border:none;">${ICON.laurel}</div>
+      <p class="type-body" style="line-height:1.7;">${escapeHtml(message)}</p>
+      <button type="button" class="btn btn-primary" id="flagshipContinue" style="margin-top:var(--sp-5);">${s.continueLabel}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
+  overlay.querySelector("#flagshipContinue").addEventListener("click", ()=>close(onDone));
+}
+
+function renderWelcome(){
+  applyDir();
+  const s = t();
+  app.innerHTML = `
+    <section class="screen no-tabbar pace-reflective" style="justify-content:center;">
+      <div class="screen-content" style="display:flex; flex-direction:column; justify-content:center; flex:1; text-align:center; padding-top:var(--sp-7);">
+        <div class="empty-icon" style="margin:0 auto var(--sp-5); width:64px; height:64px; color:var(--accent); background:var(--accent-soft); border:none;">${ICON.journey}</div>
+        <div class="type-display" style="margin-bottom:var(--sp-4);">${s.welcomeTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.7; max-width:320px; margin:0 auto;">${s.welcomeBody}</p>
+      </div>
+      <div class="screen-action">
+        <button type="button" class="btn btn-primary" id="welcomeStart">${s.welcomeStartBtn}</button>
+      </div>
+    </section>
+  `;
+  document.getElementById("welcomeStart").addEventListener("click", ()=>{ renderOnboarding(); });
+}
+
+function renderOnboarding(){
+  applyDir();
+  const s = t();
+  const obDraft = { companion:"", universityId:"", university:"", collegeId:"", college:"", majorId:"", major:"", levelId:"", level:"" };
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header" style="display:block; padding-top:var(--sp-6)">
+        <div class="type-display">${s.onboardTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); margin-top:6px;">${s.onboardSub}</p>
+      </div>
+      <div class="screen-content stack">
+        <div class="field-group">
+          <span class="field-label">${s.companionSectionLabel}</span>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-secondary" id="obCompanionMale" style="flex:1;">${s.companionMaleLabel}</button>
+            <button type="button" class="btn btn-secondary" id="obCompanionFemale" style="flex:1;">${s.companionFemaleLabel}</button>
+          </div>
+          <p class="field-error" id="obCompanionError">${s.companionRequired}</p>
+        </div>
+        ${buildProfilePickerFields("ob", s)}
+      </div>
+      <div class="screen-action">
+        <button type="button" class="btn btn-primary" id="obStart">${s.startBtn}</button>
+      </div>
+    </section>
+  `;
+
+  wireProfilePickers("ob", obDraft);
+
+  const maleBtn = document.getElementById("obCompanionMale");
+  const femaleBtn = document.getElementById("obCompanionFemale");
+  function refreshCompanionUI(){
+    maleBtn.classList.toggle("btn-primary", obDraft.companion==="male");
+    maleBtn.classList.toggle("btn-secondary", obDraft.companion!=="male");
+    femaleBtn.classList.toggle("btn-primary", obDraft.companion==="female");
+    femaleBtn.classList.toggle("btn-secondary", obDraft.companion!=="female");
+  }
+  maleBtn.addEventListener("click", ()=>{ obDraft.companion="male"; document.getElementById("obCompanionError").classList.remove("show"); refreshCompanionUI(); });
+  femaleBtn.addEventListener("click", ()=>{ obDraft.companion="female"; document.getElementById("obCompanionError").classList.remove("show"); refreshCompanionUI(); });
+
+  document.getElementById("obStart").addEventListener("click", ()=>{
+    let valid = validateProfileDraft("ob", obDraft);
+    if(!obDraft.companion){ document.getElementById("obCompanionError").classList.add("show"); valid = false; }
+    if(!valid) return;
+
+    const student = StudentModule.create({
+      lang: lang(), companion:obDraft.companion, university:obDraft.university, universityId:obDraft.universityId, college:obDraft.college, collegeId:obDraft.collegeId, major:obDraft.major, majorId:obDraft.majorId, level:obDraft.level
+    });
+    const journey = JourneyModule.ensureFor(student.id);
+    SemesterModule.createFirst(journey.id, obDraft.level || LEVELS[0][lang()]);
+
+    activeTab = "today";
+    const flagMsg = flagshipMessage(student);
+    if(flagMsg) showFlagshipMoment(flagMsg, ()=>renderToday());
+    else renderToday();
+  });
+}
+
+/* ============================================================
+   STAGE 6: TODAY (Dashboard) — one hero zone, at most one secondary zone
+   ============================================================ */
+function renderToday(){
+  applyDir();
+  const s = t();
+  const student = StudentModule.current();
+  const journey = JourneyModule.forStudent(student.id);
+  const semester = SemesterModule.current(journey.id);
+  const courses = semester ? CourseModule.listForSemester(semester.id) : [];
+  const courseIds = courses.map(c=>c.id);
+
+  const rec = semester ? RecommendationEngine.cluster(semester.id, courseIds) : null;
+  const reminder = (rec || !semester) ? null : ReminderEngine.nearest(semester.id, courseIds);
+
+  let secondaryHtml = "";
+  if(rec){
+    secondaryHtml = `
+      <div class="section-label">${s.recommendationLabel}</div>
+      <div class="card" style="cursor:default;">
+        <span class="card-icon">${ICON.compass}</span>
+        <span class="card-body">
+          <span class="card-title">${s.clusterObservation(rec.count)}</span>
+        </span>
+      </div>`;
+  } else if(reminder){
+    const daysLabel = reminder.days===0 ? (lang()==='ar'?'اليوم':'Today') : reminder.days===1 ? (lang()==='ar'?'غدًا':'Tomorrow') : (lang()==='ar'?`خلال ${reminder.days} أيام`:`In ${reminder.days} days`);
+    const course = reminder.event.courseId ? CourseModule.get(reminder.event.courseId) : null;
+    const titleText = course ? `${escapeHtml(reminder.event.title)} — ${escapeHtml(course.name)}` : escapeHtml(reminder.event.title);
+    secondaryHtml = `
+      <div class="section-label">${s.reminderLabel}</div>
+      <button type="button" class="card" id="reminderCard" ${course?`data-course-id="${course.id}"`:''}>
+        <span class="card-icon">${ICON.bell}</span>
+        <span class="card-body">
+          <span class="card-title">${titleText}</span>
+          <span class="card-meta">${daysLabel}</span>
+        </span>
+        <span class="card-chevron">${chevronFwd()}</span>
+      </button>`;
+  }
+
+  app.innerHTML = `
+    <section class="screen">
+      <div class="screen-header">
+        <div>
+          <div class="screen-header-title">${student.companion==='female' ? s.companionFemaleLabel : s.companionMaleLabel}</div>
+          <div class="screen-header-sub">${s.todayGreeting}</div>
+        </div>
+        <button type="button" class="btn-icon" id="settingsBtn" aria-label="${s.settingsBtn}">${ICON.settings}</button>
+      </div>
+      <div class="screen-content">
+        <div class="hero">
+          <div class="hero-eyebrow">${s.todayEyebrow}</div>
+          <div class="hero-title">${semester ? escapeHtml(semester.label) : s.todayNoSemester}</div>
+          <div class="hero-sub">${escapeHtml(student.major)}${student.university? ' · '+escapeHtml(student.university):''}</div>
+          <div class="type-caption">${s.coursesCount(courses.length)}</div>
+        </div>
+
+        ${secondaryHtml || (courses.length ? `
+          <div class="empty-state" style="padding:${'var(--sp-6)'} var(--sp-4);">
+            <div class="empty-icon">${ICON.compass}</div>
+            <div class="empty-title">${s.todayEmptyTitle}</div>
+            <p class="empty-text">${s.todayEmptyText}</p>
+          </div>` : `
+          <div class="empty-state">
+            <div class="empty-icon">${ICON.book}</div>
+            <div class="empty-title">${s.semesterEmptyTitle}</div>
+            <p class="empty-text">${s.semesterEmptyText}</p>
+            <button type="button" class="btn btn-primary" id="todayAddCourse" style="margin-top:var(--sp-4); max-width:240px;">${s.addFirstCourse}</button>
+            ${semester && semester.index > 1 ? `<button type="button" class="type-caption" id="newSemesterHint" style="margin-top:var(--sp-4); text-decoration:underline; background:none; border:none;">${s.newSemesterHint}</button>` : ""}
+          </div>`)}
+      </div>
+      ${renderTabBar("today")}
+    </section>
+  `;
+  wireTabBar();
+  document.getElementById("settingsBtn").addEventListener("click", ()=>{ renderSettings(); });
+  const addBtn = document.getElementById("todayAddCourse");
+  if(addBtn) addBtn.addEventListener("click", ()=>{ activeTab="semester"; openCourseSheet(semester.id, null, renderToday); });
+  const reminderCard = document.getElementById("reminderCard");
+  if(reminderCard){
+    reminderCard.addEventListener("click", ()=>{
+      const cid = reminderCard.dataset.courseId;
+      if(cid) renderCourseView(cid);
+    });
+  }
+  const hintBtn = document.getElementById("newSemesterHint");
+  if(hintBtn) hintBtn.addEventListener("click", ()=>{ activeTab="journey"; renderJourney(); });
+}
+
+/* ============================================================
+   STAGE 7: SEMESTER — scannable course list, one progress indicator
+   ============================================================ */
+function renderSemester(){
+  applyDir();
+  const s = t();
+  const student = StudentModule.current();
+  const journey = JourneyModule.forStudent(student.id);
+  const semester = SemesterModule.current(journey.id);
+  const courses = semester ? CourseModule.listForSemester(semester.id) : [];
+  const semesterEvents = semester ? AcademicEventModule.listForSemesterDirect(semester.id) : [];
+
+  const semesterEventsHtml = semester ? `
+    <div class="section-label" style="display:flex; align-items:center; justify-content:space-between; margin-top:0;">
+      <span>${s.semesterEventsLabel}</span>
+      <button type="button" class="btn-icon" id="addSemesterEventBtn" aria-label="${s.addEventBtn}" style="width:30px; height:30px;">${ICON.plus}</button>
+    </div>
+    ${semesterEvents.length ? `<div class="stack" style="margin-bottom:var(--sp-5);">${semesterEvents.map(e=>{
+      const past = isEventPast(e);
+      return `
+      <button type="button" class="card" data-semester-event-id="${e.id}">
+        <span class="card-icon">${ICON.event}</span>
+        <span class="card-body">
+          <span class="card-title" style="${past?'color:var(--ink-muted);':''}">${escapeHtml(e.title)}</span>
+          <span class="card-meta">${e.date ? (past ? s.eventPastLabel : formatEventDate(e.date, s)) : ""}</span>
+        </span>
+      </button>`;
+    }).join("")}</div>`
+    : `<p class="type-caption" style="margin-bottom:var(--sp-5);">${s.semesterEventsEmpty}</p>`}
+  ` : "";
+
+  const bodyHtml = courses.length === 0
+    ? `<div class="empty-state">
+        <div class="empty-icon">${ICON.book}</div>
+        <div class="empty-title">${s.semesterEmptyTitle}</div>
+        <p class="empty-text">${s.semesterEmptyText}</p>
+      </div>`
+    : `<div class="stack">${courses.map(c=>{
+        const evs = AcademicEventModule.listForCourse(c.id);
+        const nextEv = evs.filter(e=>e.date && !isEventPast(e)).sort((a,b)=>a.date.localeCompare(b.date))[0];
+        return `
+        <button type="button" class="card" data-course-id="${c.id}">
+          <span class="card-icon">${ICON.book}</span>
+          <span class="card-body">
+            <span class="card-title">${escapeHtml(c.name)}</span>
+            ${nextEv ? `<span class="card-meta">${escapeHtml(nextEv.title)}</span>` : ""}
+          </span>
+          <span class="card-chevron">${chevronFwd()}</span>
+        </button>`;
+      }).join("")}</div>`;
+
+  app.innerHTML = `
+    <section class="screen">
+      <div class="screen-header">
+        <div>
+          <div class="screen-header-title">${s.semesterTitle}</div>
+          ${semester ? `<div class="screen-header-sub">${escapeHtml(semester.label)}</div>` : ""}
+        </div>
+        ${semester ? `<button type="button" class="btn-icon" id="addCourseBtn" aria-label="${s.addCourseBtn}">${ICON.plus}</button>` : ""}
+      </div>
+      <div class="screen-content">
+        ${semesterEventsHtml}
+        <div class="section-label">${s.coursesLabel}</div>
+        ${bodyHtml}
+        ${semester ? `<button type="button" class="btn btn-secondary" id="endSemesterBtn" style="margin-top:var(--sp-5);">${s.endSemesterAction}</button>` : ""}
+      </div>
+      ${renderTabBar("semester")}
+    </section>
+  `;
+  wireTabBar();
+  const addBtn = document.getElementById("addCourseBtn");
+  if(addBtn) addBtn.addEventListener("click", ()=>{ openCourseSheet(semester.id, null, renderSemester); });
+  document.querySelectorAll("[data-course-id]").forEach(card=>{
+    card.addEventListener("click", ()=>{ renderCourseView(card.dataset.courseId); });
+  });
+  const addSemEvBtn = document.getElementById("addSemesterEventBtn");
+  if(addSemEvBtn) addSemEvBtn.addEventListener("click", ()=>{ openEventSheet({semesterId:semester.id}, null, renderSemester); });
+  document.querySelectorAll("[data-semester-event-id]").forEach(card=>{
+    card.addEventListener("click", ()=>{ openEventSheet({semesterId:semester.id}, AcademicEventModule.get(card.dataset.semesterEventId), renderSemester); });
+  });
+  const endBtn = document.getElementById("endSemesterBtn");
+  if(endBtn) endBtn.addEventListener("click", ()=>{ openEndSemesterConfirm(semester); });
+}
+
+/* ============================================================
+   COURSE VIEW — everything specific to one course; its own
+   Academic Events lead the screen (Phase 4, Section S).
+   ============================================================ */
+function renderCourseView(courseId){
+  applyDir();
+  const s = t();
+  const course = CourseModule.get(courseId);
+  if(!course){ renderSemester(); return; }
+  const events = AcademicEventModule.listForCourse(courseId);
+
+  const bodyHtml = events.length === 0
+    ? `<div class="empty-state">
+        <div class="empty-icon">${ICON.event}</div>
+        <div class="empty-title">${s.courseEmptyTitle}</div>
+        <p class="empty-text">${s.courseEmptyText}</p>
+      </div>`
+    : `<div class="stack">${events.map(e=>{
+        const past = isEventPast(e);
+        const daysLabel = e.date ? (past ? s.eventPastLabel : formatEventDate(e.date, s)) : "";
+        return `
+        <button type="button" class="card" data-event-id="${e.id}">
+          <span class="card-icon">${ICON.event}</span>
+          <span class="card-body">
+            <span class="card-title" style="${past?'color:var(--ink-muted);':''}">${escapeHtml(e.title)}</span>
+            ${daysLabel ? `<span class="card-meta">${daysLabel}</span>` : ""}
+          </span>
+          ${e.isEvaluative ? `<span class="pill pill-attention">${s.eventIsEvaluativeLabel.split(" ")[0]}</span>` : ""}
+        </button>`;
+      }).join("")}</div>`;
+
+  app.innerHTML = `
+    <section class="screen">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="courseBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="courseEdit" aria-label="${s.editCourseTitle}">${ICON.settings}</button>
+      </div>
+      <div class="screen-content">
+        <div class="hero" style="margin-bottom:var(--sp-4);">
+          <div class="hero-eyebrow">${s.semesterTitle}</div>
+          <div class="hero-title" style="font-size:var(--fs-heading);">${escapeHtml(course.name)}</div>
+          ${course.professor ? `<div class="hero-sub" style="margin-bottom:0;">${escapeHtml(course.professor)}</div>` : ""}
+        </div>
+        <div class="section-label">${s.addEventBtn}</div>
+        ${bodyHtml}
+      </div>
+      <div class="screen-action">
+        <button type="button" class="btn btn-primary" id="addEventBtn">${s.addEventBtn}</button>
+      </div>
+    </section>
+  `;
+  document.getElementById("courseBack").addEventListener("click", ()=>{ renderSemester(); });
+  document.getElementById("courseEdit").addEventListener("click", ()=>{ openCourseSheet(course.semesterId, course, ()=>renderCourseView(courseId)); });
+  document.getElementById("addEventBtn").addEventListener("click", ()=>{ openEventSheet({courseId}, null, ()=>renderCourseView(courseId)); });
+  document.querySelectorAll("[data-event-id]").forEach(card=>{
+    card.addEventListener("click", ()=>{ openEventSheet({courseId}, AcademicEventModule.get(card.dataset.eventId), ()=>renderCourseView(courseId)); });
+  });
+}
+function formatEventDate(dateStr, s){
+  const target = new Date(dateStr); target.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((target-today)/86400000);
+  if(diff < 0) return lang()==='ar' ? "متأخر" : "Overdue";
+  if(diff === 0) return lang()==='ar' ? "اليوم" : "Today";
+  if(diff === 1) return lang()==='ar' ? "غدًا" : "Tomorrow";
+  return lang()==='ar' ? `خلال ${diff} أيام` : `In ${diff} days`;
+}
+
+/* ============================================================
+   STAGE 9: ACADEMIC JOURNEY — the multi-year record (grows over time)
+   ============================================================ */
+function renderJourney(){
+  applyDir();
+  const s = t();
+  const student = StudentModule.current();
+  const journey = JourneyModule.forStudent(student.id);
+  const semesters = SemesterModule.listForJourney(journey.id);
+  const achievements = AchievementModule.listForJourney(journey.id);
+
+  const bodyHtml = semesters.length <= 1 && achievements.length === 0
+    ? `<div class="empty-state">
+        <div class="empty-icon">${ICON.journey}</div>
+        <div class="empty-title">${s.journeyEmptyTitle}</div>
+        <p class="empty-text">${s.journeyEmptyText}</p>
+      </div>`
+    : `<div class="stack">${semesters.map(sem=>{
+        const isDone = sem.status==='done';
+        return `
+        <button type="button" class="card" data-semester-id="${sem.id}" ${isDone?'':'style="cursor:default;"'}>
+          <span class="card-icon">${ICON.semester}</span>
+          <span class="card-body">
+            <span class="card-title">${escapeHtml(sem.label)}</span>
+            <span class="card-meta">${isDone ? (lang()==='ar'?'مكتمل':'Completed') : (lang()==='ar'?'الحالي':'Current')}</span>
+          </span>
+          ${isDone ? `<span class="card-chevron">${chevronFwd()}</span>` : ""}
+        </button>`;
+      }).join("")}</div>`;
+
+  app.innerHTML = `
+    <section class="screen">
+      <div class="screen-header"><div class="screen-header-title">${s.journeyTitle}</div></div>
+      <div class="screen-content">
+        ${bodyHtml}
+        <button type="button" class="skill-entry-card" id="skillsEntry">
+          <span class="card-icon">${ICON.spark}</span>
+          <span class="card-body">
+            <span class="card-title">${s.skillsEntryLabel}</span>
+            <span class="card-meta">${s.skillsEntryDesc}</span>
+          </span>
+          <span class="card-chevron">${chevronFwd()}</span>
+        </button>
+      </div>
+      ${renderTabBar("journey")}
+    </section>
+  `;
+  wireTabBar();
+  document.getElementById("skillsEntry").addEventListener("click", ()=>{ renderSkillsHub(); });
+  document.querySelectorAll("[data-semester-id]").forEach(card=>{
+    card.addEventListener("click", ()=>{
+      const sem = dbGet("semesters", card.dataset.semesterId);
+      if(sem && sem.status==='done') openReflectionViewSheet(sem);
+    });
+  });
+}
+
+/* ============================================================
+   LEARNING SKILLS — hub + detail. Reached from Journey (not a
+   tab, per the formal 3-tab navigation design).
+   ============================================================ */
+function skillAppliesToStudent(skill, student){
+  if(!skill.scope || skill.scope.type==="universal") return true;
+  if(skill.scope.type==="college"){
+    if(!student || !student.collegeId || skill.scope.collegeIds.indexOf(student.collegeId)===-1) return false;
+    if(skill.scope.majorIds) return !!(student.majorId && skill.scope.majorIds.indexOf(student.majorId)!==-1);
+    return true;
+  }
+  return true;
+}
+function skillCard(sk, l){
+  return `
+    <button type="button" class="card" data-skill-id="${sk.id}">
+      <span class="card-icon">${ICON[sk.icon]}</span>
+      <span class="card-body">
+        <span class="card-title">${escapeHtml(sk.title[l])}</span>
+        <span class="card-meta">${escapeHtml(sk.desc[l])}</span>
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
+    </button>`;
+}
+function renderSkillsHub(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const student = StudentModule.current();
+  const universalSkills = SKILLS.filter(sk=> !sk.scope || sk.scope.type==="universal");
+  const specificSkills = SKILLS.filter(sk=> sk.scope && sk.scope.type!=="universal" && skillAppliesToStudent(sk, student));
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="skillsHubBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.skillsHubTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.skillsHubSub}</p>
+        ${specificSkills.length ? `
+          <div class="section-label">${s.skillsSpecificLabel}</div>
+          <div class="stack" style="margin-bottom:var(--sp-5);">${specificSkills.map(sk=>skillCard(sk,l)).join("")}</div>
+          <div class="section-label">${s.skillsUniversalLabel}</div>
+        ` : ""}
+        <div class="stack">
+          ${universalSkills.map(sk=>skillCard(sk,l)).join("")}
+        </div>
+        <button type="button" class="skill-entry-card" id="glossaryEntry">
+          <span class="card-icon">${ICON.openBook}</span>
+          <span class="card-body">
+            <span class="card-title">${s.glossaryEntryLabel}</span>
+            <span class="card-meta">${s.glossaryEntryDesc}</span>
+          </span>
+          <span class="card-chevron">${chevronFwd()}</span>
+        </button>
+      </div>
+    </section>
+  `;
+  document.getElementById("skillsHubBack").addEventListener("click", ()=>{ renderJourney(); });
+  document.getElementById("glossaryEntry").addEventListener("click", ()=>{ renderGlossary(); });
+  document.querySelectorAll("[data-skill-id]").forEach(card=>{
+    card.addEventListener("click", ()=>{ renderSkillDetail(card.dataset.skillId); });
+  });
+}
+
+function renderSkillDetail(skillId){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const skill = SKILLS.find(sk=>sk.id===skillId) || SKILLS[0];
+  const student = StudentModule.current();
+  const currentLevelId = (student && skill.phaseLevels) ? levelIdForLabel(student.level) : null;
+  const currentPhaseIndex = currentLevelId ? skill.phaseLevels.findIndex(levels=>levels.indexOf(currentLevelId)!==-1) : -1;
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="skillDetailBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${escapeHtml(skill.title[l])}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-body" style="line-height:1.6; margin-bottom:var(--sp-5);">${escapeHtml(skill.intro[l])}</p>
+
+        <div class="callout">
+          <div class="callout-label">${s.tipsLabel}</div>
+          <div class="tip-list">
+            ${skill.tips[l].map((tip,i)=>{
+              const isCurrent = i===currentPhaseIndex;
+              const isRoadmap = !!skill.phaseLevels;
+              const marker = isRoadmap
+                ? `<span class="waypoint-marker ${isCurrent?'waypoint-marker-current':''}">${i+1}</span>`
+                : `<span class="tip-bullet"></span>`;
+              return `<div class="tip-row ${isCurrent?'tip-row-current':''}">
+                ${marker}
+                <span class="type-body">${isCurrent?`<strong>${s.youAreHereLabel}</strong> — `:''}${escapeHtml(tip)}</span>
+              </div>`;
+            }).join("")}
+          </div>
+        </div>
+
+        <div class="callout" style="background:var(--attention-soft);">
+          <div class="callout-label" style="color:var(--attention);">${s.mistakeLabel}</div>
+          <p class="type-body">${escapeHtml(skill.mistake[l])}</p>
+        </div>
+
+        <div class="callout" style="background:var(--accent-soft); margin-bottom:0;">
+          <div class="callout-label" style="color:var(--accent);">${s.exerciseLabel}</div>
+          <p class="type-body">${escapeHtml(skill.exercise[l])}</p>
+        </div>
+      </div>
+    </section>
+  `;
+  document.getElementById("skillDetailBack").addEventListener("click", ()=>{ renderSkillsHub(); });
+}
+
+/* ============================================================
+   GLOSSARY — a personal, growing collection of terms the student
+   adds themselves. Reached from the Skills Hub. Deliberately has
+   no dates, priorities, or done-status: not a task list.
+   ============================================================ */
+function renderGlossary(){
+  applyDir();
+  const s = t();
+  const terms = TermModule.list();
+
+  const bodyHtml = terms.length === 0
+    ? `<div class="empty-state">
+        <div class="empty-icon">${ICON.openBook}</div>
+        <div class="empty-title">${s.glossaryEmptyTitle}</div>
+        <p class="empty-text">${s.glossaryEmptyText}</p>
+      </div>`
+    : `<div class="stack">${terms.map(term=>`
+        <button type="button" class="card" data-term-id="${term.id}">
+          <span class="card-icon">${ICON.openBook}</span>
+          <span class="card-body">
+            <span class="card-title">${escapeHtml(term.text)}</span>
+            ${term.note ? `<span class="card-meta">${escapeHtml(term.note)}</span>` : ""}
+          </span>
+        </button>`).join("")}</div>`;
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="glossaryBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.glossaryTitle}</div>
+        <button type="button" class="btn-icon" id="addTermBtn" aria-label="${s.glossaryAddBtn}">${ICON.plus}</button>
+      </div>
+      <div class="screen-content">
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.glossarySub}</p>
+        ${bodyHtml}
+      </div>
+    </section>
+  `;
+  document.getElementById("glossaryBack").addEventListener("click", ()=>{ renderSkillsHub(); });
+  document.getElementById("addTermBtn").addEventListener("click", ()=>{ openTermSheet(null, renderGlossary); });
+  document.querySelectorAll("[data-term-id]").forEach(card=>{
+    card.addEventListener("click", ()=>{ openTermSheet(TermModule.get(card.dataset.termId), renderGlossary); });
+  });
+}
+
+function openTermSheet(existingTerm, onDone){
+  const s = t();
+  const editing = !!existingTerm;
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${editing ? s.glossaryEditTitle : s.glossaryAddTitle}</div>
+      <div class="field-group">
+        <label class="field-label" for="termText">${s.termTextLabel}</label>
+        <input type="text" class="field" id="termText" placeholder="${s.termTextPh}" value="${editing?escapeHtml(existingTerm.text):''}" autocomplete="off">
+        <p class="field-error" id="termTextError">${s.nameRequired}</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="termNote">${s.termNoteLabel}</label>
+        <input type="text" class="field" id="termNote" placeholder="${s.termNotePh}" value="${editing?escapeHtml(existingTerm.note):''}" autocomplete="off">
+      </div>
+      <button type="button" class="btn btn-primary" id="termSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveBtn}</button>
+      ${editing ? `<button type="button" class="btn btn-secondary" id="termDelete" style="color:var(--attention);">${s.glossaryDeleteBtn}</button>` : ""}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelector("#termSave").addEventListener("click", ()=>{
+    const text = overlay.querySelector("#termText").value.trim();
+    const textErr = overlay.querySelector("#termTextError");
+    if(!text){ textErr.classList.add("show"); return; }
+    const note = overlay.querySelector("#termNote").value.trim();
+    if(editing) TermModule.update(existingTerm.id, { text, note });
+    else TermModule.create(text, note);
+    close(onDone);
+  });
+  const deleteBtn = overlay.querySelector("#termDelete");
+  if(deleteBtn){
+    deleteBtn.addEventListener("click", ()=>{
+      close(()=>{
+        showConfirmSheet({
+          title:s.glossaryDeleteConfirmTitle, text:s.glossaryDeleteConfirmText, confirmLabel:s.confirmDelete, danger:true,
+          onConfirm:()=>{ TermModule.delete(existingTerm.id); onDone(); }
+        });
+      });
+    });
+  }
+}
+
+/* ============================================================
+   SHARED SHEETS
+   ============================================================ */
+function openReflectionViewSheet(semester){
+  const s = t();
+  const reflection = ReflectionModule.forSemester(semester.id);
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${escapeHtml(semester.label)}</div>
+      ${reflection && reflection.text ? `
+        <div class="callout">
+          <div class="callout-label">${s.reflectionEyebrow}</div>
+          <p class="type-body" style="line-height:1.6; white-space:pre-wrap;">${escapeHtml(reflection.text)}</p>
+        </div>`
+      : `<p class="type-caption">${s.reflectionEmptyView}</p>`}
+      <button type="button" class="btn btn-secondary" id="reflectionViewClose">${s.closeLabel}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(){ overlay.classList.remove("show"); setTimeout(()=>overlay.remove(), 300); }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelector("#reflectionViewClose").addEventListener("click", close);
+}
+
+function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm }){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${title}</div>
+      <p class="type-body" style="color:var(--ink-muted); margin-bottom:16px;">${text}</p>
+      <button type="button" class="btn btn-primary" id="confirmYes" style="${danger?'background:var(--attention);':''} margin-bottom:8px;">${confirmLabel}</button>
+      <button type="button" class="btn btn-secondary" id="confirmNo">${s.cancel}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelector("#confirmNo").addEventListener("click", ()=>close());
+  overlay.querySelector("#confirmYes").addEventListener("click", ()=>close(onConfirm));
+}
+
+function openCourseSheet(semesterId, existingCourse, onDone){
+  const s = t();
+  const editing = !!existingCourse;
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${editing ? s.editCourseTitle : s.addCourseBtn}</div>
+      <div class="field-group">
+        <label class="field-label" for="acName">${s.courseNameLabel}</label>
+        <input type="text" class="field" id="acName" placeholder="${s.courseNamePh}" value="${editing?escapeHtml(existingCourse.name):''}" autocomplete="off">
+        <p class="field-error" id="acNameError">${s.nameRequired}</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="acProf">${s.professorLabel}</label>
+        <input type="text" class="field" id="acProf" placeholder="${s.professorPh}" value="${editing?escapeHtml(existingCourse.professor):''}" autocomplete="off">
+      </div>
+      <button type="button" class="btn btn-primary" id="acSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveBtn}</button>
+      ${editing ? `<button type="button" class="btn btn-secondary" id="acDelete" style="color:var(--attention);">${s.deleteCourseBtn}</button>` : ""}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+
+  function close(after){
+    overlay.classList.remove("show");
+    setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300);
+  }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelector("#acSave").addEventListener("click", ()=>{
+    const name = overlay.querySelector("#acName").value.trim();
+    const nameErr = overlay.querySelector("#acNameError");
+    if(!name){ nameErr.classList.add("show"); return; }
+    const professor = overlay.querySelector("#acProf").value.trim();
+    if(editing) CourseModule.update(existingCourse.id, { name, professor });
+    else CourseModule.create(semesterId, { name, professor });
+    close(onDone);
+  });
+  const deleteBtn = overlay.querySelector("#acDelete");
+  if(deleteBtn){
+    deleteBtn.addEventListener("click", ()=>{
+      close(()=>{
+        showConfirmSheet({
+          title:s.deleteCourseConfirmTitle, text:s.deleteCourseConfirmText, confirmLabel:s.confirmDelete, danger:true,
+          onConfirm:()=>{ CourseModule.delete(existingCourse.id); renderSemester(); }
+        });
+      });
+    });
+  }
+}
+
+function openEventSheet(owner, existingEvent, onDone){
+  const s = t();
+  const editing = !!existingEvent;
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${editing ? s.editEventTitle : s.addEventTitle}</div>
+      <div class="field-group">
+        <label class="field-label" for="evTitle">${s.eventTitleLabel}</label>
+        <input type="text" class="field" id="evTitle" placeholder="${s.eventTitlePh}" value="${editing?escapeHtml(existingEvent.title):''}" autocomplete="off">
+        <p class="field-error" id="evTitleError">${s.nameRequired}</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="evDate">${s.eventDateLabel}</label>
+        <input type="date" class="field" id="evDate" value="${editing?escapeHtml(existingEvent.date):''}">
+      </div>
+      <div class="field-group" style="display:flex; align-items:center; gap:var(--sp-3);">
+        <button type="button" class="btn-icon" id="evEvalToggle" style="width:24px; height:24px; border-radius:6px; ${(editing&&existingEvent.isEvaluative)?'background:var(--accent); border-color:var(--accent); color:#fff;':''}">${(editing&&existingEvent.isEvaluative)?ICON.check:''}</button>
+        <span class="type-body">${s.eventIsEvaluativeLabel}</span>
+      </div>
+      <button type="button" class="btn btn-primary" id="evSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveBtn}</button>
+      ${editing ? `<button type="button" class="btn btn-secondary" id="evDelete" style="color:var(--attention);">${s.deleteEventBtn}</button>` : ""}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+
+  let isEvaluative = editing ? !!existingEvent.isEvaluative : false;
+
+  function close(after){
+    overlay.classList.remove("show");
+    setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300);
+  }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+
+  overlay.querySelector("#evEvalToggle").addEventListener("click", (e)=>{
+    isEvaluative = !isEvaluative;
+    e.currentTarget.style.background = isEvaluative ? "var(--accent)" : "";
+    e.currentTarget.style.borderColor = isEvaluative ? "var(--accent)" : "";
+    e.currentTarget.innerHTML = isEvaluative ? ICON.check : "";
+  });
+
+  overlay.querySelector("#evSave").addEventListener("click", ()=>{
+    const title = overlay.querySelector("#evTitle").value.trim();
+    const titleErr = overlay.querySelector("#evTitleError");
+    if(!title){ titleErr.classList.add("show"); return; }
+    const date = overlay.querySelector("#evDate").value;
+    if(editing){
+      AcademicEventModule.update(existingEvent.id, { title, date, isEvaluative });
+    } else {
+      AcademicEventModule.create(owner, { title, date, isEvaluative });
+    }
+    close(onDone);
+  });
+  const deleteBtn = overlay.querySelector("#evDelete");
+  if(deleteBtn){
+    deleteBtn.addEventListener("click", ()=>{
+      close(()=>{
+        showConfirmSheet({
+          title:s.deleteEventConfirmTitle, text:s.deleteEventConfirmText, confirmLabel:s.confirmDelete, danger:true,
+          onConfirm:()=>{ AcademicEventModule.delete(existingEvent.id); onDone(); }
+        });
+      });
+    });
+  }
+}
+
+function openEndSemesterConfirm(semester){
+  const s = t();
+  showConfirmSheet({
+    title:s.endSemesterConfirmTitle, text:s.endSemesterConfirmText, confirmLabel:s.endSemesterAction, danger:false,
+    onConfirm:()=>{ renderReflection(semester.id); }
+  });
+}
+
+/* ============================================================
+   REFLECTION — deliberately slower pacing than the rest of the
+   app (Phase 4, Section P): the one screen meant to slow down.
+   ============================================================ */
+function renderReflection(semesterId){
+  applyDir();
+  const s = t();
+  const semester = dbGet("semesters", semesterId);
+
+  app.innerHTML = `
+    <section class="screen no-tabbar pace-reflective">
+      <div class="screen-content" style="padding-top:var(--sp-7);">
+        <div class="hero-eyebrow">${s.reflectionEyebrow}</div>
+        <div class="type-display" style="margin-bottom:var(--sp-3);">${s.reflectionTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-5); line-height:1.6;">${s.reflectionPrompt}</p>
+        <textarea class="field" id="reflectionText" rows="6" placeholder="${s.reflectionPh}" style="resize:none; min-height:160px;"></textarea>
+      </div>
+      <div class="screen-action">
+        <button type="button" class="btn btn-primary" id="reflectionSave">${s.reflectionSave}</button>
+      </div>
+    </section>
+  `;
+  document.getElementById("reflectionSave").addEventListener("click", ()=>{
+    const text = document.getElementById("reflectionText").value.trim();
+    ReflectionModule.create(semesterId, text);
+
+    const student = StudentModule.current();
+    const journey = JourneyModule.forStudent(student.id);
+    const upcomingLevel = nextLevelLabel(semester.label);
+    const milestone = trackMilestoneMessage(student, upcomingLevel);
+    const achievement = milestone
+      ? AchievementModule.create(journey.id, "track_milestone", milestone)
+      : AchievementModule.create(journey.id, "semester_completed", s.achievementCompleted(semester.label));
+    SemesterModule.startNext(journey.id, semester);
+
+    activeTab = "today";
+    showAchievementMoment(achievement, ()=>renderToday());
+  });
+}
+
+/* Real, researched turning points in each flagship program — celebrated as a
+   genuine milestone rather than the routine "semester completed" note. */
+function trackMilestoneMessage(student, upcomingLevelLabel){
+  const s = t();
+  const upcomingId = levelIdForLabel(upcomingLevelLabel);
+  if(!upcomingId) return null;
+  if(student.universityId==="jazan" && student.collegeId==="cs" && upcomingId==="l3") return s.milestoneJazanCS;
+  if(student.universityId==="iau" && student.collegeId==="arts" && upcomingId==="l3") return s.milestoneIauTranslation;
+  if(student.universityId==="jazan" && student.collegeId==="eng" && student.majorId==="eng-2" && upcomingId==="l5") return s.milestoneJazanME;
+  return null;
+}
+
+/* A genuine, calm acknowledgment of a real milestone — shown once, at the
+   moment it's actually earned, then dismissed. Not a badge collection. */
+function showAchievementMoment(achievement, onDone){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet" style="text-align:center; padding-top:var(--sp-6);">
+      <div class="empty-icon" style="margin:0 auto var(--sp-4); color:var(--accent); background:var(--accent-soft); border:none;">${ICON.laurel}</div>
+      <div class="sheet-title" style="text-align:center;">${s.achievementCelebrateTitle}</div>
+      <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-5);">${escapeHtml(achievement.label)}</p>
+      <button type="button" class="btn btn-primary" id="achievementContinue">${s.continueLabel}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
+  overlay.querySelector("#achievementContinue").addEventListener("click", ()=>close(onDone));
+}
+
+/* ============================================================
+   SETTINGS — reached via the Today header icon; reuses the exact
+   same profile pickers as Onboarding (no duplicate logic).
+   ============================================================ */
+function renderSettings(){
+  applyDir();
+  const s = t();
+  const student = StudentModule.current();
+  const setDraft = {
+    universityId:student.universityId||"", university:student.university, collegeId:student.collegeId||"", college:student.college,
+    majorId:student.majorId||"", major:student.major, levelId:"", level:student.level
+  };
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="settingsBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.settingsTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <div class="field-group">
+          <span class="field-label">${s.languageLabel}</span>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn ${student.lang==='ar'?'btn-primary':'btn-secondary'}" id="langAr" style="flex:1;">العربية</button>
+            <button type="button" class="btn ${student.lang==='en'?'btn-primary':'btn-secondary'}" id="langEn" style="flex:1;">English</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <span class="field-label">${s.companionSectionLabel}</span>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn ${student.companion==='male'?'btn-primary':'btn-secondary'}" id="companionMale" style="flex:1;">${s.companionMaleLabel}</button>
+            <button type="button" class="btn ${student.companion==='female'?'btn-primary':'btn-secondary'}" id="companionFemale" style="flex:1;">${s.companionFemaleLabel}</button>
+          </div>
+        </div>
+        <div class="section-label" style="margin-top:var(--sp-5);">${s.editProfileLabel}</div>
+        ${buildProfilePickerFields("set", s)}
+        <button type="button" class="btn btn-primary" id="setSave" style="margin-top:var(--sp-2);">${s.saveChangesBtn}</button>
+        <button type="button" class="btn btn-secondary" id="resetBtn" style="color:var(--attention); margin-top:var(--sp-5);">${s.resetLabel}</button>
+      </div>
+    </section>
+  `;
+  document.getElementById("settingsBack").addEventListener("click", ()=>{ renderToday(); });
+  document.getElementById("langAr").addEventListener("click", ()=>{ StudentModule.updateLang("ar"); renderSettings(); });
+  document.getElementById("langEn").addEventListener("click", ()=>{ StudentModule.updateLang("en"); renderSettings(); });
+  document.getElementById("companionMale").addEventListener("click", ()=>{ StudentModule.updateCompanion("male"); renderSettings(); });
+  document.getElementById("companionFemale").addEventListener("click", ()=>{ StudentModule.updateCompanion("female"); renderSettings(); });
+
+  wireProfilePickers("set", setDraft);
+  refreshProfilePickerUI("set", setDraft);
+
+  document.getElementById("setSave").addEventListener("click", ()=>{
+    if(!validateProfileDraft("set", setDraft)) return;
+    StudentModule.update(setDraft);
+    renderToday();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    showConfirmSheet({
+      title:s.resetConfirmTitle, text:s.resetConfirmText, confirmLabel:s.confirmDelete, danger:true,
+      onConfirm:()=>{
+        DB = emptyDB();
+        dbSave();
+        activeTab = "today";
+        boot();
+      }
+    });
+  });
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+function boot(){
+  dbLoad();
+  const student = StudentModule.current();
+  if(student){
+    if(!student.companion) dbUpdate("students", student.id, { companion:"male" }); // pre-existing records default silently; visible/editable in Settings
+    applyDir();
+    renderToday();
+  }
+  else{ applyDir(); renderWelcome(); }
+}
+boot();
+
+})();
+</script>
+</body>
+</html>
