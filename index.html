@@ -465,7 +465,7 @@ const STR = {
     milestoneJazanCSGradProject:"وصلت للمستوى التاسع — من الآن يبدأ مشروع التخرج، المرحلة الأخيرة من رحلتك.",
     milestoneFirstSemester:"أنهيت أول فصل دراسي لك بالجامعة — أصعب مرحلة انتقالية، وقد تجاوزتها فعلًا.",
     milestoneIauTranslation:"وصلتِ للمستوى الثالث — نقطة التحول الحقيقية في رحلتك، حيث تبدأ مقررات الترجمة واللسانيات فعليًا.",
-    milestoneJazanME:"وصلت للمستوى الخامس — أتممت الأساس الرياضي والفيزيائي، ومن الآن يبدأ التصميم الهندسي الحقيقي.",
+    milestoneJazanME:"وصلت للمستوى السابع — من الآن يبدأ تصميم الماكينات وميكانيكا الموائع، جوهر تخصصك الحقيقي.",
     onboardTitle:"لنبدأ رحلتك",
     companionSectionLabel:"اختر رفيقك",
     appearanceLabel:"المظهر",
@@ -592,7 +592,7 @@ const STR = {
     milestoneJazanCSGradProject:"You've reached Level 9 — your graduation project begins now, the final stretch of your journey.",
     milestoneFirstSemester:"You finished your first university semester — the hardest transition, and you've genuinely gotten through it.",
     milestoneIauTranslation:"You've reached Level 3 — the real turning point in your journey, where translation and linguistics coursework actually begins.",
-    milestoneJazanME:"You've reached Level 5 — you've completed your math and physics foundation, and real engineering design begins from here.",
+    milestoneJazanME:"You've reached Level 7 — Machine Design and Fluid Mechanics begin now, the true core of your specialty.",
     onboardTitle:"Let's begin your journey",
     companionSectionLabel:"Choose your study companion",
     appearanceLabel:"Appearance",
@@ -868,6 +868,18 @@ const COURSE_CATALOG = {
     l8:["COMP 4** - اختياري 1","COMP 461 - رسومات الحاسب","COMP 472 - إدارة مشاريع البرمجيات","COMP 451 - نمذجة ومحاكاة البيانات","COMP 454 - تنقيب البيانات"],
     l9:["COMP 582 - مشروع التخرج (المرحلة 1)","COMP 5** - اختياري 2","COMP 555 - الحوسبة المتنقلة","COMP 525 - التشفير","COMP 593 - ندوة","COMP 535 - نظرية الحوسبة"],
     l10:["COMP 583 - مشروع التخرج (المرحلة 2)","COMP 5** - اختياري 3","COMP 591 - أخلاقيات الحاسب والمهنة","COMP 5** - موضوعات مختارة","COMP 592 - ريادة الأعمال والابتكار","COMP 556 - إنترنت الأشياء"]
+  },
+  "jazan-eng-eng-2": {
+    l1:["ريض101 - رياضيات عامة","سلم101 - ثقافة إسلامية 1","نجل101 - لغة إنجليزية 1","همك132 - التصميم الهندسي"],
+    l2:["فيز101 - فيزياء عامة","سلم102 - ثقافة إسلامية 2","نجل102 - لغة إنجليزية 2","ريض211 - تفاضل وتكامل 1"],
+    l3:["كيم106 - كيمياء عامة","هكه111 - أساسيات الهندسة الكهربائية","همك131 - الرسم الهندسي","فيز203 - فيزياء 2","ريض228 - تفاضل وتكامل 2"],
+    l4:["همد111 - استاتيكا","همك133 - ديناميكا","كيم206 - كيمياء 2","حال222 - لغة برمجة","ريض319 - تفاضل وتكامل 3"],
+    l5:["عرب102 - التحرير العربي","همك211 - الديناميكا الحرارية 1","همك234 - الرسم الميكانيكي","همك251 - هندسة الإنتاج والورش","همك261 - علم المواد","ريض336 - المعادلات التفاضلية"],
+    l6:["همك212 - الديناميكا الحرارية 2","همك252 - تشكيل المعادن","همك262 - الاختبارات الميكانيكية للمواد","همك263 - ميكانيكا المواد","همك271 - نظرية الماكينات","احص354 - إحصاء واحتمالات"],
+    l7:["همك313 - ميكانيكا الموائع","همك335 - تصميم الماكينات 1","هكه346 - هندسة المنظومات الكهروميكانيكية","نجل357 - الكتابة الفنية","همك364 - هندسة المواد","همك372 - ديناميكا المنظومات"],
+    l8:["همك314 - انتقال الحرارة","همك315 - القياسات الميكانيكية","همك336 - تصميم الماكينات 2","هصن346 - اقتصاد هندسي","همك373 - الاهتزازات الميكانيكية","ريض410 - طرق عددية","هكم461 - هندسة البيئة"],
+    l9:["همك421 - ديناميكا الغازات","همك422 - تبريد وتكييف الهواء","هصن428 - الإدارة الصناعية وضبط الجودة","همك453 - نظريات القطع وتشغيل المعادن","همك454 - تصميم عدد القطع ومعدات التشكيل","همك465 - اختيار المواد في التصميم والتصنيع","همك474 - التحكم الآلي","همك475 - ميكاترونكس","همك496 - التدريب الصيفي"],
+    l10:["همك416 - محركات الاحتراق الداخلي","همك417 - الطاقات المتجددة","همك423 - الآلات التوربينية","همك424 - أنظمة الشبكات الهيدروليكية","همك425 - محطات القوى الحرارية","همك426 - التحكم في قدرة الموائع","همك427 - محطات القوى والتحلية","همك444 - ترايبولوجيا","همك498 - مشروع التخرج"]
   },
   "iau-arts-arts-0": {
     l1:["ENGL 101 - اللغة الإنجليزية 1","ENGL 102 - قواعد 1","LRSK 103 - مهارات التعلم والاتصال","ARAB 182 - مهارات اللغة العربية"],
@@ -1273,6 +1285,28 @@ const SKILLS = [
     }
   },
   {
+    id:"cs-visual-thinking", icon:"code",
+    scope:{type:"college", collegeIds:["cs"]},
+    title:{ar:"التفكير المرئي بالمخططات قبل البرمجة", en:"Visual Thinking with Diagrams Before Coding"},
+    desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
+    intro:{
+      ar:"أفضل المبرمجين يرسمون قبل يكتبون كودًا — مخطط بسيط يوفر عليك ساعات تعديل لاحقة.",
+      en:"The best programmers sketch before they write code — a simple diagram saves you hours of later revision."
+    },
+    tips:{
+      ar:["ارسم مخطط تدفق بسيطًا لمنطق أي دالة معقدة قبل كتابة كودها","في مقررات قواعد البيانات، ابدأ بمخطط الكيانات والعلاقات قبل إنشاء أي جدول فعليًا","في مقررات هندسة البرمجيات، تدرّب على مخططات UML بسيطة (الفئات، التسلسل) لتوضيح بنية أي نظام قبل كتابة سطر واحد","لا تحتاج أدوات معقدة؛ ورقة وقلم كافية غالبًا لتوضيح فكرتك لنفسك قبل التنفيذ"],
+      en:["Sketch a simple flowchart for any complex function's logic before writing its code","In database courses, start with an entity-relationship diagram before creating any table","In software engineering courses, practice simple UML diagrams (class, sequence) to map a system's structure before writing a single line","You don't need complex tools; pen and paper is usually enough to clarify your idea to yourself before implementation"]
+    },
+    mistake:{
+      ar:"القفز مباشرة للكود عند مواجهة مشكلة معقدة، فتضيع الوقت في تعديلات متكررة بدل تخطيط واضح من البداية.",
+      en:"Jumping straight to code when facing a complex problem, wasting time on repeated fixes instead of clear planning from the start."
+    },
+    exercise:{
+      ar:"اختر دالة أو مشكلة برمجية تعمل عليها حاليًا، وارسم مخطط تدفق بسيطًا لمنطقها قبل فتح المحرر البرمجي.",
+      en:"Pick a function or coding problem you're currently working on, and sketch a simple flowchart of its logic before opening your code editor."
+    }
+  },
+  {
     id:"cs-level6-load", icon:"lens",
     scope:{type:"college", collegeIds:["cs"], universityIds:["jazan"]},
     title:{ar:"المستوى السادس — الفصل الأثقل في الخطة", en:"Level 6 — The Heaviest Term in the Plan"},
@@ -1472,6 +1506,28 @@ const SKILLS = [
     }
   },
   {
+    id:"translation-terminology", icon:"openBook",
+    scope:{type:"college", collegeIds:["arts"]},
+    title:{ar:"تنظيم المصطلحات التخصصية بصريًا", en:"Visually Organizing Specialized Terminology"},
+    desc:{ar:"مهارة خاصة بطلاب الترجمة", en:"A skill specific to Translation students"},
+    intro:{
+      ar:"الترجمة القانونية والطبية والتقنية تعتمد على مسارد مصطلحات منظمة، لا الذاكرة وحدها.",
+      en:"Legal, medical, and technical translation depend on organized glossaries, not memory alone."
+    },
+    tips:{
+      ar:["ابني مسردًا خاصًا لكل مجال ترجمة تدرسينه (قانوني، طبي، اقتصادي) بدل مسرد واحد عام يخلط كل شيء","نظمي كل مصطلح مع: المعنى، مثال جملة، وأي بديل شائع آخر لنفس المصطلح","استخدمي أدوات الترجمة بمساعدة الحاسب اللي تدرسينها لبناء ذاكرة ترجمة تراكمية، لا تبدأ من الصفر كل مرة","راجعي مسردك بانتظام قبل أي مقرر ترجمة تخصصية جديد، لا فقط قبل الاختبار"],
+      en:["Build a separate glossary for each translation field you study (legal, medical, economic) instead of one general glossary that mixes everything","Organize each term with: its meaning, an example sentence, and any common alternative for the same term","Use the computer-assisted translation tools you study to build a cumulative translation memory, instead of starting from zero each time","Review your glossary regularly before any new specialized translation course, not just before exams"]
+    },
+    mistake:{
+      ar:"الاعتماد على حفظ الترجمة الصحيحة لكل مصطلح دون فهم السياق الذي يتغير فيه المعنى بين مجال وآخر.",
+      en:"Relying on memorizing the correct translation for each term without understanding how context shifts its meaning from one field to another."
+    },
+    exercise:{
+      ar:"اختاري مصطلحًا واحدًا واجهتِه هذا الأسبوع في مقرر ترجمة تخصصية، ودوّنيه في مسردك الخاص بمعناه وسياقه.",
+      en:"Pick one term you encountered this week in a specialized translation course, and log it in your own glossary with its meaning and context."
+    }
+  },
+  {
     id:"translation-meaning", icon:"lens",
     scope:{type:"college", collegeIds:["arts"], majorIds:["arts-0"]},
     title:{ar:"كيف تترجم بالمعنى لا بالكلمة", en:"Translating Meaning, Not Words"},
@@ -1518,24 +1574,46 @@ const SKILLS = [
   {
     id:"me-roadmap", icon:"journey",
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
-    phaseLevels:[["l1","l2"],["l3","l4"],["l5","l6"],["l7","l8","l9","l10"]],
+    phaseLevels:[["l1","l2","l3"],["l4","l5","l6"],["l7","l8"],["l9","l10"]],
     title:{ar:"خارطة تخصصك: الهندسة الميكانيكية", en:"Your Roadmap: Mechanical Engineering"},
-    desc:{ar:"الصورة العامة لرحلتك — قد تختلف التفاصيل قليلًا حسب جامعتك", en:"The big picture of your journey — exact details may vary slightly by university"},
+    desc:{ar:"الخطة الرسمية لتخصصك في جامعة جازان", en:"The official plan for your major at Jazan University"},
     intro:{
-      ar:"معرفة شكل رحلتك يقلل الحيرة. هذا الشكل العام، لا خطة جامعة بعينها.",
-      en:"Knowing your journey's shape cuts confusion. This is the general shape, not one university's plan."
+      ar:"هذه خطة قسم الهندسة الميكانيكية الفعلية بجامعتك — عشرة مستويات، من الأساسيات العامة حتى مشروع التخرج.",
+      en:"This is the actual Mechanical Engineering department plan at your university — ten levels, from general foundations to your graduation project."
     },
     tips:{
-      ar:["الفصول الأولى: رياضيات وفيزياء مكثفة، رسم هندسي","الفصول الوسطى: استاتيكا وديناميكا، مقاومة مواد، ديناميكا حرارية","الفصول المتقدمة: انتقال حرارة، ميكانيكا موائع، تصميم آلات","الفصول الأخيرة: تدريب تعاوني، اختياريات، ومشروع التخرج"],
-      en:["Early terms: intensive math and physics, engineering drawing","Middle terms: statics and dynamics, strength of materials, thermodynamics","Advanced terms: heat transfer, fluid mechanics, machine design","Final terms: cooperative training, electives, graduation project"]
+      ar:["المستوى ١-٣: أساسيات عامة — رياضيات وفيزياء وكيمياء، أساسيات الهندسة الكهربائية، الرسم الهندسي","المستوى ٤-٦: بناء الأساس الهندسي — استاتيكا وديناميكا، الديناميكا الحرارية، علم المواد، هندسة الإنتاج والورش، نظرية الماكينات","المستوى ٧-٨: جوهر التصميم الميكانيكي — هنا يبدأ فعليًا تصميم الماكينات وميكانيكا الموائع وانتقال الحرارة والاهتزازات الميكانيكية","المستوى ٩-١٠: التخصص والتخرج — التدريب الصيفي، اختياريات متقدمة (محركات، ميكاترونكس، طاقة متجددة)، ومشروع التخرج"],
+      en:["Levels 1–3: general foundations — math, physics, chemistry, basics of electrical engineering, engineering drawing","Levels 4–6: building the engineering base — statics and dynamics, thermodynamics, materials science, production engineering and workshops, theory of machines","Levels 7–8: the true core of mechanical design — this is where machine design, fluid mechanics, heat transfer, and mechanical vibrations actually begin","Levels 9–10: specialization and graduation — summer training, advanced electives (engines, mechatronics, renewable energy), and your graduation project"]
     },
     mistake:{
-      ar:"افتراض أن الفصول الأولى (رياضيات وفيزياء عامة) بعيدة عن التخصص الحقيقي، فتُهمَل رغم أنها الأساس الذي يُبنى عليه كل تصميم هندسي لاحقًا.",
-      en:"Assuming the early general math and physics terms are disconnected from the real specialty, and neglecting them even though they're the foundation every later engineering design is built on."
+      ar:"توقع أن \"تصميم الماكينات\" الحقيقي يبدأ مبكرًا، ثم الشعور بالإحباط من طول مرحلة الأساسيات (رياضيات وفيزياء وديناميكا حرارية) قبل الوصول له فعليًا في المستوى السابع.",
+      en:"Expecting real \"machine design\" to begin early, then feeling discouraged by how long the foundations phase (math, physics, thermodynamics) takes before actually reaching it at Level 7."
     },
     exercise:{
       ar:"حدد الآن أي مرحلة من هذه المراحل الأربع أنت فيها، واكتب شيئًا واحدًا تتطلع إليه في المرحلة القادمة.",
       en:"Identify which of these four stages you're in right now, and write down one thing you're looking forward to in the next one."
+    }
+  },
+  {
+    id:"me-diffeq", icon:"book",
+    scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
+    title:{ar:"التعامل مع المعادلات التفاضلية", en:"Working Through Differential Equations"},
+    desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
+    intro:{
+      ar:"المعادلات التفاضلية ليست مادة تُنهى وتُنسى — هي أداة ستحتاجها في أغلب مقررات تخصصك القادمة.",
+      en:"Differential equations aren't a course you finish and forget — they're a tool you'll need in most of your upcoming courses."
+    },
+    tips:{
+      ar:["إعادة هذه المادة لا تعني فشلًا في التخصص؛ كثير من الطلاب يحتاجون فرصة ثانية لها تحديدًا لصعوبتها","اربط كل نوع معادلة بمثال فيزيائي حقيقي (اهتزاز، انتقال حرارة) بدل حفظ خطوات الحل المجردة","الديناميكا الحرارية وميكانيكا الموائع والاهتزازات الميكانيكية كلها تعتمد على هذه المادة — إتقانها الآن يوفر عليك جهدًا مضاعفًا لاحقًا","تدرّب على نوع واحد من المعادلات بعمق قبل الانتقال للنوع التالي، لا كل الأنواع دفعة واحدة"],
+      en:["Retaking this course doesn't mean failing at your major; many students need a second attempt at this one specifically because of how hard it is","Connect each equation type to a real physical example (vibration, heat transfer) instead of memorizing abstract solution steps","Thermodynamics, fluid mechanics, and mechanical vibrations all depend on this course — mastering it now saves you double the effort later","Practice one equation type deeply before moving to the next, not all types at once"]
+    },
+    mistake:{
+      ar:"التعامل مع إعادة المادة كعبء منفصل عن باقي المقررات، بدل رؤيتها استثمارًا في فهم أعمق لمقررات لاحقة تعتمد عليها بالكامل.",
+      en:"Treating a retake as a burden separate from the rest of your courses, instead of seeing it as an investment in understanding later courses that depend on it entirely."
+    },
+    exercise:{
+      ar:"اختر معادلة تفاضلية بسيطة حللتها من قبل، واكتب مثالًا هندسيًا واحدًا (اهتزاز، حرارة، حركة) يمكن أن تمثله هذه المعادلة.",
+      en:"Pick a simple differential equation you've solved before, and write down one engineering example (vibration, heat, motion) it could represent."
     }
   },
   {
@@ -1580,6 +1658,28 @@ const SKILLS = [
     exercise:{
       ar:"اختر جسمًا بسيطًا من حولك، وحاول رسمه من ثلاث زوايا مختلفة (أمامية، جانبية، علوية) على ورقة.",
       en:"Pick a simple object around you, and try drawing it from three different views (front, side, top) on paper."
+    }
+  },
+  {
+    id:"me-machine-drawing", icon:"lens",
+    scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
+    title:{ar:"قراءة ورسم مكونات الآلات", en:"Reading & Drawing Machine Components"},
+    desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
+    intro:{
+      ar:"تصميم الماكينات يعتمد كليًا على قدرتك على قراءة ورسم مكونات ميكانيكية حقيقية — تروس، مضخات، أعمدة إدارة.",
+      en:"Machine design depends entirely on your ability to read and draw real mechanical components — gears, pumps, drive shafts."
+    },
+    tips:{
+      ar:["ابدأ بمكونات بسيطة (برغي، عمود) قبل الانتقال لمكونات مركبة (مضخة، ناقل حركة)","تدرّب على رسم نفس المكون من عدة إسقاطات (أمامي، جانبي، مقطعي) — المقطع تحديدًا يكشف تفاصيل داخلية مهمة","لاحظ كيف تُكتب الأبعاد والتفاوتات في الرسومات الهندسية الحقيقية؛ هذا يميز الرسم المهني عن التخطيطي","راجع رسومات هندسية حقيقية لمكونات مألوفة (مضخة ماء بسيطة مثلًا) وحاول إعادة رسمها من الذاكرة"],
+      en:["Start with simple components (a bolt, a shaft) before moving to compound ones (a pump, a gearbox)","Practice drawing the same component from multiple views (front, side, section) — the section view specifically reveals important internal detail","Notice how dimensions and tolerances are written in real engineering drawings; that's what separates a professional drawing from a rough sketch","Review real engineering drawings of familiar components (a simple water pump, for instance) and try redrawing them from memory"]
+    },
+    mistake:{
+      ar:"الاكتفاء برسم الشكل الخارجي للمكون دون تفاصيله الداخلية أو أبعاده، فيصبح الرسم زخرفة لا وثيقة هندسية فعلية.",
+      en:"Only drawing a component's external shape without its internal detail or dimensions, making the drawing decorative rather than a real engineering document."
+    },
+    exercise:{
+      ar:"اختر مكونًا ميكانيكيًا واحدًا تعرفه (مضخة، صمام، عمود) وحاول رسمه بثلاثة إسقاطات مختلفة.",
+      en:"Pick one mechanical component you know (a pump, a valve, a shaft) and try drawing it from three different views."
     }
   },
   {
@@ -2955,7 +3055,7 @@ function trackMilestoneMessage(student, upcomingLevelLabel){
   if(student.universityId==="jazan" && student.collegeId==="cs" && upcomingId==="l5") return s.milestoneJazanCS;
   if(student.universityId==="jazan" && student.collegeId==="cs" && upcomingId==="l9") return s.milestoneJazanCSGradProject;
   if(student.universityId==="iau" && student.collegeId==="arts" && student.majorId==="arts-0" && upcomingId==="l3") return s.milestoneIauTranslation;
-  if(student.universityId==="jazan" && student.collegeId==="eng" && student.majorId==="eng-2" && upcomingId==="l5") return s.milestoneJazanME;
+  if(student.universityId==="jazan" && student.collegeId==="eng" && student.majorId==="eng-2" && upcomingId==="l7") return s.milestoneJazanME;
   return null;
 }
 
