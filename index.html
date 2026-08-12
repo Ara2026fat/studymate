@@ -22,7 +22,7 @@
    ============================================================ */
 :root{
   --footer-h:37px;
-  --app-max-w:480px;
+  --app-max-w:clamp(390px, 92vw, 900px);
   /* color — dark, luxurious base shared by both companions */
   --background:#0D1119;
   --surface:#1A2030;
@@ -61,16 +61,6 @@
   --font-en:'Inter', sans-serif;
   --lh-ar:1.6;
   --lh-en:1.4;
-}
-
-/* Tablets: the phone-width cap (480px) was leaving most of the screen empty
-   on real tablets. Widen progressively so the app actually fills the
-   available space, while still keeping line lengths comfortable. */
-@media (min-width:700px){
-  :root{ --app-max-w:640px; }
-}
-@media (min-width:1000px){
-  :root{ --app-max-w:760px; }
 }
 
 /* رفيق تعلم — clarity, ambition, the academic path, achievement.
@@ -767,6 +757,9 @@ const STR = {
     notebookEntryLabel:"دفتر المادة",
     voiceInputLabel:"إدخال صوتي",
     notebookNotesLabel:"ملاحظاتي",
+    noteModeText:"كتابة",
+    noteModeDrawing:"رسم يدوي",
+    noteClearCanvas:"امسح",
     notebookNotesPlaceholder:"دوّن ملخصك للمحاضرة، أو أي شيء تحب ترجع له لاحقًا...",
     notebookSaveNotesBtn:"حفظ الملاحظات",
     notebookNotesEmpty:"لم تضف أي ملاحظة بعد.",
@@ -1008,6 +1001,9 @@ const STR = {
     notebookEntryLabel:"Course Notebook",
     voiceInputLabel:"Voice input",
     notebookNotesLabel:"My Notes",
+    noteModeText:"Type",
+    noteModeDrawing:"Handwriting",
+    noteClearCanvas:"Clear",
     notebookNotesPlaceholder:"Write your lecture summary, or anything you'd like to come back to later...",
     notebookSaveNotesBtn:"Save Notes",
     notebookNotesEmpty:"You haven't added any notes yet.",
@@ -1277,6 +1273,20 @@ const COURSE_CATALOG = {
    in COURSE_CATALOG entries (e.g. "COMP 111"). Built incrementally, course by
    course, across sessions — see project notes for progress. */
 const COURSE_ENRICHMENT = {
+  "ريض228": {
+    explain:{
+      ar:"استكمال التفاضل والتكامل — تقنيات تكامل أكثر تقدمًا، المتسلسلات اللانهائية، والإحداثيات القطبية، إضافة لمقدمة عن المتجهات والفضاء ثلاثي الأبعاد.",
+      en:"A continuation of calculus — more advanced integration techniques, infinite series, and polar coordinates, plus an introduction to vectors and 3D space."
+    },
+    why:{
+      ar:"هذي المادة تجهزك مباشرة للمعادلات التفاضلية القادمة — بدون إتقان تقنيات التكامل هنا، ستجد صعوبة حقيقية في حل المعادلات التفاضلية لاحقًا.",
+      en:"This course prepares you directly for the upcoming differential equations course — without mastering integration techniques here, you'll find real difficulty solving differential equations later."
+    },
+    connections:{ requires:[{ar:"تفاضل وتكامل 1 (ريض211)", en:"Calculus 1 (ريض211)"}], leadsTo:[{ar:"المعادلات التفاضلية (ريض336)", en:"Differential Equations (ريض336)"}] },
+    resources:[
+      { title:{ar:"دورة التفاضل والتكامل 2 (إدراك، مجاني)", en:"Calculus 2 Course (Edraak, Free)"}, url:"https://www.edraak.org/programs/course-v1:AOU+CALC2+2016-T3/", reason:{ar:"من منصة إدراك الموثوقة بالتعاون مع جامعة العلوم العربية المفتوحة، يغطي بالضبط تقنيات التكامل والمتسلسلات والإحداثيات القطبية", en:"From the trusted Edraak platform in partnership with Arab Open University, covering exactly integration techniques, series, and polar coordinates"} }
+    ]
+  },
   "ريض336": {
     explain:{
       ar:"معادلة تفاضلية هي معادلة تحتوي على مشتقّات — بدل ما تحل عن قيمة x، تحل عن دالّة كاملة تصف كيف تتغيّر كمية بمرور الزمن أو المسافة. هذا هو الفرق الجوهري عن التفاضل والتكامل اللي درسته قبل.",
@@ -1302,6 +1312,20 @@ const COURSE_ENRICHMENT = {
     },
     resources:[
       { title:{ar:"تفاضل وتكامل 1 (يوتيوب، ٢١ محاضرة، مجاني)", en:"Calculus 1 (YouTube, 21 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", reason:{ar:"من مبادرة \"جامعتك\" الجامعية الرسمية (جامعة الطفيلة التقنية)، سلسلة عربية كاملة ومجانية بالكامل", en:"From the official university initiative \"Your University\" (Tafila Technical University), a complete and entirely free Arabic series"} }
+    ]
+  },
+  "MATH 106": {
+    explain:{
+      ar:"لغة رياضية جديدة للتعامل مع مجموعات من الأرقام دفعة واحدة (المصفوفات) — كيف تجمعها وتضربها، وكيف تحل أنظمة معادلات كثيرة في خطوة واحدة منظمة بدل حلها واحدة تلو الأخرى.",
+      en:"A new mathematical language for handling groups of numbers all at once (matrices) — how to add and multiply them, and how to solve many equations at once in one organized step instead of solving them one by one."
+    },
+    why:{
+      ar:"الرسومات ثلاثية الأبعاد، الذكاء الاصطناعي، ومعالجة الصور كلها مبنية فعليًا على عمليات المصفوفات — هذا المقرر أساس مباشر لأكثر مجالات الحاسب إثارة لاحقًا.",
+      en:"3D graphics, artificial intelligence, and image processing are all actually built on matrix operations — this course is a direct foundation for some of the most exciting areas of CS later."
+    },
+    connections:{ leadsTo:[{ar:"الذكاء الاصطناعي (COMP 441)", en:"Artificial Intelligence (COMP 441)"}] },
+    resources:[
+      { title:{ar:"دورة الجبر الخطي (معارف، ٢٠ درسًا، تقييم ٤.٤، مجاني بشهادة)", en:"Linear Algebra Course (M3aarf, 20 lessons, 4.4 rating, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/15679/%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%AC%D8%A8%D8%B1-video", reason:{ar:"يغطي بالضبط الفضاءات المتجهة، عمليات المصفوفات، والقيم الذاتية — بتقييمات حقيقية من طلاب استفادوا منها في اختباراتهم", en:"Covers exactly vector spaces, matrix operations, and eigenvalues — with real reviews from students who found it helped them pass their exams"} }
     ]
   },
   "ENG 101": {
@@ -1537,6 +1561,19 @@ const COURSE_ENRICHMENT = {
     resources:[
       { title:{ar:"قواعد اللغة الإنجليزية — المجلس الثقافي البريطاني (مجاني)", en:"English Grammar — British Council (Free)"}, url:"https://learnenglish.britishcouncil.org/grammar", reason:{ar:"من أوثق الجهات عالميًا في تعليم الإنجليزية (٧٥ عامًا خبرة)، مجاني بالكامل، منظم حسب المستوى مع تمارين تفاعلية فورية", en:"One of the most authoritative organizations in the world for teaching English (75 years of experience), completely free, organized by level with instant interactive exercises"} },
       { title:{ar:"قواعد اللغة الإنجليزية كاملة — المستوى الأول (يوتيوب، ٢٤ فيديو، عربي)", en:"Complete English Grammar — Level 1 (YouTube, 24 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmLBmV2wctgqyyRlIs1MhmNr", reason:{ar:"من نفس القناة العربية الموثوقة، مخصصة للقواعد تحديدًا — لمن يحتاج الشرح والأمثلة بالعربي الكامل قبل التمرين بالإنجليزي", en:"From the same trusted Arabic channel, dedicated specifically to grammar — for anyone who needs the explanation and examples fully in Arabic before practicing in English"} }
+    ]
+  },
+  "LRSK 103": {
+    explain:{
+      ar:"مقرر متنوع يجمع مهارات عملية للحياة الجامعية والمهنية — من البحث والتدوين والتفكير الناقد، إلى كتابة السيرة الذاتية والاستعداد لمقابلات العمل والتواصل الفعال.",
+      en:"A varied course combining practical skills for university and professional life — from research and note-taking to critical thinking, CV writing, job interview readiness, and effective communication."
+    },
+    why:{
+      ar:"هذي المهارات لا تنتهي بانتهاء الفصل — ستحتاجها فعليًا في التدريب التعاوني والتخرج، وقتها ما راح يكون عندك وقت تتعلمها من الصفر.",
+      en:"These skills don't expire when the course ends — you'll actually need them during your cooperative training and graduation, and you won't have time to learn them from scratch then."
+    },
+    resources:[
+      { title:{ar:"البحث عن عمل في العصر الرقمي (جامعة الفيصل عبر Coursera، ٧ ساعات، تقييم ٤.٨، مجاني)", en:"Job Search in the Digital Age (Alfaisal University via Coursera, 7 hours, 4.8 rating, Free)"}, url:"https://www.coursera.org/learn/job-search-skills", reason:{ar:"ملاحظة أمانة: يغطي بعمق جزء \"السيرة الذاتية ومقابلات العمل\" من المقرر تحديدًا (٦ وحدات، ٣٩ فيديو) — لا الجزء الخاص بمهارات البحث والتدوين. من جامعة سعودية رسمية، بتقييمات حقيقية موثقة", en:"Honesty note: this covers in depth specifically the \"CV and job interviews\" part of the course (6 modules, 39 videos) — not the research/note-taking part. From an official Saudi university, with real documented reviews"} }
     ]
   },
   "ARAB 182": {
@@ -4091,7 +4128,9 @@ function renderCourseNotebook(courseId){
           ${nb.notes.length===0 ? `<p class="type-caption" style="color:var(--ink-muted);">${s.notebookNotesEmpty}</p>` : nb.notes.map(n=>`
             <button type="button" class="card note-card" data-note-id="${n.id}" style="cursor:pointer; align-items:flex-start; background:${noteColorHex(n.color)};">
               <span class="card-body">
-                <span class="type-body" style="white-space:pre-wrap;">${escapeHtml(n.text)}</span>
+                ${n.type==="drawing"
+                  ? `<img src="${n.dataUrl}" style="width:100%; border-radius:var(--r-sm); display:block;" alt="">`
+                  : `<span class="type-body" style="white-space:pre-wrap;">${escapeHtml(n.text)}</span>`}
               </span>
             </button>
           `).join("")}
@@ -4150,21 +4189,82 @@ function renderCourseNotebook(courseId){
     btn.addEventListener("click", ()=>{ NotebookModule.removeExam(courseId, btn.dataset.removeExam); renderCourseNotebook(courseId); });
   });
 }
+function setupCanvasDrawing(canvas, initialDataUrl){
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.max(window.devicePixelRatio||1, 1);
+  const cssWidth = canvas.clientWidth || 320;
+  const cssHeight = 260;
+  canvas.width = cssWidth*dpr;
+  canvas.height = cssHeight*dpr;
+  canvas.style.height = cssHeight+"px";
+  ctx.scale(dpr, dpr);
+  ctx.fillStyle = "#11141F";
+  ctx.fillRect(0,0,cssWidth,cssHeight);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#F1F3F8";
+  if(initialDataUrl){
+    const img = new Image();
+    img.onload = ()=>{ ctx.drawImage(img, 0, 0, cssWidth, cssHeight); };
+    img.src = initialDataUrl;
+  }
+  let drawing = false, lastX = 0, lastY = 0;
+  function getPos(e){
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX-rect.left, y: e.clientY-rect.top };
+  }
+  canvas.addEventListener("pointerdown", (e)=>{
+    drawing = true;
+    const pos = getPos(e);
+    lastX = pos.x; lastY = pos.y;
+    ctx.beginPath(); ctx.arc(pos.x, pos.y, ctx.lineWidth/2, 0, Math.PI*2); ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+    canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener("pointermove", (e)=>{
+    if(!drawing) return;
+    const pos = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(pos.x, pos.y); ctx.stroke();
+    lastX = pos.x; lastY = pos.y;
+  });
+  canvas.addEventListener("pointerup", ()=>{ drawing = false; });
+  canvas.addEventListener("pointercancel", ()=>{ drawing = false; });
+  return {
+    setPen(color){ ctx.strokeStyle = color; },
+    clear(){ ctx.fillStyle = "#11141F"; ctx.fillRect(0,0,cssWidth,cssHeight); },
+    toDataUrl(){ return canvas.toDataURL("image/png"); }
+  };
+}
 function openNoteSheet(courseId, existingNote, onDone){
   const s = t();
   const l = lang();
   const editing = !!existingNote;
   let chosenColor = editing ? (existingNote.color||"default") : "default";
+  let mode = editing ? (existingNote.type==="drawing"?"drawing":"text") : "text";
+  const PEN_COLORS = ["#F1F3F8", "#5B93E0", "#D9A15E", "#7FA88C"];
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
   overlay.innerHTML = `
     <div class="sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-title">${editing ? s.notebookEditNoteTitle : s.notebookAddNoteBtn}</div>
-      <div class="field-group">
-        <div class="field-with-mic">
-          <textarea class="field" id="noteTextInput" style="min-height:110px; resize:vertical;" placeholder="${s.notebookNotesPlaceholder}">${editing?escapeHtml(existingNote.text):''}</textarea>
-          <button type="button" class="mic-btn" id="noteTextMic" aria-label="${s.voiceInputLabel}">${ICON.mic}</button>
+      <div class="segmented" style="margin-bottom:var(--sp-3);">
+        <button type="button" class="segmented-btn ${mode==='text'?'segmented-active':''}" id="modeText">${s.noteModeText}</button>
+        <button type="button" class="segmented-btn ${mode==='drawing'?'segmented-active':''}" id="modeDrawing">${s.noteModeDrawing}</button>
+      </div>
+      <div id="textModeArea" style="display:${mode==='text'?'block':'none'};">
+        <div class="field-group">
+          <div class="field-with-mic">
+            <textarea class="field" id="noteTextInput" style="min-height:110px; resize:vertical;" placeholder="${s.notebookNotesPlaceholder}">${editing && existingNote.type!=="drawing"?escapeHtml(existingNote.text):''}</textarea>
+            <button type="button" class="mic-btn" id="noteTextMic" aria-label="${s.voiceInputLabel}">${ICON.mic}</button>
+          </div>
+        </div>
+      </div>
+      <div id="drawingModeArea" style="display:${mode==='drawing'?'block':'none'};">
+        <canvas id="noteCanvas" style="width:100%; border-radius:var(--r-md); touch-action:none; margin-bottom:var(--sp-3); display:block;"></canvas>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:var(--sp-3);">
+          ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:28px; height:28px; border-radius:50%; background:${c}; border:2px solid ${i===0?'#fff':'transparent'};"></button>`).join("")}
+          <button type="button" class="btn btn-secondary" id="canvasClear" style="margin-inline-start:auto; padding:8px 14px;">${s.noteClearCanvas}</button>
         </div>
       </div>
       <div class="field-group">
@@ -4183,6 +4283,39 @@ function openNoteSheet(courseId, existingNote, onDone){
   function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   attachVoiceInput(overlay.querySelector("#noteTextMic"), overlay.querySelector("#noteTextInput"));
+
+  let canvasCtrl = null;
+  function ensureCanvas(){
+    if(!canvasCtrl){
+      canvasCtrl = setupCanvasDrawing(overlay.querySelector("#noteCanvas"), editing && existingNote.type==="drawing" ? existingNote.dataUrl : null);
+    }
+  }
+  if(mode==="drawing") ensureCanvas();
+
+  overlay.querySelector("#modeText").addEventListener("click", ()=>{
+    mode = "text";
+    overlay.querySelector("#textModeArea").style.display = "block";
+    overlay.querySelector("#drawingModeArea").style.display = "none";
+    overlay.querySelector("#modeText").classList.add("segmented-active");
+    overlay.querySelector("#modeDrawing").classList.remove("segmented-active");
+  });
+  overlay.querySelector("#modeDrawing").addEventListener("click", ()=>{
+    mode = "drawing";
+    overlay.querySelector("#textModeArea").style.display = "none";
+    overlay.querySelector("#drawingModeArea").style.display = "block";
+    overlay.querySelector("#modeDrawing").classList.add("segmented-active");
+    overlay.querySelector("#modeText").classList.remove("segmented-active");
+    ensureCanvas();
+  });
+  overlay.querySelectorAll("[data-pen]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(canvasCtrl) canvasCtrl.setPen(btn.dataset.pen);
+      overlay.querySelectorAll("[data-pen]").forEach(b=>b.style.borderColor="transparent");
+      btn.style.borderColor = "#fff";
+    });
+  });
+  overlay.querySelector("#canvasClear").addEventListener("click", ()=>{ if(canvasCtrl) canvasCtrl.clear(); });
+
   overlay.querySelectorAll(".color-swatch").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       chosenColor = btn.dataset.color;
@@ -4191,11 +4324,18 @@ function openNoteSheet(courseId, existingNote, onDone){
     });
   });
   overlay.querySelector("#noteSave").addEventListener("click", ()=>{
-    const text = overlay.querySelector("#noteTextInput").value.trim();
-    if(!text) return;
-    if(editing) NotebookModule.updateNote(courseId, existingNote.id, text, chosenColor);
-    else NotebookModule.addNote(courseId, text, chosenColor);
-    close(onDone);
+    if(mode==="drawing"){
+      const dataUrl = canvasCtrl.toDataUrl();
+      if(editing) NotebookModule.updateDrawingNote(courseId, existingNote.id, dataUrl, chosenColor);
+      else NotebookModule.addDrawingNote(courseId, dataUrl, chosenColor);
+      close(onDone);
+    } else {
+      const text = overlay.querySelector("#noteTextInput").value.trim();
+      if(!text) return;
+      if(editing) NotebookModule.updateNote(courseId, existingNote.id, text, chosenColor);
+      else NotebookModule.addNote(courseId, text, chosenColor);
+      close(onDone);
+    }
   });
   const deleteBtn = overlay.querySelector("#noteDelete");
   if(deleteBtn){
@@ -4588,13 +4728,23 @@ const NotebookModule = {
   },
   addNote(courseId, text, color){
     const nb = this.get(courseId);
-    nb.notes.unshift({ id:genId(), text, color:color||"default", createdAt:Date.now() });
+    nb.notes.unshift({ id:genId(), type:"text", text, color:color||"default", createdAt:Date.now() });
     dbSave();
   },
   updateNote(courseId, noteId, text, color){
     const nb = this.get(courseId);
     const note = nb.notes.find(n=>n.id===noteId);
-    if(note){ note.text = text; note.color = color||"default"; dbSave(); }
+    if(note){ note.type="text"; note.text = text; note.color = color||"default"; dbSave(); }
+  },
+  addDrawingNote(courseId, dataUrl, color){
+    const nb = this.get(courseId);
+    nb.notes.unshift({ id:genId(), type:"drawing", dataUrl, color:color||"default", createdAt:Date.now() });
+    dbSave();
+  },
+  updateDrawingNote(courseId, noteId, dataUrl, color){
+    const nb = this.get(courseId);
+    const note = nb.notes.find(n=>n.id===noteId);
+    if(note){ note.type="drawing"; note.dataUrl = dataUrl; note.color = color||"default"; dbSave(); }
   },
   removeNote(courseId, noteId){
     const nb = this.get(courseId);
