@@ -22,6 +22,7 @@
    ============================================================ */
 :root{
   --footer-h:37px;
+  --app-max-w:480px;
   /* color — dark, luxurious base shared by both companions */
   --background:#0D1119;
   --surface:#1A2030;
@@ -60,6 +61,16 @@
   --font-en:'Inter', sans-serif;
   --lh-ar:1.6;
   --lh-en:1.4;
+}
+
+/* Tablets: the phone-width cap (480px) was leaving most of the screen empty
+   on real tablets. Widen progressively so the app actually fills the
+   available space, while still keeping line lengths comfortable. */
+@media (min-width:700px){
+  :root{ --app-max-w:640px; }
+}
+@media (min-width:1000px){
+  :root{ --app-max-w:760px; }
 }
 
 /* رفيق تعلم — clarity, ambition, the academic path, achievement.
@@ -147,11 +158,11 @@ ul,ol{ list-style:none; }
 .type-caption{ font-size:var(--fs-caption); font-weight:400; color:var(--ink-muted); }
 
 /* ---------- App shell ---------- */
-#app{ min-height:100vh; min-height:100dvh; max-width:480px; margin:0 auto; position:relative; }
+#app{ min-height:100vh; min-height:100dvh; max-width:var(--app-max-w); margin:0 auto; position:relative; }
 
 #creditFooter{
   position:fixed; bottom:0; left:0; right:0; z-index:55;
-  max-width:480px; margin:0 auto;
+  max-width:var(--app-max-w); margin:0 auto;
   background:var(--surface); border-top:1px solid var(--line);
   padding:4px var(--sp-3) calc(4px + env(safe-area-inset-bottom));
   text-align:center; font-size:9px; line-height:1.35; color:var(--ink-muted);
@@ -400,7 +411,7 @@ ul,ol{ list-style:none; }
 }
 .sheet-overlay.show{ opacity:1; }
 .sheet{
-  width:100%; max-width:480px; background:var(--surface);
+  width:100%; max-width:var(--app-max-w); background:var(--surface);
   border-radius:var(--r-lg) var(--r-lg) 0 0;
   padding:var(--sp-2) var(--sp-4) calc(var(--sp-4) + env(safe-area-inset-bottom));
   transform:translateY(100%); transition:transform var(--m-transition) var(--ease);
@@ -413,7 +424,7 @@ ul,ol{ list-style:none; }
 /* Tab bar */
 .tab-bar{
   position:fixed; bottom:var(--footer-h); left:0; right:0; z-index:50;
-  max-width:480px; margin:0 auto;
+  max-width:var(--app-max-w); margin:0 auto;
   background:rgba(255,255,255,.82);
   -webkit-backdrop-filter:blur(18px) saturate(160%); backdrop-filter:blur(18px) saturate(160%);
   border-top:1px solid rgba(228,230,234,.8);
@@ -706,6 +717,9 @@ const STR = {
     scheduleNoCoursesTitle:"أضف مقررات أولًا",
     scheduleNoCoursesText:"لبناء جدولك الأسبوعي، أضف مقررات فصلك الحالي أولًا.",
     scheduleDayEmpty:"لا حصص هذا اليوم.",
+    courseColorsLabel:"ألوان موادك",
+    changeColorHint:"غيّر اللون",
+    pickColorLabel:"اختر لونًا لهذي المادة — يظهر في كل حصصها بالجدول",
     addSessionBtn:"إضافة حصة",
     editSessionTitle:"تعديل الحصة",
     sessionCourseLabel:"المادة",
@@ -944,6 +958,9 @@ const STR = {
     scheduleNoCoursesTitle:"Add Courses First",
     scheduleNoCoursesText:"To build your weekly schedule, add your current semester's courses first.",
     scheduleDayEmpty:"No classes this day.",
+    courseColorsLabel:"Your Course Colors",
+    changeColorHint:"Change color",
+    pickColorLabel:"Pick a color for this course — it will show on all its sessions in the schedule",
     addSessionBtn:"Add Session",
     editSessionTitle:"Edit Session",
     sessionCourseLabel:"Course",
@@ -2995,11 +3012,29 @@ const SemesterModule = {
 };
 
 /* ---- Course ---- */
+/* A curated palette that reads well on our dark surfaces — distinct enough
+   to tell subjects apart at a glance, muted enough not to clash with the
+   rest of the UI. Matches the spirit of the colorful printable timetables
+   students already use, adapted for a dark theme. */
+const COURSE_COLOR_PALETTE = [
+  "#5B93E0", "#D9A15E", "#7FA88C", "#C77B7B", "#9B7FC7",
+  "#6FB3B8", "#D4915E", "#8C9AA8", "#B8935E", "#7B9BC7"
+];
+function courseColorFor(course){
+  if(!course) return COURSE_COLOR_PALETTE[0];
+  if(course.color) return course.color;
+  // stable fallback so an uncolored course still looks consistent every time,
+  // not random on each render
+  let hash = 0;
+  for(let i=0;i<course.id.length;i++) hash = (hash*31 + course.id.charCodeAt(i)) >>> 0;
+  return COURSE_COLOR_PALETTE[hash % COURSE_COLOR_PALETTE.length];
+}
 const CourseModule = {
   create(semesterId, data){
-    return dbInsert("courses", { id:genId(), semesterId, name:data.name, professor:data.professor||"", createdAt:Date.now() });
+    return dbInsert("courses", { id:genId(), semesterId, name:data.name, professor:data.professor||"", color:data.color||null, createdAt:Date.now() });
   },
-  update(id, data){ return dbUpdate("courses", id, { name:data.name, professor:data.professor||"" }); },
+  update(id, data){ return dbUpdate("courses", id, { name:data.name, professor:data.professor||"", color:data.color!==undefined?data.color:CourseModule.get(id).color }); },
+  setColor(id, color){ return dbUpdate("courses", id, { color }); },
   listForSemester(semesterId){ return dbQuery("courses", c=>c.semesterId===semesterId).sort((a,b)=>a.createdAt-b.createdAt); },
   get(id){ return dbGet("courses", id); },
   delete(id){
@@ -5193,7 +5228,18 @@ function renderWeeklySchedule(){
           <div class="empty-icon">${ICON.weekGrid}</div>
           <div class="empty-title">${s.scheduleNoCoursesTitle}</div>
           <p class="empty-text">${s.scheduleNoCoursesText}</p>
-        </div>` : days.map(day=>{
+        </div>` : `
+        <div class="section-label" style="margin-top:0;">${s.courseColorsLabel}</div>
+        <div class="stack" style="margin-bottom:var(--sp-5);">
+          ${courses.map(c=>`
+            <button type="button" class="card" data-color-course="${c.id}" style="padding:10px var(--sp-4);">
+              <span style="width:22px; height:22px; border-radius:50%; background:${courseColorFor(c)}; flex-shrink:0; border:2px solid rgba(255,255,255,.25);"></span>
+              <span class="card-body"><span class="card-title" style="font-size:var(--fs-body);">${escapeHtml(c.name)}</span></span>
+              <span class="type-caption" style="color:var(--ink-muted);">${s.changeColorHint}</span>
+            </button>
+          `).join("")}
+        </div>
+        ` + days.map(day=>{
           const daySessions = sessions.filter(sess=>sess.dayOfWeek===day.id);
           return `
           <div style="margin-bottom:var(--sp-5);">
@@ -5205,9 +5251,10 @@ function renderWeeklySchedule(){
             <div class="stack">
               ${daySessions.map(sess=>{
                 const course = courses.find(c=>c.id===sess.courseId);
+                const clr = courseColorFor(course);
                 return `
-                <button type="button" class="card" data-session-id="${sess.id}">
-                  <span class="card-icon">${ICON.weekGrid}</span>
+                <button type="button" class="card" data-session-id="${sess.id}" style="border-inline-start:4px solid ${clr};">
+                  <span class="card-icon" style="background:color-mix(in srgb, ${clr} 22%, var(--surface)); color:${clr};">${ICON.weekGrid}</span>
                   <span class="card-body">
                     <span class="card-title">${escapeHtml(course ? course.name : "—")}</span>
                     <span class="card-meta">${escapeHtml(sess.startTime)} – ${escapeHtml(sess.endTime)}</span>
@@ -5224,9 +5271,41 @@ function renderWeeklySchedule(){
   document.querySelectorAll("[data-add-day]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ openSessionSheet(semester.id, courses, +btn.dataset.addDay, null, renderWeeklySchedule); });
   });
+  document.querySelectorAll("[data-color-course]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ openCourseColorSheet(btn.dataset.colorCourse, renderWeeklySchedule); });
+  });
   document.querySelectorAll("[data-session-id]").forEach(card=>{
     card.addEventListener("click", ()=>{
       openSessionSheet(semester.id, courses, null, WeeklyScheduleModule.get(card.dataset.sessionId), renderWeeklySchedule);
+    });
+  });
+}
+function openCourseColorSheet(courseId, onDone){
+  const s = t();
+  const course = CourseModule.get(courseId);
+  if(!course) return;
+  const currentColor = courseColorFor(course);
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${escapeHtml(course.name)}</div>
+      <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.pickColorLabel}</p>
+      <div style="display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:var(--sp-2);">
+        ${COURSE_COLOR_PALETTE.map(clr=>`
+          <button type="button" data-swatch="${clr}" aria-label="${clr}" style="width:44px; height:44px; border-radius:50%; background:${clr}; border:3px solid ${clr===currentColor?'#fff':'transparent'}; box-shadow:${clr===currentColor?'0 0 0 2px '+clr:'none'};"></button>
+        `).join("")}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelectorAll("[data-swatch]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      CourseModule.setColor(courseId, btn.dataset.swatch);
+      close(onDone);
     });
   });
 }
