@@ -5636,6 +5636,9 @@ function boot(){
     renderToday();
   }
   else{ applyDir(); renderWelcome(); }
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./sw.js").catch(()=>{}); // silently no-op if unreachable (e.g. local file, dev preview)
+  }
 }
 boot();
 
