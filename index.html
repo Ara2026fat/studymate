@@ -700,6 +700,22 @@ const STR = {
 
     addEventBtn:"إضافة حدث",
     weeklyScheduleEntryLabel:"الجدول الأسبوعي",
+    rawNotebookTitle:"الدفتر الخام",
+    rawNotebookSub:"دوّن هنا بسرعة خلال الأسبوع من أي مادة — بلا حاجة تختار المادة الآن. بيّضها لاحقًا لدفترها الأصلي.",
+    rawNotebookEmptyTitle:"دفترك الخام فاضي",
+    rawNotebookEmptyText:"دوّن أي شيء يعبر بخاطرك أثناء المحاضرات، ورتّبه لاحقًا وقت التبييض.",
+    rawTransferredTo:"بُيّضت إلى",
+    rawTransferBtn:"بيّضها لمادة",
+    rawTransferTitle:"بيّضها لأي مادة؟",
+    rawTranslateToEnglish:"ترجم النص إلى الإنجليزية",
+    rawTranslatedDone:"تُرجم — راجع النص وعدّله إذا أحببت",
+    whiteningTitle:"جلسة التبييض الأسبوعية",
+    whiteningEyebrow:"وقت التبييض",
+    whiteningProgress:(done,total)=>`بيّضت ${done} من ${total} ${total===1?'مادة':'مواد'} هذا الأسبوع`,
+    whiteningIntro:"كل مادة حضرت محاضرتها هذا الأسبوع — راجع ملاحظاتك الخام وانقلها لدفترها الأصلي، بالضبط متل مرورك على الدرس مرتين.",
+    whiteningRawHint:(n)=>`عندك ${n} ${n===1?'ملاحظة':'ملاحظات'} في الدفتر الخام لسا ما بيّضتها`,
+    whiteningDoneLabel:"✓ بُيّضت هذا الأسبوع",
+    whiteningNotYetLabel:"لسا ما بيّضتها",
     todaysClassesLabel:"موادك اليوم",
     sessionEndedLabel:"انتهت — راجعها الآن",
     sessionNowLabel:"جارية الآن",
@@ -944,6 +960,22 @@ const STR = {
 
     addEventBtn:"Add Event",
     weeklyScheduleEntryLabel:"Weekly Schedule",
+    rawNotebookTitle:"Raw Notebook",
+    rawNotebookSub:"Jot down quick notes here during the week from any course — no need to pick the course now. Whiten it into its real notebook later.",
+    rawNotebookEmptyTitle:"Your raw notebook is empty",
+    rawNotebookEmptyText:"Jot down anything that crosses your mind during lectures, and organize it later during whitening.",
+    rawTransferredTo:"Whitened to",
+    rawTransferBtn:"Whiten to a course",
+    rawTransferTitle:"Whiten to which course?",
+    rawTranslateToEnglish:"Translate text to English",
+    rawTranslatedDone:"Translated — review and edit if you'd like",
+    whiteningTitle:"Weekly Whitening Session",
+    whiteningEyebrow:"Whitening Time",
+    whiteningProgress:(done,total)=>`Whitened ${done} of ${total} ${total===1?'course':'courses'} this week`,
+    whiteningIntro:"Every course you had a lecture in this week — review your raw notes and move them into its real notebook, exactly like passing over the lesson twice.",
+    whiteningRawHint:(n)=>`You have ${n} ${n===1?'note':'notes'} in the raw notebook not yet whitened`,
+    whiteningDoneLabel:"✓ Whitened this week",
+    whiteningNotYetLabel:"Not whitened yet",
     todaysClassesLabel:"Today's Classes",
     sessionEndedLabel:"Ended — review now",
     sessionNowLabel:"In progress now",
@@ -1273,6 +1305,19 @@ const COURSE_CATALOG = {
    in COURSE_CATALOG entries (e.g. "COMP 111"). Built incrementally, course by
    course, across sessions — see project notes for progress. */
 const COURSE_ENRICHMENT = {
+  "كيم106": {
+    explain:{
+      ar:"أساسيات بنية المادة — الذرة، الجدول الدوري، التوزيع الإلكتروني، وكيف ترتبط الذرات ببعضها لتكوّن كل المواد اللي حولك، من المعادن اللي ستصممها لاحقًا إلى الهواء اللي تتنفسه.",
+      en:"The basics of matter's structure — the atom, the periodic table, electron configuration, and how atoms bond together to form everything around you, from the metals you'll design later to the air you breathe."
+    },
+    why:{
+      ar:"فهم خواص المعادن (التآكل، التمدد الحراري، القوة) يبدأ من فهم تركيبها الذري — هذا الأساس يظهر لاحقًا في مواد مثل علم المواد وهندسة المواد.",
+      en:"Understanding metal properties (corrosion, thermal expansion, strength) starts from understanding their atomic structure — this foundation appears later in courses like Materials Science and Materials Engineering."
+    },
+    resources:[
+      { title:{ar:"كيمياء عامة (يوتيوب، ٦ فيديوهات، مجاني)", en:"General Chemistry (YouTube, 6 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PLFHDUgpVbUeiiiW5itZeHSyEvIuDDwG6j", reason:{ar:"سلسلة عربية موجزة ومباشرة تغطي الجدول الدوري والذرة والتوزيع الإلكتروني — نقطة انطلاق واضحة قبل التعمق", en:"A concise, direct Arabic series covering the periodic table, the atom, and electron configuration — a clear starting point before going deeper"} }
+    ]
+  },
   "ريض228": {
     explain:{
       ar:"استكمال التفاضل والتكامل — تقنيات تكامل أكثر تقدمًا، المتسلسلات اللانهائية، والإحداثيات القطبية، إضافة لمقدمة عن المتجهات والفضاء ثلاثي الأبعاد.",
@@ -1326,6 +1371,19 @@ const COURSE_ENRICHMENT = {
     connections:{ leadsTo:[{ar:"الذكاء الاصطناعي (COMP 441)", en:"Artificial Intelligence (COMP 441)"}] },
     resources:[
       { title:{ar:"دورة الجبر الخطي (معارف، ٢٠ درسًا، تقييم ٤.٤، مجاني بشهادة)", en:"Linear Algebra Course (M3aarf, 20 lessons, 4.4 rating, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/15679/%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%AC%D8%A8%D8%B1-video", reason:{ar:"يغطي بالضبط الفضاءات المتجهة، عمليات المصفوفات، والقيم الذاتية — بتقييمات حقيقية من طلاب استفادوا منها في اختباراتهم", en:"Covers exactly vector spaces, matrix operations, and eigenvalues — with real reviews from students who found it helped them pass their exams"} }
+    ]
+  },
+  "MATH 262": {
+    explain:{
+      ar:"كيف تصف بدقة رياضية شيئًا غير مؤكد — احتمال وقوع حدث، وكيف تلخّص بيانات كبيرة (متوسط، انحراف معياري) لتفهم نمطها العام بدل التغرّق في كل رقم على حدة.",
+      en:"How to precisely describe something uncertain — the probability of an event occurring, and how to summarize large data (mean, standard deviation) to understand its general pattern instead of drowning in every individual number."
+    },
+    why:{
+      ar:"تحليل الخوارزميات، تعلّم الآلة، وحتى تقييم أداء برنامجك كلها تعتمد على مفاهيم الاحتمال والإحصاء — هذا أساس صامت خلف أكثر مجالات الحاسب الحديثة.",
+      en:"Algorithm analysis, machine learning, and even evaluating your program's performance all depend on probability and statistics concepts — this is a silent foundation behind most modern CS fields."
+    },
+    resources:[
+      { title:{ar:"مقدمة في الإحتمالات والإحصاء (يوتيوب، ١٧ محاضرة، مجاني)", en:"Intro to Probability and Statistics (YouTube, 17 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLxIvc-MGOs6gW9SgkmoxE5w9vQkID1_r-", reason:{ar:"سلسلة عربية مخصصة بالكامل لمقدمة الاحتمالات والإحصاء، تبني المفاهيم تدريجيًا من الصفر", en:"A complete Arabic series dedicated entirely to intro probability and statistics, building concepts gradually from scratch"} }
     ]
   },
   "ENG 101": {
@@ -1602,6 +1660,19 @@ const COURSE_ENRICHMENT = {
     resources:[
       { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية", en:"Duolingo — English Learning App"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"استمرار طبيعي لنفس الممارسة اليومية من المستوى الأول — التراكم هنا هو المفتاح، لا البداية من جديد", en:"A natural continuation of the same daily practice from Level 1 — accumulation is the key here, not starting over"} },
       { title:{ar:"تعلم الإنجليزية — المستوى الثاني (يوتيوب، ٤٠ فيديو، عربي)", en:"Learn English — Level 2 (YouTube, 40 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLWXso7v6nBWtKbyc1W7x-ZBDG10K1AdS1", reason:{ar:"سلسلة عربية كاملة ومجانية، مصممة كاستكمال مباشر لمن أنهى المستوى الأول — شرح منظم كأنك في معهد فعلي", en:"A complete, free Arabic series designed as a direct continuation for those who finished Level 1 — organized like an actual institute course"} }
+    ]
+  },
+  "ENGL 106": {
+    explain:{
+      ar:"بناء مخزون كلمات حقيقي ومركّز — بدل حفظ كلمات عشوائية، هذا المقرر يبني مفرداتك حول أكثر ١٠٠٠ كلمة إنجليزية استخدامًا، الأساس الفعلي لأي محادثة أو قراءة يومية.",
+      en:"Building a real, focused vocabulary bank — instead of memorizing random words, this course builds your vocabulary around the 1000 most-used English words, the actual foundation for any daily conversation or reading."
+    },
+    why:{
+      ar:"كمترجمة، حصيلتك اللغوية هي أدواتك الخام — كل كلمة تتقنها الآن توفر عليك وقت بحث في القاموس لاحقًا وقت الترجمة الفعلية تحت ضغط الوقت.",
+      en:"As a translator, your vocabulary is your raw material — every word you master now saves you dictionary-lookup time later when translating under real time pressure."
+    },
+    resources:[
+      { title:{ar:"دورة English Words (معارف، ١٥ درسًا، تقييم ٤.٥، مجاني بشهادة)", en:"English Words Course (M3aarf, 15 lessons, 4.5 rating, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/7281/English-Words-video", reason:{ar:"تُبنى حول قائمة Oxford 3000، أكثر الكلمات الإنجليزية استخدامًا، مع سياقات وصور حقيقية للحفظ الفعّال", en:"Built around the Oxford 3000 list, the most-used English words, with real contexts and pictures for effective memorization"} }
     ]
   },
   "ENGL 310": {
@@ -2951,7 +3022,7 @@ const SKILLS = [
 const DB_KEY = "studymate_p5_v1";
 const DB_VERSION = 1;
 function emptyDB(){
-  return { version:DB_VERSION, students:{}, journeys:{}, semesters:{}, courses:{}, academicEvents:{}, reflections:{}, achievements:{}, terms:{}, skillViews:{}, archivedSkills:{}, courseNotebooks:{}, weeklySessions:{} };
+  return { version:DB_VERSION, students:{}, journeys:{}, semesters:{}, courses:{}, academicEvents:{}, reflections:{}, achievements:{}, terms:{}, skillViews:{}, archivedSkills:{}, courseNotebooks:{}, weeklySessions:{}, rawNotes:{} };
 }
 let DB = null;
 function dbLoad(){
@@ -3092,6 +3163,15 @@ const WEEKDAYS = [
   {id:5, ar:"الجمعة", en:"Friday"},
   {id:6, ar:"السبت", en:"Saturday"}
 ];
+/* Sunday at 00:00 of the current week — the academic week's natural anchor,
+   matching WEEKDAYS[0]. Used to check "has this been touched since the week
+   began" for the whitening ritual. */
+function startOfThisWeek(){
+  const now = new Date();
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  d.setDate(d.getDate() - d.getDay()); // getDay(): 0=Sunday already
+  return d.getTime();
+}
 const WeeklyScheduleModule = {
   create(semesterId, courseId, dayOfWeek, startTime, endTime){
     return dbInsert("weeklySessions", { id:genId(), semesterId, courseId, dayOfWeek, startTime, endTime, createdAt:Date.now() });
@@ -3680,6 +3760,24 @@ function renderToday(){
   const reminder = (rec || !semester) ? null : ReminderEngine.nearest(semester.id, courseIds);
   const todaysSessions = semester ? WeeklyScheduleModule.todaysSessions(semester.id) : [];
 
+  let whiteningPromptHtml = "";
+  const isWeekendDay = [5,6].includes(new Date().getDay());
+  if(isWeekendDay && semester){
+    const allSessions = WeeklyScheduleModule.listForSemester(semester.id);
+    const coursesWithSessions = courses.filter(c => allSessions.some(sess=>sess.courseId===c.id));
+    if(coursesWithSessions.length){
+      const weekStart = startOfThisWeek();
+      const whitenedCount = coursesWithSessions.filter(c=>NotebookModule.get(c.id).notes.some(n=>n.createdAt>=weekStart)).length;
+      if(whitenedCount < coursesWithSessions.length){
+        whiteningPromptHtml = `
+        <button type="button" class="callout" id="whiteningPromptCard" style="display:block; width:100%; text-align:start; margin-bottom:var(--sp-4); cursor:pointer;">
+          <div class="callout-label">${s.whiteningEyebrow}</div>
+          <p class="type-body">${s.whiteningProgress(whitenedCount, coursesWithSessions.length)}</p>
+        </button>`;
+      }
+    }
+  }
+
   let todaysClassesHtml = "";
   if(todaysSessions.length){
     todaysClassesHtml = `
@@ -3763,6 +3861,8 @@ function renderToday(){
 
         ${renderInstallBannerHtml()}
 
+        ${whiteningPromptHtml}
+
         ${todaysClassesHtml}
 
         ${secondaryHtml || (courses.length ? `
@@ -3784,6 +3884,8 @@ function renderToday(){
   `;
   wireTabBar();
   wireInstallBanner(renderToday);
+  const whiteningCard = document.getElementById("whiteningPromptCard");
+  if(whiteningCard) whiteningCard.addEventListener("click", ()=>{ renderWeeklyWhitening(); });
   document.getElementById("settingsBtn").addEventListener("click", ()=>{ renderSettings(); });
   const addBtn = document.getElementById("todayAddCourse");
   if(addBtn) addBtn.addEventListener("click", ()=>{ activeTab="semester"; openCourseSheet(semester.id, null, renderToday); });
@@ -3873,6 +3975,7 @@ function renderSemester(){
           ${semester ? `<div class="screen-header-sub">${escapeHtml(semester.label)}</div>` : ""}
         </div>
         ${semester ? `<div style="display:flex; gap:8px;">
+          <button type="button" class="btn-icon" id="rawNotebookBtn" aria-label="${s.rawNotebookTitle}">${ICON.openBook}</button>
           <button type="button" class="btn-icon" id="weeklyScheduleBtn" aria-label="${s.weeklyScheduleEntryLabel}">${ICON.weekGrid}</button>
           <button type="button" class="btn-icon" id="addCourseBtn" aria-label="${s.addCourseBtn}">${ICON.plus}</button>
         </div>` : ""}
@@ -3891,6 +3994,8 @@ function renderSemester(){
   if(addBtn) addBtn.addEventListener("click", ()=>{ openCourseSheet(semester.id, null, renderSemester); });
   const weeklyBtn = document.getElementById("weeklyScheduleBtn");
   if(weeklyBtn) weeklyBtn.addEventListener("click", ()=>{ renderWeeklySchedule(); });
+  const rawBtn = document.getElementById("rawNotebookBtn");
+  if(rawBtn) rawBtn.addEventListener("click", ()=>{ renderRawNotebook(); });
   document.querySelectorAll("[data-course-id]").forEach(card=>{
     card.addEventListener("click", ()=>{ renderCourseView(card.dataset.courseId); });
   });
@@ -4234,6 +4339,222 @@ function setupCanvasDrawing(canvas, initialDataUrl){
     clear(){ ctx.fillStyle = "#11141F"; ctx.fillRect(0,0,cssWidth,cssHeight); },
     toDataUrl(){ return canvas.toDataURL("image/png"); }
   };
+}
+function renderRawNotebook(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const student = StudentModule.current();
+  const journey = JourneyModule.forStudent(student.id);
+  const semester = SemesterModule.current(journey.id);
+  const courses = semester ? CourseModule.listForSemester(semester.id) : [];
+  const notes = RawNotebookModule.list();
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="rawBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.rawNotebookTitle}</div>
+        <button type="button" class="btn-icon" id="rawAddBtn" aria-label="${s.notebookAddNoteBtn}">${ICON.plus}</button>
+      </div>
+      <div class="screen-content">
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.rawNotebookSub}</p>
+        ${notes.length===0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">${ICON.openBook}</div>
+          <div class="empty-title">${s.rawNotebookEmptyTitle}</div>
+          <p class="empty-text">${s.rawNotebookEmptyText}</p>
+        </div>` : `
+        <div class="stack">
+          ${notes.map(n=>{
+            const transferredCourse = n.transferredToCourseId ? CourseModule.get(n.transferredToCourseId) : null;
+            return `
+            <div class="card" style="cursor:default; align-items:flex-start; flex-direction:column; background:${noteColorHex(n.color)};">
+              <div style="display:flex; width:100%; align-items:flex-start; gap:var(--sp-3);">
+                <button type="button" class="card-body" data-raw-edit="${n.id}" style="text-align:start; background:none; border:none; padding:0; cursor:pointer;">
+                  ${n.type==="drawing"
+                    ? `<img src="${n.dataUrl}" style="width:100%; border-radius:var(--r-sm); display:block;" alt="">`
+                    : `<span class="type-body" style="white-space:pre-wrap;">${escapeHtml(n.text)}</span>`}
+                </button>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:8px;">
+                ${transferredCourse
+                  ? `<span class="type-caption" style="color:var(--accent);">✓ ${s.rawTransferredTo} ${escapeHtml(transferredCourse.name)}</span>`
+                  : `<button type="button" class="btn btn-secondary" data-raw-transfer="${n.id}" style="padding:6px 14px; font-size:var(--fs-caption);">${s.rawTransferBtn}</button>`}
+              </div>
+            </div>`;
+          }).join("")}
+        </div>`}
+      </div>
+    </section>
+  `;
+  document.getElementById("rawBack").addEventListener("click", ()=>{ renderSemester(); });
+  document.getElementById("rawAddBtn").addEventListener("click", ()=>{ openRawNoteSheet(null, renderRawNotebook); });
+  document.querySelectorAll("[data-raw-edit]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ openRawNoteSheet(RawNotebookModule.get(btn.dataset.rawEdit), renderRawNotebook); });
+  });
+  document.querySelectorAll("[data-raw-transfer]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ openTransferSheet(btn.dataset.rawTransfer, courses, renderRawNotebook); });
+  });
+}
+function openTransferSheet(rawNoteId, courses, onDone){
+  const s = t();
+  const l = lang();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.rawTransferTitle}</div>
+      ${courses.length===0 ? `<p class="type-body" style="color:var(--ink-muted);">${s.scheduleNoCoursesText}</p>` : `
+      <div class="stack">
+        ${courses.map(c=>`<button type="button" class="card" data-pick-course="${c.id}"><span class="card-body"><span class="card-title">${escapeHtml(c.name)}</span></span></button>`).join("")}
+      </div>`}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelectorAll("[data-pick-course]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      RawNotebookModule.transferToCourse(rawNoteId, btn.dataset.pickCourse);
+      close(onDone);
+    });
+  });
+}
+async function translateTextOnDemand(text, direction){
+  const langpair = direction==="ar-en" ? "ar|en" : "en|ar";
+  const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`);
+  const data = await res.json();
+  return data && data.responseData && data.responseData.translatedText;
+}
+function openRawNoteSheet(existingNote, onDone){
+  const s = t();
+  const l = lang();
+  const editing = !!existingNote;
+  let chosenColor = editing ? (existingNote.color||"default") : "default";
+  let mode = editing ? (existingNote.type==="drawing"?"drawing":"text") : "text";
+  const PEN_COLORS = ["#F1F3F8", "#5B93E0", "#D9A15E", "#7FA88C"];
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${editing ? s.notebookEditNoteTitle : s.rawNotebookTitle}</div>
+      <div class="segmented" style="margin-bottom:var(--sp-3);">
+        <button type="button" class="segmented-btn ${mode==='text'?'segmented-active':''}" id="rawModeText">${s.noteModeText}</button>
+        <button type="button" class="segmented-btn ${mode==='drawing'?'segmented-active':''}" id="rawModeDrawing">${s.noteModeDrawing}</button>
+      </div>
+      <div id="rawTextModeArea" style="display:${mode==='text'?'block':'none'};">
+        <div class="field-group">
+          <div class="field-with-mic">
+            <textarea class="field" id="rawTextInput" style="min-height:110px; resize:vertical;" placeholder="${s.notebookNotesPlaceholder}">${editing && existingNote.type!=="drawing"?escapeHtml(existingNote.text):''}</textarea>
+            <button type="button" class="mic-btn" id="rawTextMic" aria-label="${s.voiceInputLabel}">${ICON.mic}</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="rawTranslateBtn" style="margin-bottom:var(--sp-3);">${s.rawTranslateToEnglish}</button>
+        <p class="type-caption" id="rawTranslateHint" style="color:var(--ink-muted); display:none; margin-top:-8px; margin-bottom:var(--sp-3);"></p>
+      </div>
+      <div id="rawDrawingModeArea" style="display:${mode==='drawing'?'block':'none'};">
+        <canvas id="rawCanvas" style="width:100%; border-radius:var(--r-md); touch-action:none; margin-bottom:var(--sp-3); display:block;"></canvas>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:var(--sp-3);">
+          ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:28px; height:28px; border-radius:50%; background:${c}; border:2px solid ${i===0?'#fff':'transparent'};"></button>`).join("")}
+          <button type="button" class="btn btn-secondary" id="rawCanvasClear" style="margin-inline-start:auto; padding:8px 14px;">${s.noteClearCanvas}</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <span class="field-label">${s.notebookNoteColorLabel}</span>
+        <div style="display:flex; gap:8px;">
+          ${NOTE_COLORS.map(c=>`
+            <button type="button" class="color-swatch ${c.id===chosenColor?'color-swatch-active':''}" data-color="${c.id}" style="background:${c.hex};" aria-label="${escapeHtml(c[l])}"></button>
+          `).join("")}
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" id="rawSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveChangesBtn}</button>
+      ${editing ? `<button type="button" class="btn btn-secondary" id="rawDelete" style="color:var(--attention);">${s.glossaryDeleteBtn}</button>` : ""}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  attachVoiceInput(overlay.querySelector("#rawTextMic"), overlay.querySelector("#rawTextInput"));
+
+  overlay.querySelector("#rawTranslateBtn").addEventListener("click", async ()=>{
+    const input = overlay.querySelector("#rawTextInput");
+    const text = input.value.trim();
+    const hint = overlay.querySelector("#rawTranslateHint");
+    if(!text) return;
+    hint.style.display = "block";
+    hint.textContent = s.translateLoading;
+    try{
+      const translated = await translateTextOnDemand(text, "ar-en");
+      if(translated){ input.value = translated; hint.textContent = s.rawTranslatedDone; }
+      else hint.textContent = s.translateError;
+    }catch(err){ hint.textContent = s.translateError; }
+  });
+
+  let canvasCtrl = null;
+  function ensureCanvas(){
+    if(!canvasCtrl){
+      canvasCtrl = setupCanvasDrawing(overlay.querySelector("#rawCanvas"), editing && existingNote.type==="drawing" ? existingNote.dataUrl : null);
+    }
+  }
+  if(mode==="drawing") ensureCanvas();
+  overlay.querySelector("#rawModeText").addEventListener("click", ()=>{
+    mode = "text";
+    overlay.querySelector("#rawTextModeArea").style.display = "block";
+    overlay.querySelector("#rawDrawingModeArea").style.display = "none";
+    overlay.querySelector("#rawModeText").classList.add("segmented-active");
+    overlay.querySelector("#rawModeDrawing").classList.remove("segmented-active");
+  });
+  overlay.querySelector("#rawModeDrawing").addEventListener("click", ()=>{
+    mode = "drawing";
+    overlay.querySelector("#rawTextModeArea").style.display = "none";
+    overlay.querySelector("#rawDrawingModeArea").style.display = "block";
+    overlay.querySelector("#rawModeDrawing").classList.add("segmented-active");
+    overlay.querySelector("#rawModeText").classList.remove("segmented-active");
+    ensureCanvas();
+  });
+  overlay.querySelectorAll("[data-pen]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(canvasCtrl) canvasCtrl.setPen(btn.dataset.pen);
+      overlay.querySelectorAll("[data-pen]").forEach(b=>b.style.borderColor="transparent");
+      btn.style.borderColor = "#fff";
+    });
+  });
+  overlay.querySelector("#rawCanvasClear").addEventListener("click", ()=>{ if(canvasCtrl) canvasCtrl.clear(); });
+  overlay.querySelectorAll(".color-swatch").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      chosenColor = btn.dataset.color;
+      overlay.querySelectorAll(".color-swatch").forEach(b=>b.classList.remove("color-swatch-active"));
+      btn.classList.add("color-swatch-active");
+    });
+  });
+  overlay.querySelector("#rawSave").addEventListener("click", ()=>{
+    if(mode==="drawing"){
+      const dataUrl = canvasCtrl.toDataUrl();
+      if(editing) RawNotebookModule.update(existingNote.id, "drawing", dataUrl, chosenColor);
+      else RawNotebookModule.create("drawing", dataUrl, chosenColor);
+      close(onDone);
+    } else {
+      const text = overlay.querySelector("#rawTextInput").value.trim();
+      if(!text) return;
+      if(editing) RawNotebookModule.update(existingNote.id, "text", text, chosenColor);
+      else RawNotebookModule.create("text", text, chosenColor);
+      close(onDone);
+    }
+  });
+  const deleteBtn = overlay.querySelector("#rawDelete");
+  if(deleteBtn){
+    deleteBtn.addEventListener("click", ()=>{
+      close(()=>{
+        showConfirmSheet({
+          title:s.notebookDeleteNoteConfirmTitle, text:s.notebookDeleteNoteConfirmText, confirmLabel:s.confirmDelete, danger:true,
+          onConfirm:()=>{ RawNotebookModule.delete(existingNote.id); onDone(); }
+        });
+      });
+    });
+  }
 }
 function openNoteSheet(courseId, existingNote, onDone){
   const s = t();
@@ -4713,6 +5034,32 @@ const NOTE_COLORS = [
   { id:"mastered", hex:"#173A22", ar:"متقن", en:"Mastered" }
 ];
 function noteColorHex(colorId){ const c = NOTE_COLORS.find(c=>c.id===colorId); return c ? c.hex : NOTE_COLORS[0].hex; }
+/* The single "raw" capture notebook — one place to jot things down quickly
+   during the week across every course, exactly like the one big notebook in
+   the family's own study story. Entries live here until the student
+   "whitens" them by transferring into the right course's real notebook. */
+const RawNotebookModule = {
+  list(){ return dbAll("rawNotes").sort((a,b)=>b.createdAt-a.createdAt); },
+  create(type, content, color){
+    const data = { id:genId(), type, color:color||"default", transferredToCourseId:null, transferredAt:null, createdAt:Date.now() };
+    if(type==="drawing") data.dataUrl = content; else data.text = content;
+    return dbInsert("rawNotes", data);
+  },
+  update(id, type, content, color){
+    const data = { type, color:color||"default" };
+    if(type==="drawing") data.dataUrl = content; else data.text = content;
+    return dbUpdate("rawNotes", id, data);
+  },
+  delete(id){ dbDelete("rawNotes", id); },
+  get(id){ return dbGet("rawNotes", id); },
+  transferToCourse(id, courseId){
+    const raw = this.get(id);
+    if(!raw) return;
+    if(raw.type==="drawing") NotebookModule.addDrawingNote(courseId, raw.dataUrl, raw.color);
+    else NotebookModule.addNote(courseId, raw.text, raw.color);
+    dbUpdate("rawNotes", id, { transferredToCourseId:courseId, transferredAt:Date.now() });
+  }
+};
 const NotebookModule = {
   get(courseId){
     if(!DB.courseNotebooks) DB.courseNotebooks = {};
@@ -5353,6 +5700,82 @@ function openCourseFreeTextSheet(semesterId, existingCourse, onDone){
   }
 }
 
+function renderWeeklyWhitening(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const student = StudentModule.current();
+  const journey = JourneyModule.forStudent(student.id);
+  const semester = SemesterModule.current(journey.id);
+  if(!semester){ renderToday(); return; }
+  const courses = CourseModule.listForSemester(semester.id);
+  const sessions = WeeklyScheduleModule.listForSemester(semester.id);
+  const weekStart = startOfThisWeek();
+
+  const coursesWithSessions = courses.filter(c => sessions.some(sess=>sess.courseId===c.id));
+  const rawNotesThisWeek = RawNotebookModule.list().filter(n=>n.createdAt>=weekStart);
+
+  function isWhitened(courseId){
+    const nb = NotebookModule.get(courseId);
+    const hasDirectNote = nb.notes.some(n=>n.createdAt>=weekStart);
+    const hasTransferred = rawNotesThisWeek.some(n=>n.transferredToCourseId===courseId);
+    return hasDirectNote || hasTransferred;
+  }
+
+  const whitenedCount = coursesWithSessions.filter(c=>isWhitened(c.id)).length;
+  const untransferredRaw = rawNotesThisWeek.filter(n=>!n.transferredToCourseId).length;
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="whiteningBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.whiteningTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <div class="hero" style="margin-bottom:var(--sp-4);">
+          <div class="hero-eyebrow">${s.whiteningEyebrow}</div>
+          <div class="hero-title" style="font-size:var(--fs-heading);">${s.whiteningProgress(whitenedCount, coursesWithSessions.length)}</div>
+          <p class="type-body" style="color:var(--ink-muted); margin-top:8px;">${s.whiteningIntro}</p>
+        </div>
+
+        ${untransferredRaw>0 ? `
+        <button type="button" class="callout" id="whiteningRawLink" style="display:block; width:100%; text-align:start; margin-bottom:var(--sp-4); cursor:pointer;">
+          <div class="callout-label">${s.rawNotebookTitle}</div>
+          <p class="type-body">${s.whiteningRawHint(untransferredRaw)}</p>
+        </button>` : ""}
+
+        ${coursesWithSessions.length===0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">${ICON.weekGrid}</div>
+          <div class="empty-title">${s.scheduleNoCoursesTitle}</div>
+          <p class="empty-text">${s.scheduleNoCoursesText}</p>
+        </div>` : `
+        <div class="stack">
+          ${coursesWithSessions.map(c=>{
+            const done = isWhitened(c.id);
+            const clr = courseColorFor(c);
+            return `
+            <button type="button" class="card" data-whitening-course="${c.id}" style="border-inline-start:4px solid ${clr};">
+              <span class="card-icon" style="background:color-mix(in srgb, ${clr} 22%, var(--surface)); color:${clr};">${ICON.weekGrid}</span>
+              <span class="card-body">
+                <span class="card-title">${escapeHtml(c.name)}</span>
+                <span class="card-meta" style="color:${done?'var(--accent)':'var(--ink-muted)'};">${done ? s.whiteningDoneLabel : s.whiteningNotYetLabel}</span>
+              </span>
+              <span class="card-chevron">${chevronFwd()}</span>
+            </button>`;
+          }).join("")}
+        </div>`}
+      </div>
+    </section>
+  `;
+  document.getElementById("whiteningBack").addEventListener("click", ()=>{ renderToday(); });
+  const rawLink = document.getElementById("whiteningRawLink");
+  if(rawLink) rawLink.addEventListener("click", ()=>{ renderRawNotebook(); });
+  document.querySelectorAll("[data-whitening-course]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ renderCourseNotebook(btn.dataset.whiteningCourse); });
+  });
+}
 function renderWeeklySchedule(){
   applyDir();
   const s = t();
