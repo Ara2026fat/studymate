@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>StudyMate — رفيق تعلّم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1119;
+  --ink:#F1F3F8;
+  --ink-muted:#9AA5B8;
+  --gold:#C98A2E;
+  --gold-rgb:201,138,46;
+  --male:#5B93E0;
+  --male-rgb:91,147,224;
+  --female:#D9A15E;
+  --female-rgb:217,161,94;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; background:var(--bg); }
+body{
+  font-family:'Cairo', sans-serif; color:var(--ink);
+  overflow:hidden;
+  height:100vh; height:100dvh;
+  cursor:pointer;
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}
+
+/* ---- signature: one continuous winding path, advances with each tap ---- */
+#pathLayer{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+}
+#pathLayer svg{ width:100%; height:100%; }
+#journeyPath{
+  fill:none; stroke:var(--gold); stroke-width:3; stroke-linecap:round; stroke-linejoin:round;
+  opacity:.55;
+  transition:stroke-dashoffset 900ms var(--ease);
+}
+#journeyDot{ fill:#E8B25A; transition:cx 900ms var(--ease), cy 900ms var(--ease); }
+
+section{
+  position:fixed; inset:0; z-index:2;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:8vh 7vw;
+  text-align:center;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity 500ms var(--ease);
+}
+section.active{ opacity:1; visibility:visible; pointer-events:auto; }
+
+.eyebrow{
+  font-size:13px; font-weight:700; letter-spacing:.04em; color:var(--ink-muted);
+  opacity:0; transform:translateY(10px);
+  transition:opacity 700ms var(--ease), transform 700ms var(--ease);
+}
+h1{
+  font-size:clamp(28px, 7vw, 42px); font-weight:800; line-height:1.35; margin-top:14px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 800ms var(--ease) 120ms, transform 800ms var(--ease) 120ms;
+}
+p.lead{
+  font-size:clamp(16px, 4vw, 19px); color:var(--ink-muted); line-height:1.75; max-width:520px; margin-top:18px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 800ms var(--ease) 260ms, transform 800ms var(--ease) 260ms;
+}
+.reveal-in .eyebrow, .reveal-in h1, .reveal-in p.lead{ opacity:1; transform:translateY(0); }
+
+/* screen 1 */
+.brand-mark{
+  font-size:clamp(30px, 8vw, 46px); font-weight:800; margin-top:28px;
+  background:linear-gradient(120deg, #fff, var(--gold));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  opacity:0; transform:scale(.92);
+  transition:opacity 900ms var(--ease) 500ms, transform 900ms var(--ease) 500ms;
+}
+.reveal-in .brand-mark{ opacity:1; transform:scale(1); }
+.tap-hint{
+  position:absolute; bottom:6vh; font-size:13px; color:var(--ink-muted);
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  opacity:0; animation:hintFade 1200ms var(--ease) 1400ms forwards, bob 1800ms ease-in-out 2600ms infinite;
+}
+@keyframes hintFade{ to{ opacity:.75; } }
+@keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-5px);} }
+
+/* screen 3: proof mockup */
+.proof-wrap{
+  display:flex; flex-direction:column; gap:22px; margin-top:32px; width:100%; max-width:380px;
+  opacity:0; transform:translateY(20px);
+  transition:opacity 900ms var(--ease) 400ms, transform 900ms var(--ease) 400ms;
+}
+.reveal-in .proof-wrap{ opacity:1; transform:translateY(0); }
+.mock-card{
+  background:#161C2C; border:1px solid rgba(255,255,255,.08); border-radius:16px;
+  padding:16px 18px; text-align:start;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+.mock-eyebrow{ font-size:11px; color:var(--ink-muted); font-weight:700; margin-bottom:6px; }
+.mock-title{ font-size:15px; font-weight:700; }
+.mock-line{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13px; color:var(--ink-muted); }
+.mock-dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+
+.companion-pair{ display:flex; gap:14px; width:100%; }
+.comp-card{
+  flex:1; border-radius:16px; padding:18px 14px; text-align:center;
+  border:1px solid rgba(255,255,255,.08);
+}
+.comp-card.male{ background:linear-gradient(160deg, rgba(var(--male-rgb),.18), #0A0E17); }
+.comp-card.female{ background:linear-gradient(160deg, rgba(var(--female-rgb),.20), #170F1A); }
+.comp-swatch{ width:34px; height:34px; border-radius:50%; margin:0 auto 10px; }
+.comp-card.male .comp-swatch{ background:var(--male); }
+.comp-card.female .comp-swatch{ background:var(--female); }
+.comp-label{ font-size:13px; font-weight:700; }
+.comp-sub{ font-size:11px; color:var(--ink-muted); margin-top:4px; }
+
+/* screen 4: CTA */
+.cta-btn{
+  margin-top:36px; display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(160deg, #E3A94F, var(--gold));
+  color:#1A1305; font-weight:800; font-size:17px;
+  padding:16px 34px; border-radius:999px; text-decoration:none;
+  box-shadow:0 10px 30px rgba(var(--gold-rgb),.35);
+  opacity:0; transform:translateY(16px) scale(.96);
+  transition:opacity 800ms var(--ease) 500ms, transform 800ms var(--ease) 500ms;
+}
+.reveal-in .cta-btn{ opacity:1; transform:translateY(0) scale(1); }
+.cta-btn:active{ transform:scale(.97); }
+.cta-sub{
+  margin-top:16px; font-size:12px; color:var(--ink-muted);
+  opacity:0; transition:opacity 800ms var(--ease) 700ms;
+}
+.reveal-in .cta-sub{ opacity:1; }
+
+.progress-dots{
+  position:fixed; inset-inline-end:20px; top:50%; transform:translateY(-50%); z-index:5;
+  display:flex; flex-direction:column; gap:10px;
+}
+.dot{ width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.2); transition:background 300ms var(--ease), transform 300ms var(--ease); }
+.dot.active{ background:var(--gold); transform:scale(1.5); }
+</style>
+</head>
+<body>
+
+<div id="pathLayer">
+  <svg viewBox="0 0 100 400" preserveAspectRatio="none">
+    <path id="journeyPath" d="M 20 8
+      C 40 20, 15 32, 30 45
+      C 45 58, 18 68, 32 82
+      C 46 96, 20 108, 35 122
+      C 50 136, 60 128, 70 118
+      C 82 106, 65 138, 78 158
+      C 90 176, 60 192, 75 210
+      C 88 226, 62 240, 78 258
+      C 90 272, 65 286, 80 302
+      C 92 316, 68 330, 82 346
+      C 92 358, 78 368, 88 380"/>
+  </svg>
+</div>
+
+<div class="progress-dots">
+  <div class="dot" data-idx="0"></div>
+  <div class="dot" data-idx="1"></div>
+  <div class="dot" data-idx="2"></div>
+  <div class="dot" data-idx="3"></div>
+</div>
+
+<section id="s0">
+  <div class="eyebrow">أول يوم بالجامعة</div>
+  <h1>وتحس إنك تائه بين كل شيء جديد؟</h1>
+  <div class="brand-mark">StudyMate</div>
+  <div class="tap-hint">
+    <span>اضغط للمتابعة</span>
+    <span>←</span>
+  </div>
+</section>
+
+<section id="s1">
+  <div class="eyebrow">المشكلة الحقيقية</div>
+  <h1>الجامعة نظام مختلف كليًا عن الثانوية</h1>
+  <p class="lead">قواعد جديدة، اعتماد أكبر على نفسك، ولا أحد يجلس يشرح لك من أين تبدأ. StudyMate بُني ليكون رفيقك في هذه اللحظة.</p>
+  <div class="tap-hint">
+    <span>اضغط للمتابعة</span>
+    <span>←</span>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="eyebrow">الفرق الحقيقي</div>
+  <h1>ليست خطة عامة — خطتك أنت بالضبط</h1>
+  <div class="proof-wrap">
+    <div class="mock-card">
+      <div class="mock-eyebrow">خارطة تخصصك</div>
+      <div class="mock-title">هياكل البيانات والخوارزميات</div>
+      <div class="mock-line"><span class="mock-dot"></span> أنت هنا الآن — جوهر تخصصك الحقيقي</div>
+    </div>
+    <div class="companion-pair">
+      <div class="comp-card male">
+        <div class="comp-swatch"></div>
+        <div class="comp-label">رفيق تعلّم</div>
+        <div class="comp-sub">وضوح وطموح</div>
+      </div>
+      <div class="comp-card female">
+        <div class="comp-swatch"></div>
+        <div class="comp-label">رفيقة تعلّم</div>
+        <div class="comp-sub">هدوء ومرافقة</div>
+      </div>
+    </div>
+  </div>
+  <div class="tap-hint" style="position:static; margin-top:22px;">
+    <span>اضغط للمتابعة</span>
+    <span>←</span>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="eyebrow">جاهز؟</div>
+  <h1>تبدأ رحلتك من هنا</h1>
+  <a class="cta-btn" href="https://ara2026fat.github.io/studymate/" id="enterBtn">ادخل StudyMate</a>
+  <div class="cta-sub">مجاني بالكامل — بدون إعلانات، بدون حساب</div>
+</section>
+
+<script>
+const sections = [...document.querySelectorAll('section')];
+const dots = [...document.querySelectorAll('.dot')];
+const journeyPath = document.getElementById('journeyPath');
+const journeyDot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+journeyDot.setAttribute('r','2.2');
+journeyDot.setAttribute('id','journeyDot');
+journeyPath.parentNode.appendChild(journeyDot);
+
+const pathLength = journeyPath.getTotalLength();
+journeyPath.style.strokeDasharray = pathLength;
+journeyPath.style.strokeDashoffset = pathLength;
+
+let current = 0;
+
+function goToSlide(idx){
+  idx = Math.max(0, Math.min(sections.length - 1, idx));
+  current = idx;
+
+  sections.forEach((s,i)=>{
+    s.classList.toggle('active', i === idx);
+    if(i === idx) s.classList.add('reveal-in');
+  });
+  dots.forEach((d,i)=> d.classList.toggle('active', i === idx));
+
+  const progress = idx / (sections.length - 1);
+  const drawLength = pathLength * progress;
+  journeyPath.style.strokeDashoffset = pathLength - drawLength;
+  const pt = journeyPath.getPointAtLength(drawLength);
+  journeyDot.setAttribute('cx', pt.x);
+  journeyDot.setAttribute('cy', pt.y);
+}
+
+document.body.addEventListener('click', (e)=>{
+  if(e.target.closest('#enterBtn') || e.target.closest('.progress-dots')) return;
+  if(current < sections.length - 1) goToSlide(current + 1);
+});
+
+dots.forEach(d=>{
+  d.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    goToSlide(+d.dataset.idx);
+  });
+});
+
+goToSlide(0);
+</script>
+</body>
+</html>
