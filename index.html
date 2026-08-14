@@ -313,6 +313,14 @@ ul,ol{ list-style:none; }
 .level-chip-active{ background:rgba(var(--accent-rgb),.16); border-color:rgba(var(--accent-rgb),.4); color:var(--accent); }
 .level-chip-num{ font-size:var(--fs-subheading); font-weight:700; }
 .level-chip-count{ font-size:10px; opacity:.8; }
+.category-chip{
+  flex-shrink:0; padding:9px 14px; white-space:nowrap;
+  background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:999px;
+  color:var(--ink-muted); font-size:var(--fs-caption); font-weight:600;
+  transition:transform 180ms var(--ease-spring), background 200ms var(--ease), color 200ms var(--ease);
+}
+.category-chip:active{ transform:scale(.95); }
+.category-chip-active{ background:rgba(var(--accent-rgb),.16); border-color:rgba(var(--accent-rgb),.4); color:var(--accent); }
 .skill-tile-icon{
   width:32px; height:32px; border-radius:var(--r-sm); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
@@ -819,6 +827,7 @@ const STR = {
     libraryPreviewEmptyText:"لسا ما وصلنا لهذي المادة بالبحث — نعمل على إثرائها في الجولات القادمة.",
     refGlossarySearchPh:"ابحث عن مصطلح...",
     refGlossaryNoResults:"ما لقينا مصطلحًا يطابق بحثك.",
+    skillsOtherCategoryLabel:"أخرى",
     printNotebookGeneratedOn:"وُلّد بتاريخ",
     notebookNotesPlaceholder:"دوّن ملخصك للمحاضرة، أو أي شيء تحب ترجع له لاحقًا...",
     notebookSaveNotesBtn:"حفظ الملاحظات",
@@ -1097,6 +1106,7 @@ const STR = {
     libraryPreviewEmptyText:"We haven't reached this course in our research yet — working on enriching it in upcoming rounds.",
     refGlossarySearchPh:"Search for a term...",
     refGlossaryNoResults:"No terms match your search.",
+    skillsOtherCategoryLabel:"Other",
     printNotebookGeneratedOn:"Generated on",
     notebookNotesPlaceholder:"Write your lecture summary, or anything you'd like to come back to later...",
     notebookSaveNotesBtn:"Save Notes",
@@ -1222,7 +1232,8 @@ const ICON = {
   starTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.5l2.9 6.4 7 .7-5.3 4.7 1.6 6.9L12 17.6l-6.2 3.6 1.6-6.9L2.1 9.6l7-.7L12 2.5z"/></svg>`,
   questionTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 9a2.5 2.5 0 1 1 3.9 2.1c-.9.6-1.4 1.1-1.4 2.1"/><circle cx="12" cy="17.2" r=".3" fill="currentColor"/></svg>`,
   bulbTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.5.5.9 1.3 1 2.5h6c.1-1.2.5-2 1-2.5A6 6 0 0 0 12 3z"/></svg>`,
-  refreshTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/></svg>`
+  refreshTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/></svg>`,
+  trash:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 12.5a2 2 0 0 0 2 1.5h6a2 2 0 0 0 2-1.5L18 7"/></svg>`
 };
 
 /* ============================================================
@@ -2457,6 +2468,7 @@ const SKILLS = [
 
   {
     id:"transition-mindset", icon:"journey",
+    category:{id:"mindset_universal", ar:"العقلية والانتقال", en:"Mindset & Transition"},
     title:{ar:"الانتقال من الثانوية إلى الجامعة", en:"Moving from High School to University"},
     desc:{ar:"اعرف الفروقات قبل أن تفاجئك", en:"Know the differences before they surprise you"},
     intro:{
@@ -2478,6 +2490,7 @@ const SKILLS = [
   },
   {
     id:"how-to-learn", icon:"spark",
+    category:{id:"planning_universal", ar:"التخطيط والنظام الأكاديمي", en:"Planning & Academic System"},
     title:{ar:"كيف تتعلم", en:"How to Learn"},
     desc:{ar:"اكتشف أفضل طريقة تتعلم بها", en:"Discover how you learn best"},
     intro:{
@@ -2499,6 +2512,7 @@ const SKILLS = [
   },
   {
     id:"study-plan", icon:"journey",
+    category:{id:"planning_universal", ar:"التخطيط والنظام الأكاديمي", en:"Planning & Academic System"},
     title:{ar:"كيف تبني خطة دراسية ذكية", en:"Build a Smart Study Plan"},
     desc:{ar:"خطط لفصلك الدراسي باحتراف", en:"Plan your semester like a pro"},
     intro:{
@@ -2520,6 +2534,7 @@ const SKILLS = [
   },
   {
     id:"gpa-credit-weight", icon:"spark",
+    category:{id:"planning_universal", ar:"التخطيط والنظام الأكاديمي", en:"Planning & Academic System"},
     title:{ar:"فهم المعدل التراكمي ووزن الساعات", en:"Understanding GPA & Credit-Hour Weight"},
     desc:{ar:"اعرف كيف تُحسب المواد، لا لتقلق أكثر بل لتهدأ", en:"Know how courses are weighted — not to worry more, but to worry less"},
     intro:{
@@ -2541,6 +2556,7 @@ const SKILLS = [
   },
   {
     id:"focus-distraction", icon:"lens",
+    category:{id:"mindset_universal", ar:"العقلية والانتقال", en:"Mindset & Transition"},
     title:{ar:"التركيز في عصر التشتت", en:"Focus in the Age of Distraction"},
     desc:{ar:"واجه أكبر عدو للمذاكرة اليوم", en:"Face today's biggest enemy of studying"},
     intro:{
@@ -2562,6 +2578,7 @@ const SKILLS = [
   },
   {
     id:"academic-pressure", icon:"compass",
+    category:{id:"mindset_universal", ar:"العقلية والانتقال", en:"Mindset & Transition"},
     title:{ar:"التعامل مع ضغط الدراسة", en:"Managing Academic Pressure"},
     desc:{ar:"مهارة عملية، لا مجرد تحمّل", en:"A practical skill, not just endurance"},
     intro:{
@@ -2583,6 +2600,7 @@ const SKILLS = [
   },
   {
     id:"read-textbooks", icon:"openBook",
+    category:{id:"study_universal", ar:"مهارات المذاكرة والتدوين", en:"Study & Note-Taking"},
     title:{ar:"كيف تقرأ الكتب الجامعية", en:"How to Read Textbooks"},
     desc:{ar:"اقرأ أسرع وتذكّر أكثر", en:"Read faster, retain more"},
     intro:{
@@ -2604,6 +2622,7 @@ const SKILLS = [
   },
   {
     id:"summarize", icon:"book",
+    category:{id:"study_universal", ar:"مهارات المذاكرة والتدوين", en:"Study & Note-Taking"},
     title:{ar:"كيف تلخص", en:"How to Summarize"},
     desc:{ar:"حوّل الفصول الطويلة إلى ملخصات قصيرة", en:"Turn long chapters into short notes"},
     intro:{
@@ -2625,6 +2644,7 @@ const SKILLS = [
   },
   {
     id:"lecture-notes", icon:"openBook",
+    category:{id:"study_universal", ar:"مهارات المذاكرة والتدوين", en:"Study & Note-Taking"},
     title:{ar:"تدوين المحاضرة وتبييضها", en:"Lecture Note-Taking & Cleanup"},
     desc:{ar:"وفّر على نفسك ساعات مذاكرة لاحقًا", en:"Save yourself hours of studying later"},
     intro:{
@@ -2646,6 +2666,7 @@ const SKILLS = [
   },
   {
     id:"professor-style", icon:"lens",
+    category:{id:"study_universal", ar:"مهارات المذاكرة والتدوين", en:"Study & Note-Taking"},
     title:{ar:"كيف تحلل أسلوب الدكتور", en:"Analyze Your Professor's Style"},
     desc:{ar:"افهم ما يركز عليه كل دكتور", en:"Understand what each professor values"},
     intro:{
@@ -2667,6 +2688,7 @@ const SKILLS = [
   },
   {
     id:"exam-prep", icon:"event",
+    category:{id:"exams_universal", ar:"الاختبارات والمهارات العملية", en:"Exams & Practical Skills"},
     title:{ar:"كيف تستعد للاختبارات", en:"Exam Preparation"},
     desc:{ar:"ادخل الاختبارات بثقة", en:"Walk into exams with confidence"},
     intro:{
@@ -2688,6 +2710,7 @@ const SKILLS = [
   },
   {
     id:"math-study-technique", icon:"book",
+    category:{id:"subject_universal", ar:"مذاكرة حسب المادة", en:"Subject-Specific Study"},
     title:{ar:"طرق دراسة الرياضيات فعليًا", en:"Real Techniques for Studying Math"},
     desc:{ar:"طرق، لا نصائح — كيف تذاكر الرياضيات فعليًا", en:"Techniques, not advice — how to actually study math"},
     intro:{
@@ -2709,6 +2732,7 @@ const SKILLS = [
   },
   {
     id:"science-study-technique", icon:"lens",
+    category:{id:"subject_universal", ar:"مذاكرة حسب المادة", en:"Subject-Specific Study"},
     title:{ar:"طرق دراسة الكيمياء والفيزياء", en:"Techniques for Studying Chemistry & Physics"},
     desc:{ar:"طرق تجمع الفهم المفاهيمي بالحساب", en:"Techniques combining conceptual understanding with calculation"},
     intro:{
@@ -2730,6 +2754,7 @@ const SKILLS = [
   },
   {
     id:"grammar-study-technique", icon:"openBook",
+    category:{id:"subject_universal", ar:"مذاكرة حسب المادة", en:"Subject-Specific Study"},
     title:{ar:"طرق دراسة النحو والصرف", en:"Techniques for Studying Grammar & Morphology"},
     desc:{ar:"النحو والصرف علم أنماط، لا حفظ عشوائي", en:"Grammar is a science of patterns, not random memorization"},
     intro:{
@@ -2751,6 +2776,7 @@ const SKILLS = [
   },
   {
     id:"global-memory-techniques", icon:"spark",
+    category:{id:"study_universal", ar:"مهارات المذاكرة والتدوين", en:"Study & Note-Taking"},
     title:{ar:"تقنيات الحفظ والفهم العالمية", en:"Global Memory & Learning Techniques"},
     desc:{ar:"طرق قابلة للتعلم، لا موهبة أو حظ", en:"Learnable techniques, not talent or luck"},
     intro:{
@@ -2772,6 +2798,7 @@ const SKILLS = [
   },
   {
     id:"project-presentation-technique", icon:"event",
+    category:{id:"exams_universal", ar:"الاختبارات والمهارات العملية", en:"Exams & Practical Skills"},
     title:{ar:"كيف تُعِدّ مشروعًا أو عرضًا تقديميًا", en:"How to Prepare a Project or Presentation"},
     desc:{ar:"خطوات محددة تنجح بشكل متكرر", en:"Concrete steps that work reliably"},
     intro:{
@@ -2793,6 +2820,7 @@ const SKILLS = [
   },
   {
     id:"lecture-notes-cleanup", icon:"book",
+    category:{id:"study_universal", ar:"مهارات المذاكرة والتدوين", en:"Study & Note-Taking"},
     title:{ar:"تبييض المحاضرة: من ملاحظات خام إلى ملخص فعّال", en:"Cleaning Up Lecture Notes: From Raw to Effective"},
     desc:{ar:"ليس نسخًا بخط أنظف — إعادة تنظيم حقيقية", en:"Not neater copying — genuine reorganization"},
     intro:{
@@ -2814,6 +2842,7 @@ const SKILLS = [
   },
   {
     id:"meeting-prof-prep", icon:"event",
+    category:{id:"exams_universal", ar:"الاختبارات والمهارات العملية", en:"Exams & Practical Skills"},
     title:{ar:"كيف تحضّر للقاء مع دكتورك أو مشرفك", en:"How to Prepare for a Meeting with Your Professor or Supervisor"},
     desc:{ar:"تحضير يحوّل اللقاء لخطوة حقيقية للأمام", en:"Preparation that turns the meeting into real progress"},
     intro:{
@@ -2835,6 +2864,7 @@ const SKILLS = [
   },
   {
     id:"cs-roadmap", icon:"journey",
+    category:{id:"foundation_cs", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["cs"], universityIds:["jazan"]},
     phaseLevels:[["l1","l2"],["l3","l4"],["l5","l6"],["l7","l8"],["l9","l10"]],
     title:{ar:"خارطة تخصصك: علوم الحاسب", en:"Your Roadmap: Computer Science"},
@@ -2858,6 +2888,7 @@ const SKILLS = [
   },
   {
     id:"cs-getting-started-primer", icon:"code",
+    category:{id:"foundation_cs", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"قبل أول محاضرة: خطتك للأسبوعين القادمين", en:"Before Your First Lecture: Your Plan for the Next Two Weeks"},
     desc:{ar:"تدخل أول يوم وأنت مرتاح، لا تائه", en:"Walk into day one at ease, not lost"},
@@ -2892,6 +2923,7 @@ const SKILLS = [
   },
   {
     id:"cs-english-barrier", icon:"openBook",
+    category:{id:"foundation_cs", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"كيف تتعامل مع اللغة الإنجليزية في مقررات الحاسب", en:"Handling English in CS Courses"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
@@ -2914,6 +2946,7 @@ const SKILLS = [
   },
   {
     id:"cs-core-terminology", icon:"openBook",
+    category:{id:"foundation_cs", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"المصطلحات الأساسية لعلوم الحاسب مبسّطة", en:"Core CS Terms, Simply Explained"},
     desc:{ar:"نقطة بداية حقيقية، لا قائمة طويلة مرعبة", en:"A real starting point, not a scary long list"},
@@ -2956,6 +2989,7 @@ const SKILLS = [
   },
   {
     id:"cs-study-programming", icon:"code",
+    category:{id:"study_cs", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"كيف تذاكر مادة برمجة", en:"How to Study a Programming Course"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
@@ -2978,6 +3012,7 @@ const SKILLS = [
   },
   {
     id:"cs-code-notes", icon:"code",
+    category:{id:"study_cs", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"كيف تدوّن ملاحظات في محاضرات البرمجة", en:"Taking Notes in Programming Lectures"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
@@ -3000,6 +3035,7 @@ const SKILLS = [
   },
   {
     id:"cs-debugging", icon:"lens",
+    category:{id:"practical_cs", ar:"مهارات تقنية عملية", en:"Practical Technical Skills"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"كيف تصحح أخطاء برمجية بمنهجية", en:"How to Debug Systematically"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
@@ -3022,6 +3058,7 @@ const SKILLS = [
   },
   {
     id:"cs-algorithms", icon:"spark",
+    category:{id:"practical_cs", ar:"مهارات تقنية عملية", en:"Practical Technical Skills"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"كيف تحل مسائل البرمجة والخوارزميات", en:"How to Solve Programming & Algorithm Problems"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
@@ -3044,6 +3081,7 @@ const SKILLS = [
   },
   {
     id:"cs-visual-thinking", icon:"code",
+    category:{id:"practical_cs", ar:"مهارات تقنية عملية", en:"Practical Technical Skills"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"التفكير المرئي بالمخططات قبل البرمجة", en:"Visual Thinking with Diagrams Before Coding"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
@@ -3066,6 +3104,7 @@ const SKILLS = [
   },
   {
     id:"cs-level6-load", icon:"lens",
+    category:{id:"mindset_cs", ar:"التوازن النفسي والمحطات", en:"Mindset & Milestones"},
     scope:{type:"college", collegeIds:["cs"], universityIds:["jazan"]},
     title:{ar:"المستوى السادس — الفصل الأثقل في الخطة", en:"Level 6 — The Heaviest Term in the Plan"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات في جازان", en:"A skill specific to Jazan Computing students"},
@@ -3088,6 +3127,7 @@ const SKILLS = [
   },
   {
     id:"cs-grad-project", icon:"journey",
+    category:{id:"mindset_cs", ar:"التوازن النفسي والمحطات", en:"Mindset & Milestones"},
     scope:{type:"college", collegeIds:["cs"], universityIds:["jazan"]},
     title:{ar:"مشروع التخرج على مرحلتين", en:"The Graduation Project's Two Phases"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات في جازان", en:"A skill specific to Jazan Computing students"},
@@ -3110,6 +3150,7 @@ const SKILLS = [
   },
   {
     id:"cs-comparison-pressure", icon:"spark",
+    category:{id:"mindset_cs", ar:"التوازن النفسي والمحطات", en:"Mindset & Milestones"},
     scope:{type:"college", collegeIds:["cs"]},
     title:{ar:"التعامل مع مقارنة نفسك بالمبرمجين \"الموهوبين\"", en:"Dealing with Comparing Yourself to \"Gifted\" Programmers"},
     desc:{ar:"مهارة خاصة بطلاب الحاسبات", en:"A skill specific to Computing students"},
@@ -3132,6 +3173,7 @@ const SKILLS = [
   },
   {
     id:"translation-roadmap", icon:"journey",
+    category:{id:"foundation_translation", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["arts"], universityIds:["iau"], majorIds:["arts-0"]},
     phaseLevels:[["l1","l2"],["l3"],["l4","l5","l6"],["l7","l8"],["l9"]],
     title:{ar:"خارطة تخصصك: اللغة الإنجليزية والترجمة", en:"Your Roadmap: English Language & Translation"},
@@ -3155,6 +3197,7 @@ const SKILLS = [
   },
   {
     id:"translation-hours-reality", icon:"lens",
+    category:{id:"foundation_translation", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["arts"], universityIds:["iau"], majorIds:["arts-0"]},
     title:{ar:"لماذا ساعات السنة التحضيرية أثقل مما تبدو", en:"Why the Foundation Year's Hours Feel Heavier Than They Look"},
     desc:{ar:"مهارة خاصة بطلاب اللغات", en:"A skill specific to Language students"},
@@ -3177,6 +3220,7 @@ const SKILLS = [
   },
   {
     id:"translation-confidence", icon:"spark",
+    category:{id:"foundation_translation", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["arts"], majorIds:["arts-0"]},
     title:{ar:"التعامل مع صعوبة اللغة رغم أنها تخصصك", en:"Facing Language Difficulty Even in Your Own Major"},
     desc:{ar:"مهارة خاصة بطلاب اللغات", en:"A skill specific to Language students"},
@@ -3199,6 +3243,7 @@ const SKILLS = [
   },
   {
     id:"language-practice", icon:"openBook",
+    category:{id:"study_translation", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["arts"], majorIds:["arts-0"]},
     title:{ar:"كيف تطوّر لغتك خارج المحاضرة", en:"Developing Your Language Outside the Lecture"},
     desc:{ar:"مهارة خاصة بطلاب اللغات والترجمة", en:"A skill specific to Languages & Translation students"},
@@ -3221,6 +3266,7 @@ const SKILLS = [
   },
   {
     id:"vocabulary-building", icon:"openBook",
+    category:{id:"study_translation", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["arts"], majorIds:["arts-0"]},
     title:{ar:"كيف توسّع مفرداتك بفعالية", en:"Building Vocabulary Effectively"},
     desc:{ar:"مهارة خاصة بطلاب اللغات", en:"A skill specific to Language students"},
@@ -3243,6 +3289,7 @@ const SKILLS = [
   },
   {
     id:"translation-nuance-notes", icon:"openBook",
+    category:{id:"study_translation", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["arts"], majorIds:["arts-0"]},
     title:{ar:"تدوين الفروق اللغوية الدقيقة في المحاضرة", en:"Capturing Fine Language Nuances in Lecture"},
     desc:{ar:"مهارة خاصة بطلاب الترجمة", en:"A skill specific to Translation students"},
@@ -3265,6 +3312,7 @@ const SKILLS = [
   },
   {
     id:"translation-terminology", icon:"openBook",
+    category:{id:"study_translation", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["arts"]},
     title:{ar:"تنظيم المصطلحات التخصصية بصريًا", en:"Visually Organizing Specialized Terminology"},
     desc:{ar:"مهارة خاصة بطلاب الترجمة", en:"A skill specific to Translation students"},
@@ -3287,6 +3335,7 @@ const SKILLS = [
   },
   {
     id:"translation-meaning", icon:"lens",
+    category:{id:"practical_translation", ar:"مهارات تقنية عملية", en:"Practical Skills"},
     scope:{type:"college", collegeIds:["arts"], majorIds:["arts-0"]},
     title:{ar:"كيف تترجم بالمعنى لا بالكلمة", en:"Translating Meaning, Not Words"},
     desc:{ar:"مهارة خاصة بطلاب الترجمة", en:"A skill specific to Translation students"},
@@ -3309,6 +3358,7 @@ const SKILLS = [
   },
   {
     id:"translation-portfolio", icon:"openBook",
+    category:{id:"practical_translation", ar:"مهارات تقنية عملية", en:"Practical Skills"},
     scope:{type:"college", collegeIds:["arts"], majorIds:["arts-0"]},
     title:{ar:"بناء ملف أعمال للترجمة", en:"Building a Translation Portfolio"},
     desc:{ar:"مهارة خاصة بطلاب الترجمة", en:"A skill specific to Translation students"},
@@ -3331,6 +3381,7 @@ const SKILLS = [
   },
   {
     id:"me-diffeq-ripple-effect", icon:"code",
+    category:{id:"study_me", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     title:{ar:"المعادلات التفاضلية: لماذا تمتد أثرها لبقية تخصصك", en:"Differential Equations: Why Its Impact Reaches the Rest of Your Major"},
     desc:{ar:"دورة مصغرة — ليست مادة معزولة، هي أساس ستّ مواد قادمة", en:"A mini-course — not an isolated subject, it's the foundation for six upcoming courses"},
@@ -3367,6 +3418,7 @@ const SKILLS = [
   },
   {
     id:"me-roadmap", icon:"journey",
+    category:{id:"foundation_me", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     phaseLevels:[["l1","l2","l3"],["l4","l5","l6"],["l7","l8"],["l9","l10"]],
     title:{ar:"خارطة تخصصك: الهندسة الميكانيكية", en:"Your Roadmap: Mechanical Engineering"},
@@ -3390,6 +3442,7 @@ const SKILLS = [
   },
   {
     id:"me-diffeq", icon:"book",
+    category:{id:"study_me", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     title:{ar:"التعامل مع المعادلات التفاضلية", en:"Working Through Differential Equations"},
     desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
@@ -3412,6 +3465,7 @@ const SKILLS = [
   },
   {
     id:"me-lab-hours-reality", icon:"lens",
+    category:{id:"foundation_me", ar:"التأسيس والانطلاقة", en:"Foundation & Getting Started"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     title:{ar:"احسب وقت المعامل والورش الفعلي، لا الساعات المعتمدة فقط", en:"Accounting for Real Lab & Workshop Time, Not Just Credit Hours"},
     desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
@@ -3434,6 +3488,7 @@ const SKILLS = [
   },
   {
     id:"me-spatial-drawing", icon:"lens",
+    category:{id:"practical_me", ar:"مهارات تقنية عملية", en:"Practical Technical Skills"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     title:{ar:"كيف تطوّر التصور المكاني والرسم الهندسي", en:"Building Spatial Visualization & Technical Drawing"},
     desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
@@ -3456,6 +3511,7 @@ const SKILLS = [
   },
   {
     id:"me-machine-drawing", icon:"lens",
+    category:{id:"practical_me", ar:"مهارات تقنية عملية", en:"Practical Technical Skills"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     title:{ar:"قراءة ورسم مكونات الآلات", en:"Reading & Drawing Machine Components"},
     desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
@@ -3478,6 +3534,7 @@ const SKILLS = [
   },
   {
     id:"me-diagram-notes", icon:"lens",
+    category:{id:"study_me", ar:"مهارات المذاكرة", en:"Study Techniques"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     title:{ar:"تدوين المحاضرة بالرسم لا بالنص فقط", en:"Taking Lecture Notes with Diagrams, Not Just Text"},
     desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
@@ -3500,6 +3557,7 @@ const SKILLS = [
   },
   {
     id:"me-lab-safety", icon:"lens",
+    category:{id:"practical_me", ar:"مهارات تقنية عملية", en:"Practical Technical Skills"},
     scope:{type:"college", collegeIds:["eng"], majorIds:["eng-2"]},
     title:{ar:"السلامة في المعامل والورش", en:"Lab & Workshop Safety"},
     desc:{ar:"مهارة خاصة بطلاب الهندسة الميكانيكية", en:"A skill specific to Mechanical Engineering students"},
@@ -4954,12 +5012,12 @@ function setupCanvasDrawing(canvas, initialDataUrl){
   canvas.height = cssHeight*dpr;
   canvas.style.height = cssHeight+"px";
   ctx.scale(dpr, dpr);
-  ctx.fillStyle = "#11141F";
+  ctx.fillStyle = "#FAF9F5";
   ctx.fillRect(0,0,cssWidth,cssHeight);
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   ctx.lineWidth = 3;
-  ctx.strokeStyle = "#F1F3F8";
+  ctx.strokeStyle = "#232323";
   if(initialDataUrl){
     const img = new Image();
     img.onload = ()=>{ ctx.drawImage(img, 0, 0, cssWidth, cssHeight); };
@@ -5085,7 +5143,7 @@ function openRawNoteSheet(existingNote, onDone){
   const editing = !!existingNote;
   let chosenColor = editing ? (existingNote.color||"default") : "default";
   let mode = editing ? (existingNote.type==="drawing"?"drawing":"text") : "text";
-  const PEN_COLORS = ["#F1F3F8", "#5B93E0", "#D9A15E", "#7FA88C"];
+  const PEN_COLORS = ["#232323", "#5B93E0", "#C77B7B", "#7FA88C"];
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
   overlay.innerHTML = `
@@ -5107,10 +5165,12 @@ function openRawNoteSheet(existingNote, onDone){
         <p class="type-caption" id="rawTranslateHint" style="color:var(--ink-muted); display:none; margin-top:-8px; margin-bottom:var(--sp-3);"></p>
       </div>
       <div id="rawDrawingModeArea" style="display:${mode==='drawing'?'block':'none'};">
-        <canvas id="rawCanvas" style="width:100%; border-radius:var(--r-md); touch-action:none; margin-bottom:var(--sp-3); display:block;"></canvas>
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:var(--sp-3);">
-          ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:28px; height:28px; border-radius:50%; background:${c}; border:2px solid ${i===0?'#fff':'transparent'};"></button>`).join("")}
-          <button type="button" class="btn btn-secondary" id="rawCanvasClear" style="margin-inline-start:auto; padding:8px 14px;">${s.noteClearCanvas}</button>
+        <div style="display:flex; gap:8px; align-items:stretch; margin-bottom:var(--sp-3);">
+          <canvas id="rawCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
+            ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
+            <button type="button" class="btn-icon" id="rawCanvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
+          </div>
         </div>
       </div>
       <div class="field-group">
@@ -5170,7 +5230,7 @@ function openRawNoteSheet(existingNote, onDone){
     btn.addEventListener("click", ()=>{
       if(canvasCtrl) canvasCtrl.setPen(btn.dataset.pen);
       overlay.querySelectorAll("[data-pen]").forEach(b=>b.style.borderColor="transparent");
-      btn.style.borderColor = "#fff";
+      btn.style.borderColor = "var(--accent)";
     });
   });
   overlay.querySelector("#rawCanvasClear").addEventListener("click", ()=>{ if(canvasCtrl) canvasCtrl.clear(); });
@@ -5213,7 +5273,7 @@ function openNoteSheet(courseId, existingNote, onDone){
   const editing = !!existingNote;
   let chosenColor = editing ? (existingNote.color||"default") : "default";
   let mode = editing ? (existingNote.type==="drawing"?"drawing":"text") : "text";
-  const PEN_COLORS = ["#F1F3F8", "#5B93E0", "#D9A15E", "#7FA88C"];
+  const PEN_COLORS = ["#232323", "#5B93E0", "#C77B7B", "#7FA88C"];
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
   overlay.innerHTML = `
@@ -5244,10 +5304,12 @@ function openNoteSheet(courseId, existingNote, onDone){
         </div>
       </div>
       <div id="drawingModeArea" style="display:${mode==='drawing'?'block':'none'};">
-        <canvas id="noteCanvas" style="width:100%; border-radius:var(--r-md); touch-action:none; margin-bottom:var(--sp-3); display:block;"></canvas>
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:var(--sp-3);">
-          ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:28px; height:28px; border-radius:50%; background:${c}; border:2px solid ${i===0?'#fff':'transparent'};"></button>`).join("")}
-          <button type="button" class="btn btn-secondary" id="canvasClear" style="margin-inline-start:auto; padding:8px 14px;">${s.noteClearCanvas}</button>
+        <div style="display:flex; gap:8px; align-items:stretch; margin-bottom:var(--sp-3);">
+          <canvas id="noteCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
+            ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
+            <button type="button" class="btn-icon" id="canvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
+          </div>
         </div>
       </div>
       <div class="field-group">
@@ -5294,7 +5356,7 @@ function openNoteSheet(courseId, existingNote, onDone){
     btn.addEventListener("click", ()=>{
       if(canvasCtrl) canvasCtrl.setPen(btn.dataset.pen);
       overlay.querySelectorAll("[data-pen]").forEach(b=>b.style.borderColor="transparent");
-      btn.style.borderColor = "#fff";
+      btn.style.borderColor = "var(--accent)";
     });
   });
   overlay.querySelector("#canvasClear").addEventListener("click", ()=>{ if(canvasCtrl) canvasCtrl.clear(); });
@@ -5521,7 +5583,7 @@ function renderCourseLibrary(){
           <div class="empty-title">${s.libraryNoCatalogTitle}</div>
           <p class="empty-text">${s.libraryNoCatalogText}</p>
         </div>` : `
-        <div style="display:flex; gap:8px; overflow-x:auto; padding:2px var(--sp-4) var(--sp-4); -webkit-overflow-scrolling:touch;">
+        <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; padding:2px var(--sp-4) var(--sp-4);">
           ${availableLevels.map(lv=>{
             const courses = catalog[lv.id];
             const enrichedCount = courses.filter(c=>Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k))).length;
@@ -5929,8 +5991,7 @@ function skillTileBig(sk, l){
     </button>`;
 }
 let skillsHubTab = "specific";
-let skillsHubPage = 0;
-const SKILLS_PER_PAGE = 4;
+let skillsHubCategory = null;
 function renderSkillsHub(){
   applyDir();
   const s = t();
@@ -5941,12 +6002,24 @@ function renderSkillsHub(){
   const hasSpecific = specificSkills.length > 0;
   if(!hasSpecific) skillsHubTab = "universal";
   const showGlossary = skillsHubTab==="universal";
-  // The glossary entry rides along as a virtual extra tile so it always gets its own place in the pagination, not just appended after
-  const activeSkills = skillsHubTab==="specific" ? specificSkills : (showGlossary ? [...universalSkills, {id:"__glossary__"}] : universalSkills);
-  const totalPages = Math.max(1, Math.ceil(activeSkills.length / SKILLS_PER_PAGE));
-  if(skillsHubPage >= totalPages) skillsHubPage = totalPages - 1;
-  if(skillsHubPage < 0) skillsHubPage = 0;
-  const pageSkills = activeSkills.slice(skillsHubPage*SKILLS_PER_PAGE, skillsHubPage*SKILLS_PER_PAGE + SKILLS_PER_PAGE);
+  const activeSkills = skillsHubTab==="specific" ? specificSkills : universalSkills;
+
+  // Group by each skill's real content category, in first-appearance order —
+  // this is what the person asked for: categorization drives how things are shown, not an arbitrary page count.
+  const categoryOrder = [];
+  const categoryMap = {};
+  activeSkills.forEach(sk=>{
+    const cat = sk.category || {id:"other", ar:s.skillsOtherCategoryLabel, en:"Other"};
+    if(!categoryMap[cat.id]){ categoryMap[cat.id] = {cat, items:[]}; categoryOrder.push(cat.id); }
+    categoryMap[cat.id].items.push(sk);
+  });
+  if(showGlossary){
+    categoryMap["__glossary__"] = {cat:{id:"__glossary__", ar:s.glossaryEntryLabel, en:s.glossaryEntryLabel}, items:[{id:"__glossary__"}]};
+    categoryOrder.push("__glossary__");
+  }
+
+  if(!categoryOrder.includes(skillsHubCategory)) skillsHubCategory = categoryOrder[0];
+  const currentGroup = categoryMap[skillsHubCategory] || {items:[]};
   const archivedCount = Object.keys(DB.archivedSkills || {}).length;
 
   app.innerHTML = `
@@ -5960,16 +6033,18 @@ function renderSkillsHub(){
           <button type="button" class="segmented-btn ${skillsHubTab==='specific'?'segmented-active':''}" id="tabSpecific">${s.skillsSpecificLabel}</button>
           <button type="button" class="segmented-btn ${skillsHubTab==='universal'?'segmented-active':''}" id="tabUniversal">${s.skillsUniversalLabel}</button>
         </div>` : ""}
-        ${totalPages > 1 ? `
+        ${categoryOrder.length > 1 ? `
         <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:var(--sp-3); -webkit-overflow-scrolling:touch;">
-          ${Array.from({length:totalPages}, (_,i)=>i).map(i=>`
-            <button type="button" class="level-chip ${i===skillsHubPage?'level-chip-active':''}" data-skills-page="${i}" style="min-width:44px;">
-              <span class="level-chip-num">${i+1}</span>
-            </button>
-          `).join("")}
+          ${categoryOrder.map(catId=>{
+            const g = categoryMap[catId];
+            return `
+            <button type="button" class="category-chip ${catId===skillsHubCategory?'category-chip-active':''}" data-skills-category="${catId}">
+              ${escapeHtml(g.cat[l])}
+            </button>`;
+          }).join("")}
         </div>` : ""}
         <div class="skill-grid" style="grid-template-columns:1fr 1fr;">
-          ${pageSkills.map(sk=> sk.id==="__glossary__"
+          ${currentGroup.items.map(sk=> sk.id==="__glossary__"
             ? `<button type="button" class="skill-tile" id="glossaryEntry" style="min-height:128px;"><span class="skill-tile-icon">${ICON.openBook}</span><span class="skill-tile-title">${s.glossaryEntryLabel}</span></button>`
             : skillTileBig(sk,l)
           ).join("")}
@@ -5987,13 +6062,13 @@ function renderSkillsHub(){
   if(archiveBtn) archiveBtn.addEventListener("click", ()=>{ renderSkillsArchive(); });
   const tabSpecific = document.getElementById("tabSpecific");
   const tabUniversal = document.getElementById("tabUniversal");
-  if(tabSpecific) tabSpecific.addEventListener("click", ()=>{ skillsHubTab="specific"; skillsHubPage=0; renderSkillsHub(); });
-  if(tabUniversal) tabUniversal.addEventListener("click", ()=>{ skillsHubTab="universal"; skillsHubPage=0; renderSkillsHub(); });
-  document.querySelectorAll("[data-skills-page]").forEach(chip=>{
+  if(tabSpecific) tabSpecific.addEventListener("click", ()=>{ skillsHubTab="specific"; skillsHubCategory=null; renderSkillsHub(); });
+  if(tabUniversal) tabUniversal.addEventListener("click", ()=>{ skillsHubTab="universal"; skillsHubCategory=null; renderSkillsHub(); });
+  document.querySelectorAll("[data-skills-category]").forEach(chip=>{
     chip.addEventListener("click", ()=>{
-      const p = parseInt(chip.dataset.skillsPage, 10);
-      if(p === skillsHubPage) return;
-      skillsHubPage = p;
+      const catId = chip.dataset.skillsCategory;
+      if(catId === skillsHubCategory) return;
+      skillsHubCategory = catId;
       renderSkillsHub();
     });
   });
