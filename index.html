@@ -800,6 +800,13 @@ const STR = {
     noteKeyInsightLabel:"أهم ما فهمته",
     noteKeyInsightPlaceholder:"دوّنها الآن قبل ما تنسى — أهم فكرة استوعبتها من هذا الدرس",
     downloadNotebookBtn:"تحميل دفترك — احفظه PDF",
+    libraryTitle:"مكتبة التخصص",
+    librarySub:"كل مواد تخصصك، مرتبة حسب المستوى — اطّلع عليها بلا حاجة تضيفها لجدولك أولًا.",
+    libraryNoCatalogTitle:"المكتبة غير متاحة بعد لتخصصك",
+    libraryNoCatalogText:"نعمل على إضافة خطط دراسية أكثر تباعًا.",
+    libraryEnrichedLabel:"جاهزة",
+    libraryNotYetLabel:"لسا ما وصلنا لها",
+    libraryPreviewEmptyText:"لسا ما وصلنا لهذي المادة بالبحث — نعمل على إثرائها في الجولات القادمة.",
     printNotebookGeneratedOn:"وُلّد بتاريخ",
     notebookNotesPlaceholder:"دوّن ملخصك للمحاضرة، أو أي شيء تحب ترجع له لاحقًا...",
     notebookSaveNotesBtn:"حفظ الملاحظات",
@@ -1069,6 +1076,13 @@ const STR = {
     noteKeyInsightLabel:"Most Important Thing I Understood",
     noteKeyInsightPlaceholder:"Write it down now before you forget — the key idea you grasped from this lesson",
     downloadNotebookBtn:"Download Your Notebook — Save as PDF",
+    libraryTitle:"Major Library",
+    librarySub:"All your major's courses, organized by level — browse them without needing to add them to your schedule first.",
+    libraryNoCatalogTitle:"The library isn't available for your major yet",
+    libraryNoCatalogText:"We're working on adding more study plans over time.",
+    libraryEnrichedLabel:"Ready",
+    libraryNotYetLabel:"Not reached yet",
+    libraryPreviewEmptyText:"We haven't reached this course in our research yet — working on enriching it in upcoming rounds.",
     printNotebookGeneratedOn:"Generated on",
     notebookNotesPlaceholder:"Write your lecture summary, or anything you'd like to come back to later...",
     notebookSaveNotesBtn:"Save Notes",
@@ -1347,6 +1361,287 @@ const COURSE_CATALOG = {
    in COURSE_CATALOG entries (e.g. "COMP 111"). Built incrementally, course by
    course, across sessions — see project notes for progress. */
 const COURSE_ENRICHMENT = {
+  "PHYS 205": {
+    explain:{
+      ar:"استكمال الفيزياء العامة 1 — هنا تدخل عالم الكهرباء والمغناطيسية: الشحنة الكهربية، المجال الكهربي، قانون جاوس، الجهد الكهربي، المكثفات، والمجال المغناطيسي.",
+      en:"A continuation of General Physics 1 — here you enter the world of electricity and magnetism: electric charge, electric field, Gauss's law, electric potential, capacitors, and magnetic field."
+    },
+    why:{
+      ar:"كل دائرة إلكترونية، كل معالج، وكل شاشة تعمل عليها كلها مبنية فعليًا على هذي القوانين — هذا الأساس الفيزيائي الصامت خلف كل الأجهزة الإلكترونية اللي تستخدمها يوميًا.",
+      en:"Every electronic circuit, every processor, and every screen you work on is actually built on these laws — this is the silent physical foundation behind every electronic device you use daily."
+    },
+    connections:{ requires:[{ar:"مبادئ الفيزياء 1 (PHYS 204)", en:"Principles of Physics 1 (PHYS 204)"}] },
+    resources:[
+      { title:{ar:"فيزياء عامة 2 — الكهربية والمغناطيسية (محاضرات كاملة، مجاني)", en:"General Physics 2 — Electricity & Magnetism (Complete Lecture Notes, Free)"}, url:"https://sites.google.com/site/hasanmaridi/physics102", reason:{ar:"ملاحظة أمانة: ملف محاضرات مكتوب (لا فيديو)، من نفس الدكتور الموثوق اللي استخدمنا محاضراته سابقًا في الديناميكا الحرارية — سبعة فصول كاملة تغطي المقرر بالضبط، مع واجبات ونماذج امتحانات حقيقية", en:"Honesty note: written lecture notes (not video), from the same trusted professor whose thermodynamics lectures we used earlier — seven complete chapters covering the course exactly, with real assignments and exam samples"} }
+    ]
+  },
+  "MATH 326": {
+    explain:{
+      ar:"استكمال جبر المصفوفات بعمق أكبر بكثير — القيم والمتجهات الذاتية، تحليل المصفوفات، والفضاءات الأربعة لأي مصفوفة، وصولًا لتقنيات متقدمة زي PCA وSVD المستخدمة فعليًا في الذكاء الاصطناعي.",
+      en:"A much deeper continuation of matrix algebra — eigenvalues and eigenvectors, matrix decomposition, and the four fundamental subspaces of any matrix, leading up to advanced techniques like PCA and SVD actually used in artificial intelligence."
+    },
+    why:{
+      ar:"لو تفكر مستقبلًا بمجال تعلّم الآلة أو رسومات الحاسب ثلاثية الأبعاد، هذي المادة تحديدًا هي الأساس الرياضي الحقيقي وراءهم — لا مجرد متطلب نظري، بل أداة تستخدمها فعليًا.",
+      en:"If you're thinking about machine learning or 3D computer graphics down the line, this course specifically is the real mathematical foundation behind them — not just a theoretical requirement, but a tool you'll actually use."
+    },
+    connections:{ requires:[{ar:"جبر المصفوفات (MATH 106)", en:"Matrix Algebra (MATH 106)"}] },
+    resources:[
+      { title:{ar:"جبر خطي متقدم بالعربي — مستوى جامعي (Udemy، ٩٤ محاضرة، تقييم ٤.٦، مجاني)", en:"Advanced Linear Algebra in Arabic — College Level (Udemy, 94 lectures, 4.6 rating, Free)"}, url:"https://www.udemy.com/course/college-level-linear-algebra-in-arabic/", reason:{ar:"٧٨٥ طالبًا وتقييم ٤.٦ حقيقي — يغطي بالضبط القيم الذاتية، تحليل SVD، وPCA بعمق حقيقي موجّه لعلوم الحاسب تحديدًا", en:"785 students and a real 4.6 rating — covers exactly eigenvalues, SVD decomposition, and PCA in real depth aimed specifically at computer science"} }
+    ]
+  },
+  "COMP 371": {
+    explain:{
+      ar:"كيف تنتقل من \"برمجة تمرين صغير\" إلى \"بناء نظام برمجي حقيقي\" — تحليل متطلبات المشروع، تصميمه قبل كتابة أي كود، اختباره بمنهجية، وإدارته عبر فريق كامل من المبرمجين.",
+      en:"How to move from \"programming a small exercise\" to \"building a real software system\" — analyzing project requirements, designing it before writing any code, testing it methodically, and managing it across a full team of programmers."
+    },
+    why:{
+      ar:"كل شركة تقنية حقيقية تعمل بمنهجية هندسة برمجيات (Agile غالبًا) — هذي المادة تجهزك فعليًا لسوق العمل، لا فقط لتمارين أكاديمية، وتفهم ليش المشاريع الكبيرة تحتاج تخطيطًا قبل الكود.",
+      en:"Every real tech company works with a software engineering methodology (usually Agile) — this course actually prepares you for the job market, not just academic exercises, and helps you understand why large projects need planning before code."
+    },
+    resources:[
+      { title:{ar:"هندسة البرمجيات (يوتيوب، ٣٢ محاضرة، مجاني)", en:"Software Engineering (YouTube, 32 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLSdxbt9aypHLpUEjVa96utjc_lcDndJ8K", reason:{ar:"شرح وافٍ لكتاب سومرفايل الشهير عالميًا في هندسة البرمجيات — نفس المرجع الأكاديمي المعتمد في أغلب الجامعات حول العالم", en:"A thorough explanation of Sommerville's globally renowned software engineering textbook — the same academic reference used in most universities worldwide"} }
+    ]
+  },
+  "همك336": {
+    explain:{
+      ar:"استكمال تصميم الماكينات 1 — هنا تصمم عناصر نقل الحركة الفعلية: التروس بأنواعها، الأعمدة، السيور، الينابيع، والكلاتشات، بتطبيقات كاملة زي صناديق التروس.",
+      en:"A continuation of Machine Design 1 — here you design actual power transmission elements: various gears, shafts, belts, springs, and clutches, with complete applications like gearboxes."
+    },
+    why:{
+      ar:"هذي المادة تحوّل فهمك النظري لمقاومة المواد والاهتزازات إلى تصميم فعلي لقطعة ميكانيكية حقيقية تدور وتنقل حركة — جوهر عمل أي مهندس ميكانيكي في التصنيع.",
+      en:"This course transforms your theoretical understanding of materials mechanics and vibrations into the actual design of a real mechanical part that rotates and transmits motion — the core of any mechanical engineer's work in manufacturing."
+    },
+    connections:{ requires:[{ar:"تصميم الماكينات 1 (همك335)", en:"Machine Design 1 (همك335)"}] },
+    resources:[
+      { title:{ar:"التصميم الميكانيكي - الجزء الثاني (Udemy، ١١ محاضرة، تقييم ٤.٥، مجاني)", en:"Mechanical Design - Part 2 (Udemy, 11 lectures, 4.5 rating, Free)"}, url:"https://www.udemy.com/course/mechanical-design-part2/", reason:{ar:"من أكاديمية ديزاين أون لاين، امتداد مباشر للجزء الأول — ٨٩٥ طالبًا وتقييمات حقيقية، يغطي التروس والسيور والينابيع والكلاتشات بالضبط", en:"From Design Online Academy, a direct continuation of Part 1 — 895 students and real reviews, covering exactly gears, belts, springs, and clutches"} }
+    ]
+  },
+  "ENGL 403": {
+    explain:{
+      ar:"مصطلحات ونصوص اقتصادية ومالية متخصصة — قوائم الدخل، الأسهم والسندات، التقارير المالية — مجال له لغته الخاصة المختلفة تمامًا عن الترجمة العامة.",
+      en:"Specialized economic and financial terminology and texts — income statements, stocks and bonds, financial reports — a field with its own language completely different from general translation."
+    },
+    why:{
+      ar:"البنوك، شركات الاستثمار، والمؤسسات المالية تحتاج مترجمين متخصصين بدقة عالية — خطأ بسيط بترجمة رقم مالي أو مصطلح محاسبي ممكن يكلّف فعليًا، وهذا يفتح لك سوق عمل بأجر أعلى من الترجمة العامة.",
+      en:"Banks, investment firms, and financial institutions need highly precise specialized translators — a simple error translating a financial figure or accounting term can be costly, and this opens a job market with higher pay than general translation."
+    },
+    resources:[
+      { title:{ar:"دروس في الترجمة الاقتصادية (مدونة متخصصة، مجاني)", en:"Lessons in Economic Translation (Specialized Blog, Free)"}, url:"https://englisharabictranslators.blogspot.com/2008/04/economic-translation-lesson-1.html", reason:{ar:"ملاحظة أمانة: مدونة نصية متخصصة (لا فيديو)، لكنها تغطي مصطلحات مالية ومحاسبية حقيقية (قوائم الدخل، الأصول، المراجعة) بترجمة ثنائية اللغة دقيقة", en:"Honesty note: a specialized text blog (not video), but it covers real financial and accounting terminology (income statements, assets, auditing) with precise bilingual translation"} }
+    ]
+  },
+  "ITEC 321": {
+    explain:{
+      ar:"كيف تصمم واجهة سهلة، مريحة، ومفهومة للمستخدم — لا بحدسك الشخصي، بل بدراسة سلوك المستخدم الحقيقي: كيف يفكر، أين يخطئ، ومتى يشعر بالإحباط أثناء استخدام تطبيق أو موقع.",
+      en:"How to design an easy, comfortable, and understandable interface for the user — not by personal intuition, but by studying real user behavior: how they think, where they make mistakes, and when they feel frustrated while using an app or website."
+    },
+    why:{
+      ar:"أفضل كود ممكن يكتب بلا معنى لو المستخدم ما فهم كيف يستخدمه — هذي المادة تعلّمك التفكير من زاوية \"من سيستخدم هذا\"، مهارة أساسية سواء صرت مطور واجهات أو حتى مبرمج خلفي.",
+      en:"The best possible code is meaningless if the user doesn't understand how to use it — this course teaches you to think from the angle of \"who will use this\", an essential skill whether you become a front-end developer or even a backend programmer."
+    },
+    resources:[
+      { title:{ar:"مقدمة في تفاعل الإنسان والحاسوب (يوتيوب، عربي، مجاني)", en:"Introduction to Human-Computer Interaction (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/watch?v=NPQAN4tuYFI", reason:{ar:"ملاحظة أمانة: فيديو واحد شامل (لا سلسلة كاملة)، لكنه يغطي بوضوح أساسيات تصميم الواجهات وسلوك المستخدم — نقطة انطلاق جيدة", en:"Honesty note: a single comprehensive video (not a full series), but it clearly covers interface design fundamentals and user behavior — a good starting point"} }
+    ]
+  },
+  "ENGL 401": {
+    explain:{
+      ar:"كيف تحلل نصًا أبعد من مجرد كلماته — السياق، النبرة، ما وراء السطور، وكيف تتغير اللغة حسب حالة الخطاب (رسمي، إعلاني، أدبي).",
+      en:"How to analyze a text beyond just its words — context, tone, what's between the lines, and how language changes based on the type of discourse (formal, advertising, literary)."
+    },
+    why:{
+      ar:"كمترجمة، فهم النص بعمق (لا فقط ترجمة كلماته حرفيًا) هو ما يميّز ترجمة احترافية عن ترجمة آلية — هذي المادة تبني بالضبط هذي المهارة التحليلية.",
+      en:"As a translator, understanding a text deeply (not just literally translating its words) is what distinguishes professional translation from machine translation — this course builds exactly this analytical skill."
+    },
+    resources:[
+      { title:{ar:"شرح مادة تحليل الخطاب (يوتيوب، لطلاب الفرقة الرابعة آداب وتربية إنجليزي، مجاني)", en:"Discourse Analysis Explained (YouTube, for 4th-year English literature/education students, Free)"}, url:"https://www.youtube.com/watch?v=0bkkqBdwfq0", reason:{ar:"موجّه تحديدًا لنفس مستواك الدراسي (السنة الرابعة، آداب وتربية إنجليزي)، لا شرح عام مبسّط", en:"Aimed specifically at your exact academic level (4th year, English literature/education), not a generic simplified explanation"} }
+    ]
+  },
+  "ENGL 402": {
+    explain:{
+      ar:"ترجمة الأدب (الرواية، الشعر، القصة) — التحدي الأصعب في الترجمة، لأن المطلوب ليس نقل المعنى فقط، بل الحفاظ على الجمال الفني والإحساس اللي يخلق تجربة القراءة الأصلية.",
+      en:"Translating literature (novels, poetry, short stories) — the hardest challenge in translation, because the goal isn't just transferring meaning, but preserving the artistic beauty and feeling that creates the original reading experience."
+    },
+    why:{
+      ar:"هذي المادة تفتح لك مجالًا مختلفًا تمامًا عن الترجمة التقنية أو القانونية — تحتاج ذوقًا أدبيًا وإبداعًا، لا دقة حرفية فقط، وهذا يميّز فئة خاصة من المترجمين المطلوبين في دور النشر.",
+      en:"This course opens a completely different field from technical or legal translation — it requires literary taste and creativity, not just literal precision, and this distinguishes a special class of translators sought by publishing houses."
+    },
+    resources:[
+      { title:{ar:"الترجمة الأدبية — المستوى الأول (عرض تقديمي، مجاني)", en:"Literary Translation — Level 1 (Presentation Slides, Free)"}, url:"https://www.slideshare.net/slideshow/literary-translation/14746806", reason:{ar:"ملاحظة أمانة: عرض شرائح تعليمي (لا فيديو)، لكنه يغطي بعمق حقيقي الفرق بين الأدب الشعري والنثري ومبادئ الترجمة الأدبية الأساسية", en:"Honesty note: an educational slide presentation (not video), but it covers in real depth the difference between poetic and prose literature and basic literary translation principles"} }
+    ]
+  },
+  "هصن346": {
+    explain:{
+      ar:"كيف يقارن المهندس بين حلول تقنية مختلفة من ناحية التكلفة الحقيقية — القيمة الزمنية للنقود (لماذا ريال اليوم يساوي أكثر من ريال بعد سنة)، والفائدة، وطرق مقارنة المشاريع اقتصاديًا.",
+      en:"How an engineer compares different technical solutions based on real cost — the time value of money (why a riyal today is worth more than a riyal a year from now), interest, and methods for economically comparing projects."
+    },
+    why:{
+      ar:"أفضل تصميم هندسي من الناحية الفنية قد يكون قرارًا سيئًا اقتصاديًا — هذي المادة تعطيك الأداة لتوازن بين الحل الأمثل تقنيًا والحل الأذكى اقتصاديًا، وهذا بالضبط ما يميّز مهندسًا عن مهندس ناجح تجاريًا.",
+      en:"The best technically-designed solution might be a poor economic decision — this course gives you the tool to balance the technically optimal solution with the economically smartest one, and that's exactly what distinguishes an engineer from a commercially successful one."
+    },
+    resources:[
+      { title:{ar:"شرح اقتصاد هندسي (يوتيوب، سلسلة أجزاء مترقمة، مجاني)", en:"Engineering Economy Explained (YouTube, numbered part series, Free)"}, url:"https://www.youtube.com/watch?v=VSpdUF9HGWU", reason:{ar:"ملاحظة أمانة: تحققت من الجزء الثالث من سلسلة مرقّمة (تدل على وجود أجزاء سابقة) — يغطي هذا الجزء تحديدًا مفاهيم أساسية في المقرر", en:"Honesty note: verified part 3 of a numbered series (implying earlier parts exist) — this specific part covers foundational course concepts"} }
+    ]
+  },
+  "COMP 323": {
+    explain:{
+      ar:"كيف تحمي البيانات والأنظمة من التهديدات الرقمية — أنواع الهجمات الإلكترونية (فيروسات، تصيّد احتيالي، اختراق)، وأدوات الحماية الأساسية: التشفير، كلمات المرور القوية، وسياسات الأمان.",
+      en:"How to protect data and systems from digital threats — types of cyberattacks (viruses, phishing, hacking), and fundamental protection tools: encryption, strong passwords, and security policies."
+    },
+    why:{
+      ar:"أي نظام تبرمجه لاحقًا (تطبيق، موقع، قاعدة بيانات) هدف مباشر للهجوم لو ما بنيته بوعي أمني — هذي المادة تخليك تفكر \"كيف يمكن اختراق هذا\" من البداية، لا بعد وقوع كارثة.",
+      en:"Any system you program later (an app, a website, a database) is a direct target for attack if you didn't build it with security awareness — this course makes you think \"how could this be hacked\" from the start, not after disaster strikes."
+    },
+    resources:[
+      { title:{ar:"دورة أمن المعلومات (معارف، ٢٨ درسًا، تقييم ٤.٥ من ١٦٤٤ تقييمًا، مجاني بشهادة)", en:"Information Security Course (M3aarf, 28 lessons, 4.5 rating from 1,644 reviews, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/33/%D8%A3%D9%85%D9%86-%D8%A7%D9%84%D9%85%D8%B9%D9%84%D9%88%D9%85%D8%A7%D8%AA-Information-Security-video", reason:{ar:"بـ١٥١٧٦ طالبًا مسجّلًا فعليًا وتقييمات حقيقية موثقة — يغطي أنواع التهديدات، أمن الملفات، والبرمجيات الخبيثة بترتيب منطقي", en:"With 15,176 students actually enrolled and real documented reviews — covers threat types, file security, and malware in logical order"} },
+      { title:{ar:"مقدمة في الأمن السيبراني (Cisco Networking Academy، عربي، مجاني)", en:"Introduction to Cybersecurity (Cisco Networking Academy, Arabic, Free)"}, url:"https://www.netacad.com/courses/introduction-to-cybersecurity?courseLang=ar-SA", reason:{ar:"من أكاديمية Cisco الرسمية، دربت أكثر من ٢٠ مليون متعلم منذ ١٩٩٧ — مصدر عالمي المستوى بدعم كامل للعربية", en:"From the official Cisco Academy, which has trained over 20 million learners since 1997 — a world-class source with full Arabic support"} }
+    ]
+  },
+  "COMP 333": {
+    explain:{
+      ar:"النظام الخفي اللي يشغّل جهازك بالكامل — كيف يدير المعالج بحيث يشغّل عدة برامج بنفس الوقت (رغم إنه فعليًا يبدّل بينها بسرعة خارقة)، وكيف يدير الذاكرة، والملفات، ويمنع البرامج من التصادم ببعضها.",
+      en:"The hidden system that runs your entire device — how it manages the processor to run multiple programs at once (even though it's actually switching between them at incredible speed), and how it manages memory, files, and prevents programs from colliding with each other."
+    },
+    why:{
+      ar:"فهم أنظمة التشغيل يخليك مبرمجًا يفهم \"وراء الكواليس\" — ليش برنامجك يبطئ، ليش يتعطل، وكيف يتعامل مع الذاكرة فعليًا — معرفة تميّزك بشكل واضح في أي مقابلة تقنية.",
+      en:"Understanding operating systems makes you a programmer who understands \"behind the scenes\" — why your program slows down, why it crashes, and how it actually handles memory — knowledge that clearly sets you apart in any technical interview."
+    },
+    resources:[
+      { title:{ar:"Operating Systems in Arabic (يوتيوب، ٦٠ محاضرة، مجاني)", en:"Operating Systems in Arabic (YouTube, 60 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLTr1xN4uMK5seRz6IO7Am9Zp2UKdnzO_n", reason:{ar:"سلسلة عربية شاملة جدًا (٦٠ محاضرة)، تستخدم المصطلحات الإنجليزية الأساسية جنبًا لجنب مع الشرح العربي — تجهزك لقراءة أي مرجع إنجليزي لاحقًا", en:"A very comprehensive Arabic series (60 lectures), using key English terms alongside the Arabic explanation — prepares you to read any English reference later"} }
+    ]
+  },
+  "STAT 311": {
+    explain:{
+      ar:"كيف تصف مجموعة بيانات كبيرة برقم أو رقمين مفيدين (المتوسط، الانحراف المعياري)، وكيف تحسب احتمال وقوع حدث معيّن بدقة رياضية، لا تخمينًا.",
+      en:"How to describe a large dataset with one or two useful numbers (the mean, standard deviation), and how to calculate the probability of an event occurring with mathematical precision, not guesswork."
+    },
+    why:{
+      ar:"أي بحث أو استبيان أو دراسة ميدانية تعملينها لاحقًا (حتى في الترجمة، لو درستِ اتجاهات استخدام مصطلح معيّن) تحتاج أدوات إحصائية بسيطة لتفسير النتائج بمصداقية، لا انطباعات شخصية.",
+      en:"Any research, survey, or field study you do later (even in translation, if you study trends in a certain term's usage) needs simple statistical tools to interpret results credibly, not personal impressions."
+    },
+    resources:[
+      { title:{ar:"مقدمة في الإحصاء ١٠١ (يوتيوب، ١١ محاضرة، مجاني)", en:"Intro to Statistics 101 (YouTube, 11 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLKEweXToqFyiksCT3fIl4gZLt3NJrdPjc", reason:{ar:"من كلية تقنية سعودية، بنفس رمز المقرر ١٠١ احصا — شرح عملي خطوة بخطوة، مناسب لمن ليس تخصصه رياضيات", en:"From a Saudi technical college, matching the exact course code 101-Stat — practical step-by-step explanation, suited for non-math majors"} }
+    ]
+  },
+  "همك315": {
+    explain:{
+      ar:"كيف تقيس كمية فيزيائية (حرارة، ضغط، اهتزاز، إزاحة) بدقة موثوقة — من أدوات قياس ميكانيكية بسيطة (الميكرومتر) إلى حساسات إلكترونية تحوّل القياس لإشارة كهربائية.",
+      en:"How to measure a physical quantity (temperature, pressure, vibration, displacement) with reliable precision — from simple mechanical measuring tools (micrometers) to electronic sensors that convert the measurement into an electrical signal."
+    },
+    why:{
+      ar:"كل مادة نظرية درستها (مقاومة المواد، الاهتزازات، انتقال الحرارة) تحتاج قياسًا فعليًا للتحقق منها في المختبر أو الواقع — بدون هذي المهارة، النظرية تبقى نظرية فقط.",
+      en:"Every theoretical course you studied (mechanics of materials, vibrations, heat transfer) needs actual measurement to verify it in the lab or reality — without this skill, theory stays just theory."
+    },
+    resources:[
+      { title:{ar:"القياسات والنواقل الميكانيكية (يوتيوب، سلسلة فصول كاملة، مجاني)", en:"Mechanical Measurements & Transducers (YouTube, complete chapter series, Free)"}, url:"https://www.youtube.com/watch?v=I8l_mopjyXs", reason:{ar:"من \"لجنة الميكانيك\"، مبادرة طلابية عريقة (منذ ٢٠٠٨) — سلسلة فصول كاملة (الفصل ١، ٢، ٤...) مع مراجعة أسئلة اختبارات نهائية حقيقية", en:"From \"Mechanical Committee\", a long-established student initiative (since 2008) — a complete chapter series (Chapter 1, 2, 4...) with real final exam question review"} }
+    ]
+  },
+  "COMP 315": {
+    explain:{
+      ar:"كيف تبني موقع ويب حقيقي من الصفر — هيكل الصفحة (HTML)، تنسيقها وتجميلها (CSS)، ثم إضافة التفاعل والحركة (JavaScript) اللي يجعل الموقع يستجيب لنقرات المستخدم فعليًا.",
+      en:"How to build a real website from scratch — page structure (HTML), styling and beautifying it (CSS), then adding interactivity and behavior (JavaScript) that makes the site actually respond to user clicks."
+    },
+    why:{
+      ar:"هذي المادة عملية بامتياز — تخرج منها بموقع حقيقي تقدر تعرضه، لا مجرد تمارين نظرية. مهارة الويب من أكثر المهارات طلبًا للعمل الحر والوظائف التقنية.",
+      en:"This course is highly practical — you leave it with a real website you can showcase, not just theoretical exercises. Web skills are among the most in-demand for freelance work and tech jobs."
+    },
+    connections:{ requires:[{ar:"البرمجة 2 (COMP 213)", en:"Programming 2 (COMP 213)"}] },
+    resources:[
+      { title:{ar:"دروس تعلم برمجة الويب من الصفر (يوتيوب، ٣٠ فيديو، مجاني)", en:"Learn Web Programming From Scratch (YouTube, 30 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PL7VOgFQ42C7e-lWJiV4QeqRg3GqCOgoab", reason:{ar:"سلسلة عربية تبدأ من جافاسكربت وHTML وCSS بترتيب عملي، مناسبة لمن يريد بناء موقع حقيقي خطوة بخطوة", en:"An Arabic series starting from JavaScript, HTML, and CSS in a practical order, suited for anyone who wants to build a real site step by step"} }
+    ]
+  },
+  "نجل357": {
+    explain:{
+      ar:"كتابة تقنية واضحة وموجزة — تقارير مشاريع، توثيق فني، ورسائل مهنية — بأسلوب يفهمه القارئ بسرعة، لا بأسلوب أدبي معقّد.",
+      en:"Clear, concise technical writing — project reports, technical documentation, and professional communications — in a style the reader understands quickly, not complex literary prose."
+    },
+    why:{
+      ar:"مهندس يعرف يصمم لكن ما يعرف يشرح تصميمه بوضوح لفريقه أو عميله يفقد نصف قيمته — هذي المادة تبني المهارة اللي تكمّل خبرتك التقنية، لا تنافسها.",
+      en:"An engineer who knows how to design but can't clearly explain their design to their team or client loses half their value — this course builds the skill that complements your technical expertise, not competes with it."
+    },
+    resources:[
+      { title:{ar:"دورات الكتابة التقنية من Google (إنجليزي، مجاني بالكامل)", en:"Google's Technical Writing Courses (English, Completely Free)"}, url:"https://developers.google.com/tech-writing", reason:{ar:"ملاحظة أمانة: بالإنجليزي، وأمثلتها موجّهة لمهندسي البرمجيات تحديدًا — لكن مبادئ الوضوح والإيجاز اللي تعلّمها عالمية تنطبق على أي كتابة تقنية هندسية. من مصدر رسمي موثوق (Google)، مجاني بالكامل", en:"Honesty note: in English, with examples aimed specifically at software engineers — but the clarity and conciseness principles it teaches are universal and apply to any engineering technical writing. From a trusted official source (Google), completely free"} }
+    ]
+  },
+  "SLM 102": {
+    explain:{
+      ar:"استكمال أعمق للثقافة الإسلامية — من التعريف بأصولها في المستوى الأول، إلى قضايا معاصرة حقيقية: كيف يتعامل الإسلام مع الفكر الآخر، والتحديات الفكرية اللي يواجهها أي شاب مسلم اليوم.",
+      en:"A deeper continuation of Islamic culture — from defining its foundations in Level 1, to real contemporary issues: how Islam engages with other thought, and the intellectual challenges any young Muslim faces today."
+    },
+    why:{
+      ar:"هذا المقرر يبني وعيًا فكريًا ناضجًا يواجه به الشبهات والتيارات المختلفة اللي تواجهك في الجامعة والحياة، لا مجرد معلومات نظرية تُحفظ للاختبار.",
+      en:"This course builds mature intellectual awareness to face the doubts and different currents you'll encounter in university and life, not just theoretical information memorized for a test."
+    },
+    connections:{ requires:[{ar:"الثقافة الإسلامية 1 (SLM 101)", en:"Islamic Culture 1 (SLM 101)"}] },
+    resources:[
+      { title:{ar:"مقرر الثقافة الإسلامية 2 (جامعة تبوك، مجاني)", en:"Islamic Culture 2 Course (Tabuk University, Free)"}, url:"https://www.youtube.com/playlist?list=PLIFDJj6eIeVW2aTdgthal6nQQ4zfsCFax", reason:{ar:"إنتاج رسمي من عمادة التعلم الإلكتروني بجامعة تبوك، بنفس رمز المقرر ISLS 201 — محتوى أكاديمي موثوق مطابق تمامًا", en:"Official production from Tabuk University's E-Learning Deanship, matching the exact course code ISLS 201 — trustworthy academic content that matches precisely"} }
+    ]
+  },
+  "همك373": {
+    explain:{
+      ar:"دراسة رياضية لماذا وكيف تهتز الأنظمة الميكانيكية — من اهتزاز حر بسيط (كتلة ونابض) إلى اهتزاز قسري بفعل قوة خارجية، وأخطر حالة على الإطلاق: الرنين، حين يهتز النظام بعنف عند تردد معين.",
+      en:"A mathematical study of why and how mechanical systems vibrate — from simple free vibration (mass-spring) to forced vibration from an external force, and the most dangerous case of all: resonance, when a system vibrates violently at a specific frequency."
+    },
+    why:{
+      ar:"الرنين تحديدًا سبب انهيارات هندسية حقيقية موثقة (جسور، مبانٍ) — فهم هذي المادة يحميك من كارثة تصميمية حقيقية، لا مجرد معادلات نظرية.",
+      en:"Resonance specifically has caused real documented engineering collapses (bridges, buildings) — understanding this course protects you from a real design catastrophe, not just theoretical equations."
+    },
+    connections:{ requires:[{ar:"مقاومة المواد (همك263)", en:"Mechanics of Materials (همك263)"}] },
+    resources:[
+      { title:{ar:"الاهتزازات الميكانيكية (يوتيوب، ١٦ محاضرة، مجاني)", en:"Mechanical Vibrations (YouTube, 16 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PL5P9-IPjYzZ76w1y6uNAB59SFRDUpVNuS", reason:{ar:"كورس متكامل وفق المنهج الجامعي، يغطي الاهتزاز الحر والمخمّد والقسري بترتيب منطقي متدرج", en:"A complete course following the university curriculum, covering free, damped, and forced vibration in logical progressive order"} }
+    ]
+  },
+  "همك314": {
+    explain:{
+      ar:"كيف تنتقل الحرارة فعليًا بين ثلاث طرق مختلفة تمامًا: التوصيل (عبر مادة صلبة)، الحمل (عبر سائل أو غاز متحرك)، والإشعاع (بلا وسيط مادي أصلًا) — وكيف تحسب كمية الحرارة المنتقلة بكل طريقة.",
+      en:"How heat actually transfers through three completely different methods: conduction (through a solid), convection (through moving fluid or gas), and radiation (with no medium at all) — and how to calculate the amount of heat transferred by each method."
+    },
+    why:{
+      ar:"أي نظام تبريد أو تدفئة أو عزل حراري تصممه لاحقًا في مسيرتك المهنية يعتمد على فهم هذي الطرق الثلاث بدقة — من مبادل حراري بسيط إلى نظام تكييف كامل.",
+      en:"Any cooling, heating, or thermal insulation system you design later in your career depends on precisely understanding these three methods — from a simple heat exchanger to a full HVAC system."
+    },
+    resources:[
+      { title:{ar:"أساسيات انتقال الحرارة (معارف، ١١ درسًا، مجاني بشهادة)", en:"Heat Transfer Basics (M3aarf, 11 lessons, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/22140/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-%D8%A7%D9%86%D8%AA%D9%82%D8%A7%D9%84-%D8%A7%D9%84%D8%AD%D8%B1%D8%A7%D8%B1%D8%A9-video", reason:{ar:"يغطي بالضبط قانون فورييه للتوصيل، وقانون نيوتن للحمل، وقانون ستيفان بولتزمان للإشعاع — الثلاثة قوانين الأساسية للمادة بالضبط", en:"Covers exactly Fourier's law of conduction, Newton's law of convection, and the Stefan-Boltzmann law of radiation — the course's three fundamental laws precisely"} }
+    ]
+  },
+  "همك364": {
+    explain:{
+      ar:"استكمال علم المواد بمنظور هندسي تطبيقي — كيف تختار المادة الصحيحة لتطبيق معيّن (لماذا الألومنيوم للطائرات لا الحديد؟)، والمعالجات الحرارية اللي تغيّر خواص المعدن دون تغيير تركيبه الكيميائي.",
+      en:"A continuation of materials science with an applied engineering lens — how to choose the right material for a specific application (why aluminum for aircraft, not steel?), and heat treatments that change a metal's properties without changing its chemical composition."
+    },
+    why:{
+      ar:"قرار اختيار المادة في أي تصميم هندسي حقيقي يوازن بين القوة والوزن والتكلفة ومقاومة التآكل — هذي المادة تبني عندك هذا الحكم الهندسي، لا مجرد حفظ جدول خواص.",
+      en:"The material-selection decision in any real engineering design balances strength, weight, cost, and corrosion resistance — this course builds that engineering judgment in you, not just memorizing a properties table."
+    },
+    connections:{ requires:[{ar:"علم المواد (همك261)", en:"Materials Science (همك261)"}] },
+    resources:[
+      { title:{ar:"المواد الهندسية (يوتيوب، ١٠ محاضرات كاملة، مجاني)", en:"Engineering Materials (YouTube, 10 full lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLNBj23z192s94scYT8grEg05qD9T5t9AB", reason:{ar:"محاضرات عربية كاملة مخصصة لمادة المواد الهندسية تحديدًا، تكمّل مباشرة ما بدأته في علم المواد", en:"Complete Arabic lectures dedicated specifically to the Engineering Materials course, directly continuing what you started in Materials Science"} }
+    ]
+  },
+  "COMP 107": {
+    explain:{
+      ar:"إتقان برامج المكتب الأساسية (Word، Excel، PowerPoint) بمستوى احترافي — من الكتابة والتنسيق، لجداول البيانات والمعادلات، لتصميم عروض تقديمية مقنعة.",
+      en:"Mastering the core office programs (Word, Excel, PowerPoint) at a professional level — from writing and formatting, to spreadsheets and formulas, to designing convincing presentations."
+    },
+    why:{
+      ar:"كمترجمة، أغلب عملك سيُسلَّم كملف Word منسّق باحترافية — وأي عرض تقديمي لمشروع تخرج أو مقابلة عمل يحتاج PowerPoint إتقانًا حقيقيًا، لا أساسيات فقط.",
+      en:"As a translator, most of your work will be delivered as a professionally formatted Word file — and any graduation project or job interview presentation needs real PowerPoint mastery, not just basics."
+    },
+    resources:[
+      { title:{ar:"كورس إكسل شامل من الصفر للاحتراف (يوتيوب، ١٠٠ فيديو، مجاني)", en:"Comprehensive Excel Course From Scratch (YouTube, 100 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PLZZaSsse59ub0PaFmc-fwkXSNkTz5ePuy", reason:{ar:"ملاحظة أمانة: يغطي بعمق حقيقي جزء Excel من المقرر تحديدًا (١٠٠ فيديو متدرج) — لا Word وPowerPoint. مصدر ممتاز لهذا الجزء تحديدًا", en:"Honesty note: covers in real depth specifically the Excel part of the course (100 progressive videos) — not Word and PowerPoint. An excellent resource for this specific part"} }
+    ]
+  },
+  "ENG 102": {
+    explain:{
+      ar:"استكمال طبيعي للمستوى الأول — تعميق القواعد والمفردات، مع تدريب أكبر على القراءة والكتابة الأكاديمية بالإنجليزي، تحضيرًا لمراجع مقررات الحاسب اللي كلها تقريبًا إنجليزي.",
+      en:"A natural continuation of Level 1 — deepening grammar and vocabulary, with more practice in academic reading and writing in English, preparing you for CS course references which are almost all in English."
+    },
+    why:{
+      ar:"كل مقرر برمجة قادم سيرميك بمصطلحات ورسائل خطأ بالإنجليزي — كل مستوى تتقنه هنا يقلل وقت الحيرة هناك.",
+      en:"Every upcoming programming course will hit you with English terms and error messages — every level you master here reduces confusion time there."
+    },
+    resources:[
+      { title:{ar:"تعلم الإنجليزية — المستوى الثاني (يوتيوب، ٤٠ فيديو، عربي)", en:"Learn English — Level 2 (YouTube, 40 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLWXso7v6nBWtKbyc1W7x-ZBDG10K1AdS1", reason:{ar:"سلسلة عربية كاملة ومجانية، مصممة كاستكمال مباشر لمن أنهى المستوى الأول — شرح منظم كأنك في معهد فعلي", en:"A complete, free Arabic series designed as a direct continuation for those who finished Level 1 — organized like an actual institute course"} }
+    ]
+  },
   "كيم106": {
     explain:{
       ar:"أساسيات بنية المادة — الذرة، الجدول الدوري، التوزيع الإلكتروني، وكيف ترتبط الذرات ببعضها لتكوّن كل المواد اللي حولك، من المعادن اللي ستصممها لاحقًا إلى الهواء اللي تتنفسه.",
@@ -5137,6 +5432,99 @@ function buildBridgeCablesSvg(count){
   const lightsHtml = lights.map(l=>`<span class="cable-light" style="left:${l.x}%; top:${l.yPct}%; animation-delay:${l.delay}s;"></span>`).join("");
   return svg + lightsHtml;
 }
+/* The full major "library" — every course across every level, organized
+   the way the parent asked for: by semester/level, so the family can see
+   the whole landscape at a glance, not just courses they've added so far. */
+function renderCourseLibrary(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const student = StudentModule.current();
+  const catalogKey = catalogKeyFor(student);
+  const catalog = COURSE_CATALOG[catalogKey];
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="libraryBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.libraryTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.librarySub}</p>
+        ${!catalog ? `
+        <div class="empty-state">
+          <div class="empty-icon">${ICON.openBook}</div>
+          <div class="empty-title">${s.libraryNoCatalogTitle}</div>
+          <p class="empty-text">${s.libraryNoCatalogText}</p>
+        </div>` : LEVELS.filter(lv=>catalog[lv.id] && catalog[lv.id].length).map(lv=>{
+          const courses = catalog[lv.id];
+          const enrichedCount = courses.filter(c=>Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k))).length;
+          return `
+          <div style="margin-bottom:var(--sp-5);">
+            <div class="section-label" style="display:flex; align-items:center; justify-content:space-between; margin-top:0;">
+              <span>${lv[l]}</span>
+              <span class="type-caption" style="color:var(--ink-muted);">${enrichedCount}/${courses.length}</span>
+            </div>
+            <div class="stack">
+              ${courses.map(c=>{
+                const code = c.split(" - ")[0].trim();
+                const name = c.split(" - ").slice(1).join(" - ") || c;
+                const isEnriched = !!Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k));
+                return `
+                <button type="button" class="card" data-library-course="${escapeHtml(c)}" style="${isEnriched?'':'opacity:.72;'}">
+                  <span class="card-icon" style="${isEnriched?'':'color:var(--ink-muted); background:var(--surface);'}">${isEnriched ? ICON.check : ICON.openBook}</span>
+                  <span class="card-body">
+                    <span class="card-title">${escapeHtml(name)}</span>
+                    <span class="card-meta">${code} · ${isEnriched ? s.libraryEnrichedLabel : s.libraryNotYetLabel}</span>
+                  </span>
+                  <span class="card-chevron">${chevronFwd()}</span>
+                </button>`;
+              }).join("")}
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+    </section>
+  `;
+  document.getElementById("libraryBack").addEventListener("click", ()=>{ renderJourney(); });
+  document.querySelectorAll("[data-library-course]").forEach(card=>{
+    card.addEventListener("click", ()=>{ openLibraryCoursePreview(card.dataset.libraryCourse); });
+  });
+}
+function openLibraryCoursePreview(catalogString){
+  const s = t();
+  const l = lang();
+  const code = catalogString.split(" - ")[0].trim();
+  const name = catalogString.split(" - ").slice(1).join(" - ") || catalogString;
+  const enrichmentKey = Object.keys(COURSE_ENRICHMENT).find(k=>catalogString.trim().startsWith(k));
+  const enrichment = enrichmentKey ? COURSE_ENRICHMENT[enrichmentKey] : null;
+
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet" style="max-height:80vh; overflow-y:auto;">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${escapeHtml(name)}</div>
+      ${enrichment ? `
+        <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[l])}</p>
+        <p class="type-body" style="color:var(--ink-muted); font-size:var(--fs-caption); margin-bottom:var(--sp-3);"><strong>${s.enrichmentWhyLabel}</strong> ${escapeHtml(enrichment.why[l])}</p>
+        ${enrichment.resources ? enrichment.resources.map(r=>`
+          <a href="${r.url}" target="_blank" rel="noopener" style="display:block; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--surface); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.07);">
+            <div class="type-body" style="font-weight:700; color:var(--accent);">${escapeHtml(r.title[l])} ↗</div>
+          </a>
+        `).join("") : ""}
+      ` : `
+      <div class="empty-state" style="padding:var(--sp-4) 0;">
+        <div class="empty-icon">${ICON.openBook}</div>
+        <p class="empty-text">${s.libraryPreviewEmptyText}</p>
+      </div>`}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
+  function close(){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); }, 300); }
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+}
 function renderJourney(){
   applyDir();
   const s = t();
@@ -5170,7 +5558,10 @@ function renderJourney(){
 
   app.innerHTML = `
     <section class="screen">
-      <div class="screen-header"><div class="screen-header-title">${s.journeyTitle}</div></div>
+      <div class="screen-header">
+        <div class="screen-header-title">${s.journeyTitle}</div>
+        <button type="button" class="btn-icon" id="openLibraryBtn" aria-label="${s.libraryTitle}">${ICON.openBook}</button>
+      </div>
       <div class="screen-content">
         ${bodyHtml}
       </div>
@@ -5178,6 +5569,8 @@ function renderJourney(){
     </section>
   `;
   wireTabBar();
+  const libBtn = document.getElementById("openLibraryBtn");
+  if(libBtn) libBtn.addEventListener("click", ()=>{ renderCourseLibrary(); });
   document.querySelectorAll("[data-semester-id]").forEach(card=>{
     card.addEventListener("click", ()=>{
       const sem = dbGet("semesters", card.dataset.semesterId);
