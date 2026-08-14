@@ -303,6 +303,16 @@ ul,ol{ list-style:none; }
   background:rgba(var(--accent-rgb),.85); color:#1A1305;
 }
 .skill-tile-viewed svg{ width:10px; height:10px; }
+.level-chip{
+  flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:2px;
+  min-width:52px; padding:8px 6px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:var(--r-sm);
+  color:var(--ink-muted); transition:transform 180ms var(--ease-spring), background 200ms var(--ease), color 200ms var(--ease);
+}
+.level-chip:active{ transform:scale(.94); }
+.level-chip-active{ background:rgba(var(--accent-rgb),.16); border-color:rgba(var(--accent-rgb),.4); color:var(--accent); }
+.level-chip-num{ font-size:var(--fs-subheading); font-weight:700; }
+.level-chip-count{ font-size:10px; opacity:.8; }
 .skill-tile-icon{
   width:32px; height:32px; border-radius:var(--r-sm); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
@@ -1361,6 +1371,19 @@ const COURSE_CATALOG = {
    in COURSE_CATALOG entries (e.g. "COMP 111"). Built incrementally, course by
    course, across sessions — see project notes for progress. */
 const COURSE_ENRICHMENT = {
+  "COMP 324": {
+    explain:{
+      ar:"سؤال نظري عميق: ما الذي يقدر الحاسوب يحسبه أصلًا، وما الذي لا يقدر عليه أبدًا مهما تطورت التقنية؟ تدرس آلات نظرية مبسّطة (الأتمتة، آلة تورنغ) لفهم حدود الحوسبة نفسها.",
+      en:"A deep theoretical question: what can a computer actually compute, and what can it never compute no matter how technology advances? You study simplified theoretical machines (automata, Turing machines) to understand the limits of computation itself."
+    },
+    why:{
+      ar:"هذي المادة تبني عندك تفكيرًا رياضيًا مجردًا يفيدك في تصميم أي خوارزمية أو لغة برمجة لاحقًا — أساس نظري خلف كل شيء عملي تعلّمته في مواد البرمجة.",
+      en:"This course builds abstract mathematical thinking that benefits you in designing any algorithm or programming language later — a theoretical foundation behind everything practical you've learned in programming courses."
+    },
+    resources:[
+      { title:{ar:"مبادئ نظرية الحوسبة (كتاب، ٣٥ صفحة، مجاني)", en:"Principles of Theory of Computation (Book, 35 pages, Free)"}, url:"https://www.noor-book.com/en/ebook-%D9%85%D8%A8%D8%A7%D8%AF%D8%A6-%D9%86%D8%B8%D8%B1%D9%8A%D9%87-%D8%A7%D9%84%D8%AD%D9%88%D8%B3%D8%A8%D9%87-Theory-of-Computation--pdf", reason:{ar:"ملاحظة أمانة: كتاب مكثّف (لا فيديو) كتبه د. أيمن حمارشه تحديدًا لسد فجوة حقيقية — قلة المصادر العربية في هذا الموضوع النظري تحديدًا، بترخيص إتاحة حر", en:"Honesty note: a concise book (not video) written by Dr. Ayman Hamarsheh specifically to fill a real gap — the scarcity of Arabic resources on this specific theoretical topic, under a free-access license"} }
+    ]
+  },
   "ARAB 306": {
     explain:{
       ar:"تطبيقات عملية لعلم الأسلوب — كيف تحلل نصًا لتكتشف بصمة الكاتب الفريدة: اختياراته اللغوية، طول جمله، تكرار كلماته — لا مجرد وصف نظري للأسلوب.",
@@ -3894,6 +3917,7 @@ const RecommendationEngine = {
    ============================================================ */
 const app = document.getElementById("app");
 let activeTab = "today";
+let libraryActiveLevel = null;
 
 function t(){ const s = StudentModule.current(); return STR[s ? s.lang : "ar"]; }
 function lang(){ const s = StudentModule.current(); return s ? s.lang : "ar"; }
@@ -5470,51 +5494,71 @@ function renderCourseLibrary(){
   const student = StudentModule.current();
   const catalogKey = catalogKeyFor(student);
   const catalog = COURSE_CATALOG[catalogKey];
+  const availableLevels = catalog ? LEVELS.filter(lv=>catalog[lv.id] && catalog[lv.id].length) : [];
+
+  if(!libraryActiveLevel || !availableLevels.find(lv=>lv.id===libraryActiveLevel)){
+    const currentLevelId = levelIdForLabel(student && student.level);
+    libraryActiveLevel = (currentLevelId && availableLevels.find(lv=>lv.id===currentLevelId)) ? currentLevelId : (availableLevels[0] && availableLevels[0].id);
+  }
+
+  const currentCourses = catalog && libraryActiveLevel ? catalog[libraryActiveLevel] : [];
 
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
         <div class="screen-header-title">${s.libraryTitle}</div>
       </div>
-      <div class="screen-content">
-        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.librarySub}</p>
+      <div class="screen-content" style="padding-inline-start:0; padding-inline-end:0;">
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-3); padding-inline:var(--sp-4);">${s.librarySub}</p>
         ${!catalog ? `
-        <div class="empty-state">
+        <div class="empty-state" style="padding-inline:var(--sp-4);">
           <div class="empty-icon">${ICON.openBook}</div>
           <div class="empty-title">${s.libraryNoCatalogTitle}</div>
           <p class="empty-text">${s.libraryNoCatalogText}</p>
-        </div>` : LEVELS.filter(lv=>catalog[lv.id] && catalog[lv.id].length).map(lv=>{
-          const courses = catalog[lv.id];
-          const enrichedCount = courses.filter(c=>Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k))).length;
-          return `
-          <div style="margin-bottom:var(--sp-5);">
-            <div class="section-label" style="display:flex; align-items:center; justify-content:space-between; margin-top:0;">
-              <span>${lv[l]}</span>
-              <span class="type-caption" style="color:var(--ink-muted);">${enrichedCount}/${courses.length}</span>
-            </div>
-            <div class="stack">
-              ${courses.map(c=>{
-                const code = c.split(" - ")[0].trim();
-                const name = c.split(" - ").slice(1).join(" - ") || c;
-                const isEnriched = !!Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k));
-                return `
-                <button type="button" class="card" data-library-course="${escapeHtml(c)}" style="${isEnriched?'':'opacity:.72;'}">
-                  <span class="card-icon" style="${isEnriched?'':'color:var(--ink-muted); background:var(--surface);'}">${isEnriched ? ICON.check : ICON.openBook}</span>
-                  <span class="card-body">
-                    <span class="card-title">${escapeHtml(name)}</span>
-                    <span class="card-meta">${code} · ${isEnriched ? s.libraryEnrichedLabel : s.libraryNotYetLabel}</span>
-                  </span>
-                  <span class="card-chevron">${chevronFwd()}</span>
-                </button>`;
-              }).join("")}
-            </div>
-          </div>`;
-        }).join("")}
+        </div>` : `
+        <div style="display:flex; gap:8px; overflow-x:auto; padding:2px var(--sp-4) var(--sp-4); -webkit-overflow-scrolling:touch;">
+          ${availableLevels.map(lv=>{
+            const courses = catalog[lv.id];
+            const enrichedCount = courses.filter(c=>Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k))).length;
+            const isActive = lv.id===libraryActiveLevel;
+            return `
+            <button type="button" class="level-chip ${isActive?'level-chip-active':''}" data-library-level="${lv.id}">
+              <span class="level-chip-num">${lv.id.replace('l','')}</span>
+              <span class="level-chip-count">${enrichedCount}/${courses.length}</span>
+            </button>`;
+          }).join("")}
+        </div>
+        <div style="padding-inline:var(--sp-4);">
+          <div class="section-label" style="margin-top:0;">${availableLevels.find(lv=>lv.id===libraryActiveLevel) ? availableLevels.find(lv=>lv.id===libraryActiveLevel)[l] : ''}</div>
+          <div class="stack" id="libraryCourseList">
+            ${currentCourses.map(c=>{
+              const code = c.split(" - ")[0].trim();
+              const name = c.split(" - ").slice(1).join(" - ") || c;
+              const isEnriched = !!Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k));
+              return `
+              <button type="button" class="card" data-library-course="${escapeHtml(c)}" style="${isEnriched?'':'opacity:.72;'}">
+                <span class="card-icon" style="${isEnriched?'':'color:var(--ink-muted); background:var(--surface);'}">${isEnriched ? ICON.check : ICON.openBook}</span>
+                <span class="card-body">
+                  <span class="card-title">${escapeHtml(name)}</span>
+                  <span class="card-meta">${code} · ${isEnriched ? s.libraryEnrichedLabel : s.libraryNotYetLabel}</span>
+                </span>
+                <span class="card-chevron">${chevronFwd()}</span>
+              </button>`;
+            }).join("")}
+          </div>
+        </div>`}
       </div>
       ${renderTabBar("library")}
     </section>
   `;
   wireTabBar();
+  document.querySelectorAll("[data-library-level]").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      if(chip.dataset.libraryLevel === libraryActiveLevel) return;
+      libraryActiveLevel = chip.dataset.libraryLevel;
+      renderCourseLibrary();
+    });
+  });
   document.querySelectorAll("[data-library-course]").forEach(card=>{
     card.addEventListener("click", ()=>{ openLibraryCoursePreview(card.dataset.libraryCourse); });
   });
@@ -5870,16 +5914,18 @@ function unarchiveSkill(skillId){
   if(DB.archivedSkills) delete DB.archivedSkills[skillId];
   dbSave();
 }
-function skillTile(sk, l){
+function skillTileBig(sk, l){
   const viewed = isSkillViewed(sk.id);
   return `
-    <button type="button" class="skill-tile" data-skill-id="${sk.id}">
+    <button type="button" class="skill-tile" data-skill-id="${sk.id}" style="min-height:128px; padding:var(--sp-4) var(--sp-2);">
       ${viewed ? `<span class="skill-tile-viewed" aria-label="viewed">${ICON.check}</span>` : ""}
-      <span class="skill-tile-icon">${ICON[sk.icon]}</span>
-      <span class="skill-tile-title">${escapeHtml(sk.title[l])}</span>
+      <span class="skill-tile-icon" style="width:40px; height:40px;">${ICON[sk.icon]}</span>
+      <span class="skill-tile-title" style="font-size:var(--fs-body); line-height:1.4;">${escapeHtml(sk.title[l])}</span>
     </button>`;
 }
 let skillsHubTab = "specific";
+let skillsHubPage = 0;
+const SKILLS_PER_PAGE = 4;
 function renderSkillsHub(){
   applyDir();
   const s = t();
@@ -5889,8 +5935,13 @@ function renderSkillsHub(){
   const specificSkills = SKILLS.filter(sk=> sk.scope && sk.scope.type!=="universal" && skillAppliesToStudent(sk, student) && !isSkillArchived(sk.id));
   const hasSpecific = specificSkills.length > 0;
   if(!hasSpecific) skillsHubTab = "universal";
-  const activeSkills = skillsHubTab==="specific" ? specificSkills : universalSkills;
   const showGlossary = skillsHubTab==="universal";
+  // The glossary entry rides along as a virtual extra tile so it always gets its own place in the pagination, not just appended after
+  const activeSkills = skillsHubTab==="specific" ? specificSkills : (showGlossary ? [...universalSkills, {id:"__glossary__"}] : universalSkills);
+  const totalPages = Math.max(1, Math.ceil(activeSkills.length / SKILLS_PER_PAGE));
+  if(skillsHubPage >= totalPages) skillsHubPage = totalPages - 1;
+  if(skillsHubPage < 0) skillsHubPage = 0;
+  const pageSkills = activeSkills.slice(skillsHubPage*SKILLS_PER_PAGE, skillsHubPage*SKILLS_PER_PAGE + SKILLS_PER_PAGE);
   const archivedCount = Object.keys(DB.archivedSkills || {}).length;
 
   app.innerHTML = `
@@ -5900,17 +5951,23 @@ function renderSkillsHub(){
       </div>
       <div class="screen-content">
         ${hasSpecific ? `
-        <div class="segmented">
+        <div class="segmented" style="margin-bottom:var(--sp-3);">
           <button type="button" class="segmented-btn ${skillsHubTab==='specific'?'segmented-active':''}" id="tabSpecific">${s.skillsSpecificLabel}</button>
           <button type="button" class="segmented-btn ${skillsHubTab==='universal'?'segmented-active':''}" id="tabUniversal">${s.skillsUniversalLabel}</button>
         </div>` : ""}
-        <div class="skill-grid">
-          ${activeSkills.map(sk=>skillTile(sk,l)).join("")}
-          ${showGlossary ? `
-          <button type="button" class="skill-tile" id="glossaryEntry">
-            <span class="skill-tile-icon">${ICON.openBook}</span>
-            <span class="skill-tile-title">${s.glossaryEntryLabel}</span>
-          </button>` : ""}
+        ${totalPages > 1 ? `
+        <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:var(--sp-3); -webkit-overflow-scrolling:touch;">
+          ${Array.from({length:totalPages}, (_,i)=>i).map(i=>`
+            <button type="button" class="level-chip ${i===skillsHubPage?'level-chip-active':''}" data-skills-page="${i}" style="min-width:44px;">
+              <span class="level-chip-num">${i+1}</span>
+            </button>
+          `).join("")}
+        </div>` : ""}
+        <div class="skill-grid" style="grid-template-columns:1fr 1fr;">
+          ${pageSkills.map(sk=> sk.id==="__glossary__"
+            ? `<button type="button" class="skill-tile" id="glossaryEntry" style="min-height:128px;"><span class="skill-tile-icon">${ICON.openBook}</span><span class="skill-tile-title">${s.glossaryEntryLabel}</span></button>`
+            : skillTileBig(sk,l)
+          ).join("")}
         </div>
         ${archivedCount > 0 ? `
         <button type="button" class="type-caption" id="skillsArchiveEntry" style="display:block; margin:var(--sp-4) auto 0; background:none; border:none; text-decoration:underline; color:var(--ink-muted);">${s.skillsArchiveLabel(archivedCount)}</button>` : ""}
@@ -5925,8 +5982,16 @@ function renderSkillsHub(){
   if(archiveBtn) archiveBtn.addEventListener("click", ()=>{ renderSkillsArchive(); });
   const tabSpecific = document.getElementById("tabSpecific");
   const tabUniversal = document.getElementById("tabUniversal");
-  if(tabSpecific) tabSpecific.addEventListener("click", ()=>{ skillsHubTab="specific"; renderSkillsHub(); });
-  if(tabUniversal) tabUniversal.addEventListener("click", ()=>{ skillsHubTab="universal"; renderSkillsHub(); });
+  if(tabSpecific) tabSpecific.addEventListener("click", ()=>{ skillsHubTab="specific"; skillsHubPage=0; renderSkillsHub(); });
+  if(tabUniversal) tabUniversal.addEventListener("click", ()=>{ skillsHubTab="universal"; skillsHubPage=0; renderSkillsHub(); });
+  document.querySelectorAll("[data-skills-page]").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      const p = parseInt(chip.dataset.skillsPage, 10);
+      if(p === skillsHubPage) return;
+      skillsHubPage = p;
+      renderSkillsHub();
+    });
+  });
   document.querySelectorAll("[data-skill-id]").forEach(card=>{
     card.addEventListener("click", ()=>{ renderSkillDetail(card.dataset.skillId); });
   });
