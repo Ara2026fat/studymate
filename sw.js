@@ -20,7 +20,7 @@
    behavior, since this is a single-file app and it barely matters there.
 */
 
-const CACHE_NAME = "studymate-shell-v2";
+const CACHE_NAME = "studymate-shell-v3";
 const APP_SHELL = ["./", "./index.html"];
 
 self.addEventListener("install", (event) => {
