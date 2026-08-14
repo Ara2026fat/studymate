@@ -817,6 +817,8 @@ const STR = {
     libraryEnrichedLabel:"جاهزة",
     libraryNotYetLabel:"لسا ما وصلنا لها",
     libraryPreviewEmptyText:"لسا ما وصلنا لهذي المادة بالبحث — نعمل على إثرائها في الجولات القادمة.",
+    refGlossarySearchPh:"ابحث عن مصطلح...",
+    refGlossaryNoResults:"ما لقينا مصطلحًا يطابق بحثك.",
     printNotebookGeneratedOn:"وُلّد بتاريخ",
     notebookNotesPlaceholder:"دوّن ملخصك للمحاضرة، أو أي شيء تحب ترجع له لاحقًا...",
     notebookSaveNotesBtn:"حفظ الملاحظات",
@@ -1093,6 +1095,8 @@ const STR = {
     libraryEnrichedLabel:"Ready",
     libraryNotYetLabel:"Not reached yet",
     libraryPreviewEmptyText:"We haven't reached this course in our research yet — working on enriching it in upcoming rounds.",
+    refGlossarySearchPh:"Search for a term...",
+    refGlossaryNoResults:"No terms match your search.",
     printNotebookGeneratedOn:"Generated on",
     notebookNotesPlaceholder:"Write your lecture summary, or anything you'd like to come back to later...",
     notebookSaveNotesBtn:"Save Notes",
@@ -3918,6 +3922,7 @@ const RecommendationEngine = {
 const app = document.getElementById("app");
 let activeTab = "today";
 let libraryActiveLevel = null;
+let skillDetailActiveSection = "tips";
 
 function t(){ const s = StudentModule.current(); return STR[s ? s.lang : "ar"]; }
 function lang(){ const s = StudentModule.current(); return s ? s.lang : "ar"; }
@@ -6054,6 +6059,37 @@ function renderSkillDetail(skillId){
   const currentPhaseIndex = currentLevelId ? skill.phaseLevels.findIndex(levels=>levels.indexOf(currentLevelId)!==-1) : -1;
 
   const isArchived = isSkillArchived(skillId);
+  if(!["tips","mistake","exercise"].includes(skillDetailActiveSection)) skillDetailActiveSection = "tips";
+
+  const sectionsHtml = {
+    tips: `
+      <div class="callout" style="margin-bottom:0;">
+        <div class="callout-label">${s.tipsLabel}</div>
+        <div class="tip-list">
+          ${skill.tips[l].map((tip,i)=>{
+            const isCurrent = i===currentPhaseIndex;
+            const isRoadmap = !!skill.phaseLevels;
+            const marker = isRoadmap
+              ? `<span class="waypoint-marker ${isCurrent?'waypoint-marker-current':''}">${i+1}</span>`
+              : `<span class="tip-bullet"></span>`;
+            return `<div class="tip-row ${isCurrent?'tip-row-current':''}">
+              ${marker}
+              <span class="type-body">${isCurrent?`<strong>${s.youAreHereLabel}</strong> — `:''}${escapeHtml(tip)}</span>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>`,
+    mistake: `
+      <div class="callout" style="background:var(--attention-soft); margin-bottom:0;">
+        <div class="callout-label" style="color:var(--attention);">${s.mistakeLabel}</div>
+        <p class="type-body">${escapeHtml(skill.mistake[l])}</p>
+      </div>`,
+    exercise: `
+      <div class="callout" style="background:var(--accent-soft); margin-bottom:0;">
+        <div class="callout-label" style="color:var(--accent);">${s.exerciseLabel}</div>
+        <p class="type-body">${escapeHtml(skill.exercise[l])}</p>
+      </div>`
+  };
 
   app.innerHTML = `
     <section class="screen no-tabbar">
@@ -6065,36 +6101,24 @@ function renderSkillDetail(skillId){
       <div class="screen-content">
         <p class="type-body" style="line-height:1.6; margin-bottom:var(--sp-5);">${escapeHtml(skill.intro[l])}</p>
 
-        <div class="callout">
-          <div class="callout-label">${s.tipsLabel}</div>
-          <div class="tip-list">
-            ${skill.tips[l].map((tip,i)=>{
-              const isCurrent = i===currentPhaseIndex;
-              const isRoadmap = !!skill.phaseLevels;
-              const marker = isRoadmap
-                ? `<span class="waypoint-marker ${isCurrent?'waypoint-marker-current':''}">${i+1}</span>`
-                : `<span class="tip-bullet"></span>`;
-              return `<div class="tip-row ${isCurrent?'tip-row-current':''}">
-                ${marker}
-                <span class="type-body">${isCurrent?`<strong>${s.youAreHereLabel}</strong> — `:''}${escapeHtml(tip)}</span>
-              </div>`;
-            }).join("")}
-          </div>
+        <div class="segmented" style="margin-bottom:var(--sp-4);">
+          <button type="button" class="segmented-btn ${skillDetailActiveSection==='tips'?'segmented-active':''}" data-section="tips">${s.tipsLabel}</button>
+          <button type="button" class="segmented-btn ${skillDetailActiveSection==='mistake'?'segmented-active':''}" data-section="mistake">${s.mistakeLabel}</button>
+          <button type="button" class="segmented-btn ${skillDetailActiveSection==='exercise'?'segmented-active':''}" data-section="exercise">${s.exerciseLabel}</button>
         </div>
 
-        <div class="callout" style="background:var(--attention-soft);">
-          <div class="callout-label" style="color:var(--attention);">${s.mistakeLabel}</div>
-          <p class="type-body">${escapeHtml(skill.mistake[l])}</p>
-        </div>
-
-        <div class="callout" style="background:var(--accent-soft); margin-bottom:0;">
-          <div class="callout-label" style="color:var(--accent);">${s.exerciseLabel}</div>
-          <p class="type-body">${escapeHtml(skill.exercise[l])}</p>
-        </div>
+        ${sectionsHtml[skillDetailActiveSection]}
       </div>
     </section>
   `;
-  document.getElementById("skillDetailBack").addEventListener("click", ()=>{ renderSkillsHub(); });
+  document.getElementById("skillDetailBack").addEventListener("click", ()=>{ skillDetailActiveSection="tips"; renderSkillsHub(); });
+  document.querySelectorAll("[data-section]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.section === skillDetailActiveSection) return;
+      skillDetailActiveSection = btn.dataset.section;
+      renderSkillDetail(skillId);
+    });
+  });
   document.getElementById("skillArchiveToggle").addEventListener("click", ()=>{
     if(isSkillArchived(skillId)){ unarchiveSkill(skillId); renderSkillDetail(skillId); }
     else{ archiveSkill(skillId); renderSkillsHub(); }
@@ -6216,11 +6240,16 @@ function showReviewCard(queue, idx){
     close(()=> showReviewCard(queue, idx+1));
   });
 }
+let refGlossarySearch = "";
+const REF_GLOSSARY_ACCENTS = ["#D9A15E","#6FB3B8","#C77B7B","#7FA88C","#9B8BC4"];
 function renderReferenceGlossary(){
   applyDir();
   const s = t();
   const student = StudentModule.current();
-  const entries = (student && REFERENCE_GLOSSARY[student.collegeId]) || [];
+  const allEntries = (student && REFERENCE_GLOSSARY[student.collegeId]) || [];
+  const q = refGlossarySearch.trim().toLowerCase();
+  const entries = q ? allEntries.filter(([term,meaning])=> term.toLowerCase().includes(q) || meaning.toLowerCase().includes(q)) : allEntries;
+
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -6229,19 +6258,39 @@ function renderReferenceGlossary(){
         <span style="width:40px;"></span>
       </div>
       <div class="screen-content">
-        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.refGlossarySub}</p>
-        <div class="stack">
-          ${entries.map(([term,meaning])=>`
-            <div class="card" style="cursor:default; flex-direction:column; align-items:flex-start;">
-              <span class="type-body" style="font-weight:600; white-space:normal; overflow-wrap:break-word; width:100%;">${escapeHtml(term)}</span>
-              <span class="type-caption" style="color:var(--ink-muted); margin-top:4px; white-space:normal; overflow-wrap:break-word; width:100%;">${escapeHtml(meaning)}</span>
-            </div>
-          `).join("")}
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-3);">${s.refGlossarySub}</p>
+        <div class="field-with-mic" style="margin-bottom:var(--sp-4);">
+          <input type="text" id="refGlossarySearchInput" class="field" placeholder="${s.refGlossarySearchPh}" value="${escapeHtml(refGlossarySearch)}" style="padding-inline-end:var(--sp-4);">
         </div>
+        ${entries.length===0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">${ICON.openBook}</div>
+          <p class="empty-text">${s.refGlossaryNoResults}</p>
+        </div>` : `
+        <div class="stack">
+          ${entries.map(([term,meaning], i)=>{
+            const accent = REF_GLOSSARY_ACCENTS[i % REF_GLOSSARY_ACCENTS.length];
+            const parts = meaning.split(" — ");
+            const arTerm = parts[0] || meaning;
+            const explanation = parts.slice(1).join(" — ");
+            return `
+            <div class="card" style="cursor:default; flex-direction:column; align-items:flex-start; border-inline-start:4px solid ${accent};">
+              <div style="display:flex; align-items:center; gap:8px; width:100%; flex-wrap:wrap;">
+                <span class="type-body" style="font-weight:700; font-size:var(--fs-subheading);">${escapeHtml(term)}</span>
+                <span class="pill" style="background:${accent}22; color:${accent}; border:1px solid ${accent}55;">${escapeHtml(arTerm)}</span>
+              </div>
+              ${explanation ? `<p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6; width:100%;">${escapeHtml(explanation)}</p>` : ""}
+            </div>`;
+          }).join("")}
+        </div>`}
       </div>
     </section>
   `;
-  document.getElementById("refGlossaryBack").addEventListener("click", ()=>{ renderGlossary(); });
+  document.getElementById("refGlossaryBack").addEventListener("click", ()=>{ refGlossarySearch=""; renderGlossary(); });
+  const searchInput = document.getElementById("refGlossarySearchInput");
+  searchInput.addEventListener("input", (e)=>{ refGlossarySearch = e.target.value; renderReferenceGlossary(); });
+  searchInput.focus();
+  searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
 }
 function renderLiveTranslate(){
   applyDir();
