@@ -456,19 +456,38 @@ ul,ol{ list-style:none; }
   -webkit-backdrop-filter:blur(18px) saturate(160%); backdrop-filter:blur(18px) saturate(160%);
   border-top:1px solid rgba(228,230,234,.8);
   padding:var(--sp-2) var(--sp-2) var(--sp-2);
-  display:flex;
+  display:flex; position:fixed;
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .tab-bar{ background:var(--surface); }
 }
-.tab-item{
-  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
-  padding:var(--sp-2); border-radius:var(--r-sm); color:var(--ink-muted);
-  transition:color var(--m-micro), transform 200ms var(--ease-spring), background 220ms var(--ease);
+.tab-indicator{
+  position:absolute; top:6px; bottom:6px; border-radius:16px;
+  background:radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb),.22), rgba(var(--accent-rgb),.09) 70%);
+  transition:transform 420ms cubic-bezier(.34,1.56,.64,1), width 420ms cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none; opacity:0;
 }
-.tab-item:active{ transform:scale(.94); }
-.tab-item.active{ color:var(--accent); background:rgba(var(--accent-rgb),.10); }
-.tab-label{ font-size:11px; font-weight:600; }
+.tab-indicator.tab-indicator-ready{ opacity:1; }
+.tab-item{
+  position:relative; flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:var(--sp-2); border-radius:var(--r-sm); color:var(--ink-muted); z-index:1;
+  transition:color 260ms var(--ease);
+}
+.tab-item:active .tab-item-icon{ transform:scale(.88); }
+.tab-item-icon{ display:flex; transition:transform 380ms cubic-bezier(.34,1.56,.64,1); }
+.tab-item.active{ color:var(--accent); }
+.tab-item.active .tab-item-icon{
+  transform:translateY(-3px);
+  filter:drop-shadow(0 3px 6px rgba(var(--accent-rgb),.45));
+  animation:tabPop 420ms cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes tabPop{
+  0%{ transform:translateY(-3px) scale(1); }
+  40%{ transform:translateY(-6px) scale(1.18); }
+  100%{ transform:translateY(-3px) scale(1); }
+}
+.tab-label{ font-size:11px; font-weight:600; transition:font-weight 200ms var(--ease); }
+.tab-item.active .tab-label{ font-weight:800; }
 
 /* Empty state */
 .empty-state{
@@ -4035,15 +4054,28 @@ function escapeHtml(str){
 function renderTabBar(active){
   const s = t();
   return `
-    <div class="tab-bar">
-      <button type="button" class="tab-item ${active==='today'?'active':''}" data-tab="today">${ICON.today}<span class="tab-label">${s.tabToday}</span></button>
-      <button type="button" class="tab-item ${active==='semester'?'active':''}" data-tab="semester">${ICON.semester}<span class="tab-label">${s.tabSemester}</span></button>
-      <button type="button" class="tab-item ${active==='skills'?'active':''}" data-tab="skills">${ICON.spark}<span class="tab-label">${s.tabSkills}</span></button>
-      <button type="button" class="tab-item ${active==='journey'?'active':''}" data-tab="journey">${ICON.journey}<span class="tab-label">${s.tabJourney}</span></button>
-      <button type="button" class="tab-item ${active==='library'?'active':''}" data-tab="library">${ICON.openBook}<span class="tab-label">${s.tabLibrary}</span></button>
+    <div class="tab-bar" id="tabBar">
+      <div class="tab-indicator" id="tabIndicator"></div>
+      <button type="button" class="tab-item ${active==='today'?'active':''}" data-tab="today"><span class="tab-item-icon">${ICON.today}</span><span class="tab-label">${s.tabToday}</span></button>
+      <button type="button" class="tab-item ${active==='semester'?'active':''}" data-tab="semester"><span class="tab-item-icon">${ICON.semester}</span><span class="tab-label">${s.tabSemester}</span></button>
+      <button type="button" class="tab-item ${active==='skills'?'active':''}" data-tab="skills"><span class="tab-item-icon">${ICON.spark}</span><span class="tab-label">${s.tabSkills}</span></button>
+      <button type="button" class="tab-item ${active==='journey'?'active':''}" data-tab="journey"><span class="tab-item-icon">${ICON.journey}</span><span class="tab-label">${s.tabJourney}</span></button>
+      <button type="button" class="tab-item ${active==='library'?'active':''}" data-tab="library"><span class="tab-item-icon">${ICON.openBook}</span><span class="tab-label">${s.tabLibrary}</span></button>
     </div>`;
 }
+function positionTabIndicator(){
+  const bar = document.getElementById("tabBar");
+  const indicator = document.getElementById("tabIndicator");
+  const activeItem = bar && bar.querySelector(".tab-item.active");
+  if(!bar || !indicator || !activeItem) return;
+  const offset = activeItem.offsetLeft;
+  const width = activeItem.offsetWidth;
+  indicator.style.width = width + "px";
+  indicator.style.transform = `translateX(${offset}px)`;
+  requestAnimationFrame(()=>{ indicator.classList.add("tab-indicator-ready"); });
+}
 function wireTabBar(){
+  positionTabIndicator();
   document.querySelectorAll("[data-tab]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const tab = btn.dataset.tab;
@@ -6017,12 +6049,15 @@ function unarchiveSkill(skillId){
   if(DB.archivedSkills) delete DB.archivedSkills[skillId];
   dbSave();
 }
-function skillTileBig(sk, l){
+function skillTileBig(sk, l, compact){
   const viewed = isSkillViewed(sk.id);
+  const minH = compact ? 104 : 128;
+  const iconSize = compact ? 32 : 40;
+  const pad = compact ? "var(--sp-3) var(--sp-2)" : "var(--sp-4) var(--sp-2)";
   return `
-    <button type="button" class="skill-tile" data-skill-id="${sk.id}" style="min-height:128px; padding:var(--sp-4) var(--sp-2);">
+    <button type="button" class="skill-tile" data-skill-id="${sk.id}" style="min-height:${minH}px; padding:${pad};">
       ${viewed ? `<span class="skill-tile-viewed" aria-label="viewed">${ICON.check}</span>` : ""}
-      <span class="skill-tile-icon" style="width:40px; height:40px;">${ICON[sk.icon]}</span>
+      <span class="skill-tile-icon" style="width:${iconSize}px; height:${iconSize}px;">${ICON[sk.icon]}</span>
       <span class="skill-tile-title" style="font-size:var(--fs-body); line-height:1.4;">${escapeHtml(sk.title[l])}</span>
     </button>`;
 }
@@ -6081,8 +6116,8 @@ function renderSkillsHub(){
         </div>` : ""}
         <div class="skill-grid" style="grid-template-columns:1fr 1fr;">
           ${currentGroup.items.map(sk=> sk.id==="__glossary__"
-            ? `<button type="button" class="skill-tile" id="glossaryEntry" style="min-height:128px;"><span class="skill-tile-icon">${ICON.openBook}</span><span class="skill-tile-title">${s.glossaryEntryLabel}</span></button>`
-            : skillTileBig(sk,l)
+            ? `<button type="button" class="skill-tile" id="glossaryEntry" style="min-height:${currentGroup.items.length>4?104:128}px;"><span class="skill-tile-icon">${ICON.openBook}</span><span class="skill-tile-title">${s.glossaryEntryLabel}</span></button>`
+            : skillTileBig(sk,l,currentGroup.items.length>4)
           ).join("")}
         </div>
         ${archivedCount > 0 ? `
@@ -7264,6 +7299,13 @@ function boot(){
         // Actively ask "is there a newer sw.js?" every time the app opens,
         // instead of waiting for the browser's own periodic check.
         reg.update().catch(()=>{});
+        // Also re-check every time the person switches back to the app
+        // (e.g. reopening it from the home screen after it was already
+        // running) — covers the case where the app was never fully closed,
+        // so the "on open" check above never re-fires.
+        document.addEventListener("visibilitychange", ()=>{
+          if(document.visibilityState === "visible") reg.update().catch(()=>{});
+        });
       })
       .catch(()=>{}); // silently no-op if unreachable (e.g. local file, dev preview)
 
