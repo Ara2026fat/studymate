@@ -658,7 +658,7 @@ const STR = {
     otherMajorPh:"اكتب اسم تخصصك",
     pickCollegeFirst:"اختر الكلية أولاً",
 
-    tabToday:"اليوم", tabSemester:"الفصل", tabSkills:"مهارات", tabJourney:"المسار",
+    tabToday:"اليوم", tabSemester:"الفصل", tabSkills:"مهارات", tabJourney:"المسار", tabLibrary:"المكتبة",
     settingsBtn:"الإعدادات",
     installTitle:"ثبّت StudyMate على جهازك",
     installTextAndroid:"استخدمه كتطبيق حقيقي بأيقونة خاصة، بدون فتح المتصفح كل مرة.",
@@ -934,7 +934,7 @@ const STR = {
     otherMajorPh:"Type your major",
     pickCollegeFirst:"Select a college first",
 
-    tabToday:"Today", tabSemester:"Semester", tabSkills:"Skills", tabJourney:"Journey",
+    tabToday:"Today", tabSemester:"Semester", tabSkills:"Skills", tabJourney:"Journey", tabLibrary:"Library",
     settingsBtn:"Settings",
     installTitle:"Install StudyMate on your device",
     installTextAndroid:"Use it like a real app with its own icon, without opening the browser every time.",
@@ -3923,6 +3923,7 @@ function renderTabBar(active){
       <button type="button" class="tab-item ${active==='semester'?'active':''}" data-tab="semester">${ICON.semester}<span class="tab-label">${s.tabSemester}</span></button>
       <button type="button" class="tab-item ${active==='skills'?'active':''}" data-tab="skills">${ICON.spark}<span class="tab-label">${s.tabSkills}</span></button>
       <button type="button" class="tab-item ${active==='journey'?'active':''}" data-tab="journey">${ICON.journey}<span class="tab-label">${s.tabJourney}</span></button>
+      <button type="button" class="tab-item ${active==='library'?'active':''}" data-tab="library">${ICON.openBook}<span class="tab-label">${s.tabLibrary}</span></button>
     </div>`;
 }
 function wireTabBar(){
@@ -3935,6 +3936,7 @@ function wireTabBar(){
       else if(tab==="semester") renderSemester();
       else if(tab==="skills") renderSkillsHub();
       else if(tab==="journey") renderJourney();
+      else if(tab==="library") renderCourseLibrary();
     });
   });
 }
@@ -5470,11 +5472,9 @@ function renderCourseLibrary(){
   const catalog = COURSE_CATALOG[catalogKey];
 
   app.innerHTML = `
-    <section class="screen no-tabbar">
+    <section class="screen">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="libraryBack" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.libraryTitle}</div>
-        <span style="width:40px;"></span>
       </div>
       <div class="screen-content">
         <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.librarySub}</p>
@@ -5511,9 +5511,10 @@ function renderCourseLibrary(){
           </div>`;
         }).join("")}
       </div>
+      ${renderTabBar("library")}
     </section>
   `;
-  document.getElementById("libraryBack").addEventListener("click", ()=>{ renderJourney(); });
+  wireTabBar();
   document.querySelectorAll("[data-library-course]").forEach(card=>{
     card.addEventListener("click", ()=>{ openLibraryCoursePreview(card.dataset.libraryCourse); });
   });
@@ -5586,7 +5587,6 @@ function renderJourney(){
     <section class="screen">
       <div class="screen-header">
         <div class="screen-header-title">${s.journeyTitle}</div>
-        <button type="button" class="btn-icon" id="openLibraryBtn" aria-label="${s.libraryTitle}">${ICON.openBook}</button>
       </div>
       <div class="screen-content">
         ${bodyHtml}
@@ -5595,8 +5595,6 @@ function renderJourney(){
     </section>
   `;
   wireTabBar();
-  const libBtn = document.getElementById("openLibraryBtn");
-  if(libBtn) libBtn.addEventListener("click", ()=>{ renderCourseLibrary(); });
   document.querySelectorAll("[data-semester-id]").forEach(card=>{
     card.addEventListener("click", ()=>{
       const sem = dbGet("semesters", card.dataset.semesterId);
