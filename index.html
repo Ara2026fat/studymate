@@ -444,6 +444,7 @@ ul,ol{ list-style:none; }
   .print-callout{ margin-top:8px; padding:8px 10px; border-radius:6px; font-size:12.5px; }
   .print-note img{ max-width:100%; border-radius:6px; margin-top:6px; }
   .print-section-title{ font-size:16px; font-weight:700; margin:24px 0 12px; border-bottom:1px solid #ccc; padding-bottom:6px; }
+  .print-footer-stamp{ text-align:center; margin-top:40px; padding-top:16px; border-top:1px solid #ddd; }
 }
 
 /* Tab bar */
@@ -828,6 +829,7 @@ const STR = {
     refGlossarySearchPh:"ابحث عن مصطلح...",
     refGlossaryNoResults:"ما لقينا مصطلحًا يطابق بحثك.",
     skillsOtherCategoryLabel:"أخرى",
+    printFooterCopyright:"StudyMate — رفيق تعلم © 2026 — جميع الحقوق محفوظة",
     printNotebookGeneratedOn:"وُلّد بتاريخ",
     notebookNotesPlaceholder:"دوّن ملخصك للمحاضرة، أو أي شيء تحب ترجع له لاحقًا...",
     notebookSaveNotesBtn:"حفظ الملاحظات",
@@ -1107,6 +1109,7 @@ const STR = {
     refGlossarySearchPh:"Search for a term...",
     refGlossaryNoResults:"No terms match your search.",
     skillsOtherCategoryLabel:"Other",
+    printFooterCopyright:"StudyMate — Your Learning Companion © 2026 — All Rights Reserved",
     printNotebookGeneratedOn:"Generated on",
     notebookNotesPlaceholder:"Write your lecture summary, or anything you'd like to come back to later...",
     notebookSaveNotesBtn:"Save Notes",
@@ -4891,6 +4894,12 @@ function downloadNotebook(courseId){
     html += `<p style="text-align:center; color:#999; margin-top:40px;">${s.notebookNotesEmpty}</p>`;
   }
 
+  html += `
+    <div class="print-footer-stamp">
+      <img src="${LOGO_DATA_URI}" alt="StudyMate" style="width:60px; height:auto; display:block; margin:0 auto 6px;">
+      <div style="font-size:11px; color:#888;">${s.printFooterCopyright}</div>
+    </div>`;
+
   document.getElementById("printNotebookArea").innerHTML = html;
   window.print();
 }
@@ -6034,7 +6043,7 @@ function renderSkillsHub(){
           <button type="button" class="segmented-btn ${skillsHubTab==='universal'?'segmented-active':''}" id="tabUniversal">${s.skillsUniversalLabel}</button>
         </div>` : ""}
         ${categoryOrder.length > 1 ? `
-        <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:var(--sp-3); -webkit-overflow-scrolling:touch;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:var(--sp-3);">
           ${categoryOrder.map(catId=>{
             const g = categoryMap[catId];
             return `
