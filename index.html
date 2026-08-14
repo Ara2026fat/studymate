@@ -245,9 +245,7 @@ ul,ol{ list-style:none; }
 .card-icon{
   width:42px; height:42px; border-radius:var(--r-sm); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(150deg, rgba(var(--accent-rgb),.24), rgba(var(--accent-rgb),.10));
-  border:1px solid rgba(255,255,255,.5);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.7), inset 0 -1px 3px rgba(var(--accent-rgb),.12), 0 3px 8px rgba(var(--accent-rgb),.18);
+  background:rgba(var(--accent-rgb),.14);
   color:var(--accent);
 }
 .card-body{ flex:1; min-width:0; }
@@ -308,9 +306,7 @@ ul,ol{ list-style:none; }
 .skill-tile-icon{
   width:32px; height:32px; border-radius:var(--r-sm); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(150deg, rgba(var(--accent-rgb),.24), rgba(var(--accent-rgb),.10));
-  border:1px solid rgba(255,255,255,.5);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.7), inset 0 -1px 2px rgba(var(--accent-rgb),.12), 0 2px 6px rgba(var(--accent-rgb),.16);
+  background:rgba(var(--accent-rgb),.14);
   color:var(--accent);
 }
 .skill-tile-title{ font-size:11.5px; font-weight:600; color:var(--ink); line-height:1.3; }
@@ -419,6 +415,18 @@ ul,ol{ list-style:none; }
   50%{ box-shadow:0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); }
 }
 .pulse-imminent{ animation:gentlePulse 2.2s ease-in-out infinite; }
+
+#printNotebookArea{ display:none; }
+@media print{
+  body *{ visibility:hidden; }
+  #printNotebookArea, #printNotebookArea *{ visibility:visible; }
+  #printNotebookArea{ display:block; position:absolute; top:0; left:0; width:100%; background:#fff; color:#1a1a1a; padding:24px; }
+  .print-page-header{ text-align:center; margin-bottom:28px; border-bottom:2px solid #333; padding-bottom:14px; }
+  .print-note{ page-break-inside:avoid; margin-bottom:18px; border-radius:8px; padding:14px 16px; border:1px solid #ddd; }
+  .print-callout{ margin-top:8px; padding:8px 10px; border-radius:6px; font-size:12.5px; }
+  .print-note img{ max-width:100%; border-radius:6px; margin-top:6px; }
+  .print-section-title{ font-size:16px; font-weight:700; margin:24px 0 12px; border-bottom:1px solid #ccc; padding-bottom:6px; }
+}
 
 /* Tab bar */
 .tab-bar{
@@ -565,6 +573,7 @@ ul,ol{ list-style:none; }
 </head>
 <body>
 <div id="app"></div>
+<div id="printNotebookArea"></div>
 <footer id="creditFooter">
   <div>© 2026 عرفات الراجحي Arafat AlRajhi</div>
   <div>جميع الحقوق محفوظة — أداة أكاديمية لأغراض تعليمية</div>
@@ -785,6 +794,13 @@ const STR = {
     noteModeText:"كتابة",
     noteModeDrawing:"رسم يدوي",
     noteClearCanvas:"امسح",
+    noteExtraFieldsToggle:"أضف تفاصيل — أصعب نقطة أو أهم فكرة",
+    noteHardestPointLabel:"أصعب نقطة في هذا الدرس",
+    noteHardestPointPlaceholder:"وش الشي اللي ما فهمته تمامًا أو تحتاج تركّز عليه وقت المراجعة؟",
+    noteKeyInsightLabel:"أهم ما فهمته",
+    noteKeyInsightPlaceholder:"دوّنها الآن قبل ما تنسى — أهم فكرة استوعبتها من هذا الدرس",
+    downloadNotebookBtn:"تحميل دفترك — احفظه PDF",
+    printNotebookGeneratedOn:"وُلّد بتاريخ",
     notebookNotesPlaceholder:"دوّن ملخصك للمحاضرة، أو أي شيء تحب ترجع له لاحقًا...",
     notebookSaveNotesBtn:"حفظ الملاحظات",
     notebookNotesEmpty:"لم تضف أي ملاحظة بعد.",
@@ -1047,6 +1063,13 @@ const STR = {
     noteModeText:"Type",
     noteModeDrawing:"Handwriting",
     noteClearCanvas:"Clear",
+    noteExtraFieldsToggle:"Add details — hardest point or key insight",
+    noteHardestPointLabel:"Hardest Point in This Lesson",
+    noteHardestPointPlaceholder:"What didn't you fully understand, or need to focus on when reviewing?",
+    noteKeyInsightLabel:"Most Important Thing I Understood",
+    noteKeyInsightPlaceholder:"Write it down now before you forget — the key idea you grasped from this lesson",
+    downloadNotebookBtn:"Download Your Notebook — Save as PDF",
+    printNotebookGeneratedOn:"Generated on",
     notebookNotesPlaceholder:"Write your lecture summary, or anything you'd like to come back to later...",
     notebookSaveNotesBtn:"Save Notes",
     notebookNotesEmpty:"You haven't added any notes yet.",
@@ -1167,7 +1190,11 @@ const ICON = {
   code:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/></svg>`,
   chevronDown:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
   pencil:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
-  image:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.7"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg>`
+  image:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.7"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg>`,
+  starTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.5l2.9 6.4 7 .7-5.3 4.7 1.6 6.9L12 17.6l-6.2 3.6 1.6-6.9L2.1 9.6l7-.7L12 2.5z"/></svg>`,
+  questionTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 9a2.5 2.5 0 1 1 3.9 2.1c-.9.6-1.4 1.1-1.4 2.1"/><circle cx="12" cy="17.2" r=".3" fill="currentColor"/></svg>`,
+  bulbTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.5.5.9 1.3 1 2.5h6c.1-1.2.5-2 1-2.5A6 6 0 0 0 12 3z"/></svg>`,
+  refreshTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/></svg>`
 };
 
 /* ============================================================
@@ -1720,6 +1747,19 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"قواعد اللغة الإنجليزية كاملة — المستوى الأول (يوتيوب، ٢٤ فيديو، عربي)", en:"Complete English Grammar — Level 1 (YouTube, 24 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmLBmV2wctgqyyRlIs1MhmNr", reason:{ar:"من نفس القناة العربية الموثوقة، مخصصة للقواعد تحديدًا — لمن يحتاج الشرح والأمثلة بالعربي الكامل قبل التمرين بالإنجليزي", en:"From the same trusted Arabic channel, dedicated specifically to grammar — for anyone who needs the explanation and examples fully in Arabic before practicing in English"} }
     ]
   },
+  "ENGL 405": {
+    explain:{
+      ar:"ترجمة متخصصة بمستوى مختلف تمامًا عن أي ترجمة سابقة — عقود، وصايا، أوراق محكمة — حيث كلمة واحدة مترجمة بشكل خاطئ ممكن تسبب نزاعًا قانونيًا حقيقيًا، لا مجرد ركاكة أسلوب.",
+      en:"Specialized translation at a level completely different from anything before — contracts, wills, court documents — where a single mistranslated word can cause a real legal dispute, not just awkward style."
+    },
+    why:{
+      ar:"هذا التخصص من أعلى مجالات الترجمة أجرًا وطلبًا في السوق — يتطلب دقة تامة وفهمًا للنظام القانوني نفسه، لا اللغة فقط، وهذا بالضبط ما يميّزك عن مترجم عام.",
+      en:"This specialty is among the highest-paid and most in-demand translation fields — it requires complete precision and understanding of the legal system itself, not just the language, and that's exactly what sets you apart from a general translator."
+    },
+    resources:[
+      { title:{ar:"دورة الترجمة القانونية (معارف، تقييم ٤.٥ من ٢٦٥ تقييمًا، مجاني بشهادة)", en:"Legal Translation Course (M3aarf, 4.5 rating from 265 reviews, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/6579/%D8%AF%D9%88%D8%B1%D8%A9-%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8%D9%8A%D8%A9-%D9%84%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%AA%D8%B1%D8%AC%D9%85%D8%A9-%D8%A7%D9%84%D9%82%D8%A7%D9%86%D9%88%D9%86%D9%8A%D8%A9-video", reason:{ar:"من Justice Academy عبر منصة معارف، بـ٣١٨٦ طالبًا مسجّلًا فعليًا — يغطي التعامل مع النصوص القانونية المعقدة والمواقف الصعبة في الترجمة القانونية تحديدًا", en:"From Justice Academy via M3aarf, with 3,186 students actually enrolled — covers handling complex legal texts and difficult situations in legal translation specifically"} }
+    ]
+  },
   "LRSK 103": {
     explain:{
       ar:"مقرر متنوع يجمع مهارات عملية للحياة الجامعية والمهنية — من البحث والتدوين والتفكير الناقد، إلى كتابة السيرة الذاتية والاستعداد لمقابلات العمل والتواصل الفعال.",
@@ -1953,6 +1993,20 @@ const COURSE_ENRICHMENT = {
     connections:{ requires:[{ar:"المعادلات التفاضلية (ريض336)", en:"Differential Equations (ريض336)"}], leadsTo:[{ar:"التحكم الآلي (همك474)", en:"Automatic Control (همك474)"}] },
     resources:[
       { title:{ar:"ديناميكا الأنظمة والتحكم (معارف، ١٣ درسًا، مجاني بشهادة)", en:"Systems Dynamics & Control (M3aarf, 13 lessons, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/22206/%D8%AF%D9%8A%D9%86%D8%A7%D9%85%D9%8A%D9%83%D8%A7-%D8%A7%D9%84%D8%A3%D9%86%D8%B8%D9%85%D8%A9-%D9%88%D8%A7%D9%84%D8%AA%D8%AD%D9%83%D9%85-video", reason:{ar:"يغطي بالضبط نمذجة الأنظمة الميكانيكية بدالة التحويل، وتقنيات PID، مع تطبيق عملي على MATLAB وSimulink", en:"Covers exactly modeling mechanical systems with transfer functions, and PID techniques, with hands-on MATLAB and Simulink application"} }
+    ]
+  },
+  "همك474": {
+    explain:{
+      ar:"هذي هي القمة اللي بنيت لها كل المواد السابقة — تصميم أنظمة تتحكم في نفسها تلقائيًا: كيف تحلل استقرار نظام (هل يهتز إلى الأبد أو يستقر؟)، وكيف تصمم متحكم PID يجعل أي نظام يتصرف بالضبط كما تريد.",
+      en:"This is the peak everything before it was building toward — designing systems that control themselves automatically: how to analyze a system's stability (will it oscillate forever or settle?), and how to design a PID controller that makes any system behave exactly as you want."
+    },
+    why:{
+      ar:"من الثرموستات البسيط إلى ذراع المصنع الآلي، كل شيء \"ذكي\" حولك يعمل بمبادئ هذي المادة — هذا التخصص الفعلي اللي يفتح لك أبواب الروبوتات والأتمتة الصناعية.",
+      en:"From a simple thermostat to a factory robotic arm, everything \"smart\" around you works on this course's principles — this is the actual specialty that opens doors to robotics and industrial automation."
+    },
+    connections:{ requires:[{ar:"ديناميكا المنظومات (همك372)", en:"Systems Dynamics (همك372)"}] },
+    resources:[
+      { title:{ar:"هندسة نُظم التحكم والسيطرة (يوتيوب، ٨٦ محاضرة، مجاني)", en:"Control Systems Engineering (YouTube, 86 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PL6FPxL5CnQeW-lEQYwCA6vVOOjTg36-5V", reason:{ar:"سلسلة عربية شاملة جدًا (٨٦ محاضرة)، تغطي كل موضوعات المقرر من الأساسيات إلى تحليل الاستقرار وتصميم المتحكمات بعمق حقيقي", en:"A very comprehensive Arabic series (86 lectures), covering all course topics from basics to stability analysis and controller design in real depth"} }
     ]
   },
   "همك212": {
@@ -3764,7 +3818,7 @@ function showFlagshipMoment(message, onDone){
   overlay.className = "sheet-overlay";
   overlay.innerHTML = `
     <div class="sheet" style="text-align:center; padding-top:var(--sp-5);">
-      <div class="empty-icon celebrate-icon" style="margin:0 auto var(--sp-4); width:72px; height:72px; color:var(--accent); background:linear-gradient(150deg, rgba(var(--accent-rgb),.28), rgba(var(--accent-rgb),.08)); border:1px solid rgba(255,255,255,.6); box-shadow:inset 0 1px 1px rgba(255,255,255,.7), 0 6px 16px rgba(var(--accent-rgb),.28);">${ICON.laurel}</div>
+      <div class="empty-icon celebrate-icon" style="margin:0 auto var(--sp-4); width:72px; height:72px; color:var(--accent); background:rgba(var(--accent-rgb),.16); box-shadow:0 4px 14px rgba(var(--accent-rgb),.20);">${ICON.laurel}</div>
       <p class="type-body" style="line-height:1.7;">${escapeHtml(message)}</p>
       <button type="button" class="btn btn-primary" id="flagshipContinue" style="margin-top:var(--sp-5);">${s.continueLabel}</button>
     </div>`;
@@ -4363,6 +4417,73 @@ function renderExamPrepHub(eventId){
   document.getElementById("prepGoNotebook").addEventListener("click", ()=>{ renderCourseNotebook(course.id); });
   document.getElementById("prepAddExam").addEventListener("click", ()=>{ openPastExamSheet(course.id, ()=>renderExamPrepHub(eventId)); });
 }
+/* Compiles a course's notebook (notes, understanding checks, past exams)
+   into one clean, printable document — the browser's own "print" dialog
+   lets the student save it as a real PDF they keep, no external library
+   needed, works on any device. */
+function downloadNotebook(courseId){
+  const s = t();
+  const l = lang();
+  const course = CourseModule.get(courseId);
+  const nb = NotebookModule.get(courseId);
+  const dateStr = new Date().toLocaleDateString(l==="ar"?"ar-SA":"en-US", {year:"numeric", month:"long", day:"numeric"});
+
+  const NOTE_COLOR_PRINT = { default:"#F4F4F4", blue:"#DCEBFB", green:"#DFF3E4", yellow:"#FCF3D6", pink:"#FBE2E8" };
+  function printColorHex(id){ return NOTE_COLOR_PRINT[id] || NOTE_COLOR_PRINT.default; }
+
+  let html = `
+    <div class="print-page-header">
+      <div style="font-size:22px; font-weight:800;">${escapeHtml(course.name)}</div>
+      <div style="font-size:13px; color:#666; margin-top:4px;">${s.printNotebookGeneratedOn} ${dateStr}</div>
+    </div>`;
+
+  if(nb.notes.length){
+    html += `<div class="print-section-title">${s.notebookNotesLabel}</div>`;
+    nb.notes.slice().reverse().forEach(n=>{
+      html += `<div class="print-note" style="background:${printColorHex(n.color)};">`;
+      if(n.type==="drawing" || n.type==="image"){
+        html += `<img src="${n.dataUrl}" alt="">`;
+      } else {
+        html += `<div style="white-space:pre-wrap; font-size:13.5px; line-height:1.7;">${escapeHtml(n.text)}</div>`;
+      }
+      if(n.hardestPoint){
+        html += `<div class="print-callout" style="background:#FCE8D6; border:1px solid #E8A05C;"><strong>${s.noteHardestPointLabel}:</strong> ${escapeHtml(n.hardestPoint)}</div>`;
+      }
+      if(n.keyInsight){
+        html += `<div class="print-callout" style="background:#DCEBFB; border:1px solid #5B93E0;"><strong>${s.noteKeyInsightLabel}:</strong> ${escapeHtml(n.keyInsight)}</div>`;
+      }
+      html += `</div>`;
+    });
+  }
+
+  if(nb.checks.length){
+    html += `<div class="print-section-title">${s.notebookChecksLabel}</div>`;
+    nb.checks.slice().reverse().forEach(c=>{
+      const reason = c.reasonId ? UNDERSTANDING_REASONS.find(r=>r.id===c.reasonId) : null;
+      html += `<div class="print-note" style="background:#F4F4F4;">
+        <div style="font-weight:700; font-size:13.5px;">${c.understood?'✓':'✗'} ${escapeHtml(c.topic)}</div>
+        ${reason ? `<div style="font-size:12.5px; color:#666; margin-top:4px;">${escapeHtml(reason[l])} — ${escapeHtml(reason.tip[l])}</div>` : ""}
+      </div>`;
+    });
+  }
+
+  if(nb.exams.length){
+    html += `<div class="print-section-title">${s.notebookExamsLabel}</div>`;
+    nb.exams.slice().reverse().forEach(e=>{
+      html += `<div class="print-note" style="background:#F4F4F4;">
+        <div style="font-weight:700; font-size:13.5px;">${escapeHtml(e.title)}</div>
+        ${e.note ? `<div style="font-size:12.5px; color:#666; margin-top:4px;">${escapeHtml(e.note)}</div>` : ""}
+      </div>`;
+    });
+  }
+
+  if(!nb.notes.length && !nb.checks.length && !nb.exams.length){
+    html += `<p style="text-align:center; color:#999; margin-top:40px;">${s.notebookNotesEmpty}</p>`;
+  }
+
+  document.getElementById("printNotebookArea").innerHTML = html;
+  window.print();
+}
 function renderCourseNotebook(courseId){
   applyDir();
   const s = t();
@@ -4382,15 +4503,20 @@ function renderCourseNotebook(courseId){
 
         <div class="section-label">${s.notebookNotesLabel}</div>
         <div class="stack" style="margin-bottom:var(--sp-3);">
-          ${nb.notes.length===0 ? `<p class="type-caption" style="color:var(--ink-muted);">${s.notebookNotesEmpty}</p>` : nb.notes.map(n=>`
-            <button type="button" class="card note-card" data-note-id="${n.id}" style="cursor:pointer; align-items:flex-start; background:${noteColorHex(n.color)};">
-              <span class="card-body">
+          ${nb.notes.length===0 ? `<p class="type-caption" style="color:var(--ink-muted);">${s.notebookNotesEmpty}</p>` : nb.notes.map(n=>{
+            const badge = noteColorBadge(n.color);
+            return `
+            <button type="button" class="card note-card" data-note-id="${n.id}" style="cursor:pointer; align-items:flex-start; flex-direction:column; background:${noteColorHex(n.color)}; position:relative;">
+              ${badge ? `<span style="position:absolute; top:10px; inset-inline-end:10px; width:22px; height:22px; border-radius:50%; background:${badge.accent}; color:#1A1A1A; display:flex; align-items:center; justify-content:center;">${ICON[badge.icon]}</span>` : ""}
+              <span class="card-body" style="${badge?'padding-inline-end:30px;':''}">
                 ${n.type==="drawing" || n.type==="image"
                   ? `<img src="${n.dataUrl}" style="width:100%; border-radius:var(--r-sm); display:block;" alt="">`
                   : `<span class="type-body" style="white-space:pre-wrap;">${escapeHtml(n.text)}</span>`}
               </span>
+              ${n.hardestPoint ? `<div style="margin-top:8px; padding:8px 10px; background:rgba(var(--attention-rgb),.14); border-radius:var(--r-sm); width:100%;"><span class="type-caption" style="color:var(--attention); font-weight:700;">${s.noteHardestPointLabel}</span><p class="type-caption" style="margin-top:2px; white-space:pre-wrap;">${escapeHtml(n.hardestPoint)}</p></div>` : ""}
+              ${n.keyInsight ? `<div style="margin-top:8px; padding:8px 10px; background:rgba(var(--accent-rgb),.14); border-radius:var(--r-sm); width:100%;"><span class="type-caption" style="color:var(--accent); font-weight:700;">${s.noteKeyInsightLabel}</span><p class="type-caption" style="margin-top:2px; white-space:pre-wrap;">${escapeHtml(n.keyInsight)}</p></div>` : ""}
             </button>
-          `).join("")}
+          `;}).join("")}
         </div>
         <div style="display:flex; gap:10px; margin-bottom:var(--sp-5);">
           <button type="button" class="btn btn-secondary" id="notebookAddNote" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.pencil}<span>${s.notebookAddNoteBtn}</span></button>
@@ -4430,6 +4556,7 @@ function renderCourseNotebook(courseId){
         </div>
         <button type="button" class="btn btn-secondary" id="notebookAddExam" style="display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.event}<span>${s.notebookAddExamBtn}</span></button>
 
+        <button type="button" class="btn btn-primary" id="downloadNotebookBtn" style="margin-top:var(--sp-5); display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.openBook}<span>${s.downloadNotebookBtn}</span></button>
       </div>
     </section>
   `;
@@ -4458,6 +4585,7 @@ function renderCourseNotebook(courseId){
   });
   document.getElementById("notebookAddCheck").addEventListener("click", ()=>{ openUnderstandingCheckSheet(courseId, ()=>renderCourseNotebook(courseId)); });
   document.getElementById("notebookAddExam").addEventListener("click", ()=>{ openPastExamSheet(courseId, ()=>renderCourseNotebook(courseId)); });
+  document.getElementById("downloadNotebookBtn").addEventListener("click", ()=>{ downloadNotebook(courseId); });
   document.querySelectorAll("[data-remove-check]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ NotebookModule.removeCheck(courseId, btn.dataset.removeCheck); renderCourseNotebook(courseId); });
   });
@@ -4637,7 +4765,7 @@ function openRawNoteSheet(existingNote, onDone){
         <span class="field-label">${s.notebookNoteColorLabel}</span>
         <div style="display:flex; gap:8px;">
           ${NOTE_COLORS.map(c=>`
-            <button type="button" class="color-swatch ${c.id===chosenColor?'color-swatch-active':''}" data-color="${c.id}" style="background:${c.hex};" aria-label="${escapeHtml(c[l])}"></button>
+            <button type="button" class="color-swatch ${c.id===chosenColor?'color-swatch-active':''}" data-color="${c.id}" style="background:${c.hex}; display:flex; align-items:center; justify-content:center; color:${c.accent||'transparent'};" aria-label="${escapeHtml(c[l])}">${c.icon?ICON[c.icon]:''}</button>
           `).join("")}
         </div>
       </div>
@@ -4751,6 +4879,17 @@ function openNoteSheet(courseId, existingNote, onDone){
             <button type="button" class="mic-btn" id="noteTextMic" aria-label="${s.voiceInputLabel}">${ICON.mic}</button>
           </div>
         </div>
+        <button type="button" id="extraFieldsToggle" style="background:none; border:none; color:var(--accent); font-size:var(--fs-caption); padding:0; margin-bottom:var(--sp-3); cursor:pointer;">${ICON.plus}<span style="margin-inline-start:4px;">${s.noteExtraFieldsToggle}</span></button>
+        <div id="extraFieldsArea" style="display:${editing && (existingNote.hardestPoint||existingNote.keyInsight) ? 'block':'none'};">
+          <div class="field-group">
+            <span class="field-label" style="color:var(--attention);">${s.noteHardestPointLabel}</span>
+            <textarea class="field" id="noteHardestPoint" style="min-height:60px; resize:vertical;" placeholder="${s.noteHardestPointPlaceholder}">${editing?escapeHtml(existingNote.hardestPoint||''):''}</textarea>
+          </div>
+          <div class="field-group">
+            <span class="field-label" style="color:var(--accent);">${s.noteKeyInsightLabel}</span>
+            <textarea class="field" id="noteKeyInsight" style="min-height:60px; resize:vertical;" placeholder="${s.noteKeyInsightPlaceholder}">${editing?escapeHtml(existingNote.keyInsight||''):''}</textarea>
+          </div>
+        </div>
       </div>
       <div id="drawingModeArea" style="display:${mode==='drawing'?'block':'none'};">
         <canvas id="noteCanvas" style="width:100%; border-radius:var(--r-md); touch-action:none; margin-bottom:var(--sp-3); display:block;"></canvas>
@@ -4763,7 +4902,7 @@ function openNoteSheet(courseId, existingNote, onDone){
         <span class="field-label">${s.notebookNoteColorLabel}</span>
         <div style="display:flex; gap:8px;">
           ${NOTE_COLORS.map(c=>`
-            <button type="button" class="color-swatch ${c.id===chosenColor?'color-swatch-active':''}" data-color="${c.id}" style="background:${c.hex};" aria-label="${escapeHtml(c[l])}"></button>
+            <button type="button" class="color-swatch ${c.id===chosenColor?'color-swatch-active':''}" data-color="${c.id}" style="background:${c.hex}; display:flex; align-items:center; justify-content:center; color:${c.accent||'transparent'};" aria-label="${escapeHtml(c[l])}">${c.icon?ICON[c.icon]:''}</button>
           `).join("")}
         </div>
       </div>
@@ -4807,6 +4946,10 @@ function openNoteSheet(courseId, existingNote, onDone){
     });
   });
   overlay.querySelector("#canvasClear").addEventListener("click", ()=>{ if(canvasCtrl) canvasCtrl.clear(); });
+  overlay.querySelector("#extraFieldsToggle").addEventListener("click", ()=>{
+    const area = overlay.querySelector("#extraFieldsArea");
+    area.style.display = area.style.display==="none" ? "block" : "none";
+  });
 
   overlay.querySelectorAll(".color-swatch").forEach(btn=>{
     btn.addEventListener("click", ()=>{
@@ -4824,8 +4967,12 @@ function openNoteSheet(courseId, existingNote, onDone){
     } else {
       const text = overlay.querySelector("#noteTextInput").value.trim();
       if(!text) return;
-      if(editing) NotebookModule.updateNote(courseId, existingNote.id, text, chosenColor);
-      else NotebookModule.addNote(courseId, text, chosenColor);
+      const extras = {
+        hardestPoint: overlay.querySelector("#noteHardestPoint").value.trim(),
+        keyInsight: overlay.querySelector("#noteKeyInsight").value.trim()
+      };
+      if(editing) NotebookModule.updateNote(courseId, existingNote.id, text, chosenColor, extras);
+      else NotebookModule.addNote(courseId, text, chosenColor, extras);
       close(onDone);
     }
   });
@@ -5199,12 +5346,13 @@ function attachVoiceInput(buttonEl, targetEl){
    being purely decorative. Reused by course notebooks and the glossary. */
 const NOTE_COLORS = [
   { id:"default", hex:"#1A2030", ar:"عادي", en:"Default" },
-  { id:"important", hex:"#3A2E12", ar:"مهم", en:"Important" },
-  { id:"review", hex:"#3A1A1A", ar:"يحتاج مراجعة", en:"Needs Review" },
-  { id:"reference", hex:"#12283A", ar:"مرجع", en:"Reference" },
-  { id:"mastered", hex:"#173A22", ar:"متقن", en:"Mastered" }
+  { id:"important", hex:"#3A2E12", ar:"مهم", en:"Important", icon:"starTag", accent:"#D9A15E" },
+  { id:"review", hex:"#3A1A1A", ar:"يحتاج مراجعة", en:"Needs Review", icon:"refreshTag", accent:"#C77B7B" },
+  { id:"reference", hex:"#12283A", ar:"مرجع", en:"Reference", icon:"openBook", accent:"#6FB3B8" },
+  { id:"mastered", hex:"#173A22", ar:"متقن", en:"Mastered", icon:"check", accent:"#7FA88C" }
 ];
 function noteColorHex(colorId){ const c = NOTE_COLORS.find(c=>c.id===colorId); return c ? c.hex : NOTE_COLORS[0].hex; }
+function noteColorBadge(colorId){ return NOTE_COLORS.find(c=>c.id===colorId && c.icon); }
 /* The single "raw" capture notebook — one place to jot things down quickly
    during the week across every course, exactly like the one big notebook in
    the family's own study story. Entries live here until the student
@@ -5244,15 +5392,15 @@ const NotebookModule = {
     }
     return nb;
   },
-  addNote(courseId, text, color){
+  addNote(courseId, text, color, extras){
     const nb = this.get(courseId);
-    nb.notes.unshift({ id:genId(), type:"text", text, color:color||"default", createdAt:Date.now() });
+    nb.notes.unshift({ id:genId(), type:"text", text, color:color||"default", hardestPoint:(extras&&extras.hardestPoint)||"", keyInsight:(extras&&extras.keyInsight)||"", createdAt:Date.now() });
     dbSave();
   },
-  updateNote(courseId, noteId, text, color){
+  updateNote(courseId, noteId, text, color, extras){
     const nb = this.get(courseId);
     const note = nb.notes.find(n=>n.id===noteId);
-    if(note){ note.type="text"; note.text = text; note.color = color||"default"; dbSave(); }
+    if(note){ note.type="text"; note.text = text; note.color = color||"default"; note.hardestPoint=(extras&&extras.hardestPoint)||""; note.keyInsight=(extras&&extras.keyInsight)||""; dbSave(); }
   },
   addDrawingNote(courseId, dataUrl, color){
     const nb = this.get(courseId);
@@ -6261,7 +6409,7 @@ function showAchievementMoment(achievement, onDone){
   overlay.className = "sheet-overlay";
   overlay.innerHTML = `
     <div class="sheet" style="text-align:center; padding-top:var(--sp-6);">
-      <div class="empty-icon celebrate-icon" style="margin:0 auto var(--sp-4); width:72px; height:72px; color:var(--accent); background:linear-gradient(150deg, rgba(var(--accent-rgb),.28), rgba(var(--accent-rgb),.08)); border:1px solid rgba(255,255,255,.6); box-shadow:inset 0 1px 1px rgba(255,255,255,.7), 0 6px 16px rgba(var(--accent-rgb),.28);">${ICON.laurel}</div>
+      <div class="empty-icon celebrate-icon" style="margin:0 auto var(--sp-4); width:72px; height:72px; color:var(--accent); background:rgba(var(--accent-rgb),.16); box-shadow:0 4px 14px rgba(var(--accent-rgb),.20);">${ICON.laurel}</div>
       <div class="sheet-title" style="text-align:center;">${s.achievementCelebrateTitle}</div>
       <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-5);">${escapeHtml(achievement.label)}</p>
       <button type="button" class="btn btn-primary" id="achievementContinue">${s.continueLabel}</button>
