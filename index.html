@@ -440,12 +440,15 @@ ul,ol{ list-style:none; }
   body *{ visibility:hidden; }
   #printNotebookArea, #printNotebookArea *{ visibility:visible; }
   #printNotebookArea{ display:block; position:absolute; top:0; left:0; width:100%; background:#fff; color:#1a1a1a; padding:24px; }
-  .print-page-header{ text-align:center; margin-bottom:28px; border-bottom:2px solid #333; padding-bottom:14px; }
+  .print-page-header{ margin-bottom:28px; border-bottom:2px solid #333; padding-bottom:14px; }
   .print-note{ page-break-inside:avoid; margin-bottom:18px; border-radius:8px; padding:14px 16px; border:1px solid #ddd; }
   .print-callout{ margin-top:8px; padding:8px 10px; border-radius:6px; font-size:12.5px; }
   .print-note img{ max-width:100%; border-radius:6px; margin-top:6px; }
   .print-section-title{ font-size:16px; font-weight:700; margin:24px 0 12px; border-bottom:1px solid #ccc; padding-bottom:6px; }
-  .print-footer-stamp{ text-align:center; margin-top:40px; padding-top:16px; border-top:1px solid #ddd; }
+  .print-footer-stamp{
+    position:fixed; bottom:0; left:0; right:0;
+    text-align:center; padding:12px 24px; border-top:1px solid #ddd; background:#fff;
+  }
 }
 
 /* Tab bar */
@@ -770,8 +773,6 @@ const STR = {
     rawTransferredTo:"بُيّضت إلى",
     rawTransferBtn:"بيّضها لمادة",
     rawTransferTitle:"بيّضها لأي مادة؟",
-    rawTranslateToEnglish:"ترجم النص إلى الإنجليزية",
-    rawTranslatedDone:"تُرجم — راجع النص وعدّله إذا أحببت",
     whiteningTitle:"جلسة التبييض الأسبوعية",
     whiteningEyebrow:"وقت التبييض",
     whiteningProgress:(done,total)=>`بيّضت ${done} من ${total} ${total===1?'مادة':'مواد'} هذا الأسبوع`,
@@ -836,9 +837,9 @@ const STR = {
     notebookEntryLabel:"دفتر المادة",
     voiceInputLabel:"إدخال صوتي",
     notebookNotesLabel:"ملاحظاتي",
-    noteModeText:"كتابة",
-    noteModeDrawing:"رسم يدوي",
     noteClearCanvas:"امسح",
+    noteTextToolLabel:"أضف نصًا",
+    noteTextToolHint:"اضغط في أي مكان على الصفحة لتكتب فيه",
     noteExtraFieldsToggle:"أضف تفاصيل — أصعب نقطة أو أهم فكرة",
     noteHardestPointLabel:"أصعب نقطة في هذا الدرس",
     noteHardestPointPlaceholder:"وش الشي اللي ما فهمته تمامًا أو تحتاج تركّز عليه وقت المراجعة؟",
@@ -855,9 +856,8 @@ const STR = {
     refGlossarySearchPh:"ابحث عن مصطلح...",
     refGlossaryNoResults:"ما لقينا مصطلحًا يطابق بحثك.",
     skillsOtherCategoryLabel:"أخرى",
-    printFooterCopyright:"StudyMate — رفيق تعلم © 2026 — جميع الحقوق محفوظة",
+    printFooterCopyright:(gregYear,hijriYear)=>`StudyMate — رفيق تعلم © ${gregYear}${hijriYear?` (${hijriYear})`:""} — جميع الحقوق محفوظة — أداة أكاديمية لأغراض تعليمية`,
     printNotebookGeneratedOn:"وُلّد بتاريخ",
-    notebookNotesPlaceholder:"دوّن ملخصك للمحاضرة، أو أي شيء تحب ترجع له لاحقًا...",
     notebookSaveNotesBtn:"حفظ الملاحظات",
     notebookNotesEmpty:"لم تضف أي ملاحظة بعد.",
     notebookAddNoteBtn:"إضافة ملاحظة",
@@ -1050,8 +1050,6 @@ const STR = {
     rawTransferredTo:"Whitened to",
     rawTransferBtn:"Whiten to a course",
     rawTransferTitle:"Whiten to which course?",
-    rawTranslateToEnglish:"Translate text to English",
-    rawTranslatedDone:"Translated — review and edit if you'd like",
     whiteningTitle:"Weekly Whitening Session",
     whiteningEyebrow:"Whitening Time",
     whiteningProgress:(done,total)=>`Whitened ${done} of ${total} ${total===1?'course':'courses'} this week`,
@@ -1116,9 +1114,9 @@ const STR = {
     notebookEntryLabel:"Course Notebook",
     voiceInputLabel:"Voice input",
     notebookNotesLabel:"My Notes",
-    noteModeText:"Type",
-    noteModeDrawing:"Handwriting",
     noteClearCanvas:"Clear",
+    noteTextToolLabel:"Add text",
+    noteTextToolHint:"Tap anywhere on the page to write there",
     noteExtraFieldsToggle:"Add details — hardest point or key insight",
     noteHardestPointLabel:"Hardest Point in This Lesson",
     noteHardestPointPlaceholder:"What didn't you fully understand, or need to focus on when reviewing?",
@@ -1135,9 +1133,8 @@ const STR = {
     refGlossarySearchPh:"Search for a term...",
     refGlossaryNoResults:"No terms match your search.",
     skillsOtherCategoryLabel:"Other",
-    printFooterCopyright:"StudyMate — Your Learning Companion © 2026 — All Rights Reserved",
+    printFooterCopyright:(gregYear,hijriYear)=>`StudyMate — Your Learning Companion © ${gregYear}${hijriYear?` (${hijriYear}H)`:""} — All Rights Reserved — An Academic Tool for Educational Purposes`,
     printNotebookGeneratedOn:"Generated on",
-    notebookNotesPlaceholder:"Write your lecture summary, or anything you'd like to come back to later...",
     notebookSaveNotesBtn:"Save Notes",
     notebookNotesEmpty:"You haven't added any notes yet.",
     notebookAddNoteBtn:"Add a Note",
@@ -1262,7 +1259,8 @@ const ICON = {
   questionTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 9a2.5 2.5 0 1 1 3.9 2.1c-.9.6-1.4 1.1-1.4 2.1"/><circle cx="12" cy="17.2" r=".3" fill="currentColor"/></svg>`,
   bulbTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.5.5.9 1.3 1 2.5h6c.1-1.2.5-2 1-2.5A6 6 0 0 0 12 3z"/></svg>`,
   refreshTag:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/></svg>`,
-  trash:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 12.5a2 2 0 0 0 2 1.5h6a2 2 0 0 0 2-1.5L18 7"/></svg>`
+  trash:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7"/><path d="M6 7l1 12.5a2 2 0 0 0 2 1.5h6a2 2 0 0 0 2-1.5L18 7"/></svg>`,
+  textTool:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14"/><path d="M12 5v14"/></svg>`
 };
 
 /* ============================================================
@@ -1415,6 +1413,189 @@ const COURSE_CATALOG = {
    in COURSE_CATALOG entries (e.g. "COMP 111"). Built incrementally, course by
    course, across sessions — see project notes for progress. */
 const COURSE_ENRICHMENT = {
+  "ريض101": {
+    explain:{
+      ar:"تثبيت أساسيات الرياضيات قبل الدخول في التفاضل والتكامل — الأعداد، المعادلات من الدرجة الأولى، الأسس، الجذور، والمتراجحات. القاعدة اللي تُبنى عليها كل رياضيات الهندسة القادمة.",
+      en:"Solidifying math fundamentals before entering calculus — numbers, first-degree equations, exponents, roots, and inequalities. The foundation all upcoming engineering math is built on."
+    },
+    why:{
+      ar:"ضعف بسيط في الأساسيات هنا يتحول لعائق كبير في ريض211 (تفاضل وتكامل) القادمة — تأسيس متين الآن يوفر عليك مجهودًا مضاعفًا لاحقًا.",
+      en:"A small weakness in the fundamentals here becomes a major obstacle in the upcoming Calculus course — solid grounding now saves you double the effort later."
+    },
+    resources:[
+      { title:{ar:"دورة احتراف أساسيات الرياضيات من الصفر (Udemy، ٤٩ محاضرة، تقييم ٤.٥، مجاني)", en:"Mastering Math Fundamentals From Scratch (Udemy, 49 lectures, 4.5 rating, Free)"}, url:"https://www.udemy.com/course/arabic-math-basics/", reason:{ar:"موجهة صراحة \"للمقبلين على الدخول في الجامعات العلمية\" — تغطي بالضبط أساسيات المعادلات والأسس والجذور والمتراجحات", en:"Explicitly aimed at \"students about to enter science universities\" — covers exactly equations, exponents, roots, and inequalities fundamentals"} }
+    ]
+  },
+  "همك132": {
+    explain:{
+      ar:"مبادئ التصميم الهندسي — تحليل الإجهادات والتحميلات، اختيار المواد المناسبة، وأساسيات استخدام برامج التصميم مثل AutoCAD وSolidWorks لرسم القطع الميكانيكية.",
+      en:"Engineering design principles — stress and load analysis, appropriate material selection, and the basics of design software like AutoCAD and SolidWorks for drawing mechanical parts."
+    },
+    why:{
+      ar:"هذا أول تماس فعلي مع \"التفكير كمهندس تصميم\" لا مجرد حل معادلات — المهارة اللي تبني عليها كل مقررات التصميم والتصنيع لاحقًا.",
+      en:"This is your first real contact with \"thinking like a design engineer\" rather than just solving equations — the skill every upcoming design and manufacturing course builds on."
+    },
+    resources:[
+      { title:{ar:"دورة التصميم الميكانيكي (معارف، ٤٤ درسًا، مجاني)", en:"Mechanical Design Course (M3aarf, 44 lessons, Free)"}, url:"https://www.m3aarf.com/certificate/16630/%D8%A7%D9%84%D8%AA%D8%B5%D9%85%D9%8A%D9%85-%D8%A7%D9%84%D9%85%D9%8A%D9%83%D8%A7%D9%86%D9%8A%D9%83%D9%8A-video", reason:{ar:"٢٣٨ طالبًا مسجّلًا فعليًا — يغطي تحليل الإجهادات، اختيار المواد، والتصميم ببرامج AutoCAD وSolidWorks بمحتوى عربي كامل", en:"238 students actually enrolled — covers stress analysis, material selection, and AutoCAD/SolidWorks design with full Arabic content"} }
+    ]
+  },
+  "سلم101": {
+    explain:{
+      ar:"مقدمة في أصول الثقافة الإسلامية — العقيدة والعبادة والأخلاق، وكيف تشكّل هذي الأصول هوية المسلم الفكرية في مواجهة التيارات الفكرية المختلفة.",
+      en:"An introduction to the foundations of Islamic culture — belief, worship, and ethics, and how these foundations shape a Muslim's intellectual identity when facing different currents of thought."
+    },
+    why:{
+      ar:"مقرر جامعي إلزامي يبني وعيًا فكريًا أساسيًا، بمعزل عن تخصصك الهندسي — أساس تحتاجه بقية حياتك، لا فقط لاجتياز الفصل.",
+      en:"A required university course that builds essential intellectual awareness, separate from your engineering major — a foundation you'll need for the rest of your life, not just to pass the semester."
+    },
+    resources:[
+      { title:{ar:"مقرر الثقافة الإسلامية (جامعة القدس المفتوحة، QTube، مجاني)", en:"Islamic Culture Course (Al-Quds Open University, QTube, Free)"}, url:"https://qtube.qou.edu/%D9%85%D9%82%D8%B1%D8%B1-%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A9-%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9-%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%AA%D8%A7%D9%8A%D9%84%D9%88%D8%B1-%D9%84%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9_v400234", reason:{ar:"من منصة الجامعة الرسمية الخاصة بمحاضراتها المصوّرة (QTube)، لا مصدر خارجي غير موثّق", en:"From the university's own official platform for recorded lectures (QTube), not an unverified external source"} }
+    ]
+  },
+  "نجل101": {
+    explain:{
+      ar:"مقرر اللغة الإنجليزية العام الأول في خطتك — يبني الأساس اللي تحتاجه لقراءة أي مرجع تقني هندسي بالإنجليزي لاحقًا.",
+      en:"The first general English course in your plan — builds the foundation you need to read any technical engineering reference in English later."
+    },
+    why:{
+      ar:"أغلب مراجع الهندسة والتوثيق التقني بالإنجليزي — هذا المقرر استثمار مباشر في قدرتك على فهم كل مقرر هندسي قادم.",
+      en:"Most engineering references and technical documentation are in English — this course is a direct investment in your ability to understand every upcoming engineering course."
+    },
+    resources:[
+      { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية", en:"Duolingo — English Learning App"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"مجاني بالكامل، يبني المفردات والقواعد تدريجيًا بجلسات قصيرة يومية", en:"Completely free, builds vocabulary and grammar gradually through short daily sessions"} },
+      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} }
+    ]
+  },
+  "فيز101": {
+    explain:{
+      ar:"أساسيات ميكانيكا الحركة الانتقالية — الحركة في بعد وبعدين، المتجهات، قوانين نيوتن الثلاثة، الشغل والطاقة، وقانون حفظ كمية الحركة، من كتاب سيروي المرجعي.",
+      en:"Fundamentals of translational mechanics — motion in one and two dimensions, vectors, Newton's three laws, work and energy, and conservation of momentum, from the reference Serway textbook."
+    },
+    why:{
+      ar:"كل مقرر ميكانيكي قادم (ديناميكا، مقاومة مواد، اهتزازات) مبني مباشرة على هذي القوانين — فهمها الآن بعمق يوفر عليك صعوبة مضاعفة لاحقًا.",
+      en:"Every upcoming mechanical course (dynamics, strength of materials, vibrations) is built directly on these laws — understanding them deeply now saves you double the difficulty later."
+    },
+    resources:[
+      { title:{ar:"Physics 101 — شرح مع حل أكثر من ١٠٠ مسألة (Udemy، ١٤٨ محاضرة، مجاني)", en:"Physics 101 — Explanation with 100+ Solved Problems (Udemy, 148 lectures, Free)"}, url:"https://www.udemy.com/course/physics_serway_mechanics_arabic/", reason:{ar:"مبني بالكامل على كتاب سيروي المرجعي (الفصول ٢-٩)، ويغطي بالضبط قوانين نيوتن والشغل والطاقة وكمية الحركة بحل عملي لأكثر من ١٠٠ مسألة", en:"Fully based on the reference Serway textbook (Chapters 2-9), covering exactly Newton's laws, work/energy, and momentum with over 100 solved problems"} }
+    ]
+  },
+  "ريض211": {
+    explain:{
+      ar:"أول مقرر تفاضل وتكامل حقيقي — النهايات، الاتصال، المشتقات وتطبيقاتها، ثم مقدمة في التكامل. الأداة الرياضية الأساسية لكل مقرر هندسي يتعامل مع معدلات التغير.",
+      en:"Your first real calculus course — limits, continuity, derivatives and their applications, then an introduction to integration. The essential mathematical tool for every engineering course dealing with rates of change."
+    },
+    why:{
+      ar:"التفاضل والتكامل هو اللغة الرياضية للهندسة الميكانيكية كلها — من الديناميكا إلى انتقال الحرارة — ضعف هنا يتكرر في كل مقرر رياضي هندسي قادم.",
+      en:"Calculus is the mathematical language of all mechanical engineering — from dynamics to heat transfer — weakness here repeats in every upcoming engineering math course."
+    },
+    resources:[
+      { title:{ar:"تفاضل وتكامل 101 (Udemy، ٢٥ محاضرة، تقييم ٥.٠، مجاني)", en:"Calculus 101 (Udemy, 25 lectures, 5.0 rating, Free)"}, url:"https://www.udemy.com/course/calculus-101-course/", reason:{ar:"موجهة صراحة لطلاب كليات الهندسة والعلوم — تغطي النهايات والاتصال والمشتقات وتطبيقاتها ومقدمة التكامل بترتيب متسلسل", en:"Explicitly aimed at engineering and science college students — covers limits, continuity, derivatives and applications, and an intro to integration in sequential order"} }
+    ]
+  },
+  "سلم102": {
+    explain:{
+      ar:"استكمال الثقافة الإسلامية — نظام الإسلام الشامل: الجانب الاجتماعي والاقتصادي والسياسي، وكيف يتكامل هذا النظام مع العقيدة والعبادة اللي درستها في سلم101.",
+      en:"Continuing Islamic Culture — Islam's comprehensive system: the social, economic, and political dimensions, and how this system integrates with the belief and worship you studied in SLM 101."
+    },
+    why:{
+      ar:"يوسّع فهمك من العقيدة الفردية إلى النظام المجتمعي الكامل — أساس فكري متكامل يبقى معك بمعزل عن تخصصك الهندسي.",
+      en:"Expands your understanding from individual belief to the complete societal system — an integrated intellectual foundation that stays with you regardless of your engineering major."
+    },
+    resources:[
+      { title:{ar:"مقرر الثقافة الإسلامية — الحلقة الثانية (جامعة القدس المفتوحة، QTube، مجاني)", en:"Islamic Culture Course — Part Two (Al-Quds Open University, QTube, Free)"}, url:"https://qtube.qou.edu/%D9%85%D9%82%D8%B1%D8%B1-%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A9-%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9-%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%AA%D8%A7%D9%8A%D9%84%D9%88%D8%B1-%D9%84%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9_v400234", reason:{ar:"نفس المنصة الرسمية الموثوقة (QTube) بحلقتها الثانية المخصصة لنظام الإسلام الاجتماعي والاقتصادي والسياسي", en:"Same trusted official platform (QTube), its second part dedicated to Islam's social, economic, and political system"} }
+    ]
+  },
+  "نجل102": {
+    explain:{
+      ar:"استكمال بناء اللغة الإنجليزية — مفردات وقواعد أكثر تقدمًا من نجل101، تحضيرًا لقراءة مراجع هندسية أعقد لاحقًا.",
+      en:"Continuing to build English — more advanced vocabulary and grammar than ENG 101, preparing you to read more complex engineering references later."
+    },
+    why:{
+      ar:"كل مستوى إضافي في الإنجليزية يفتح لك مراجع تقنية أكثر — الاستمرارية هنا أهم من السرعة.",
+      en:"Every additional level in English opens up more technical references to you — consistency here matters more than speed."
+    },
+    resources:[
+      { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية (استكمال المسار)", en:"Duolingo — English Learning App (continuing the path)"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"نفس المسار المجاني المستمر — يتقدم تلقائيًا لمستوى أعلى بناءً على تقدمك في نجل101", en:"The same continuous free path — automatically advances to a higher level based on your progress in ENG 101"} }
+    ]
+  },
+  "ENGL 105": {
+    explain:{
+      ar:"استكمال قواعد اللغة الإنجليزية بمستوى متقدم أكثر — المقارنات وصيغ التفضيل، الأفعال المركبة، المضارع التام المستمر، وقاعدة If الشرطية في سياقات حقيقية.",
+      en:"Continuing English grammar at a more advanced level — comparatives and superlatives, phrasal verbs, present perfect continuous, and conditional 'If' structures in real contexts."
+    },
+    why:{
+      ar:"هذا المستوى يفصلك عن قراءة نصوص إنجليزية حقيقية معقدة — كل تركيب تتقنه هنا يفتح لك باب الترجمة من نص أصعب لاحقًا.",
+      en:"This level separates you from reading real complex English texts — every structure you master here opens the door to translating a harder text later."
+    },
+    resources:[
+      { title:{ar:"كورس شامل كامل — المستوى الثاني (يوتيوب، ٤٠ فيديو، عربي، مجاني)", en:"Complete Comprehensive Course — Level 2 (YouTube, 40 videos, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PLWXso7v6nBWtKbyc1W7x-ZBDG10K1AdS1", reason:{ar:"سلسلة كاملة من ٤٠ فيديو متخصصة تحديدًا للمستوى الثاني — تكمل ما بدأته في نجل101 بلا فجوة", en:"A complete 40-video series specifically dedicated to Level 2 — continues exactly where ENG 101 left off with no gap"} }
+    ]
+  },
+  "ENGL 202": {
+    explain:{
+      ar:"مدخل إلى علم اللغة (اللسانيات) — المستويات الأربعة لتحليل أي لغة: الصوتي، الصرفي، النحوي، والدلالي، وهي الأدوات النظرية اللي يبني عليها كل مترجم فهمه العميق للغة.",
+      en:"An introduction to linguistics — the four levels of analyzing any language: phonetic, morphological, syntactic, and semantic, the theoretical tools every translator builds their deep language understanding on."
+    },
+    why:{
+      ar:"الترجمة الجيدة مو نقل كلمات، هي فهم بنية اللغة على مستوياتها الأربعة — هذا المقرر يعطيك الإطار النظري اللي يفرّق بين مترجم يترجم بالحدس ومترجم يفهم لماذا الجملة تعمل كذا.",
+      en:"Good translation isn't just transferring words — it's understanding language structure across its four levels. This course gives you the theoretical framework that separates a translator who works by intuition from one who understands why a sentence works the way it does."
+    },
+    resources:[
+      { title:{ar:"مستويات التحليل اللغوي (جامعة الملك سعود، صفحة أستاذ رسمية، مقالة أكاديمية، مجاني)", en:"Levels of Linguistic Analysis (King Saud University, official faculty page, academic article, Free)"}, url:"https://faculty.ksu.edu.sa/en/nsaldayel/course-material/55265", reason:{ar:"ملاحظة صراحة: هذا مقال أكاديمي لا فيديو — لكنه من صفحة أستاذ جامعي رسمية (جامعة الملك سعود)، ويغطي بدقة المستويات الأربعة (الصوتي، الصرفي، النحوي، الدلالي) اللي هي جوهر المقرر", en:"Note honestly: this is an academic article, not a video — but it's from an official university faculty page (King Saud University), and precisely covers the four levels (phonetic, morphological, syntactic, semantic) that are the core of the course"} }
+    ]
+  },
+  "ENGL 204": {
+    explain:{
+      ar:"جولة عبر تاريخ الأدب الإنجليزي وأنواعه — من مسرح شكسبير إلى الشعر الرومانسي والرواية الحديثة، وكيف نشأت دراسة الأدب الإنجليزي نفسها كعلم أكاديمي.",
+      en:"A tour through the history and genres of English literature — from Shakespeare's theater to Romantic poetry and the modern novel, and how the study of English literature itself emerged as an academic discipline."
+    },
+    why:{
+      ar:"مترجم الأدب يحتاج خلفية عن السياق التاريخي والأدبي اللي يُكتب فيه النص — بدون هذا، الترجمة تصبح نقل كلمات بلا روح النص الأصلي.",
+      en:"A literary translator needs background on the historical and literary context a text is written in — without this, translation becomes transferring words without the spirit of the original."
+    },
+    resources:[
+      { title:{ar:"الأدب الإنجليزي: مقدمة قصيرة جدًّا (مؤسسة هنداوي، ترجمة كتاب كامل، مجاني)", en:"English Literature: A Very Short Introduction (Hindawi Foundation, full book translation, Free)"}, url:"https://www.hindawi.org/books/35959607/4/", reason:{ar:"ترجمة عربية كاملة وموثوقة من مؤسسة هنداوي (منصة غير ربحية معروفة) لكتاب أكاديمي بقلم جوناثان بيت — يغطي بالضبط تاريخ الأدب الإنجليزي وأنواعه ونشأة دراسته الأكاديمية", en:"A complete, trustworthy Arabic translation from Hindawi Foundation (a well-known nonprofit platform) of an academic book by Jonathan Bate — covers exactly English literature's history, genres, and the emergence of its academic study"} }
+    ]
+  },
+  "ARAB 205": {
+    explain:{
+      ar:"تطبيق عملي مكثف على قواعد النحو العربي — الإعراب الفعلي لجمل حقيقية، لا الحفظ النظري فقط، لتثبيت القواعد بالممارسة المباشرة.",
+      en:"Intensive practical application of Arabic grammar rules — actual parsing (i'rab) of real sentences, not just theoretical memorization, to cement the rules through direct practice."
+    },
+    why:{
+      ar:"الترجمة إلى العربية تتطلب عربية سليمة إعرابًا لا مجرد فهمًا نظريًا للقاعدة — هذا المقرر يحوّل معرفتك النظرية إلى مهارة تطبيقية فعلية.",
+      en:"Translating into Arabic requires grammatically correct Arabic, not just theoretical rule knowledge — this course turns your theoretical knowledge into an actual applied skill."
+    },
+    resources:[
+      { title:{ar:"النحو التطبيقي — الشرح المرئي (يوتيوب، ٩٣ فيديو، مجاني)", en:"Applied Grammar — Visual Explanation (YouTube, 93 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PL9OA173EdeidNLTX8uYcT030qkk9ZYjJi", reason:{ar:"عنوان السلسلة يطابق اسم المقرر حرفيًا — ٩٣ فيديو تطبيقي مخصص للإعراب الفعلي، لا الشرح النظري فقط", en:"The series title matches the course name literally — 93 practical videos dedicated to actual parsing, not just theoretical explanation"} }
+    ]
+  },
+  "ENGL 206": {
+    explain:{
+      ar:"الكتابة الأكاديمية بالإنجليزية لأغراض محددة — من بناء الجملة إلى هيكلة المقال الكامل (مقدمة، جسم، خاتمة)، مع تجنب الأخطاء الشائعة في الكتابة الأكاديمية.",
+      en:"Academic English writing for specific purposes — from sentence construction to full essay structure (intro, body, conclusion), while avoiding common academic writing mistakes."
+    },
+    why:{
+      ar:"الترجمة من العربية إلى الإنجليزية تحتاج كتابة إنجليزية سليمة الهيكل، لا فقط مفردات صحيحة — هذا المقرر يبني المهارة اللي تُخرج نصًا إنجليزيًا يقرأ بطلاقة لا كأنه مترجم حرفيًا.",
+      en:"Translating from Arabic to English needs structurally sound English writing, not just correct vocabulary — this course builds the skill that produces English text reading fluently, not like a literal translation."
+    },
+    resources:[
+      { title:{ar:"كورس شامل للكتابة الأكاديمية بالإنجليزية (يوتيوب، ٥ ساعات، عربي، مجاني)", en:"Comprehensive Academic Writing Course in English (YouTube, 5 hours, Arabic, Free)"}, url:"https://www.youtube.com/watch?v=hCOkuCBVrqM", reason:{ar:"شرح تأسيسي شامل من الجملة إلى المقال الكامل، يغطي بالضبط بناء المقدمة والجسم والخاتمة والأخطاء الشائعة اللي يجب تجنبها", en:"A comprehensive foundational explanation from sentence to full essay, covering exactly intro/body/conclusion structure and common mistakes to avoid"} }
+    ]
+  },
+  "ENGL 208": {
+    explain:{
+      ar:"الترجمة العلمية والطبية — التعامل مع المصطلحات الطبية المتخصصة، ترجمة التقارير والمستندات الطبية بدقة، وأدوات ترجمة موثوقة للمجال الصحي.",
+      en:"Scientific and medical translation — handling specialized medical terminology, accurately translating medical reports and documents, and reliable translation tools for the healthcare field."
+    },
+    why:{
+      ar:"خطأ بسيط في الترجمة الطبية قد يكون له عواقب وخيمة حقيقية — هذا المجال يتطلب دقة أعلى من أي ترجمة عامة، وهو أحد أكثر مجالات الترجمة طلبًا في سوق العمل.",
+      en:"A small error in medical translation can have real serious consequences — this field demands higher accuracy than general translation, and it's one of the most in-demand translation fields in the job market."
+    },
+    resources:[
+      { title:{ar:"تاسكات تدريب على الترجمة الطبية ومصطلحاتها (يوتيوب، ٢٤ فيديو، مجاني)", en:"Medical Translation Training Tasks & Terminology (YouTube, 24 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PLXdNEJmufnaPOYOxV0SFsW0dw_qDFohnj", reason:{ar:"سلسلة عملية مخصصة تحديدًا للترجمة الطبية — تدريبات فعلية على ملفات طبية حقيقية بجانب شرح المصطلحات", en:"A practical series specifically dedicated to medical translation — actual practice on real medical files alongside terminology explanation"} }
+    ]
+  },
   "ARAB 210": {
     explain:{
       ar:"كتابة نص عربي مؤثر وجذاب — تقنيات السرد، بناء الأسلوب الشخصي، ثم إتقان مهارات التحرير والمراجعة لتلميع النص قبل تسليمه.",
@@ -1935,6 +2116,19 @@ const COURSE_ENRICHMENT = {
     },
     resources:[
       { title:{ar:"مقرر الثقافة الإسلامية (جامعة القدس المفتوحة، QTube، مجاني)", en:"Islamic Culture Course (Al-Quds Open University, QTube, Free)"}, url:"https://qtube.qou.edu/%D9%85%D9%82%D8%B1%D8%B1-%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A9-%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9-%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%AA%D8%A7%D9%8A%D9%84%D9%88%D8%B1-%D9%84%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9_v400234", reason:{ar:"من منصة الجامعة الرسمية الخاصة بمحاضراتها المصوّرة (QTube)، لا مصدر خارجي غير موثّق", en:"From the university's own official platform for recorded lectures (QTube), not an unverified external source"} }
+    ]
+  },
+  "هكه111": {
+    explain:{
+      ar:"أساسيات الدوائر الكهربائية — مكونات الدائرة وأنواعها، قانون أوم، توصيل المقاومات على التوالي والتوازي، وقوانين كيرشوف للتيار والجهد (KCL/KVL) لتحليل أي دائرة.",
+      en:"Electrical circuit fundamentals — circuit components and types, Ohm's law, series/parallel resistor connections, and Kirchhoff's current and voltage laws (KCL/KVL) for analyzing any circuit."
+    },
+    why:{
+      ar:"أي نظام ميكانيكي حديث فيه مكوّن كهربائي أو تحكم إلكتروني (مستشعرات، محركات، أنظمة تحكم) — فهم الدوائر الأساسي يفتح لك التعامل مع هذي الأنظمة بثقة لا خوف.",
+      en:"Any modern mechanical system has an electrical component or electronic control (sensors, motors, control systems) — basic circuit understanding lets you approach these systems with confidence, not fear."
+    },
+    resources:[
+      { title:{ar:"أساسيات الدوائر الكهربائية خطوة بخطوة (معارف، ٣١ درسًا، تقييم ٤.٨ من ٨ تقييمات، مجاني)", en:"Electrical Circuit Fundamentals Step by Step (M3aarf, 31 lessons, 4.8 rating from 8 reviews, Free)"}, url:"https://www.m3aarf.com/certificate/16639/%D8%A7%D9%84%D8%AF%D9%88%D8%A7%D8%A6%D8%B1-%D8%A7%D9%84%D9%83%D9%87%D8%B1%D8%A8%D8%A7%D8%A6%D9%8A%D8%A9-video", reason:{ar:"٢٤٩ طالبًا وتقييمات حقيقية موثقة — يغطي بالضبط قانون أوم، التوصيل بالتوالي والتوازي، وقوانين كيرشوف بالترتيب المنطقي", en:"249 students and real documented reviews — covers exactly Ohm's law, series/parallel connections, and Kirchhoff's laws in logical order"} }
     ]
   },
   "COMP 111": {
@@ -4906,14 +5100,20 @@ function downloadNotebook(courseId){
   const course = CourseModule.get(courseId);
   const nb = NotebookModule.get(courseId);
   const dateStr = new Date().toLocaleDateString(l==="ar"?"ar-SA":"en-US", {year:"numeric", month:"long", day:"numeric"});
+  let hijriYear = "";
+  try{ hijriYear = new Intl.DateTimeFormat("ar-SA-u-ca-islamic", {year:"numeric"}).format(new Date()).trim(); }catch(e){}
+  const gregYear = new Date().getFullYear();
 
   const NOTE_COLOR_PRINT = { default:"#F4F4F4", blue:"#DCEBFB", green:"#DFF3E4", yellow:"#FCF3D6", pink:"#FBE2E8" };
   function printColorHex(id){ return NOTE_COLOR_PRINT[id] || NOTE_COLOR_PRINT.default; }
 
   let html = `
-    <div class="print-page-header">
-      <div style="font-size:22px; font-weight:800;">${escapeHtml(course.name)}</div>
-      <div style="font-size:13px; color:#666; margin-top:4px;">${s.printNotebookGeneratedOn} ${dateStr}</div>
+    <div class="print-page-header" style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+      <img src="${LOGO_DATA_URI}" alt="StudyMate" style="width:38px; height:auto; flex-shrink:0;">
+      <div style="text-align:end;">
+        <div style="font-size:22px; font-weight:800;">${escapeHtml(course.name)}</div>
+        <div style="font-size:13px; color:#666; margin-top:4px;">${s.printNotebookGeneratedOn} ${dateStr}</div>
+      </div>
     </div>`;
 
   if(nb.notes.length){
@@ -4962,8 +5162,7 @@ function downloadNotebook(courseId){
 
   html += `
     <div class="print-footer-stamp">
-      <img src="${LOGO_DATA_URI}" alt="StudyMate" style="width:60px; height:auto; display:block; margin:0 auto 6px;">
-      <div style="font-size:11px; color:#888;">${s.printFooterCopyright}</div>
+      <div style="font-size:11px; color:#888;">${s.printFooterCopyright(gregYear, hijriYear)}</div>
     </div>`;
 
   document.getElementById("printNotebookArea").innerHTML = html;
@@ -5120,9 +5319,53 @@ function setupCanvasDrawing(canvas, initialDataUrl){
   canvas.addEventListener("pointercancel", ()=>{ drawing = false; });
   return {
     setPen(color){ ctx.strokeStyle = color; },
-    clear(){ ctx.fillStyle = "#11141F"; ctx.fillRect(0,0,cssWidth,cssHeight); },
-    toDataUrl(){ return canvas.toDataURL("image/png"); }
+    clear(){ ctx.fillStyle = "#FAF9F5"; ctx.fillRect(0,0,cssWidth,cssHeight); },
+    toDataUrl(){ return canvas.toDataURL("image/png"); },
+    placeText(text, x, y, color){
+      if(!text) return;
+      ctx.fillStyle = color;
+      ctx.font = "16px Tajawal, Arial, sans-serif";
+      ctx.textBaseline = "top";
+      text.split("\n").forEach((line, i)=>{ ctx.fillText(line, x, y + i*20); });
+    }
   };
+}
+function wireCanvasTextTool(overlay, canvasEl, toolBtnId, hintId, getCanvasCtrl){
+  const toolBtn = overlay.querySelector("#"+toolBtnId);
+  const hint = overlay.querySelector("#"+hintId);
+  let placing = false;
+  function setPlacing(val){
+    placing = val;
+    toolBtn.style.color = val ? "var(--accent)" : "var(--ink-muted)";
+    hint.style.display = val ? "block" : "none";
+    canvasEl.style.cursor = val ? "text" : "";
+  }
+  toolBtn.addEventListener("click", ()=>{ setPlacing(!placing); });
+  canvasEl.addEventListener("pointerdown", (e)=>{
+    if(!placing) return;
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    const rect = canvasEl.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const input = document.createElement("textarea");
+    input.className = "field";
+    input.rows = 1;
+    input.style.cssText = `position:absolute; left:${rect.left - overlay.querySelector(".sheet").getBoundingClientRect().left + x}px; top:${rect.top - overlay.querySelector(".sheet").getBoundingClientRect().top + y}px; width:${Math.min(200, rect.width - x)}px; min-height:32px; z-index:5; font-size:14px; padding:4px 8px; resize:both;`;
+    overlay.querySelector(".sheet").appendChild(input);
+    input.focus();
+    function commit(){
+      const ctrl = getCanvasCtrl();
+      const val = input.value.trim();
+      const activePen = overlay.querySelector("[data-pen].active-pen");
+      const penColor = activePen ? activePen.dataset.pen : "#232323";
+      if(val && ctrl) ctrl.placeText(val, x, y, penColor);
+      input.remove();
+      setPlacing(false);
+    }
+    input.addEventListener("blur", commit, {once:true});
+    input.addEventListener("keydown", (ev)=>{ if(ev.key==="Enter" && !ev.shiftKey){ ev.preventDefault(); input.blur(); } });
+  }, true);
 }
 function renderRawNotebook(){
   applyDir();
@@ -5217,7 +5460,6 @@ function openRawNoteSheet(existingNote, onDone){
   const l = lang();
   const editing = !!existingNote;
   let chosenColor = editing ? (existingNote.color||"default") : "default";
-  let mode = editing ? (existingNote.type==="drawing"?"drawing":"text") : "text";
   const PEN_COLORS = ["#232323", "#5B93E0", "#C77B7B", "#7FA88C"];
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
@@ -5225,29 +5467,15 @@ function openRawNoteSheet(existingNote, onDone){
     <div class="sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-title">${editing ? s.notebookEditNoteTitle : s.rawNotebookTitle}</div>
-      <div class="segmented" style="margin-bottom:var(--sp-3);">
-        <button type="button" class="segmented-btn ${mode==='text'?'segmented-active':''}" id="rawModeText">${s.noteModeText}</button>
-        <button type="button" class="segmented-btn ${mode==='drawing'?'segmented-active':''}" id="rawModeDrawing">${s.noteModeDrawing}</button>
-      </div>
-      <div id="rawTextModeArea" style="display:${mode==='text'?'block':'none'};">
-        <div class="field-group">
-          <div class="field-with-mic">
-            <textarea class="field" id="rawTextInput" style="min-height:110px; resize:vertical;" placeholder="${s.notebookNotesPlaceholder}">${editing && existingNote.type!=="drawing"?escapeHtml(existingNote.text):''}</textarea>
-            <button type="button" class="mic-btn" id="rawTextMic" aria-label="${s.voiceInputLabel}">${ICON.mic}</button>
-          </div>
-        </div>
-        <button type="button" class="btn btn-secondary" id="rawTranslateBtn" style="margin-bottom:var(--sp-3);">${s.rawTranslateToEnglish}</button>
-        <p class="type-caption" id="rawTranslateHint" style="color:var(--ink-muted); display:none; margin-top:-8px; margin-bottom:var(--sp-3);"></p>
-      </div>
-      <div id="rawDrawingModeArea" style="display:${mode==='drawing'?'block':'none'};">
-        <div style="display:flex; gap:8px; align-items:stretch; margin-bottom:var(--sp-3);">
-          <canvas id="rawCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
-          <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
-            ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
-            <button type="button" class="btn-icon" id="rawCanvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
-          </div>
+      <div style="display:flex; gap:8px; align-items:stretch; margin-bottom:var(--sp-3); position:relative;">
+        <canvas id="rawCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
+          ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
+          <button type="button" class="btn-icon" id="rawTextTool" aria-label="${s.noteTextToolLabel}" style="color:var(--ink-muted);">${ICON.textTool}</button>
+          <button type="button" class="btn-icon" id="rawCanvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
         </div>
       </div>
+      <p class="type-caption" id="rawTextToolHint" style="color:var(--accent); display:none; margin-top:-8px; margin-bottom:var(--sp-3);">${s.noteTextToolHint}</p>
       <div class="field-group">
         <span class="field-label">${s.notebookNoteColorLabel}</span>
         <div style="display:flex; gap:8px;">
@@ -5263,49 +5491,20 @@ function openRawNoteSheet(existingNote, onDone){
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
   function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
-  attachVoiceInput(overlay.querySelector("#rawTextMic"), overlay.querySelector("#rawTextInput"));
 
-  overlay.querySelector("#rawTranslateBtn").addEventListener("click", async ()=>{
-    const input = overlay.querySelector("#rawTextInput");
-    const text = input.value.trim();
-    const hint = overlay.querySelector("#rawTranslateHint");
-    if(!text) return;
-    hint.style.display = "block";
-    hint.textContent = s.translateLoading;
-    try{
-      const translated = await translateTextOnDemand(text, "ar-en");
-      if(translated){ input.value = translated; hint.textContent = s.rawTranslatedDone; }
-      else hint.textContent = s.translateError;
-    }catch(err){ hint.textContent = s.translateError; }
-  });
-
+  const canvasEl = overlay.querySelector("#rawCanvas");
   let canvasCtrl = null;
-  function ensureCanvas(){
-    if(!canvasCtrl){
-      canvasCtrl = setupCanvasDrawing(overlay.querySelector("#rawCanvas"), editing && existingNote.type==="drawing" ? existingNote.dataUrl : null);
-    }
-  }
-  if(mode==="drawing") ensureCanvas();
-  overlay.querySelector("#rawModeText").addEventListener("click", ()=>{
-    mode = "text";
-    overlay.querySelector("#rawTextModeArea").style.display = "block";
-    overlay.querySelector("#rawDrawingModeArea").style.display = "none";
-    overlay.querySelector("#rawModeText").classList.add("segmented-active");
-    overlay.querySelector("#rawModeDrawing").classList.remove("segmented-active");
+  requestAnimationFrame(()=>{
+    canvasCtrl = setupCanvasDrawing(canvasEl, editing && existingNote.type==="drawing" ? existingNote.dataUrl : null);
   });
-  overlay.querySelector("#rawModeDrawing").addEventListener("click", ()=>{
-    mode = "drawing";
-    overlay.querySelector("#rawTextModeArea").style.display = "none";
-    overlay.querySelector("#rawDrawingModeArea").style.display = "block";
-    overlay.querySelector("#rawModeDrawing").classList.add("segmented-active");
-    overlay.querySelector("#rawModeText").classList.remove("segmented-active");
-    requestAnimationFrame(()=>{ ensureCanvas(); });
-  });
-  overlay.querySelectorAll("[data-pen]").forEach(btn=>{
+
+  overlay.querySelectorAll("[data-pen]").forEach((btn,i)=>{
+    if(i===0) btn.classList.add("active-pen");
     btn.addEventListener("click", ()=>{
       if(canvasCtrl) canvasCtrl.setPen(btn.dataset.pen);
-      overlay.querySelectorAll("[data-pen]").forEach(b=>b.style.borderColor="transparent");
+      overlay.querySelectorAll("[data-pen]").forEach(b=>{ b.style.borderColor="transparent"; b.classList.remove("active-pen"); });
       btn.style.borderColor = "var(--accent)";
+      btn.classList.add("active-pen");
     });
   });
   overlay.querySelector("#rawCanvasClear").addEventListener("click", ()=>{ if(canvasCtrl) canvasCtrl.clear(); });
@@ -5316,19 +5515,15 @@ function openRawNoteSheet(existingNote, onDone){
       btn.classList.add("color-swatch-active");
     });
   });
+
+  wireCanvasTextTool(overlay, canvasEl, "rawTextTool", "rawTextToolHint", ()=>canvasCtrl);
+
   overlay.querySelector("#rawSave").addEventListener("click", ()=>{
-    if(mode==="drawing"){
-      const dataUrl = canvasCtrl.toDataUrl();
-      if(editing) RawNotebookModule.update(existingNote.id, "drawing", dataUrl, chosenColor);
-      else RawNotebookModule.create("drawing", dataUrl, chosenColor);
-      close(onDone);
-    } else {
-      const text = overlay.querySelector("#rawTextInput").value.trim();
-      if(!text) return;
-      if(editing) RawNotebookModule.update(existingNote.id, "text", text, chosenColor);
-      else RawNotebookModule.create("text", text, chosenColor);
-      close(onDone);
-    }
+    if(!canvasCtrl) return;
+    const dataUrl = canvasCtrl.toDataUrl();
+    if(editing) RawNotebookModule.update(existingNote.id, "drawing", dataUrl, chosenColor);
+    else RawNotebookModule.create("drawing", dataUrl, chosenColor);
+    close(onDone);
   });
   const deleteBtn = overlay.querySelector("#rawDelete");
   if(deleteBtn){
@@ -5347,7 +5542,6 @@ function openNoteSheet(courseId, existingNote, onDone){
   const l = lang();
   const editing = !!existingNote;
   let chosenColor = editing ? (existingNote.color||"default") : "default";
-  let mode = editing ? (existingNote.type==="drawing"?"drawing":"text") : "text";
   const PEN_COLORS = ["#232323", "#5B93E0", "#C77B7B", "#7FA88C"];
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
@@ -5355,36 +5549,24 @@ function openNoteSheet(courseId, existingNote, onDone){
     <div class="sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-title">${editing ? s.notebookEditNoteTitle : s.notebookAddNoteBtn}</div>
-      <div class="segmented" style="margin-bottom:var(--sp-3);">
-        <button type="button" class="segmented-btn ${mode==='text'?'segmented-active':''}" id="modeText">${s.noteModeText}</button>
-        <button type="button" class="segmented-btn ${mode==='drawing'?'segmented-active':''}" id="modeDrawing">${s.noteModeDrawing}</button>
+      <div style="display:flex; gap:8px; align-items:stretch; margin-bottom:var(--sp-3); position:relative;">
+        <canvas id="noteCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
+          ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
+          <button type="button" class="btn-icon" id="noteTextTool" aria-label="${s.noteTextToolLabel}" style="color:var(--ink-muted);">${ICON.textTool}</button>
+          <button type="button" class="btn-icon" id="canvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
+        </div>
       </div>
-      <div id="textModeArea" style="display:${mode==='text'?'block':'none'};">
+      <p class="type-caption" id="noteTextToolHint" style="color:var(--accent); display:none; margin-top:-8px; margin-bottom:var(--sp-3);">${s.noteTextToolHint}</p>
+      <button type="button" id="extraFieldsToggle" style="background:none; border:none; color:var(--accent); font-size:var(--fs-caption); padding:0; margin-bottom:var(--sp-3); cursor:pointer;">${ICON.plus}<span style="margin-inline-start:4px;">${s.noteExtraFieldsToggle}</span></button>
+      <div id="extraFieldsArea" style="display:${editing && (existingNote.hardestPoint||existingNote.keyInsight) ? 'block':'none'};">
         <div class="field-group">
-          <div class="field-with-mic">
-            <textarea class="field" id="noteTextInput" style="min-height:110px; resize:vertical;" placeholder="${s.notebookNotesPlaceholder}">${editing && existingNote.type!=="drawing"?escapeHtml(existingNote.text):''}</textarea>
-            <button type="button" class="mic-btn" id="noteTextMic" aria-label="${s.voiceInputLabel}">${ICON.mic}</button>
-          </div>
+          <span class="field-label" style="color:var(--attention);">${s.noteHardestPointLabel}</span>
+          <textarea class="field" id="noteHardestPoint" style="min-height:60px; resize:vertical;" placeholder="${s.noteHardestPointPlaceholder}">${editing?escapeHtml(existingNote.hardestPoint||''):''}</textarea>
         </div>
-        <button type="button" id="extraFieldsToggle" style="background:none; border:none; color:var(--accent); font-size:var(--fs-caption); padding:0; margin-bottom:var(--sp-3); cursor:pointer;">${ICON.plus}<span style="margin-inline-start:4px;">${s.noteExtraFieldsToggle}</span></button>
-        <div id="extraFieldsArea" style="display:${editing && (existingNote.hardestPoint||existingNote.keyInsight) ? 'block':'none'};">
-          <div class="field-group">
-            <span class="field-label" style="color:var(--attention);">${s.noteHardestPointLabel}</span>
-            <textarea class="field" id="noteHardestPoint" style="min-height:60px; resize:vertical;" placeholder="${s.noteHardestPointPlaceholder}">${editing?escapeHtml(existingNote.hardestPoint||''):''}</textarea>
-          </div>
-          <div class="field-group">
-            <span class="field-label" style="color:var(--accent);">${s.noteKeyInsightLabel}</span>
-            <textarea class="field" id="noteKeyInsight" style="min-height:60px; resize:vertical;" placeholder="${s.noteKeyInsightPlaceholder}">${editing?escapeHtml(existingNote.keyInsight||''):''}</textarea>
-          </div>
-        </div>
-      </div>
-      <div id="drawingModeArea" style="display:${mode==='drawing'?'block':'none'};">
-        <div style="display:flex; gap:8px; align-items:stretch; margin-bottom:var(--sp-3);">
-          <canvas id="noteCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
-          <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
-            ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
-            <button type="button" class="btn-icon" id="canvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
-          </div>
+        <div class="field-group">
+          <span class="field-label" style="color:var(--accent);">${s.noteKeyInsightLabel}</span>
+          <textarea class="field" id="noteKeyInsight" style="min-height:60px; resize:vertical;" placeholder="${s.noteKeyInsightPlaceholder}">${editing?escapeHtml(existingNote.keyInsight||''):''}</textarea>
         </div>
       </div>
       <div class="field-group">
@@ -5402,36 +5584,20 @@ function openNoteSheet(courseId, existingNote, onDone){
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
   function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
-  attachVoiceInput(overlay.querySelector("#noteTextMic"), overlay.querySelector("#noteTextInput"));
 
+  const canvasEl = overlay.querySelector("#noteCanvas");
   let canvasCtrl = null;
-  function ensureCanvas(){
-    if(!canvasCtrl){
-      canvasCtrl = setupCanvasDrawing(overlay.querySelector("#noteCanvas"), editing && existingNote.type==="drawing" ? existingNote.dataUrl : null);
-    }
-  }
-  if(mode==="drawing") ensureCanvas();
+  requestAnimationFrame(()=>{
+    canvasCtrl = setupCanvasDrawing(canvasEl, editing && existingNote.type==="drawing" ? existingNote.dataUrl : null);
+  });
 
-  overlay.querySelector("#modeText").addEventListener("click", ()=>{
-    mode = "text";
-    overlay.querySelector("#textModeArea").style.display = "block";
-    overlay.querySelector("#drawingModeArea").style.display = "none";
-    overlay.querySelector("#modeText").classList.add("segmented-active");
-    overlay.querySelector("#modeDrawing").classList.remove("segmented-active");
-  });
-  overlay.querySelector("#modeDrawing").addEventListener("click", ()=>{
-    mode = "drawing";
-    overlay.querySelector("#textModeArea").style.display = "none";
-    overlay.querySelector("#drawingModeArea").style.display = "block";
-    overlay.querySelector("#modeDrawing").classList.add("segmented-active");
-    overlay.querySelector("#modeText").classList.remove("segmented-active");
-    requestAnimationFrame(()=>{ ensureCanvas(); });
-  });
-  overlay.querySelectorAll("[data-pen]").forEach(btn=>{
+  overlay.querySelectorAll("[data-pen]").forEach((btn,i)=>{
+    if(i===0) btn.classList.add("active-pen");
     btn.addEventListener("click", ()=>{
       if(canvasCtrl) canvasCtrl.setPen(btn.dataset.pen);
-      overlay.querySelectorAll("[data-pen]").forEach(b=>b.style.borderColor="transparent");
+      overlay.querySelectorAll("[data-pen]").forEach(b=>{ b.style.borderColor="transparent"; b.classList.remove("active-pen"); });
       btn.style.borderColor = "var(--accent)";
+      btn.classList.add("active-pen");
     });
   });
   overlay.querySelector("#canvasClear").addEventListener("click", ()=>{ if(canvasCtrl) canvasCtrl.clear(); });
@@ -5447,23 +5613,19 @@ function openNoteSheet(courseId, existingNote, onDone){
       btn.classList.add("color-swatch-active");
     });
   });
+
+  wireCanvasTextTool(overlay, canvasEl, "noteTextTool", "noteTextToolHint", ()=>canvasCtrl);
+
   overlay.querySelector("#noteSave").addEventListener("click", ()=>{
-    if(mode==="drawing"){
-      const dataUrl = canvasCtrl.toDataUrl();
-      if(editing) NotebookModule.updateDrawingNote(courseId, existingNote.id, dataUrl, chosenColor);
-      else NotebookModule.addDrawingNote(courseId, dataUrl, chosenColor);
-      close(onDone);
-    } else {
-      const text = overlay.querySelector("#noteTextInput").value.trim();
-      if(!text) return;
-      const extras = {
-        hardestPoint: overlay.querySelector("#noteHardestPoint").value.trim(),
-        keyInsight: overlay.querySelector("#noteKeyInsight").value.trim()
-      };
-      if(editing) NotebookModule.updateNote(courseId, existingNote.id, text, chosenColor, extras);
-      else NotebookModule.addNote(courseId, text, chosenColor, extras);
-      close(onDone);
-    }
+    if(!canvasCtrl) return;
+    const dataUrl = canvasCtrl.toDataUrl();
+    const extras = {
+      hardestPoint: overlay.querySelector("#noteHardestPoint").value.trim(),
+      keyInsight: overlay.querySelector("#noteKeyInsight").value.trim()
+    };
+    if(editing) NotebookModule.updateDrawingNote(courseId, existingNote.id, dataUrl, chosenColor, extras);
+    else NotebookModule.addDrawingNote(courseId, dataUrl, chosenColor, extras);
+    close(onDone);
   });
   const deleteBtn = overlay.querySelector("#noteDelete");
   if(deleteBtn){
@@ -6005,9 +6167,9 @@ const NotebookModule = {
     const note = nb.notes.find(n=>n.id===noteId);
     if(note){ note.type="text"; note.text = text; note.color = color||"default"; note.hardestPoint=(extras&&extras.hardestPoint)||""; note.keyInsight=(extras&&extras.keyInsight)||""; dbSave(); }
   },
-  addDrawingNote(courseId, dataUrl, color){
+  addDrawingNote(courseId, dataUrl, color, extras){
     const nb = this.get(courseId);
-    nb.notes.unshift({ id:genId(), type:"drawing", dataUrl, color:color||"default", createdAt:Date.now() });
+    nb.notes.unshift({ id:genId(), type:"drawing", dataUrl, color:color||"default", hardestPoint:extras&&extras.hardestPoint||"", keyInsight:extras&&extras.keyInsight||"", createdAt:Date.now() });
     dbSave();
   },
   addImageNote(courseId, dataUrl, color){
@@ -6015,10 +6177,10 @@ const NotebookModule = {
     nb.notes.unshift({ id:genId(), type:"image", dataUrl, color:color||"default", createdAt:Date.now() });
     dbSave();
   },
-  updateDrawingNote(courseId, noteId, dataUrl, color){
+  updateDrawingNote(courseId, noteId, dataUrl, color, extras){
     const nb = this.get(courseId);
     const note = nb.notes.find(n=>n.id===noteId);
-    if(note){ note.type="drawing"; note.dataUrl = dataUrl; note.color = color||"default"; dbSave(); }
+    if(note){ note.type="drawing"; note.dataUrl = dataUrl; note.color = color||"default"; note.hardestPoint = extras&&extras.hardestPoint||""; note.keyInsight = extras&&extras.keyInsight||""; dbSave(); }
   },
   removeNote(courseId, noteId){
     const nb = this.get(courseId);
