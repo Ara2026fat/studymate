@@ -329,6 +329,77 @@ ul,ol{ list-style:none; }
   color:var(--accent);
 }
 .skill-tile-title{ font-size:11.5px; font-weight:600; color:var(--ink); line-height:1.3; }
+
+/* ---- Skill detail -------------------------------------------------
+   Each family of skills carries its own hue, so a student senses which
+   kind of skill they are in before reading a word. The hue arrives as
+   --sk on the screen element; everything below borrows it, so adding a
+   family later means adding one colour and nothing else. */
+.skill-hero{
+  border-radius:var(--r-lg);
+  border:1px solid rgba(var(--sk),.28);
+  background:linear-gradient(160deg, rgba(var(--sk),.16), rgba(var(--sk),.04));
+  padding:var(--sp-5) var(--sp-4);
+  margin-bottom:var(--sp-4);
+}
+.skill-hero-top{ display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-3); }
+.skill-hero-icon{
+  width:44px; height:44px; border-radius:var(--r-md); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--sk),.2); color:rgb(var(--sk));
+}
+.skill-hero-icon svg{ width:24px; height:24px; }
+.skill-hero-cat{ font-size:var(--fs-caption); font-weight:700; color:rgb(var(--sk)); }
+.skill-hero-title{ font-size:var(--fs-heading); font-weight:700; color:var(--ink); line-height:1.35; }
+.skill-hero-intro{ font-size:var(--fs-body); color:var(--ink); opacity:.92; line-height:1.65; margin:0; }
+
+.skill-tabs{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:var(--sp-4); }
+.skill-tab{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  padding:var(--sp-3) 4px; min-height:62px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:var(--r-md);
+  color:var(--ink-muted); font-size:var(--fs-caption); font-weight:600; line-height:1.25; text-align:center;
+  transition:background 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease), transform 180ms var(--ease-spring);
+}
+.skill-tab svg{ width:18px; height:18px; }
+.skill-tab:active{ transform:scale(.97); }
+.skill-tab-active{ background:rgba(var(--sk),.16); border-color:rgba(var(--sk),.42); color:rgb(var(--sk)); }
+.skill-tab-dot{
+  position:absolute; top:6px; inset-inline-end:6px;
+  width:6px; height:6px; border-radius:50%; background:rgba(var(--sk),.7);
+}
+
+.skill-panel{
+  border-radius:var(--r-md); border:1px solid rgba(var(--sk),.22);
+  background:rgba(var(--sk),.07); padding:var(--sp-4);
+}
+.skill-panel-label{ font-size:var(--fs-caption); font-weight:700; color:rgb(var(--sk)); margin-bottom:var(--sp-2); }
+.skill-panel-text{ font-size:var(--fs-body); color:var(--ink); line-height:1.7; margin:0; }
+.skill-step{ display:flex; gap:var(--sp-3); align-items:flex-start; padding:var(--sp-3) 0; }
+.skill-step + .skill-step{ border-top:1px solid rgba(255,255,255,.06); }
+.skill-step-num{
+  flex-shrink:0; width:26px; height:26px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--sk),.18); color:rgb(var(--sk));
+  font-size:var(--fs-caption); font-weight:700;
+}
+.skill-step-here .skill-step-num{ background:rgb(var(--sk)); color:#0D1119; }
+.skill-step-text{ font-size:var(--fs-body); color:var(--ink); line-height:1.65; }
+
+.skill-nav{ display:flex; gap:var(--sp-2); margin-top:var(--sp-5); }
+.skill-nav-btn{
+  flex:1; display:flex; align-items:center; gap:var(--sp-2);
+  padding:var(--sp-3); min-height:54px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:var(--r-md);
+  color:var(--ink); text-align:start;
+  transition:transform 180ms var(--ease-spring);
+}
+.skill-nav-btn:active{ transform:scale(.98); }
+.skill-nav-btn svg{ width:16px; height:16px; color:var(--ink-muted); flex-shrink:0; }
+.skill-nav-label{ font-size:11px; color:var(--ink-muted); display:block; }
+.skill-nav-title{ font-size:var(--fs-caption); font-weight:600; line-height:1.3; }
+.skill-position{ text-align:center; font-size:var(--fs-caption); color:var(--ink-muted); margin-top:var(--sp-3); }
 .segmented{
   display:flex; background:var(--surface); border:1px solid rgba(255,255,255,.06); border-radius:999px; padding:3px; margin-bottom:var(--sp-4);
 }
@@ -825,6 +896,9 @@ const STR = {
     eventPastLabel:"مضى",
 
     skillsHubTitle:"مهارات التعلم",
+    skillPrevLabel:"السابقة",
+    skillNextLabel:"التالية",
+    skillPositionLabel:(i,n)=>`المهارة ${i} من ${n} في هذا القسم`,
     skillsSpecificLabel:"خاص بتخصصك",
     skillsUniversalLabel:"مهارات عامة لكل الطلاب",
 
@@ -1102,6 +1176,9 @@ const STR = {
     eventPastLabel:"Past",
 
     skillsHubTitle:"Learning Skills",
+    skillPrevLabel:"Previous",
+    skillNextLabel:"Next",
+    skillPositionLabel:(i,n)=>`Skill ${i} of ${n} in this section`,
     skillsSpecificLabel:"Specific to Your Major",
     skillsUniversalLabel:"General Skills for Every Student",
 
@@ -1423,7 +1500,7 @@ const COURSE_ENRICHMENT = {
       en:"A small weakness in the fundamentals here becomes a major obstacle in the upcoming Calculus course — solid grounding now saves you double the effort later."
     },
     resources:[
-      { title:{ar:"دورة احتراف أساسيات الرياضيات من الصفر (Udemy، ٤٩ محاضرة، تقييم ٤.٥، مجاني)", en:"Mastering Math Fundamentals From Scratch (Udemy, 49 lectures, 4.5 rating, Free)"}, url:"https://www.udemy.com/course/arabic-math-basics/", reason:{ar:"موجهة صراحة \"للمقبلين على الدخول في الجامعات العلمية\" — تغطي بالضبط أساسيات المعادلات والأسس والجذور والمتراجحات", en:"Explicitly aimed at \"students about to enter science universities\" — covers exactly equations, exponents, roots, and inequalities fundamentals"} }
+      { title:{ar:"أساسيات معادلات الدوال الرياضية (معارف، عربي، مجاني)", en:"Fundamentals of Function Equations (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/20361/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-%D9%85%D8%B9%D8%A7%D8%AF%D9%84%D8%A7%D8%AA-%D8%A7%D9%84%D8%AF%D9%88%D8%A7%D9%84-video", lang:"ar", reason:{ar:"تغطي أنواع الدوال التي يقوم عليها المقرر كله: الخطية والتربيعية والكسرية والجذرية والأسية واللوغاريتمية والمثلثية، مع حل معادلاتها جبريًا. استبدلت رابطًا سابقًا على Udemy تبيّن أنه مدفوع لا مجاني", en:"Covers the function types the whole course rests on: linear, quadratic, rational, radical, exponential, logarithmic and trigonometric, with algebraic solving of their equations. It replaces an earlier Udemy link that turned out to be paid, not free"} }
     ]
   },
   "همك132": {
@@ -1449,7 +1526,7 @@ const COURSE_ENRICHMENT = {
       en:"A required university course that builds essential intellectual awareness, separate from your engineering major — a foundation you'll need for the rest of your life, not just to pass the semester."
     },
     resources:[
-      { title:{ar:"مقرر الثقافة الإسلامية (جامعة القدس المفتوحة، QTube، مجاني)", en:"Islamic Culture Course (Al-Quds Open University, QTube, Free)"}, url:"https://qtube.qou.edu/%D9%85%D9%82%D8%B1%D8%B1-%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A9-%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9-%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%AA%D8%A7%D9%8A%D9%84%D9%88%D8%B1-%D9%84%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9_v400234", reason:{ar:"من منصة الجامعة الرسمية الخاصة بمحاضراتها المصوّرة (QTube)، لا مصدر خارجي غير موثّق", en:"From the university's own official platform for recorded lectures (QTube), not an unverified external source"} }
+      { title:{ar:"مقرر الثقافة الإسلامية — المقرر الإلكتروني الكامل (جامعة القدس المفتوحة، مجاني)", en:"Islamic Culture — Full Open E-Course (Al-Quds Open University, Free)"}, url:"https://osol.qou.edu/contents/0206/index.html", lang:"ar", verified:"2026-08-15", reason:{ar:"مقرر إلكتروني مفتوح كامل من جامعة القدس المفتوحة: خمس وحدات بمحتوى مكتوب وفيديو، واختبار ذاتي بعد كل موضوع، وتقويم نهائي — إعداد أعضاء هيئة تدريس في كلية العلوم التربوية، متاح مجانًا بلا تسجيل", en:"A complete free open e-course from Al-Quds Open University: five units with written and video content, a self-test after each topic, and a final assessment — prepared by faculty of the College of Educational Sciences, freely available without registration"} }
     ]
   },
   "نجل101": {
@@ -1476,7 +1553,7 @@ const COURSE_ENRICHMENT = {
       en:"Every upcoming mechanical course (dynamics, strength of materials, vibrations) is built directly on these laws — understanding them deeply now saves you double the difficulty later."
     },
     resources:[
-      { title:{ar:"Physics 101 — شرح مع حل أكثر من ١٠٠ مسألة (Udemy، ١٤٨ محاضرة، مجاني)", en:"Physics 101 — Explanation with 100+ Solved Problems (Udemy, 148 lectures, Free)"}, url:"https://www.udemy.com/course/physics_serway_mechanics_arabic/", reason:{ar:"مبني بالكامل على كتاب سيروي المرجعي (الفصول ٢-٩)، ويغطي بالضبط قوانين نيوتن والشغل والطاقة وكمية الحركة بحل عملي لأكثر من ١٠٠ مسألة", en:"Fully based on the reference Serway textbook (Chapters 2-9), covering exactly Newton's laws, work/energy, and momentum with over 100 solved problems"} }
+      { title:{ar:"فيزياء عامة 101 — حل مسائل كتاب سيروي (يوتيوب، ٢٩ فيديو، عربي، مجاني)", en:"General Physics 101 — Solving Serway Textbook Problems (YouTube, 29 videos, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PLQewEPwm2NbzjSnrgZNVjseIGSuhQVaQ7", lang:"ar", verified:"2026-08-15", reason:{ar:"قائمة مجانية على يوتيوب من قناة \"الفيزياء مع إيهاب\" مبنية على كتاب سيروي المعتمد جامعيًا، وتركز على حل المسائل لا الشرح النظري وحده — وهذا بالضبط ما يُختبر فيه الطالب", en:"A free YouTube playlist from the channel Physics with Ehab, built on the university-standard Serway textbook, focused on solving problems rather than theory alone — which is exactly what students are tested on"} }
     ]
   },
   "ريض211": {
@@ -1489,7 +1566,7 @@ const COURSE_ENRICHMENT = {
       en:"Calculus is the mathematical language of all mechanical engineering — from dynamics to heat transfer — weakness here repeats in every upcoming engineering math course."
     },
     resources:[
-      { title:{ar:"تفاضل وتكامل 101 (Udemy، ٢٥ محاضرة، تقييم ٥.٠، مجاني)", en:"Calculus 101 (Udemy, 25 lectures, 5.0 rating, Free)"}, url:"https://www.udemy.com/course/calculus-101-course/", reason:{ar:"موجهة صراحة لطلاب كليات الهندسة والعلوم — تغطي النهايات والاتصال والمشتقات وتطبيقاتها ومقدمة التكامل بترتيب متسلسل", en:"Explicitly aimed at engineering and science college students — covers limits, continuity, derivatives and applications, and an intro to integration in sequential order"} }
+      { title:{ar:"تفاضل وتكامل 1 — Calculus 1 (يوتيوب، ٢١ محاضرة، عربي، مجاني)", en:"Calculus 1 (YouTube, 21 lectures, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", lang:"ar", verified:"2026-08-15", reason:{ar:"محاضرات جامعية عربية كاملة من مبادرة \"جامعتك\" بشرح د. عمار البدور (جامعة الطفيلة التقنية) — مقرر تفاضل وتكامل ١ بترتيبه الجامعي المعتاد، مجاني بالكامل بلا تسجيل", en:"Complete Arabic university lectures from the Jami3atak initiative, taught by Dr. Ammar Al-Badour (Tafila Technical University) — Calculus 1 in its usual university order, entirely free with no registration"} }
     ]
   },
   "سلم102": {
@@ -1502,7 +1579,7 @@ const COURSE_ENRICHMENT = {
       en:"Expands your understanding from individual belief to the complete societal system — an integrated intellectual foundation that stays with you regardless of your engineering major."
     },
     resources:[
-      { title:{ar:"مقرر الثقافة الإسلامية — الحلقة الثانية (جامعة القدس المفتوحة، QTube، مجاني)", en:"Islamic Culture Course — Part Two (Al-Quds Open University, QTube, Free)"}, url:"https://qtube.qou.edu/%D9%85%D9%82%D8%B1%D8%B1-%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A9-%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9-%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%AA%D8%A7%D9%8A%D9%84%D9%88%D8%B1-%D9%84%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9_v400234", reason:{ar:"نفس المنصة الرسمية الموثوقة (QTube) بحلقتها الثانية المخصصة لنظام الإسلام الاجتماعي والاقتصادي والسياسي", en:"Same trusted official platform (QTube), its second part dedicated to Islam's social, economic, and political system"} }
+      { title:{ar:"الثقافة الإسلامية — الوحدة الخامسة: قضايا فكرية معاصرة (جامعة القدس المفتوحة، مجاني)", en:"Islamic Culture — Unit 5: Contemporary Intellectual Issues (Al-Quds Open University, Free)"}, url:"https://osol.qou.edu/contents/0206/unit5/index.html", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"وحدة كاملة من مقرر إلكتروني مفتوح، تعالج بالضبط ما يميّز الثقافة الإسلامية ٢ عن ١: موقف الإسلام من العلمانية والقومية والتطرف والتغريب. تنبيه صريح: وحدة واحدة لا مقرر كامل، فاستخدمها لهذا الجزء تحديدًا", en:"A complete unit from an open e-course, addressing exactly what distinguishes Islamic Culture 2 from 1: Islam's position on secularism, nationalism, extremism and westernization. Stated plainly: this is one unit, not a whole course, so use it for this part specifically"} }
     ]
   },
   "نجل102": {
@@ -1596,6 +1673,310 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"تاسكات تدريب على الترجمة الطبية ومصطلحاتها (يوتيوب، ٢٤ فيديو، مجاني)", en:"Medical Translation Training Tasks & Terminology (YouTube, 24 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PLXdNEJmufnaPOYOxV0SFsW0dw_qDFohnj", reason:{ar:"سلسلة عملية مخصصة تحديدًا للترجمة الطبية — تدريبات فعلية على ملفات طبية حقيقية بجانب شرح المصطلحات", en:"A practical series specifically dedicated to medical translation — actual practice on real medical files alongside terminology explanation"} }
     ]
   },
+  "ENGL 207": {
+    explain:{
+      ar:"مقارنة منهجية بين تراكيب الجملة في العربية والإنجليزية — ترتيب الكلمات، الأزمنة، أدوات التعريف، المبني للمجهول — لمعرفة أين تتشابه اللغتان وأين تفترقان بالضبط.",
+      en:"A systematic comparison of sentence structures in Arabic and English — word order, tenses, articles, the passive voice — to see exactly where the two languages align and where they diverge."
+    },
+    why:{
+      ar:"أغلب أخطاء المترجم المبتدئ ليست في المفردات، بل في نقل تركيب الجملة العربية كما هو إلى الإنجليزية. معرفة نقاط الاختلاف مسبقًا هي ما يمنع الترجمة الحرفية قبل وقوعها.",
+      en:"Most beginner-translator errors aren't vocabulary — they're carrying an Arabic sentence structure straight into English. Knowing the divergence points in advance is what prevents literal translation before it happens."
+    },
+    connections:{ requires:[{ar:"مقدمة في اللغويات (ENGL 202)", en:"Intro to Linguistics (ENGL 202)"}], leadsTo:[{ar:"علم الأساليب المقارن (ENGL 209)", en:"Comparative Stylistics (ENGL 209)"}] },
+    resources:[
+      { title:{ar:"تراكيب الجملة الإنجليزية — تمارين مختبر الكتابة بجامعة بيردو (مجاني)", en:"English Sentence Structure — Purdue OWL Exercises (Free)"}, url:"https://owl.purdue.edu/owl_exercises/sentence_structure/index.html", lang:"en", verified:"2026-08-15", reason:{ar:"مرجع جامعي أمريكي معروف ومتاح مجانًا بالكامل، يغطي الجمل المستقلة والتابعة والجمل الناقصة وتطابق الفعل مع الفاعل — وهي بالضبط المواضع التي يختلف فيها التركيب الإنجليزي عن العربي، مع تمارين وإجابات", en:"A well-known American university reference, entirely free, covering independent and dependent clauses, fragments, run-ons and subject-verb agreement — precisely the points where English structure departs from Arabic, with exercises and answers"} }
+    ]
+  },
+  "ENGL 209": {
+    explain:{
+      ar:"بعد إتقان التركيب الصحيح يأتي السؤال الأصعب: أي صياغة صحيحة نختار؟ المقرر يقارن الأساليب بين اللغتين — الرسمي والتلقائي، الإيجاز والإطناب، المبني للمعلوم والمجهول — وأثر هذا الاختيار على المعنى ونبرة النص.",
+      en:"Once correct structure is mastered, the harder question follows: which correct phrasing do you choose? The course compares styles across the two languages — formal vs. informal, concision vs. elaboration, active vs. passive — and how that choice shapes meaning and tone."
+    },
+    why:{
+      ar:"النص المترجم قد يكون سليمًا نحويًا ومع ذلك يُقرأ كترجمة. الأسلوب هو الفرق بين ترجمة مقبولة وترجمة تبدو كأنها كُتبت أصلًا بلغتها.",
+      en:"A translated text can be grammatically sound and still read like a translation. Style is the difference between an acceptable translation and one that reads as though it were originally written in that language."
+    },
+    connections:{ requires:[{ar:"التراكيب المقارنة (ENGL 207)", en:"Comparative Structures (ENGL 207)"}] },
+    resources:[
+      { title:{ar:"الأسلوب على مستوى الجملة — مختبر الكتابة بجامعة بيردو (مجاني)", en:"Sentence-Level Style — Purdue OWL (Free)"}, url:"https://owl.purdue.edu/owl/general_writing/mechanics", lang:"en", verified:"2026-08-15", reason:{ar:"يعالج تحديدًا اختيارات الأسلوب لا القواعد: المبني للمعلوم مقابل المجهول، تناظر التراكيب، وأدوات الربط — وهي جوهر ما تقارنه في هذا المقرر، بمرجع جامعي مجاني بالكامل", en:"Addresses style choices specifically rather than grammar: active vs. passive voice, parallel structure and transitions — the very things this course compares, from a fully free university reference"} }
+    ]
+  },
+  "ISLM 181": {
+    explain:{
+      ar:"شِقّان مترابطان: أصول العقيدة (مراتب الدين، الإيمان بالله والنبوات والغيبيات، نواقض الإيمان، الولاء والبراء)، ثم أقرب تطبيق عملي لها — الأسرة: مقاصد الزواج، الحقوق المتبادلة، وسائل وقايتها، وقضايا معاصرة.",
+      en:"Two connected halves: the foundations of creed (the levels of religion, belief in God, prophethood and the unseen, what nullifies faith, loyalty and disavowal), then its closest practical application — the family: the purposes of marriage, mutual rights, safeguards, and contemporary issues."
+    },
+    why:{
+      ar:"هذا من المقررات القليلة التي تخصك كإنسان قبل أن تخصك كطالب — الجزء الثاني منه تحديدًا يتحدث عن بيت ستبنينه يومًا، لا عن معلومات تُحفظ للاختبار.",
+      en:"This is one of the few courses that concerns you as a person before it concerns you as a student — its second half in particular is about a home you will one day build, not information memorized for a test."
+    },
+    resources:[
+      { title:{ar:"الموسوعة العقدية — الدرر السنية (مرجع نصي مجاني)", en:"The Creed Encyclopedia — Dorar.net (Free text reference)"}, url:"https://dorar.net/aqeeda", lang:"ar", verified:"2026-08-15", reason:{ar:"مرجع نصي (لا فيديو) مجاني بالكامل ومنظم في ثلاثة عشر كتابًا تغطي أبواب العقيدة كلها بالترتيب نفسه تقريبًا الذي يسير عليه المقرر، ومنهجية الموقع مراجعة ومعتمدة من متخصصين في جامعات سعودية", en:"A fully free text reference (not video), organized into thirteen books covering the topics of creed in nearly the same order the course follows; the site's methodology is reviewed and endorsed by specialists at Saudi universities"} }
+    ]
+  },
+  "HIST 281": {
+    explain:{
+      ar:"مسار الدولة السعودية في أدوارها الثلاثة، وتوحيد المملكة على يد الملك عبدالعزيز، ثم التحول من مرحلة التأسيس إلى الدولة الحديثة — مع الجانب الحضاري لا السياسي فقط.",
+      en:"The path of the Saudi state through its three phases, the unification of the Kingdom under King Abdulaziz, and the shift from founding to the modern state — covering the civilizational dimension, not only the political one."
+    },
+    why:{
+      ar:"كمترجمة ستنقلين صورة بلدك للعالم بلغة أخرى. المعرفة الدقيقة بالتواريخ والمسميات الرسمية هي ما يجعل النقل أمينًا لا تقريبيًا — وهذا فرق يُلاحَظ في الترجمة الرسمية والدبلوماسية تحديدًا.",
+      en:"As a translator you will convey your country's story to the world in another language. Precise knowledge of dates and official names is what makes that conveying faithful rather than approximate — a difference that shows especially in official and diplomatic translation."
+    },
+    resources:[
+      { title:{ar:"دارة الملك عبدالعزيز — المركز السعودي للتاريخ والوثائق (مجاني)", en:"King Abdulaziz Foundation — Saudi Center for History and Documents (Free)"}, url:"https://darah.gov.sa/", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"المرجعية الرسمية لتاريخ المملكة (أُنشئت بمرسوم ملكي عام ١٣٩٢هـ)، وتتيح مجانًا أرشيفًا وثائقيًا وقواعد بيانات تاريخية — منصة مصادر ومراجع لا دورة فيديو، فاستخدميها للتحقق من التواريخ والمسميات لا كشرح متسلسل للمقرر", en:"The official reference for the Kingdom's history (established by royal decree in 1392 AH), offering a free documentary archive and historical databases — a source and reference platform rather than a video course, so use it to verify dates and official names rather than as a sequential course explanation"} }
+    ]
+  },
+  "COMP 316": {
+    explain:{
+      ar:"ليس تعلّم لغة جديدة، بل دراسة اللغات نفسها: كيف تُبنى (القواعد النحوية والدلالة)، وكيف تختلف أنماطها (الأمرية، الكائنية، الدالية، المنطقية)، وكيف تُدار الأسماء والذاكرة وأنظمة الأنواع داخلها.",
+      en:"Not learning a new language, but studying languages themselves: how they are built (grammar and semantics), how their paradigms differ (imperative, object-oriented, functional, logic), and how names, memory and type systems are managed inside them."
+    },
+    why:{
+      ar:"بعد هذا المقرر تتعلم أي لغة جديدة في أيام لا في أشهر، لأنك فهمت المبادئ المشتركة تحتها كلها — وهذه أثمن مهارة في مهنة تتغير أدواتها كل بضع سنوات.",
+      en:"After this course you learn any new language in days rather than months, because you understand the shared principles beneath all of them — the most valuable skill in a profession whose tools change every few years."
+    },
+    connections:{ requires:[{ar:"البرمجة الكائنية (COMP 214)", en:"Object-Oriented Programming (COMP 214)"}] },
+    resources:[
+      { title:{ar:"Programming Language Principles and Paradigms — كتاب مفتوح مجاني (إنجليزي)", en:"Programming Language Principles and Paradigms — Free Open Textbook (English)"}, url:"https://eecs390.github.io/notes/foundations.html", lang:"en", verified:"2026-08-15", reason:{ar:"كتاب جامعي مفتوح ومجاني بالكامل يغطي مواضيع المقرر بترتيبها نفسه تقريبًا: القواعد النحوية والدلالة، النطاق والذاكرة، أنظمة الأنواع، والأنماط الأربعة. ملاحظة صريحة: لم نجد مصدرًا عربيًا حرًّا بنفس الشمول لهذا المقرر النظري تحديدًا، فالكتاب بالإنجليزية — استخدم خاصية ترجمة الصفحة في المتصفح للقراءة بالعربي، وأداة الترجمة داخل التطبيق للمصطلحات المفردة", en:"A fully free, open university textbook covering the course topics in nearly the same order: grammar and semantics, scope and memory, type systems, and the four paradigms. Note stated plainly: we found no freely available Arabic source of comparable depth for this particular theoretical course, so the book is in English — use the browser's page-translate feature to read it in Arabic, and the app's translation tool for individual terms"} }
+    ]
+  },
+  "همك131": {
+    explain:{
+      ar:"لغة المهندس المكتوبة: الإسقاط العمودي والمساقط الثلاثة، المنظور الأيزومتري، القطاعات، وكتابة الأبعاد — نقل جسم ثلاثي الأبعاد إلى ورقة بشكل لا يقبل تأويلين.",
+      en:"The engineer's written language: orthographic projection and the three views, isometric perspective, sections and dimensioning — putting a three-dimensional object on paper in a way that admits no second reading."
+    },
+    why:{
+      ar:"أي تصميم مهما كان بارعًا لا يُنفَّذ في الورشة إلا إذا رُسم بشكل صحيح. وهذا المقرر تحديدًا هو الأساس الذي يُبنى عليه الرسم الميكانيكي (همك234) وتصميم الماكينات لاحقًا.",
+      en:"No design, however brilliant, gets made in the workshop unless it is drawn correctly. This course specifically is the base on which Mechanical Drawing (همك234) and later machine design are built."
+    },
+    connections:{ requires:[{ar:"التصميم الهندسي (همك132)", en:"Engineering Design (همك132)"}], leadsTo:[{ar:"الرسم الميكانيكي (همك234)", en:"Mechanical Drawing (همك234)"}] },
+    resources:[
+      { title:{ar:"كورس الرسم الهندسي باللغة العربية (يوتيوب، ١٦٧ فيديو، مجاني)", en:"Engineering Drawing Course in Arabic (YouTube, 167 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PLp29oFdEDi3aFmBJtQwJuJFC6WmXnou7Z", lang:"ar", verified:"2026-08-15", reason:{ar:"شرح عربي كامل من مدرس بكلية الهندسة (جامعة المنوفية)، يبدأ من الأدوات وأنواع الخطوط ويتدرج إلى المساقط والأيزومترك والقطاعات — تسلسل يطابق ترتيب المقرر، وطوله يسمح بالرجوع لأي جزئية بعينها عند التعثر", en:"A complete Arabic explanation by a faculty-of-engineering instructor (Menoufia University), starting from tools and line types and building up to views, isometric and sections — a sequence matching the course order, and long enough to return to any specific point when stuck"} }
+    ]
+  },
+  "ENGL 301": {
+    explain:{
+      ar:"بناء الخطاب وإلقاؤه أمام جمهور: تنظيم الأفكار في تسلسل مقنع، التحكم في نبرة الصوت ولغة الجسد، مواجهة رهبة الوقوف، والتعامل مع أسئلة الحضور الصعبة.",
+      en:"Building a speech and delivering it to an audience: organizing ideas into a persuasive sequence, controlling vocal tone and body language, facing stage fright, and handling difficult questions from the audience."
+    },
+    why:{
+      ar:"الترجمة التتبعية والفورية لاحقًا (ENGL 309 وENGL 406) تعني الوقوف والتحدث تحت ضغط أمام ناس ينتظرون كلامك. الخطابة هي التمرين الذي يبني هذه الجرأة وحدها، قبل أن تُضاف إليها صعوبة الترجمة فوقها.",
+      en:"Consecutive and simultaneous interpreting later (ENGL 309 and ENGL 406) mean standing and speaking under pressure before people waiting on your words. Public speaking is the exercise that builds that nerve on its own, before the difficulty of interpreting is layered on top of it."
+    },
+    connections:{ leadsTo:[{ar:"الترجمة التتبعية (ENGL 309)", en:"Consecutive Interpreting (ENGL 309)"}] },
+    resources:[
+      { title:{ar:"دورة فن الخطابة والإلقاء — إدراك (بالعربية، التسجيل مجاني)", en:"The Art of Public Speaking — Edraak (Arabic, free registration)"}, url:"https://www.edraak.org/programs/course/ps101-v2018_v1/", lang:"ar", verified:"2026-08-15", reason:{ar:"دورة عربية كاملة من منصة إدراك (بدعم مؤسسة الملكة رانيا)، تغطي بالضبط ما يغطيه المقرر: تنظيم العرض، التواصل اللفظي وغير اللفظي، ومواجهة رهبة الجمهور. التسجيل مجاني، والشهادة وحدها هي المدفوعة", en:"A complete Arabic course from the Edraak platform (backed by the Queen Rania Foundation), covering exactly what the course covers: structuring a presentation, verbal and non-verbal communication, and facing stage fright. Registration is free; only the certificate is paid"} }
+    ]
+  },
+  "فيز203": {
+    explain:{
+      ar:"الانتقال من عالم الأجسام المتحركة إلى عالم غير المرئي: الشحنة والمجال الكهربي، قانون جاوس، الجهد والمكثفات، التيار والمقاومة، ثم المجال المغناطيسي وقانونا بيو-سافار وأمبير.",
+      en:"The move from the world of moving bodies to the invisible one: charge and electric field, Gauss's law, potential and capacitors, current and resistance, then the magnetic field and the Biot-Savart and Ampere laws."
+    },
+    why:{
+      ar:"كل نظام كهروميكانيكي ستتعامل معه لاحقًا — من المحركات إلى الحساسات إلى دوائر التحكم — يقف على هذا المقرر. وهو بوابتك المباشرة إلى أساسيات الهندسة الكهربائية (هكه111) وإلى المنظومات الكهروميكانيكية في المستويات المتقدمة.",
+      en:"Every electromechanical system you will later work with — from motors to sensors to control circuits — rests on this course. It is your direct gateway to Electrical Engineering Fundamentals (هكه111) and to electromechanical systems in the advanced levels."
+    },
+    connections:{ requires:[{ar:"فيزياء عامة (فيز101)", en:"General Physics (فيز101)"}], leadsTo:[{ar:"أساسيات الهندسة الكهربائية (هكه111)", en:"Electrical Engineering Fundamentals (هكه111)"}] },
+    resources:[
+      { title:{ar:"فيزياء عامة 2 — الكهربية والمغناطيسية، د. حسن مريدي (عربي، مجاني)", en:"General Physics 2 — Electricity and Magnetism, Dr. Hasan Maridi (Arabic, Free)"}, url:"https://sites.google.com/site/hasanmaridi/physics102", lang:"ar", verified:"2026-08-15", reason:{ar:"صفحة مقرر عربية كاملة لأستاذ جامعي: كتاب المقرر بالعربية للتحميل، سبعة فصول موصوفة بالتفصيل، ثلاثة واجبات، نموذجا الاختبار النصفي والنهائي، ودليل التجارب العملية — والمؤلف ينص صراحةً على أن حقوق الاستخدام مكفولة للجميع", en:"A complete Arabic course page by a university professor: the course book in Arabic for download, seven chapters described in detail, three homework sets, midterm and final exam papers, and a lab manual — the author explicitly states that usage rights are granted to everyone"} }
+    ]
+  },
+  "COMP 441": {
+    explain:{
+      ar:"كيف نجعل الآلة تتصرف بذكاء: تمثيل المسألة كفضاء حالات، طرق البحث العمياء (الرأسي والأفقي) ثم الاجتهادية الموجَّهة (تسلق الجبل، الأفضل أولًا، خوارزمية A*)، وحساب المنطق والأنظمة الخبيرة.",
+      en:"How to make a machine act intelligently: representing a problem as a state space, blind search methods (depth-first and breadth-first) then guided heuristic ones (hill climbing, best-first, A*), plus logic calculus and expert systems."
+    },
+    why:{
+      ar:"المقرر ليس عن استخدام أدوات الذكاء الاصطناعي الجاهزة، بل عن الخوارزميات التي تحتها. من يفهم A* ودوال التقدير الاجتهادي يفهم لماذا يفشل النظام ومتى، ومن يحفظ الأدوات وحدها يقف عند أول عطل.",
+      en:"This course isn't about using ready-made AI tools; it's about the algorithms underneath them. Whoever understands A* and heuristic functions understands why and when a system fails; whoever memorizes only the tools stops at the first breakdown."
+    },
+    connections:{ requires:[{ar:"البرمجة 2 (COMP 213)", en:"Programming 2 (COMP 213)"}] },
+    resources:[
+      { title:{ar:"الذكاء الاصطناعي والأنظمة الخبيرة — خمس وحدات PDF بالعربية (جامعة القدس المفتوحة، مجاني)", en:"Artificial Intelligence and Expert Systems — Five Arabic PDF Units (Al-Quds Open University, Free)"}, url:"https://mbabubaker.wordpress.com/aies/", lang:"ar", verified:"2026-08-15", reason:{ar:"مقرر جامعي عربي كامل (رقم ١٤٨٤) بخمس وحدات تُحمَّل مباشرة بلا تسجيل: ماهية الأنظمة، أساليب البحث، حساب المنطق، نظم قواعد الإنتاج، والبرمجة بلغة برولوج. فتحتُ الوحدة الثانية وتأكدت: شرح عربي لـ DFS وBFS وتسلق الجبل والأفضل أولًا وA* بأمثلة محلولة وتدريبات", en:"A complete Arabic university course (no. 1484) in five units downloadable directly without registration: the nature of AI systems, search methods, logic calculus, production rule systems, and Prolog programming. I opened Unit Two and confirmed: Arabic explanations of DFS, BFS, hill climbing, best-first and A* with worked examples and exercises"} }
+    ]
+  },
+  "حال222": {
+    explain:{
+      ar:"أول لقاء للمهندس الميكانيكي بالبرمجة: المتغيرات والشروط والحلقات والدوال والمصفوفات — أدوات تحويل معادلة أو خطوات حساب متكررة إلى برنامج يحلها في ثوانٍ.",
+      en:"The mechanical engineer's first encounter with programming: variables, conditionals, loops, functions and arrays — the tools for turning an equation or a repeated calculation into a program that solves it in seconds."
+    },
+    why:{
+      ar:"المهندس الذي يبرمج يحسب دورة حرارية كاملة بتغيير رقم واحد، وغيره يعيد الحساب يدويًا في كل مرة. وهذه المهارة نفسها هي مدخلك لاحقًا إلى الميكاترونكس والتحكم والمحاكاة العددية.",
+      en:"An engineer who programs recomputes an entire thermal cycle by changing one number; another redoes it by hand every time. That same skill is later your entry into mechatronics, control, and numerical simulation."
+    },
+    resources:[
+      { title:{ar:"مواد مقرر مقدمة في البرمجة C++‎ — تمارين واختبارات بحلولها (مجاني)", en:"Introduction to Programming (C++) Materials — Exercises and Exams with Solutions (Free)"}, url:"https://mbabubaker.wordpress.com/cpp/", lang:"en", partial:true, verified:"2026-08-15", reason:{ar:"صفحة مقرر جامعي تتيح مجانًا ما يصعب إيجاده: اختبارات قصيرة بحلولها، اختبار نصفي محلول، اختبار مراجعة نهائي محلول، وأمثلة أكواد مشروحة. تنبيه صريح: المواد بالإنجليزية وهي للتمرين لا للشرح النظري — استخدمها بعد فهم الدرس، وترجمة الصفحة في المتصفح تكفي للتعليمات", en:"A university course page offering free what is hard to find: quizzes with solutions, a solved midterm, a solved final review exam, and annotated example code. Stated plainly: the materials are in English and are for practice rather than theory — use them after understanding the lesson; the browser's page translation is enough for the instructions"} }
+    ]
+  },
+  "ENGL 303": {
+    explain:{
+      ar:"مستويان متتابعان: كيف تُبنى الكلمة من وحدات المعنى الصغرى (المورفيمات، السوابق واللواحق، الاشتقاق والتصريف)، ثم كيف تُبنى الجملة من الكلمات (أشباه الجمل، أنواع التراكيب، والالتباس النحوي).",
+      en:"Two successive levels: how a word is built from the smallest units of meaning (morphemes, prefixes and suffixes, derivation and inflection), then how a sentence is built from words (phrases, structure types, and syntactic ambiguity)."
+    },
+    why:{
+      ar:"هذا المقرر يعطيك المبضع الذي تشرّح به أي جملة إنجليزية غامضة قبل ترجمتها. جملة مثل I saw the man with a telescope لها معنيان مختلفان تمامًا، والذي يحسم أيهما قصده الكاتب هو التحليل النحوي لا الحدس.",
+      en:"This course gives you the scalpel for dissecting any ambiguous English sentence before translating it. A sentence like 'I saw the man with a telescope' has two entirely different meanings, and what settles which the writer meant is syntactic analysis, not intuition."
+    },
+    connections:{ requires:[{ar:"مقدمة في اللغويات (ENGL 202)", en:"Intro to Linguistics (ENGL 202)"}], leadsTo:[{ar:"علم المعاني والتداولية (ENGL 307)", en:"Semantics and Pragmatics (ENGL 307)"}] },
+    resources:[
+      { title:{ar:"قواعد اللغة الإنجليزية — اللغويات (Sylingo، ٦ دروس بالعربية، مجاني)", en:"English Grammar — Linguistics (Sylingo, 6 Arabic lessons, Free)"}, url:"https://www.sylingo.com/ar/courses/linguistics-course", lang:"ar", verified:"2026-08-15", reason:{ar:"دورة عربية مكتوبة بمستوى متقدم، درسها الثالث (علم الكلمات) والرابع (بناء الجملة) يغطيان شقّي هذا المقرر تحديدًا: المورفيمات، أجزاء الكلام، أشباه الجمل الخمسة، أنواع التراكيب الأربعة، والالتباس النحوي والمعجمي بأمثلة. القراءة مجانية والاشتراك لإزالة الإعلانات فقط", en:"A written Arabic course at advanced level whose third lesson (morphology) and fourth (syntax) cover precisely this course's two halves: morphemes, parts of speech, the five phrase types, the four sentence structures, and syntactic and lexical ambiguity with examples. Reading is free; the subscription only removes ads"} }
+    ]
+  },
+  "ENGL 307": {
+    explain:{
+      ar:"علم الدلالة يسأل: ماذا تعني الجملة في ذاتها؟ والتداولية تسأل السؤال الأهم للمترجم: ماذا قصد قائلها في هذا الموقف بالذات؟ — الفرق بين المعنى الحرفي والمعنى المقصود.",
+      en:"Semantics asks: what does the sentence mean in itself? Pragmatics asks the question that matters more to a translator: what did its speaker intend in this particular situation? — the difference between literal and intended meaning."
+    },
+    why:{
+      ar:"أصعب أخطاء الترجمة ليست نحوية بل تداولية: عبارة مجاملة تُترجم كأمر، أو تلميح مهذب يُترجم كرفض صريح. هذا المقرر هو الذي يعلّمك قراءة ما وراء الكلمات قبل نقلها.",
+      en:"The hardest translation errors aren't grammatical but pragmatic: a courtesy phrase rendered as a command, or a polite hint rendered as a flat refusal. This course is what teaches you to read past the words before carrying them across."
+    },
+    connections:{ requires:[{ar:"بناء الكلمة والتراكيب (ENGL 303)", en:"Morphology and Syntax (ENGL 303)"}] },
+    resources:[
+      { title:{ar:"علم الدلالة وعلم المعنى والسياق (Sylingo، درسان بالعربية، مجاني)", en:"Semantics and Pragmatics (Sylingo, 2 Arabic lessons, Free)"}, url:"https://www.sylingo.com/ar/course/28/semantics-lesson", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"الدرسان الخامس والسادس من دورة اللغويات العربية نفسها، وهما يقابلان شقّي المقرر مباشرة. تنبيه صريح: درسان لا مقرر كامل، فاستخدمهما كمدخل عربي يوضح المفاهيم قبل الرجوع لمرجع المقرر الإنجليزي", en:"The fifth and sixth lessons of the same Arabic linguistics course, corresponding directly to this course's two halves. Stated plainly: two lessons, not a full course — use them as an Arabic entry point that clarifies the concepts before returning to the course's English reference"} }
+    ]
+  },
+  "ISLM 282": {
+    explain:{
+      ar:"الأخلاق الإسلامية مصدرًا وخصائصَ ووسائلَ اكتساب، ثم تفصيل الأخلاق المحمودة والمذمومة: الصدق والأمانة والحلم والوفاء في مقابل الكذب والغيبة والحسد والغرور.",
+      en:"Islamic ethics — its source, characteristics and means of acquisition — then a detailing of praised and blameworthy traits: truthfulness, trustworthiness, forbearance and fidelity against lying, backbiting, envy and conceit."
+    },
+    why:{
+      ar:"المترجم يقف بين طرفين لا يفهم أحدهما الآخر، فأمانته في النقل ليست مهارة مهنية فحسب بل خُلُق يُسأل عنه. وهذا المقرر هو الوحيد في خطتك الذي يعالج ذلك مباشرة.",
+      en:"A translator stands between two parties who cannot understand each other, so fidelity in conveying is not merely a professional skill but a moral trait one is answerable for. This is the only course in your plan that addresses that directly."
+    },
+    resources:[
+      { title:{ar:"موسوعة الأخلاق والسلوك — الدرر السنية (مرجع نصي مجاني)", en:"Encyclopedia of Ethics and Conduct — Dorar.net (Free text reference)"}, url:"https://dorar.net/alakhlaq", lang:"ar", verified:"2026-08-15", reason:{ar:"موسوعة مجانية بلا تسجيل تشرح أكثر من مائة خُلُق في نحو ألفَي صفحة، مرتّبة كما يرتّبها المقرر: مقدمات في معنى الأخلاق والسلوك والفرق بينهما وخصائصها ووسائل اكتسابها، ثم الأخلاق المحمودة فالمذمومة. ومنهجية الموقع معتمدة من الجمعية الفقهية السعودية", en:"A free encyclopedia requiring no registration, explaining over a hundred character traits across some two thousand pages, ordered as the course orders them: introductions on the meaning of ethics and conduct and the difference between them, their characteristics and how they are acquired, then praised traits followed by blameworthy ones. The site's methodology is endorsed by the Saudi Fiqh Association"} }
+    ]
+  },
+  "همك422": {
+    explain:{
+      ar:"تطبيق دورة التبريد على واقع: مكوّنات المنظومة (الضاغط، المكثف، صمام التمدد، المبخِّر)، حساب أحمال التبريد لمبنى، واختيار الوحدة المناسبة وشبكات التوزيع.",
+      en:"Applying the refrigeration cycle to reality: the system's components (compressor, condenser, expansion valve, evaporator), calculating a building's cooling load, and selecting the right unit and distribution networks."
+    },
+    why:{
+      ar:"في مناخ المملكة تحديدًا، التبريد والتكييف من أوسع أبواب العمل أمام المهندس الميكانيكي — وهذا المقرر هو الذي يحوّل الديناميكا الحرارية من معادلات على ورق إلى منظومة تُصمَّم وتُركَّب وتُصان.",
+      en:"In the Kingdom's climate especially, refrigeration and air conditioning are among the widest employment paths open to a mechanical engineer — and this course is what turns thermodynamics from equations on paper into a system that gets designed, installed and maintained."
+    },
+    connections:{ requires:[{ar:"الديناميكا الحرارية 2 (همك212)", en:"Thermodynamics 2 (همك212)"},{ar:"انتقال الحرارة (همك314)", en:"Heat Transfer (همك314)"}] },
+    resources:[
+      { title:{ar:"دورة HVAC — التدفئة والتهوية وتكييف الهواء (معارف، ٩ دروس، ٥ ساعات، عربي، مجاني)", en:"HVAC Course — Heating, Ventilation and Air Conditioning (M3aarf, 9 lessons, 5 hours, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15641/HVAC-video", lang:"ar", verified:"2026-08-15", reason:{ar:"شرح عربي عملي في تسع محاضرات يغطي مبادئ عمل المنظومة وحساب الأحمال والتركيب والصيانة وتشخيص الأعطال — الجانب التطبيقي الذي لا تجده في الكتاب النظري. التسجيل بلا رسوم وشهادة الإتمام مجانية (الشهادة المدفوعة اختيارية ولا حاجة لها)", en:"A practical Arabic explanation in nine lectures covering system operating principles, load calculation, installation, maintenance and fault diagnosis — the applied side you won't find in the theory textbook. Enrollment is free of charge and the completion certificate is free (the paid certificate is optional and unnecessary)"} }
+    ]
+  },
+  "COMP 452": {
+    explain:{
+      ar:"نماذج الخدمة السحابية الثلاثة (IaaS وPaaS وSaaS) والفرق بينها، الخوادم والشبكات الافتراضية، تخزين البيانات وتأمينها، ومقارنة مزوّدي الخدمة الكبار (AWS وAzure وGoogle Cloud).",
+      en:"The three cloud service models (IaaS, PaaS, SaaS) and how they differ, virtual servers and networks, data storage and security, and a comparison of the major providers (AWS, Azure, Google Cloud)."
+    },
+    why:{
+      ar:"لم يعد أحد يشتري خادمًا ويضعه في غرفة. أي نظام ستبنيه بعد التخرج سيعمل على سحابة أحدهم، ومن لا يفهم نماذج الخدمة يدفع أضعاف التكلفة أو يفتح ثغرة أمنية دون أن يدري.",
+      en:"Nobody buys a server and puts it in a room anymore. Any system you build after graduation will run on someone's cloud, and whoever doesn't understand the service models either pays many times the cost or opens a security hole without realizing it."
+    },
+    connections:{ requires:[{ar:"شبكات الحاسب (COMP 333)", en:"Computer Networks (COMP 333)"}] },
+    resources:[
+      { title:{ar:"مدخل إلى هندسة الحوسبة السحابية (معارف، ٣ دروس، ساعة و٤٦ دقيقة، عربي، مجاني)", en:"Introduction to Cloud Engineering (M3aarf, 3 lessons, 1h46m, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/23323/%D9%83%D9%8A%D9%81-%D8%AA%D8%B5%D8%A8%D8%AD-%D9%85%D9%87%D9%86%D8%AF%D8%B3-cloud-computing-video", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"تنبيه صريح: ثلاثة دروس فقط، فهي مدخل عربي مركّز لا مقرر كامل. تغطي نماذج الخدمة IaaS وPaaS وSaaS ومزوّدي الخدمة وإدارة الخوادم والشبكات الافتراضية والأمن السحابي — أي الشق المفاهيمي من المقرر. استخدمها لتثبيت المفاهيم بالعربية أولًا ثم ارجع لمرجع المقرر", en:"Stated plainly: only three lessons, so it is a focused Arabic entry point rather than a full course. It covers the IaaS, PaaS and SaaS service models, the providers, virtual server and network management, and cloud security — the conceptual half of the course. Use it to settle the concepts in Arabic first, then return to the course reference"} }
+    ]
+  },
+  "COMP 453": {
+    explain:{
+      ar:"دورة حياة البيانات كاملة: جمعها وتنقيتها من الفوضى، تجميعها ومعالجتها، ثم التحليل المتقدم لاستخراج أنماط تُبنى عليها قرارات حقيقية.",
+      en:"The full data life cycle: gathering data and cleaning it of noise, aggregating and processing it, then advanced analysis to extract patterns that real decisions get built on."
+    },
+    why:{
+      ar:"أغلب وقت عالم البيانات لا يُنفق في النماذج الذكية، بل في تنظيف بيانات قذرة. من يتقن هذا الجزء الممل تحديدًا هو من ينتج تحليلًا يُوثق به، وغيره يبني استنتاجات جميلة على أرض متحركة.",
+      en:"Most of a data scientist's time isn't spent on clever models but on cleaning dirty data. Whoever masters that tedious part specifically is the one who produces trustworthy analysis; the rest build elegant conclusions on shifting ground."
+    },
+    connections:{ requires:[{ar:"الاحتمالات والإحصاء (STAT 311)", en:"Probability and Statistics (STAT 311)"}] },
+    resources:[
+      { title:{ar:"Data Science & Analysis — علم البيانات وتحليلها (معارف، عربي، مجاني)", en:"Data Science & Analysis (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/8859", lang:"ar", reason:{ar:"دورة عربية مجانية تتناول إعداد البيانات للتحليل: التنقية والتجميع والمعالجة، ثم مراجعة النتائج لكشف الأنماط — بنفس ترتيب المقرر من البيانات الخام إلى الرؤية النهائية", en:"A free Arabic course covering data preparation for analysis: cleaning, aggregation and processing, then reviewing results to uncover patterns — in the same order as the course, from raw data to final insight"} }
+    ]
+  },
+  "COMP 454": {
+    explain:{
+      ar:"استخراج المعرفة من كميات ضخمة من البيانات: تجهيز البيانات ومعالجتها المسبقة، ثم خوارزميات اكتشاف الأنماط والتصنيف والتجميع والقواعد الارتباطية.",
+      en:"Extracting knowledge from massive data: preparing and preprocessing it, then algorithms for pattern discovery, classification, clustering and association rules."
+    },
+    why:{
+      ar:"الفرق بين شركة تعرف عملاءها وأخرى تخمّنهم هو هذا المقرر. وهو أيضًا الأساس العملي الذي يقف تحت أغلب تطبيقات تعلّم الآلة التي تسمع عنها.",
+      en:"The difference between a company that knows its customers and one that guesses at them is this course. It is also the practical foundation beneath most of the machine-learning applications you hear about."
+    },
+    connections:{ requires:[{ar:"علم البيانات (COMP 453)", en:"Data Science (COMP 453)"}] },
+    resources:[
+      { title:{ar:"معالجة البيانات — Data Preprocessing (معارف، عربي، مجاني)", en:"Data Preprocessing (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16191/%D9%85%D8%B9%D8%A7%D9%84%D8%AC%D8%A9-%D8%A7%D9%84%D8%A8%D9%8A%D8%A7%D9%86%D8%A7%D8%AA-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: تغطي مرحلة المعالجة المسبقة وحدها — تنظيف البيانات وتصفيتها وتحويلها لتحسين جودتها — لا خوارزميات التنقيب نفسها. أدرجناها لأن هذه المرحلة تستهلك أكبر جزء من العمل الفعلي وأقل جزء من الشرح المتاح بالعربية", en:"Stated plainly: it covers the preprocessing stage alone — cleaning, filtering and transforming data to improve its quality — not the mining algorithms themselves. We included it because this stage consumes the largest share of the actual work and has the smallest share of available Arabic explanation"} }
+    ]
+  },
+  "همك475": {
+    explain:{
+      ar:"تزاوج الميكانيكا والإلكترونيات والبرمجة في منظومة واحدة: الحساسات التي تقرأ العالم، المتحكم الدقيق الذي يقرر، والمشغّلات التي تنفّذ — وهي بنية أي روبوت أو خط إنتاج آلي.",
+      en:"The marriage of mechanics, electronics and programming in a single system: sensors that read the world, a microcontroller that decides, and actuators that execute — the architecture of any robot or automated production line."
+    },
+    why:{
+      ar:"هذا المقرر هو ما يحوّل خريج الميكانيكا من مصمم أجزاء جامدة إلى مهندس منظومات تتحرك وتستشعر وتصحح نفسها — وهو أكثر ما يفصل بين خريج وخريج في سوق التصنيع الحديث.",
+      en:"This course is what turns a mechanical graduate from a designer of inert parts into an engineer of systems that move, sense and correct themselves — the sharpest divider between one graduate and another in modern manufacturing."
+    },
+    connections:{ requires:[{ar:"لغة برمجة (حال222)", en:"Programming Language (حال222)"}] },
+    resources:[
+      { title:{ar:"كورس أردوينو كامل — هندسة النظم المدمجة (معارف، عربي، مجاني)", en:"Complete Arduino Course — Embedded Systems (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/87/%D8%A7%D8%B1%D8%AF%D9%88%D9%8A%D9%86%D9%88-%D8%A7%D8%AA%D9%82%D9%86-%D9%87%D9%86%D8%AF%D8%B3%D8%A9-%D8%A7%D9%84%D9%86%D8%B8%D9%85-%D8%A7%D9%84%D9%85%D8%AF%D9%85%D8%AC%D8%A9-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة تطبيقية على الأردوينو لا مقرر ميكاترونكس كامل — لكنها أقصر طريق عربي لتجربة الحلقة كاملة بيدك: حسّاس يقرأ، ومتحكم يقرر، ومحرّك ينفّذ. المفاهيم النظرية تبقى من مرجع المقرر", en:"Stated plainly: an applied Arduino course rather than a complete mechatronics course — but it is the shortest Arabic path to running the whole loop with your own hands: a sensor reads, a controller decides, a motor executes. The theory stays with the course reference"} }
+    ]
+  },
+  "ENGL 308": {
+    explain:{
+      ar:"كيف يُبنى بحث علمي من الصفر: تحديد المشكلة وصياغة الفرضيات والمتغيرات، اختيار المنهج المناسب، أنواع العينات والفرق بين الاحتمالية وغيرها، وأدوات جمع البيانات ثم تحليل النتائج.",
+      en:"How a piece of research is built from nothing: defining the problem, forming hypotheses and variables, choosing the right methodology, sample types and the difference between probability and non-probability sampling, data-collection tools, then analysis of results."
+    },
+    why:{
+      ar:"هذا المقرر هو العدة التي ستدخل بها مشروع التخرج (ENGL 407). ومن يتقنه لا يقف عند التخرج — دراسات الترجمة نفسها حقل بحثي، ومن يعرف كيف يُبنى البحث يستطيع أن ينشر فيه لا أن يقرأه فقط.",
+      en:"This course is the kit you will carry into the graduation project (ENGL 407). Whoever masters it doesn't stop at graduation — translation studies is itself a research field, and whoever knows how research is built can publish in it rather than only read it."
+    },
+    connections:{ leadsTo:[{ar:"مشروع التخرج (ENGL 407)", en:"Graduation Project (ENGL 407)"}] },
+    resources:[
+      { title:{ar:"مبادئ البحث العلمي — إدراك (بالعربية، مجاني)", en:"Principles of Scientific Research — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/srm-v2017_t1/", lang:"ar", verified:"2026-08-16", reason:{ar:"مساق عربي كامل من إدراك يقدّمه أ.د. عدنان الجادري، عميد كلية العلوم التربوية بجامعة عمّان العربية ومؤلف ستة كتب في البحث العلمي والإحصاء. يغطي بالترتيب: المشكلة والفرضيات، المتغيرات، أنواع العينات، أدوات جمع البيانات، ومناهج البحث الوصفي والتاريخي. التسجيل مجاني", en:"A complete Arabic course on Edraak taught by Prof. Adnan Al-Jaderi, dean of the College of Educational Sciences at Amman Arab University and author of six books on research and statistics. It covers, in order: the problem and hypotheses, variables, sample types, data-collection tools, and descriptive and historical research methods. Enrollment is free"} }
+    ]
+  },
+  "همك417": {
+    explain:{
+      ar:"مصادر الطاقة المتجددة وكيف تُحوَّل إلى كهرباء: الخلايا الشمسية ومكوّناتها، حساب الأحمال وتحديد حجم المنظومة، والربط بين اللوح والمنظّم والبطارية والعاكس.",
+      en:"Renewable energy sources and how they are converted into electricity: photovoltaic cells and their components, load calculation and system sizing, and wiring the panel, charge controller, battery and inverter together."
+    },
+    why:{
+      ar:"رؤية ٢٠٣٠ جعلت هذا المجال من أسرع القطاعات نموًا في المملكة، ومشاريع مثل نيوم والشعيبة تحتاج مهندسين ميكانيكيين يفهمون تحويل الطاقة لا كهربائيين فقط. مقرر يفتح بابًا لا يُغلق قريبًا.",
+      en:"Vision 2030 made this one of the fastest-growing sectors in the Kingdom, and projects like NEOM and Shuaibah need mechanical engineers who understand energy conversion, not only electrical ones. A course that opens a door which won't close soon."
+    },
+    connections:{ requires:[{ar:"الديناميكا الحرارية 2 (همك212)", en:"Thermodynamics 2 (همك212)"}] },
+    resources:[
+      { title:{ar:"الطاقة البديلة — أنظمة الخلايا الشمسية PV (معارف، عربي، مجاني)", en:"Alternative Energy — Solar PV Systems (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15678/%D8%A7%D9%84%D8%B7%D8%A7%D9%82%D8%A9-%D8%A7%D9%84%D8%A8%D8%AF%D9%8A%D9%84%D8%A9-video", lang:"ar", reason:{ar:"دورة عربية مجانية تنتقل من مفهوم الطاقة المتجددة ومصادرها إلى تقييم مكوّنات المنظومة الشمسية عمليًا — الجانب التطبيقي الذي يكمّل المعالجة النظرية في المقرر", en:"A free Arabic course moving from the concept of renewable energy and its sources to a practical evaluation of solar system components — the applied side that complements the course's theoretical treatment"} }
+    ]
+  },
+  "همك425": {
+    explain:{
+      ar:"كيف تتحول الحرارة إلى كهرباء على نطاق وطني: دورات القوى البخارية والغازية، أنواع المحطات الحرارية والمائية، كفاءة كل نوع، ثم نقل الطاقة وتوزيعها والتحديات البيئية.",
+      en:"How heat becomes electricity at national scale: steam and gas power cycles, types of thermal and hydro plants, the efficiency of each, then energy transmission, distribution, and environmental challenges."
+    },
+    why:{
+      ar:"هنا تجتمع كل مقررات المسار الحراري التي درستها — الديناميكا الحرارية وانتقال الحرارة وميكانيكا الموائع — في منظومة واحدة حقيقية. وهو المقرر الذي يؤهلك لأكبر جهات التوظيف في المملكة: أرامكو والشركة السعودية للكهرباء ومحطات التحلية.",
+      en:"Here every course on the thermal track you've studied — thermodynamics, heat transfer, fluid mechanics — converges into one real system. It is also the course that qualifies you for the Kingdom's largest employers: Aramco, the Saudi Electricity Company, and the desalination plants."
+    },
+    connections:{ requires:[{ar:"الديناميكا الحرارية 2 (همك212)", en:"Thermodynamics 2 (همك212)"},{ar:"انتقال الحرارة (همك314)", en:"Heat Transfer (همك314)"}], leadsTo:[{ar:"محطات القوى والتحلية (همك427)", en:"Power and Desalination Plants (همك427)"}] },
+    resources:[
+      { title:{ar:"محطات توليد الكهرباء (معارف، عربي، مجاني)", en:"Electric Power Generation Plants (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15202/%D9%85%D8%AD%D8%B7%D8%A7%D8%AA-%D8%AA%D9%88%D9%84%D9%8A%D8%AF-%D8%A7%D9%84%D9%83%D9%87%D8%B1%D8%A8%D8%A7%D8%A1-video", lang:"ar", reason:{ar:"تغطي بالضبط خريطة المقرر: مصادر الطاقة المستخدمة، أنواع المحطات الحرارية والمائية والمتجددة، آلية عمل كل منها من تحويل الطاقة إلى نقلها وتوزيعها، ثم الكفاءة والتحديات البيئية وانبعاثات الكربون", en:"It covers exactly the course's map: the energy sources used, the types of thermal, hydro and renewable plants, how each works from energy conversion through transmission and distribution, then efficiency, environmental challenges and carbon emissions"} }
+    ]
+  },
+  "COMP 525": {
+    explain:{
+      ar:"كيف تُخفى المعلومة عمّن لا يُراد له قراءتها: مبادئ التشفير المتماثل وغير المتماثل، دوال التجزئة (Hash)، إدارة المفاتيح وأطوالها، وتطبيق ذلك في تأمين الاتصال وتخزين البيانات.",
+      en:"How information is hidden from whoever isn't meant to read it: the principles of symmetric and asymmetric encryption, hash functions, key management and key lengths, and applying all of that to securing communication and stored data."
+    },
+    why:{
+      ar:"كل عملية دفع، وكل رسالة، وكل تسجيل دخول تمر عبر ما يُدرَّس في هذا المقرر. والفرق بين مبرمج يستدعي مكتبة تشفير ومهندس يعرف لماذا اختار هذا الطول للمفتاح تحديدًا — هو الفرق بين نظام آمن وآخر يبدو آمنًا.",
+      en:"Every payment, every message, every login passes through what this course teaches. And the difference between a programmer who calls an encryption library and an engineer who knows why he chose that particular key length is the difference between a secure system and one that merely looks secure."
+    },
+    connections:{ requires:[{ar:"أمن الحاسب والخصوصية (COMP 323)", en:"Computer Security and Privacy (COMP 323)"}] },
+    resources:[
+      { title:{ar:"أساسيات التشفير وأمن المعلومات (معارف، عربي، مجاني)", en:"Fundamentals of Encryption and Information Security (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/21936/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D8%B4%D9%81%D9%8A%D8%B1-%D9%88-%D8%A3%D9%85%D9%86-%D8%A7%D9%84%D9%85%D8%B9%D9%84%D9%88%D9%85%D8%A7%D8%AA-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة أساسيات لا مقرر تشفير كامل — لا تتوسع في الجانب الرياضي ولا في إثبات أمان الخوارزميات. لكنها تضع المفاهيم الأولى بالعربية (المتماثل وغير المتماثل ودوال التجزئة والمفاتيح) قبل الدخول على مرجع المقرر الإنجليزي", en:"Stated plainly: a fundamentals course rather than a full cryptography course — it does not expand on the mathematical side or on proving algorithm security. But it establishes the first concepts in Arabic (symmetric, asymmetric, hash functions, keys) before moving to the course's English reference"} }
+    ]
+  },
   "ARAB 210": {
     explain:{
       ar:"كتابة نص عربي مؤثر وجذاب — تقنيات السرد، بناء الأسلوب الشخصي، ثم إتقان مهارات التحرير والمراجعة لتلميع النص قبل تسليمه.",
@@ -1619,7 +2000,7 @@ const COURSE_ENRICHMENT = {
       en:"Any factory or production company you'll want to join after graduation operates by exactly these standards — understanding them is the difference between an engineer who only understands design, and one who understands how production is actually managed in reality."
     },
     resources:[
-      { title:{ar:"أساسيات الجودة (Udemy، ٢١ محاضرة، تقييم ٤.٥ من ٦٣٩ تقييمًا، مجاني)", en:"Quality Fundamentals (Udemy, 21 lectures, 4.5 rating from 639 reviews, Free)"}, url:"https://www.udemy.com/course/introduction_to_quality/", reason:{ar:"٦٥٧٩ طالبًا وتقييمات حقيقية موثقة — يغطي توكيد الجودة ومراقبتها، معايير الأيزو، ودورة PDCA بتطبيقات عملية صناعية حقيقية", en:"6,579 students and real documented reviews — covers QA/QC, ISO standards, and the PDCA cycle with real practical industrial applications"} }
+      { title:{ar:"أساسيات إدارة الجودة الشاملة لتحسين الأداء (معارف، عربي، مجاني)", en:"Fundamentals of Total Quality Management (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/20677/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9-%D8%A7%D9%84%D8%AC%D9%88%D8%AF%D8%A9-%D8%A7%D9%84%D8%B4%D8%A7%D9%85%D9%84%D8%A9-video", lang:"ar", reason:{ar:"تعرّف بمبادئ إدارة الجودة الشاملة TQM ودورها في تحسين الأداء المؤسسي وتقليل التكاليف وأدوات تحليل الجودة — وهو الشق الأهم من المقرر. استبدلت رابطًا سابقًا على Udemy لم يثبت أنه مجاني", en:"Introduces the principles of Total Quality Management and its role in improving institutional performance, cutting costs, and quality analysis tools — the most important half of this course. It replaces an earlier Udemy link that was never confirmed free"} }
     ]
   },
   "COMP 324": {
@@ -1672,7 +2053,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"مبادئ الفيزياء 1 (PHYS 204)", en:"Principles of Physics 1 (PHYS 204)"}] },
     resources:[
-      { title:{ar:"فيزياء عامة 2 — الكهربية والمغناطيسية (محاضرات كاملة، مجاني)", en:"General Physics 2 — Electricity & Magnetism (Complete Lecture Notes, Free)"}, url:"https://sites.google.com/site/hasanmaridi/physics102", reason:{ar:"ملاحظة أمانة: ملف محاضرات مكتوب (لا فيديو)، من نفس الدكتور الموثوق اللي استخدمنا محاضراته سابقًا في الديناميكا الحرارية — سبعة فصول كاملة تغطي المقرر بالضبط، مع واجبات ونماذج امتحانات حقيقية", en:"Honesty note: written lecture notes (not video), from the same trusted professor whose thermodynamics lectures we used earlier — seven complete chapters covering the course exactly, with real assignments and exam samples"} }
+      { title:{ar:"فيزياء عامة 2 — الكهربية والمغناطيسية (محاضرات كاملة، مجاني)", en:"General Physics 2 — Electricity & Magnetism (Complete Lecture Notes, Free)"}, url:"https://sites.google.com/site/hasanmaridi/physics102", lang:"ar", verified:"2026-08-15", reason:{ar:"ملاحظة أمانة: ملف محاضرات مكتوب (لا فيديو)، من نفس الدكتور الموثوق اللي استخدمنا محاضراته سابقًا في الديناميكا الحرارية — سبعة فصول كاملة تغطي المقرر بالضبط، مع واجبات ونماذج امتحانات حقيقية", en:"Honesty note: written lecture notes (not video), from the same trusted professor whose thermodynamics lectures we used earlier — seven complete chapters covering the course exactly, with real assignments and exam samples"} }
     ]
   },
   "MATH 326": {
@@ -1686,7 +2067,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"جبر المصفوفات (MATH 106)", en:"Matrix Algebra (MATH 106)"}] },
     resources:[
-      { title:{ar:"جبر خطي متقدم بالعربي — مستوى جامعي (Udemy، ٩٤ محاضرة، تقييم ٤.٦، مجاني)", en:"Advanced Linear Algebra in Arabic — College Level (Udemy, 94 lectures, 4.6 rating, Free)"}, url:"https://www.udemy.com/course/college-level-linear-algebra-in-arabic/", reason:{ar:"٧٨٥ طالبًا وتقييم ٤.٦ حقيقي — يغطي بالضبط القيم الذاتية، تحليل SVD، وPCA بعمق حقيقي موجّه لعلوم الحاسب تحديدًا", en:"785 students and a real 4.6 rating — covers exactly eigenvalues, SVD decomposition, and PCA in real depth aimed specifically at computer science"} }
+      { title:{ar:"محاضرات الجبر الخطي (يوتيوب، ١٦ محاضرة، عربي، مجاني)", en:"Linear Algebra Lectures (YouTube, 16 lectures, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL6uPDJZGhQEqgzfmFJv3j1M2lwegqVWj_", lang:"ar", verified:"2026-08-15", reason:{ar:"سلسلة محاضرات جامعية عربية مجانية بلا تسجيل، تغطي المصفوفات والمحددات والفضاءات المتجهية بالتسلسل الجامعي المعتاد — أساس المقرر قبل التطبيقات المتقدمة", en:"A free Arabic university lecture series with no registration, covering matrices, determinants and vector spaces in the usual university sequence — the course foundation before advanced applications"} }
     ]
   },
   "COMP 371": {
@@ -1713,7 +2094,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"تصميم الماكينات 1 (همك335)", en:"Machine Design 1 (همك335)"}] },
     resources:[
-      { title:{ar:"التصميم الميكانيكي - الجزء الثاني (Udemy، ١١ محاضرة، تقييم ٤.٥، مجاني)", en:"Mechanical Design - Part 2 (Udemy, 11 lectures, 4.5 rating, Free)"}, url:"https://www.udemy.com/course/mechanical-design-part2/", reason:{ar:"من أكاديمية ديزاين أون لاين، امتداد مباشر للجزء الأول — ٨٩٥ طالبًا وتقييمات حقيقية، يغطي التروس والسيور والينابيع والكلاتشات بالضبط", en:"From Design Online Academy, a direct continuation of Part 1 — 895 students and real reviews, covering exactly gears, belts, springs, and clutches"} }
+      { title:{ar:"Machine Design — تصميم الماكينات (Udemy، ٧ محاضرات، ساعتان، عربي، مجاني فعليًا)", en:"Machine Design (Udemy, 7 lectures, 2 hours, Arabic, genuinely free)"}, url:"https://www.udemy.com/course/machine-design/", lang:"ar", partial:true, verified:"2026-08-16", reason:{ar:"فتحتُ الصفحة وتأكدت أنها مجانية فعلًا (١٢١٩ طالبًا، بالعربية). تنبيه صريح: تغطي تحليل الإجهادات ومعامل الأمان — أي الأساس الذي يُبنى عليه تصميم عناصر الماكينة، لا كل عناصر المقرر. لكنها تحل تمارين من مراجع المقرر نفسها (Shigley وMott وKhurmi)", en:"I opened the page and confirmed it is genuinely free (1,219 students, in Arabic). Stated plainly: it covers stress analysis and the safety factor — the foundation machine-element design is built on, not every element in the course. But it works through exercises from the course's own references (Shigley, Mott, Khurmi)"} }
     ]
   },
   "ENGL 403": {
@@ -2034,7 +2415,7 @@ const COURSE_ENRICHMENT = {
       }
     ],
     resources:[
-      { title:{ar:"تفاضل وتكامل 1 (يوتيوب، ٢١ محاضرة، مجاني)", en:"Calculus 1 (YouTube, 21 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", reason:{ar:"من مبادرة \"جامعتك\" الجامعية الرسمية (جامعة الطفيلة التقنية)، سلسلة عربية كاملة ومجانية بالكامل", en:"From the official university initiative \"Your University\" (Tafila Technical University), a complete and entirely free Arabic series"} },
+      { title:{ar:"تفاضل وتكامل 1 (يوتيوب، ٢١ محاضرة، مجاني)", en:"Calculus 1 (YouTube, 21 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", lang:"ar", verified:"2026-08-15", reason:{ar:"من مبادرة \"جامعتك\" الجامعية الرسمية (جامعة الطفيلة التقنية)، سلسلة عربية كاملة ومجانية بالكامل", en:"From the official university initiative \"Your University\" (Tafila Technical University), a complete and entirely free Arabic series"} },
       { title:{ar:"Paul's Online Math Notes — ملاحظات كالكولاس شاملة (إنجليزي، مجاني بالكامل)", en:"Paul's Online Math Notes — Comprehensive Calculus Notes (English, Completely Free)"}, url:"https://tutorial.math.lamar.edu/classes/calci/calci.aspx", reason:{ar:"من أشهر وأوثق مصادر الكالكولاس عالميًا — يغطي كل موضوع بأمثلة محلولة كاملة، بصيغة مرجع مكتوب تراجعه وقت الحاجة، لا فيديو تشاهده مرة واحدة. الرموز الرياضية عالمية، فحاجز اللغة هنا محدود جدًا", en:"One of the most famous and trusted calculus resources worldwide — covers every topic with fully worked examples, as a written reference you revisit anytime, not a video you watch once. Math notation is universal, so the language barrier here is quite limited"} }
     ]
   },
@@ -2115,7 +2496,7 @@ const COURSE_ENRICHMENT = {
       en:"A required university course that builds essential intellectual awareness, separate from your technical major — a foundation you'll need for the rest of your life, not just to pass the semester."
     },
     resources:[
-      { title:{ar:"مقرر الثقافة الإسلامية (جامعة القدس المفتوحة، QTube، مجاني)", en:"Islamic Culture Course (Al-Quds Open University, QTube, Free)"}, url:"https://qtube.qou.edu/%D9%85%D9%82%D8%B1%D8%B1-%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9-%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%D9%8A%D8%A9-%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9-%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%AA%D8%A7%D9%8A%D9%84%D9%88%D8%B1-%D9%84%D9%84%D8%AB%D9%82%D8%A7%D9%81%D8%A9_v400234", reason:{ar:"من منصة الجامعة الرسمية الخاصة بمحاضراتها المصوّرة (QTube)، لا مصدر خارجي غير موثّق", en:"From the university's own official platform for recorded lectures (QTube), not an unverified external source"} }
+      { title:{ar:"مقرر الثقافة الإسلامية — المقرر الإلكتروني الكامل (جامعة القدس المفتوحة، مجاني)", en:"Islamic Culture — Full Open E-Course (Al-Quds Open University, Free)"}, url:"https://osol.qou.edu/contents/0206/index.html", lang:"ar", verified:"2026-08-15", reason:{ar:"مقرر إلكتروني مفتوح كامل من جامعة القدس المفتوحة: خمس وحدات بمحتوى مكتوب وفيديو، واختبار ذاتي بعد كل موضوع، وتقويم نهائي — إعداد أعضاء هيئة تدريس في كلية العلوم التربوية، متاح مجانًا بلا تسجيل", en:"A complete free open e-course from Al-Quds Open University: five units with written and video content, a self-test after each topic, and a final assessment — prepared by faculty of the College of Educational Sciences, freely available without registration"} }
     ]
   },
   "هكه111": {
@@ -2337,7 +2718,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"الكتابة الأكاديمية (ENGL 201)", en:"Academic Writing (ENGL 201)"}], leadsTo:[{ar:"الترجمة باستخدام الحاسب (ENGL 310)", en:"CAT Tools (ENGL 310)"}] },
     resources:[
-      { title:{ar:"المهارات الأساسية للترجمة (رواق، مجاني)", en:"Basic Translation Skills (Rwaq, Free)"}, url:"https://www.rwaq.org/courses/basictranslationskills", reason:{ar:"من منصة رواق السعودية المعروفة، بتدريس أستاذ متخصص فعليًا في دراسات الترجمة — يغطي بالضبط فهم روح النص وتجنب الترجمة الحرفية", en:"From the well-known Saudi platform Rwaq, taught by a professor genuinely specialized in translation studies — covers exactly understanding a text's spirit and avoiding literal translation"} }
+      { title:{ar:"كورس مقدمة في أساسيات الترجمة (يوتيوب، ١٠ فيديوهات، عربي، مجاني)", en:"Introduction to Translation Basics (YouTube, 10 videos, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL9CKq5c1HtdU0qj80mEPfCM1ID7iGxsO9", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"شرح عربي متسلسل لأساسيات الترجمة من قناة موجّهة لطلاب الجامعة — قصير نسبيًا (١٠ فيديوهات) فهو مدخل لا مرجع شامل، لكنه يغطي المفاهيم الأولى للمقرر بلغتك", en:"A sequential Arabic explanation of translation basics from a channel aimed at university students — relatively short (10 videos), so it is an entry point rather than a comprehensive reference, but it covers the course's first concepts in your own language"} }
     ]
   },
   "ENGL 102": {
@@ -2677,6 +3058,22 @@ function enrichmentForCourse(courseName){
   if(!courseName) return null;
   const code = Object.keys(COURSE_ENRICHMENT).find(c => courseName.trim().startsWith(c));
   return code ? COURSE_ENRICHMENT[code] : null;
+}
+/* A one-line honest label under each resource link, so the student knows what
+   they're opening before they open it. The kind (video / PDF / site) is read
+   off the URL so it can never go stale. Language and "covers part of the
+   course" are only shown when we have actually confirmed them — an unknown
+   field simply shows nothing rather than a guess. */
+function resourceBadge(r, L){
+  const parts = [];
+  const u = (r.url || "").toLowerCase();
+  if(/youtube\.com|youtu\.be/.test(u)) parts.push(L === "ar" ? "فيديو" : "Video");
+  else if(/\.pdf(\?|$)/.test(u)) parts.push(L === "ar" ? "ملف PDF" : "PDF");
+  else parts.push(L === "ar" ? "موقع" : "Website");
+  if(r.lang === "ar") parts.push(L === "ar" ? "بالعربية" : "Arabic");
+  else if(r.lang === "en") parts.push(L === "ar" ? "بالإنجليزية" : "English");
+  if(r.partial) parts.push(L === "ar" ? "يغطي جزءًا من المقرر" : "covers part of the course");
+  return parts.join(" · ");
 }
 /* Suggests one of the "how to study this kind of subject" technique skills
    based on keywords in the course name — works for every course, not just
@@ -4978,6 +5375,7 @@ function renderCourseView(courseId){
           ${enrichment.resources.map(r=>`
             <a href="${r.url}" target="_blank" rel="noopener" style="display:block; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--surface); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.07);">
               <div class="type-body" style="font-weight:700; color:var(--accent);">${escapeHtml(r.title[lang()])} ↗</div>
+              <div class="type-caption" style="color:var(--ink-muted); opacity:.7; margin-top:2px;">${resourceBadge(r, lang())}</div>
               <div class="type-caption" style="color:var(--ink-muted); margin-top:2px;">${escapeHtml(r.reason[lang()])}</div>
             </a>
           `).join("")}` : ""}
@@ -5077,6 +5475,7 @@ function renderExamPrepHub(eventId){
           ${enrichment.resources.map(r=>`
             <a href="${r.url}" target="_blank" rel="noopener" style="display:block; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--surface); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.07);">
               <div class="type-body" style="font-weight:700; color:var(--accent);">${escapeHtml(r.title[l])} ↗</div>
+              <div class="type-caption" style="color:var(--ink-muted); opacity:.7; margin-top:2px;">${resourceBadge(r, l)}</div>
               <div class="type-caption" style="color:var(--ink-muted); margin-top:2px;">${escapeHtml(r.reason[l])}</div>
             </a>
           `).join("")}
@@ -5887,6 +6286,7 @@ function openLibraryCoursePreview(catalogString){
         ${enrichment.resources ? enrichment.resources.map(r=>`
           <a href="${r.url}" target="_blank" rel="noopener" style="display:block; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--surface); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.07);">
             <div class="type-body" style="font-weight:700; color:var(--accent);">${escapeHtml(r.title[l])} ↗</div>
+            <div class="type-caption" style="color:var(--ink-muted); opacity:.7; margin-top:2px;">${resourceBadge(r, l)}</div>
           </a>
         `).join("") : ""}
       ` : `
@@ -6218,6 +6618,40 @@ function unarchiveSkill(skillId){
   if(DB.archivedSkills) delete DB.archivedSkills[skillId];
   dbSave();
 }
+/* Skill families and their colours. The key is the part of the category id
+   before the underscore, so "study_cs" and "study_translation" share one hue:
+   the kind of skill matters more to a student than which major files it. */
+const SKILL_FAMILY_RGB = {
+  mindset:"201,138,46",
+  planning:"123,167,212",
+  study:"143,191,159",
+  exams:"232,148,120",
+  subject:"183,155,214",
+  foundation:"111,181,176",
+  practical:"217,168,108"
+};
+function skillFamilyRgb(skill){
+  const id = (skill && skill.category && skill.category.id) || "study_universal";
+  return SKILL_FAMILY_RGB[id.split("_")[0]] || "201,138,46";
+}
+/* Which of the three sections the student has already opened, this session.
+   Deliberately not saved: a gentle nudge inside one sitting, not a score. */
+const skillSectionsSeen = {};
+function markSkillSectionSeen(skillId, section){
+  (skillSectionsSeen[skillId] = skillSectionsSeen[skillId] || {})[section] = true;
+}
+function skillSectionSeen(skillId, section){
+  return !!(skillSectionsSeen[skillId] && skillSectionsSeen[skillId][section]);
+}
+/* The other skills in the same category, in their listed order — this is
+   what the previous/next buttons walk through, so a student can read a
+   whole category without returning to the hub between every one. */
+function skillNeighbours(skill){
+  const catId = skill.category && skill.category.id;
+  const family = catId ? SKILLS.filter(sk=>sk.category && sk.category.id===catId) : [skill];
+  const i = family.findIndex(sk=>sk.id===skill.id);
+  return { family, index:i, prev:i>0?family[i-1]:null, next:(i>=0&&i<family.length-1)?family[i+1]:null };
+}
 function skillTileBig(sk, l, compact){
   const viewed = isSkillViewed(sk.id);
   const minH = compact ? 104 : 128;
@@ -6226,7 +6660,7 @@ function skillTileBig(sk, l, compact){
   return `
     <button type="button" class="skill-tile" data-skill-id="${sk.id}" style="min-height:${minH}px; padding:${pad};">
       ${viewed ? `<span class="skill-tile-viewed" aria-label="viewed">${ICON.check}</span>` : ""}
-      <span class="skill-tile-icon" style="width:${iconSize}px; height:${iconSize}px;">${ICON[sk.icon]}</span>
+      <span class="skill-tile-icon" style="width:${iconSize}px; height:${iconSize}px; background:rgba(${skillFamilyRgb(sk)},.16); color:rgb(${skillFamilyRgb(sk)});">${ICON[sk.icon]}</span>
       <span class="skill-tile-title" style="font-size:var(--fs-body); line-height:1.4;">${escapeHtml(sk.title[l])}</span>
     </button>`;
 }
@@ -6375,54 +6809,85 @@ function renderSkillDetail(skillId){
 
   const isArchived = isSkillArchived(skillId);
   if(!["tips","mistake","exercise"].includes(skillDetailActiveSection)) skillDetailActiveSection = "tips";
+  markSkillSectionSeen(skillId, skillDetailActiveSection);
+
+  const rgb = skillFamilyRgb(skill);
+  const catLabel = skill.category ? skill.category[l] : "";
+  const nb = skillNeighbours(skill);
 
   const sectionsHtml = {
     tips: `
-      <div class="callout" style="margin-bottom:0;">
-        <div class="callout-label">${s.tipsLabel}</div>
-        <div class="tip-list">
-          ${skill.tips[l].map((tip,i)=>{
-            const isCurrent = i===currentPhaseIndex;
-            const isRoadmap = !!skill.phaseLevels;
-            const marker = isRoadmap
-              ? `<span class="waypoint-marker ${isCurrent?'waypoint-marker-current':''}">${i+1}</span>`
-              : `<span class="tip-bullet"></span>`;
-            return `<div class="tip-row ${isCurrent?'tip-row-current':''}">
-              ${marker}
-              <span class="type-body">${isCurrent?`<strong>${s.youAreHereLabel}</strong> — `:''}${escapeHtml(tip)}</span>
-            </div>`;
-          }).join("")}
-        </div>
+      <div class="skill-panel">
+        <div class="skill-panel-label">${s.tipsLabel}</div>
+        ${skill.tips[l].map((tip,i)=>{
+          const isCurrent = i===currentPhaseIndex;
+          return `<div class="skill-step ${isCurrent?'skill-step-here':''}">
+            <span class="skill-step-num">${i+1}</span>
+            <span class="skill-step-text">${isCurrent?`<strong>${s.youAreHereLabel}</strong> — `:''}${escapeHtml(tip)}</span>
+          </div>`;
+        }).join("")}
       </div>`,
     mistake: `
-      <div class="callout" style="background:var(--attention-soft); margin-bottom:0;">
-        <div class="callout-label" style="color:var(--attention);">${s.mistakeLabel}</div>
-        <p class="type-body">${escapeHtml(skill.mistake[l])}</p>
+      <div class="skill-panel">
+        <div class="skill-panel-label">${s.mistakeLabel}</div>
+        <p class="skill-panel-text">${escapeHtml(skill.mistake[l])}</p>
       </div>`,
     exercise: `
-      <div class="callout" style="background:var(--accent-soft); margin-bottom:0;">
-        <div class="callout-label" style="color:var(--accent);">${s.exerciseLabel}</div>
-        <p class="type-body">${escapeHtml(skill.exercise[l])}</p>
+      <div class="skill-panel">
+        <div class="skill-panel-label">${s.exerciseLabel}</div>
+        <p class="skill-panel-text">${escapeHtml(skill.exercise[l])}</p>
       </div>`
   };
 
+  const tab = (key, icon, label)=>`
+    <button type="button" class="skill-tab ${skillDetailActiveSection===key?'skill-tab-active':''}" data-section="${key}">
+      ${skillSectionSeen(skillId,key)&&skillDetailActiveSection!==key?`<span class="skill-tab-dot"></span>`:""}
+      ${icon}
+      <span>${label}</span>
+    </button>`;
+
+  const navBtn = (target, label, forward)=> target ? `
+    <button type="button" class="skill-nav-btn" data-goto-skill="${target.id}">
+      ${forward?"":chevronBack()}
+      <span style="flex:1; min-width:0;">
+        <span class="skill-nav-label">${label}</span>
+        <span class="skill-nav-title">${escapeHtml(target.title[l])}</span>
+      </span>
+      ${forward?chevronFwd():""}
+    </button>` : "";
+
   app.innerHTML = `
-    <section class="screen no-tabbar">
+    <section class="screen no-tabbar" style="--sk:${rgb};">
       <div class="screen-header">
         <button type="button" class="btn-icon" id="skillDetailBack" aria-label="Back">${chevronBack()}</button>
-        <div class="screen-header-title">${escapeHtml(skill.title[l])}</div>
+        <div class="screen-header-title">${escapeHtml(catLabel || skill.title[l])}</div>
         <button type="button" class="btn-icon" id="skillArchiveToggle" aria-label="Archive" style="${isArchived?`color:var(--accent);`:``}">${ICON.archiveBox}</button>
       </div>
       <div class="screen-content">
-        <p class="type-body" style="line-height:1.6; margin-bottom:var(--sp-5);">${escapeHtml(skill.intro[l])}</p>
+        <div class="skill-hero">
+          <div class="skill-hero-top">
+            <span class="skill-hero-icon">${ICON[skill.icon]}</span>
+            <span style="min-width:0;">
+              ${catLabel?`<span class="skill-hero-cat">${escapeHtml(catLabel)}</span>`:""}
+              <div class="skill-hero-title">${escapeHtml(skill.title[l])}</div>
+            </span>
+          </div>
+          <p class="skill-hero-intro">${escapeHtml(skill.intro[l])}</p>
+        </div>
 
-        <div class="segmented" style="margin-bottom:var(--sp-4);">
-          <button type="button" class="segmented-btn ${skillDetailActiveSection==='tips'?'segmented-active':''}" data-section="tips">${s.tipsLabel}</button>
-          <button type="button" class="segmented-btn ${skillDetailActiveSection==='mistake'?'segmented-active':''}" data-section="mistake">${s.mistakeLabel}</button>
-          <button type="button" class="segmented-btn ${skillDetailActiveSection==='exercise'?'segmented-active':''}" data-section="exercise">${s.exerciseLabel}</button>
+        <div class="skill-tabs">
+          ${tab("tips", ICON.bulbTag, s.tipsLabel)}
+          ${tab("mistake", ICON.questionTag, s.mistakeLabel)}
+          ${tab("exercise", ICON.refreshTag, s.exerciseLabel)}
         </div>
 
         ${sectionsHtml[skillDetailActiveSection]}
+
+        ${(nb.prev||nb.next) ? `<div class="skill-nav">
+          ${navBtn(nb.prev, s.skillPrevLabel, false)}
+          ${navBtn(nb.next, s.skillNextLabel, true)}
+        </div>
+        <div class="skill-position">${s.skillPositionLabel(nb.index+1, nb.family.length)}</div>` : ""}
       </div>
     </section>
   `;
@@ -6433,6 +6898,9 @@ function renderSkillDetail(skillId){
       skillDetailActiveSection = btn.dataset.section;
       renderSkillDetail(skillId);
     });
+  });
+  document.querySelectorAll("[data-goto-skill]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ skillDetailActiveSection="tips"; renderSkillDetail(btn.dataset.gotoSkill); });
   });
   document.getElementById("skillArchiveToggle").addEventListener("click", ()=>{
     if(isSkillArchived(skillId)){ unarchiveSkill(skillId); renderSkillDetail(skillId); }
