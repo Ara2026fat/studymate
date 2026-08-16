@@ -337,8 +337,10 @@ ul,ol{ list-style:none; }
    family later means adding one colour and nothing else. */
 .skill-hero{
   border-radius:var(--r-lg);
-  border:1px solid rgba(var(--sk),.28);
-  background:linear-gradient(160deg, rgba(var(--sk),.16), rgba(var(--sk),.04));
+  border:none;
+  /* A filled block, not a frame: the colour carries the whole card so the
+     student lands inside the skill's world rather than beside an outline. */
+  background:rgba(var(--sk),.24);
   padding:var(--sp-5) var(--sp-4);
   margin-bottom:var(--sp-4);
 }
@@ -346,10 +348,10 @@ ul,ol{ list-style:none; }
 .skill-hero-icon{
   width:44px; height:44px; border-radius:var(--r-md); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(var(--sk),.2); color:rgb(var(--sk));
+  background:rgb(var(--sk)); color:#0D1119;
 }
 .skill-hero-icon svg{ width:24px; height:24px; }
-.skill-hero-cat{ font-size:var(--fs-caption); font-weight:700; color:rgb(var(--sk)); }
+.skill-hero-cat{ font-size:var(--fs-caption); font-weight:700; color:rgb(var(--sk)); filter:brightness(1.25); }
 .skill-hero-title{ font-size:var(--fs-heading); font-weight:700; color:var(--ink); line-height:1.35; }
 .skill-hero-intro{ font-size:var(--fs-body); color:var(--ink); opacity:.92; line-height:1.65; margin:0; }
 
@@ -364,15 +366,15 @@ ul,ol{ list-style:none; }
 }
 .skill-tab svg{ width:18px; height:18px; }
 .skill-tab:active{ transform:scale(.97); }
-.skill-tab-active{ background:rgba(var(--sk),.16); border-color:rgba(var(--sk),.42); color:rgb(var(--sk)); }
+.skill-tab-active{ background:rgb(var(--sk)); border-color:rgb(var(--sk)); color:#0D1119; }
 .skill-tab-dot{
   position:absolute; top:6px; inset-inline-end:6px;
   width:6px; height:6px; border-radius:50%; background:rgba(var(--sk),.7);
 }
 
 .skill-panel{
-  border-radius:var(--r-md); border:1px solid rgba(var(--sk),.22);
-  background:rgba(var(--sk),.07); padding:var(--sp-4);
+  border-radius:var(--r-md); border:none;
+  background:rgba(var(--sk),.13); padding:var(--sp-4);
 }
 .skill-panel-label{ font-size:var(--fs-caption); font-weight:700; color:rgb(var(--sk)); margin-bottom:var(--sp-2); }
 .skill-panel-text{ font-size:var(--fs-body); color:var(--ink); line-height:1.7; margin:0; }
@@ -400,6 +402,26 @@ ul,ol{ list-style:none; }
 .skill-nav-label{ font-size:11px; color:var(--ink-muted); display:block; }
 .skill-nav-title{ font-size:var(--fs-caption); font-weight:600; line-height:1.3; }
 .skill-position{ text-align:center; font-size:var(--fs-caption); color:var(--ink-muted); margin-top:var(--sp-3); }
+
+/* Quick tools on the main screen. These two were buried three screens deep
+   inside the skills hub; a student needs a term looked up in the moment,
+   not after three taps. */
+.quick-tools{ display:flex; gap:var(--sp-2); margin-bottom:var(--sp-4); }
+.quick-tool{
+  flex:1; display:flex; align-items:center; gap:var(--sp-2);
+  padding:var(--sp-3); min-height:56px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:var(--r-md);
+  color:var(--ink); text-align:start;
+  transition:transform 180ms var(--ease-spring);
+}
+.quick-tool:active{ transform:scale(.97); }
+.quick-tool-icon{
+  width:32px; height:32px; border-radius:var(--r-sm); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--accent-rgb),.16); color:var(--accent);
+}
+.quick-tool-icon svg{ width:17px; height:17px; }
+.quick-tool-title{ font-size:var(--fs-caption); font-weight:600; line-height:1.3; }
 .segmented{
   display:flex; background:var(--surface); border:1px solid rgba(255,255,255,.06); border-radius:999px; padding:3px; margin-bottom:var(--sp-4);
 }
@@ -1975,6 +1997,34 @@ const COURSE_ENRICHMENT = {
     connections:{ requires:[{ar:"أمن الحاسب والخصوصية (COMP 323)", en:"Computer Security and Privacy (COMP 323)"}] },
     resources:[
       { title:{ar:"أساسيات التشفير وأمن المعلومات (معارف، عربي، مجاني)", en:"Fundamentals of Encryption and Information Security (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/21936/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D8%B4%D9%81%D9%8A%D8%B1-%D9%88-%D8%A3%D9%85%D9%86-%D8%A7%D9%84%D9%85%D8%B9%D9%84%D9%88%D9%85%D8%A7%D8%AA-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة أساسيات لا مقرر تشفير كامل — لا تتوسع في الجانب الرياضي ولا في إثبات أمان الخوارزميات. لكنها تضع المفاهيم الأولى بالعربية (المتماثل وغير المتماثل ودوال التجزئة والمفاتيح) قبل الدخول على مرجع المقرر الإنجليزي", en:"Stated plainly: a fundamentals course rather than a full cryptography course — it does not expand on the mathematical side or on proving algorithm security. But it establishes the first concepts in Arabic (symmetric, asymmetric, hash functions, keys) before moving to the course's English reference"} }
+    ]
+  },
+  "ENGL 309": {
+    explain:{
+      ar:"يتكلم المتحدث دقيقة أو دقيقتين ثم يصمت لتنقل كلامه. المهارة الحقيقية هنا ليست اللغة بل الذاكرة وتدوين الملاحظات برموز مختصرة، وإعادة بناء الفكرة كاملة لا الكلمات.",
+      en:"The speaker talks for a minute or two, then pauses for you to carry it over. The real skill here isn't language but memory and note-taking in shorthand symbols, and rebuilding the whole idea rather than the words."
+    },
+    why:{
+      ar:"هذه أول مرة تترجمين واقفة أمام الناس لا جالسة أمام نص يمكن مراجعته. وهي المرحلة التي تُبنى فيها الأعصاب قبل أن تُضاف إليها سرعة الترجمة الفورية في المستوى الثامن.",
+      en:"This is the first time you translate standing in front of people rather than sitting before a text you can revise. It is the stage where nerve is built, before the speed of simultaneous interpreting is added in level eight."
+    },
+    connections:{ requires:[{ar:"الخطابة (ENGL 301)", en:"Public Speaking (ENGL 301)"}], leadsTo:[{ar:"الترجمة الفورية (ENGL 406)", en:"Simultaneous Interpreting (ENGL 406)"}] },
+    resources:[
+      { title:{ar:"الترجمة الشفوية — د. محمد أبو ريشة (معارف، عربي، مجاني)", en:"Oral Interpreting — Dr. Mohammed Abu-Risha (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15598/%D8%A7%D9%84%D8%AA%D8%B1%D8%AC%D9%85%D8%A9-%D8%A7%D9%84%D9%81%D9%88%D8%B1%D9%8A%D8%A9-video", lang:"ar", partial:true, verified:"2026-08-16", reason:{ar:"فتحتُ الدورة وراجعتُ دروسها: ٥١ درسًا في الترجمة الشفوية، من بينها لقاء كامل (١٠٧ دقائق) مع الأستاذ عماد الصفدي عن تأهيل المترجمين الشفويين — الفوري والتتابعي معًا. تنبيه صريح: هي الدورة نفسها المستخدمة في مقرر الترجمة الفورية (ENGL 406)، فاقصدي منها ما يخص التتبعية وتدوين الملاحظات، ولا تظنيها مصدرين مختلفين", en:"I opened the course and reviewed its lessons: 51 lessons in oral interpreting, among them a full 107-minute session with Emad Al-Safadi on training oral interpreters — simultaneous and consecutive together. Stated plainly: this is the same course used for Simultaneous Interpreting (ENGL 406), so take from it what concerns consecutive work and note-taking, and don't mistake them for two separate sources"} }
+    ]
+  },
+  "ENGL 406": {
+    explain:{
+      ar:"أصعب ما في المهنة: أن تستمعي وتفهمي وتترجمي وتتكلمي في اللحظة نفسها، بفارق ثوانٍ عن المتحدث ودون أن يتوقف. مهارة تُبنى بالتمرين المتكرر لا بالقراءة.",
+      en:"The hardest thing in the profession: to listen, understand, translate and speak in the same instant, seconds behind a speaker who never pauses. A skill built by repeated drill, not by reading."
+    },
+    why:{
+      ar:"المترجم الفوري الكفء نادر ومطلوب في المؤتمرات والمحافل الرسمية، وأجره يفوق نظيره التحريري أضعافًا. لكن الطريق إليه تمرين يومي طويل، وهذا المقرر بدايته المنظّمة.",
+      en:"A capable simultaneous interpreter is rare and sought after at conferences and official gatherings, earning many times what a written translator does. But the road there is long daily drilling, and this course is its organized beginning."
+    },
+    connections:{ requires:[{ar:"الترجمة التتبعية (ENGL 309)", en:"Consecutive Interpreting (ENGL 309)"}] },
+    resources:[
+      { title:{ar:"الترجمة الفورية — د. محمد أبو ريشة (معارف، ٥١ درسًا، ٢٠ ساعة، عربي، مجاني)", en:"Simultaneous Interpreting — Dr. Mohammed Abu-Risha (M3aarf, 51 lessons, 20 hours, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15598/%D8%A7%D9%84%D8%AA%D8%B1%D8%AC%D9%85%D8%A9-%D8%A7%D9%84%D9%81%D9%88%D8%B1%D9%8A%D8%A9-video", lang:"ar", verified:"2026-08-16", reason:{ar:"فتحتُ الدورة وراجعتُ دروسها الواحد والخمسين (٢٠ ساعة و٤٤ دقيقة) بإشراف د. محمد أبو ريشة، أحد أبرز مدربي الترجمة العرب: سلسلة متدرجة من مستوى الصفر مع تمارين تطبيقية. تنبيه لازم: الوصف المنشور على المنصة يذكر لغة الإشارة خطأً — راجعتُ قائمة الدروس بنفسي وليس فيها شيء من ذلك، والمحتوى ترجمة شفوية بين العربية والإنجليزية", en:"I opened the course and reviewed all fifty-one of its lessons (20 hours 44 minutes) led by Dr. Mohammed Abu-Risha, one of the foremost Arab interpreting trainers: a graded series starting from zero with practical drills. A necessary warning: the blurb published on the platform mistakenly mentions sign language — I checked the lesson list myself and there is none of that in it; the content is oral interpreting between Arabic and English"} }
     ]
   },
   "ARAB 210": {
@@ -5106,6 +5156,8 @@ function renderToday(){
       </div>`;
   }
 
+  const hasRefGlossaryToday = !!(REFERENCE_GLOSSARY[student.collegeId] && REFERENCE_GLOSSARY[student.collegeId].length);
+
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
@@ -5124,6 +5176,17 @@ function renderToday(){
         </div>
 
         ${renderInstallBannerHtml()}
+
+        <div class="quick-tools">
+          ${hasRefGlossaryToday ? `<button type="button" class="quick-tool" id="todayRefGlossary">
+            <span class="quick-tool-icon">${ICON.openBook}</span>
+            <span class="quick-tool-title">${s.refGlossaryEntryLabel}</span>
+          </button>` : ""}
+          <button type="button" class="quick-tool" id="todayLiveTranslate">
+            <span class="quick-tool-icon">${ICON.textTool}</span>
+            <span class="quick-tool-title">${s.liveTranslateEntryLabel}</span>
+          </button>
+        </div>
 
         ${whiteningPromptHtml}
 
@@ -5148,6 +5211,10 @@ function renderToday(){
   `;
   wireTabBar();
   wireInstallBanner(renderToday);
+  const todayRef = document.getElementById("todayRefGlossary");
+  if(todayRef) todayRef.addEventListener("click", ()=>{ renderReferenceGlossary(); });
+  const todayTranslate = document.getElementById("todayLiveTranslate");
+  if(todayTranslate) todayTranslate.addEventListener("click", ()=>{ renderLiveTranslate(); });
   const whiteningCard = document.getElementById("whiteningPromptCard");
   if(whiteningCard) whiteningCard.addEventListener("click", ()=>{ renderWeeklyWhitening(); });
   document.getElementById("settingsBtn").addEventListener("click", ()=>{ renderSettings(); });
@@ -6622,13 +6689,13 @@ function unarchiveSkill(skillId){
    before the underscore, so "study_cs" and "study_translation" share one hue:
    the kind of skill matters more to a student than which major files it. */
 const SKILL_FAMILY_RGB = {
-  mindset:"201,138,46",
-  planning:"123,167,212",
-  study:"143,191,159",
-  exams:"232,148,120",
-  subject:"183,155,214",
-  foundation:"111,181,176",
-  practical:"217,168,108"
+  mindset:"224,166,75",
+  planning:"95,168,224",
+  study:"79,191,139",
+  exams:"240,120,90",
+  subject:"167,139,250",
+  foundation:"63,192,199",
+  practical:"236,127,176"
 };
 function skillFamilyRgb(skill){
   const id = (skill && skill.category && skill.category.id) || "study_universal";
@@ -6658,9 +6725,9 @@ function skillTileBig(sk, l, compact){
   const iconSize = compact ? 32 : 40;
   const pad = compact ? "var(--sp-3) var(--sp-2)" : "var(--sp-4) var(--sp-2)";
   return `
-    <button type="button" class="skill-tile" data-skill-id="${sk.id}" style="min-height:${minH}px; padding:${pad};">
+    <button type="button" class="skill-tile" data-skill-id="${sk.id}" style="min-height:${minH}px; padding:${pad}; background:rgba(${skillFamilyRgb(sk)},.16); border-color:rgba(${skillFamilyRgb(sk)},.3);">
       ${viewed ? `<span class="skill-tile-viewed" aria-label="viewed">${ICON.check}</span>` : ""}
-      <span class="skill-tile-icon" style="width:${iconSize}px; height:${iconSize}px; background:rgba(${skillFamilyRgb(sk)},.16); color:rgb(${skillFamilyRgb(sk)});">${ICON[sk.icon]}</span>
+      <span class="skill-tile-icon" style="width:${iconSize}px; height:${iconSize}px; background:rgb(${skillFamilyRgb(sk)}); color:#0D1119;">${ICON[sk.icon]}</span>
       <span class="skill-tile-title" style="font-size:var(--fs-body); line-height:1.4;">${escapeHtml(sk.title[l])}</span>
     </button>`;
 }
