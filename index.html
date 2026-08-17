@@ -432,6 +432,25 @@ ul,ol{ list-style:none; }
   transition:background 200ms var(--ease), transform 200ms var(--ease-spring);
 }
 .glossary-dot-active{ background:var(--accent); transform:scale(1.25); }
+
+/* Action tiles: an icon with its label underneath, instead of a row of
+   word-buttons that all look alike. A student scanning the notebook should
+   recognise "add a photo" by its shape before reading anything. */
+.action-row{ display:flex; gap:var(--sp-2); }
+.action-tile{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  padding:var(--sp-3) 6px; min-height:74px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:var(--r-md);
+  color:var(--ink); font-size:var(--fs-caption); font-weight:600; line-height:1.25; text-align:center;
+  transition:transform 180ms var(--ease-spring), border-color 200ms var(--ease);
+}
+.action-tile:active{ transform:scale(.96); }
+.action-tile-icon{
+  width:34px; height:34px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--accent-rgb),.14); color:var(--accent);
+}
+.action-tile-icon svg{ width:18px; height:18px; }
 .segmented{
   display:flex; background:var(--surface); border:1px solid rgba(255,255,255,.06); border-radius:999px; padding:3px; margin-bottom:var(--sp-4);
 }
@@ -789,6 +808,10 @@ const STR = {
     milestoneIauTranslation:"وصلتِ للمستوى الثالث — نقطة التحول الحقيقية في رحلتك، حيث تبدأ مقررات الترجمة واللسانيات فعليًا.",
     milestoneJazanME:"وصلت للمستوى السابع — من الآن يبدأ تصميم الماكينات وميكانيكا الموائع، جوهر تخصصك الحقيقي.",
     onboardTitle:"لنبدأ رحلتك",
+    studentNameLabel:"اسمك",
+    studentNamePh:"اكتب اسمك الأول",
+    studentNameRequired:"اكتب اسمك من فضلك",
+    greetingReturning:(name)=>`أهلًا ${name}`,
     companionSectionLabel:"اختر رفيقك",
     appearanceLabel:"المظهر",
     themeDefaultLabel:"تلقائي (حسب رفيقك)",
@@ -968,6 +991,11 @@ const STR = {
     notebookNotesEmpty:"لم تضف أي ملاحظة بعد.",
     notebookAddNoteBtn:"إضافة ملاحظة",
     notebookAddImageBtn:"أضف صورة",
+    notebookAddFileBtn:"أضف ملفًا",
+    notebookOpenFileLabel:"فتح الملف",
+    notebookFileTooBig:(mb)=>`الملف أكبر من ${mb} ميجابايت. التطبيق يحفظ الملفات داخل جهازك بلا خادم، والمساحة محدودة — جرّب ملفًا أصغر أو احتفظ بالكبير في مجلد التنزيلات.`,
+    notebookStorageFull:"لم تعد هناك مساحة كافية داخل التطبيق. احذف ملفًا أو صورة قديمة ثم أعد المحاولة.",
+    confirmOk:"حسنًا",
     notebookEditNoteTitle:"تعديل الملاحظة",
     notebookNoteColorLabel:"اللون",
     notebookDeleteNoteConfirmTitle:"حذف الملاحظة؟",
@@ -1026,6 +1054,15 @@ const STR = {
     reviewDueText:(n)=>`عندك ${n} ${n===1?'كلمة':'كلمات'} مستحقة للمراجعة الآن`,
     reviewCardTitle:(i,n)=>`مراجعة ${i} من ${n}`,
     refGlossaryEntryLabel:"القاموس المرجعي",
+    searchEntryLabel:"ابحث في تخصصك",
+    searchPlaceholder:"اسم مقرر، مصطلح، أو موضوع…",
+    searchPrompt:"اكتب ما تبحث عنه — مقررًا في خطتك، مصدرًا، مهارة تعلّم، أو مصطلحًا في القاموس.",
+    searchNoResults:"لا نتائج. جرّب كلمة أقصر أو جزءًا من الاسم.",
+    searchGroupCourses:"مقررات",
+    searchGroupResources:"مصادر",
+    searchGroupSkills:"مهارات",
+    searchGroupTerms:"مصطلحات",
+    searchResultCount:(n)=>`${n} نتيجة`,
     refGlossaryPageLabel:(p,n,total)=>`صفحة ${p} من ${n} · ${total} مصطلحًا`,
     refGlossarySub:"مصطلحات أساسية لتخصصك، جاهزة من اليوم الأول.",
     liveTranslateEntryLabel:"ترجمة فورية",
@@ -1070,6 +1107,10 @@ const STR = {
     milestoneIauTranslation:"You've reached Level 3 — the real turning point in your journey, where translation and linguistics coursework actually begins.",
     milestoneJazanME:"You've reached Level 7 — Machine Design and Fluid Mechanics begin now, the true core of your specialty.",
     onboardTitle:"Let's begin your journey",
+    studentNameLabel:"Your name",
+    studentNamePh:"Your first name",
+    studentNameRequired:"Please write your name",
+    greetingReturning:(name)=>`Welcome back, ${name}`,
     companionSectionLabel:"Choose your study companion",
     appearanceLabel:"Appearance",
     themeDefaultLabel:"Automatic (based on your companion)",
@@ -1249,6 +1290,11 @@ const STR = {
     notebookNotesEmpty:"You haven't added any notes yet.",
     notebookAddNoteBtn:"Add a Note",
     notebookAddImageBtn:"Add Photo",
+    notebookAddFileBtn:"Add File",
+    notebookOpenFileLabel:"Open file",
+    notebookFileTooBig:(mb)=>`This file is larger than ${mb} MB. The app stores files inside your own device with no server, and that space is limited — try a smaller file, or keep the large one in your downloads folder.`,
+    notebookStorageFull:"There isn't enough space left inside the app. Delete an old file or image, then try again.",
+    confirmOk:"OK",
     notebookEditNoteTitle:"Edit Note",
     notebookNoteColorLabel:"Color",
     notebookDeleteNoteConfirmTitle:"Delete this note?",
@@ -1307,6 +1353,15 @@ const STR = {
     reviewDueText:(n)=>`You have ${n} ${n===1?'term':'terms'} due for review now`,
     reviewCardTitle:(i,n)=>`Review ${i} of ${n}`,
     refGlossaryEntryLabel:"Reference Dictionary",
+    searchEntryLabel:"Search your major",
+    searchPlaceholder:"A course, a term, a topic…",
+    searchPrompt:"Type what you're looking for — a course in your plan, a resource, a study skill, or a term from the dictionary.",
+    searchNoResults:"Nothing found. Try a shorter word, or part of the name.",
+    searchGroupCourses:"Courses",
+    searchGroupResources:"Resources",
+    searchGroupSkills:"Skills",
+    searchGroupTerms:"Terms",
+    searchResultCount:(n)=>`${n} results`,
     refGlossaryPageLabel:(p,n,total)=>`Page ${p} of ${n} · ${total} terms`,
     refGlossarySub:"Core terms for your major, ready from day one.",
     liveTranslateEntryLabel:"Live Translate",
@@ -1485,13 +1540,13 @@ const OTHER_ID = "__other__";
 const COURSE_CATALOG = {
   "jazan-cs-cs-0": {
     l1:["COMP 111 - مقدمة في الحاسب","MATH 105 - تفاضل وتكامل","ENG 101 - اللغة الإنجليزية 1","ARB 102 - الكتابة العربية","SLM 101 - الثقافة الإسلامية 1"],
-    l2:["COMP 112 - البرمجة 1","MATH 106 - جبر المصفوفات","MATH 107 - رياضيات متقطعة","ENG 102 - اللغة الإنجليزية 2"],
+    l2:["COMP 112 - البرمجة 1","MATH 106 - جبر المصفوفات","MATH 107 - رياضيات متقطعة","ENG 102 - اللغة الإنجليزية 2","ذكاء101 - مقدمة في الذكاء الاصطناعي"],
     l3:["COMP 213 - البرمجة 2","ITEC 211 - مفاهيم وتصميم قواعد البيانات","SLM 102 - الثقافة الإسلامية 2","PHYS 204 - مبادئ الفيزياء 1","MATH 262 - الإحصاء والاحتمالات"],
     l4:["COMP 214 - البرمجة الكائنية","COMP 231 - التصميم الرقمي","ITEC 251 - اتصال البيانات وشبكات الحاسب","PHYS 205 - مبادئ الفيزياء 2","ITEC 212 - نظم إدارة قواعد البيانات"],
     l5:["COMP 321 - هياكل البيانات والخوارزميات","COMP 332 - تنظيم الحاسب","COMP 315 - برمجة الويب","ITEC 321 - تفاعل الإنسان والحاسب","MATH 326 - الجبر الخطي"],
     l6:["COMP 316 - مبادئ لغات البرمجة","COMP 322 - تحليل وتصميم الخوارزميات","COMP 323 - أمن الحاسب والخصوصية","COMP 333 - أنظمة التشغيل","COMP 371 - هندسة البرمجيات","COMP 324 - نظرية البيانات وتطبيقاتها"],
     l7:["COMP 441 - الذكاء الاصطناعي","COMP 434 - الحوسبة المتوازية والموزعة","COMP 452 - الحوسبة السحابية","COMP 417 - تطوير تطبيقات المؤسسات","COMP 453 - علم البيانات"],
-    l8:["COMP 4** - اختياري 1","COMP 461 - رسومات الحاسب","COMP 472 - إدارة مشاريع البرمجيات","COMP 451 - نمذجة ومحاكاة البيانات","COMP 454 - تنقيب البيانات"],
+    l8:["COMP 4** - اختياري 1","COMP 461 - رسومات الحاسب","COMP 472 - إدارة مشاريع البرمجيات","COMP 451 - نمذجة ومحاكاة البيانات","COMP 454 - تنقيب البيانات","عال481 - التدريب التعاوني"],
     l9:["COMP 582 - مشروع التخرج (المرحلة 1)","COMP 5** - اختياري 2","COMP 555 - الحوسبة المتنقلة","COMP 525 - التشفير","COMP 593 - ندوة","COMP 535 - نظرية الحوسبة"],
     l10:["COMP 583 - مشروع التخرج (المرحلة 2)","COMP 5** - اختياري 3","COMP 591 - أخلاقيات الحاسب والمهنة","COMP 5** - موضوعات مختارة","COMP 592 - ريادة الأعمال والابتكار","COMP 556 - إنترنت الأشياء"]
   },
@@ -1574,7 +1629,7 @@ const COURSE_ENRICHMENT = {
     },
     resources:[
       { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية", en:"Duolingo — English Learning App"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"مجاني بالكامل، يبني المفردات والقواعد تدريجيًا بجلسات قصيرة يومية", en:"Completely free, builds vocabulary and grammar gradually through short daily sessions"} },
-      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} }
+      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", lang:"ar", verified:"2026-08-17", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} }
     ]
   },
   "فيز101": {
@@ -2037,6 +2092,102 @@ const COURSE_ENRICHMENT = {
     connections:{ requires:[{ar:"الترجمة التتبعية (ENGL 309)", en:"Consecutive Interpreting (ENGL 309)"}] },
     resources:[
       { title:{ar:"الترجمة الفورية — د. محمد أبو ريشة (معارف، ٥١ درسًا، ٢٠ ساعة، عربي، مجاني)", en:"Simultaneous Interpreting — Dr. Mohammed Abu-Risha (M3aarf, 51 lessons, 20 hours, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15598/%D8%A7%D9%84%D8%AA%D8%B1%D8%AC%D9%85%D8%A9-%D8%A7%D9%84%D9%81%D9%88%D8%B1%D9%8A%D8%A9-video", lang:"ar", verified:"2026-08-16", reason:{ar:"فتحتُ الدورة وراجعتُ دروسها الواحد والخمسين (٢٠ ساعة و٤٤ دقيقة) بإشراف د. محمد أبو ريشة، أحد أبرز مدربي الترجمة العرب: سلسلة متدرجة من مستوى الصفر مع تمارين تطبيقية. تنبيه لازم: الوصف المنشور على المنصة يذكر لغة الإشارة خطأً — راجعتُ قائمة الدروس بنفسي وليس فيها شيء من ذلك، والمحتوى ترجمة شفوية بين العربية والإنجليزية", en:"I opened the course and reviewed all fifty-one of its lessons (20 hours 44 minutes) led by Dr. Mohammed Abu-Risha, one of the foremost Arab interpreting trainers: a graded series starting from zero with practical drills. A necessary warning: the blurb published on the platform mistakenly mentions sign language — I checked the lesson list myself and there is none of that in it; the content is oral interpreting between Arabic and English"} }
+    ]
+  },
+  "COMP 556": {
+    explain:{
+      ar:"ربط الأجهزة اليومية بالإنترنت لتتبادل البيانات بلا وسيط بشري: الحسّاسات والمتحكّمات الدقيقة، بروتوكولات الاتصال الخفيفة، وإرسال القراءات إلى السحابة لتحليلها واتخاذ قرار.",
+      en:"Connecting everyday devices to the internet so they exchange data without a human in between: sensors and microcontrollers, lightweight communication protocols, and sending readings to the cloud to be analyzed and acted upon."
+    },
+    why:{
+      ar:"المدن الذكية في نيوم والقدية والعدادات الذكية في المنازل السعودية كلها إنترنت أشياء. وهذا المقرر يجمع ما درسته متفرقًا — الشبكات وقواعد البيانات والبرمجة المدمجة — في منظومة واحدة تعمل.",
+      en:"The smart cities in NEOM and Qiddiya and the smart meters in Saudi homes are all the internet of things. This course gathers what you studied separately — networks, databases, embedded programming — into one working system."
+    },
+    connections:{ requires:[{ar:"شبكات الحاسب (COMP 333)", en:"Computer Networks (COMP 333)"}] },
+    resources:[
+      { title:{ar:"دورة إنترنت الأشياء IoT (معارف، عربي، مجاني)", en:"Internet of Things Course (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15526/%D8%A5%D9%86%D8%AA%D8%B1%D9%86%D8%AA-%D8%A7%D9%84%D8%A3%D8%B4%D9%8A%D8%A7%D8%A1-video", lang:"ar", reason:{ar:"دورة عربية مجانية تعرّف بمنظومة الأجهزة المتصلة وبرمجة المتحكّمات الدقيقة وبروتوكول MQTT وتطبيقات المدن الذكية — الشق التطبيقي الذي يصعب تخيّله من الكتاب وحده", en:"A free Arabic course introducing the ecosystem of connected devices, microcontroller programming, the MQTT protocol and smart-city applications — the applied side that is hard to picture from the textbook alone"} }
+    ]
+  },
+  "COMP 592": {
+    explain:{
+      ar:"كيف تتحول فكرة تقنية إلى شركة: دراسة السوق واختبار الفكرة قبل بنائها، نموذج العمل ومصادر الدخل، خطة العمل والتمويل، ثم بناء الفريق وإطلاق المنتج الأول.",
+      en:"How a technical idea becomes a company: studying the market and testing the idea before building it, the business model and revenue sources, the business plan and funding, then building a team and launching a first product."
+    },
+    why:{
+      ar:"خريج الحاسب أقرب الناس إلى بناء منتج بيده دون رأس مال كبير — لا يحتاج مصنعًا ولا مخزنًا. ما ينقصه غالبًا ليس المهارة التقنية بل معرفة كيف يتحقق من أن أحدًا يريد ما يبنيه قبل أن يقضي فيه سنة.",
+      en:"A computing graduate is the person closest to building a product single-handedly without large capital — needing no factory and no warehouse. What is usually missing isn't technical skill but knowing how to verify that anyone wants the thing before spending a year on it."
+    },
+    resources:[
+      { title:{ar:"من فكرة إلى شركة: مقدمة في ريادة الأعمال — إدراك (عربي، مجاني)", en:"From Idea to Company: Intro to Entrepreneurship — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/entr_101-vsp_2017/", lang:"ar", verified:"2026-08-16", reason:{ar:"مساق عربي كامل من منصة إدراك (بدعم مؤسسة الملكة رانيا) يمشي بالفكرة من نقطة الصفر حتى تصير شركة قائمة. التسجيل مجاني. تنبيه: هو المساق نفسه المستخدم في مقرر ريادة الأعمال بتخصص الترجمة، فالمحتوى عام لا تقني", en:"A complete Arabic course from the Edraak platform (backed by the Queen Rania Foundation) that walks an idea from zero to a standing company. Registration is free. Note: it is the same course used for the entrepreneurship course in the translation programme, so the content is general rather than technical"} }
+    ]
+  },
+  "BUS 381": {
+    explain:{
+      ar:"مفهوم ريادة الأعمال عمليًا: كيف تُختبر فكرة قبل الاستثمار فيها، نموذج العمل ومصادر الدخل، خطة العمل والتمويل، وبناء العلاقات والفريق.",
+      en:"Entrepreneurship in practice: how an idea is tested before investing in it, the business model and revenue sources, the business plan and funding, and building relationships and a team."
+    },
+    why:{
+      ar:"كثير من المترجمين لا يُوظَّفون بل يعملون لحسابهم — يبنون قاعدة عملاء ويسعّرون خدمتهم ويديرون مشاريعهم. هذا المقرر هو الذي يعلّمك إدارة نفسك كمنشأة صغيرة، وهي الحالة الأغلب في هذه المهنة لا الاستثناء.",
+      en:"Many translators are not employed but self-employed — building a client base, pricing their service, managing their own projects. This course is what teaches you to run yourself as a small enterprise, which in this profession is the common case rather than the exception."
+    },
+    connections:{ leadsTo:[{ar:"إدارة مشاريع الترجمة (ENGL 404)", en:"Translation Project Management (ENGL 404)"}] },
+    resources:[
+      { title:{ar:"من فكرة إلى شركة: مقدمة في ريادة الأعمال — إدراك (عربي، مجاني)", en:"From Idea to Company: Intro to Entrepreneurship — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/entr_101-vsp_2017/", lang:"ar", verified:"2026-08-16", reason:{ar:"فتحتُ صفحة المساق وتأكدت منها: مساق عربي كامل من إدراك يبدأ من الفكرة وينتهي بشركة قائمة، بتسجيل مجاني. مناسب تحديدًا لمن ستعمل لحسابها بعد التخرج، لأنه يعالج التسعير والعميل والخطة لا النظرية وحدها", en:"I opened the course page and confirmed it: a complete Arabic course from Edraak beginning with an idea and ending at a standing company, free to enroll. Particularly suited to someone who will work for herself after graduation, because it deals with pricing, the client and the plan rather than theory alone"} }
+    ]
+  },
+  "همك416": {
+    explain:{
+      ar:"ما يجري داخل الأسطوانة بالضبط: الأشواط الأربعة (السحب والضغط والاحتراق والعادم)، الفرق بين الإشعال بالشرارة والإشعال بالضغط، خواص الوقود وأثرها في الأداء، ثم الاحتكاك والتزييت والتبريد والانبعاثات.",
+      en:"Exactly what happens inside the cylinder: the four strokes (intake, compression, combustion, exhaust), the difference between spark ignition and compression ignition, fuel properties and their effect on performance, then friction, lubrication, cooling and emissions."
+    },
+    why:{
+      ar:"هذا المقرر هو الذي يحوّل الدورات الحرارية التي درستها على الورق إلى آلة تدور وتصدر ضجيجًا وحرارة. وهو الأقرب إلى قطاع السيارات والنقل والمعدات الثقيلة — وأحد أوسع أبواب التوظيف أمام المهندس الميكانيكي.",
+      en:"This course turns the thermal cycles you studied on paper into a machine that spins, roars and heats. It is the closest to the automotive, transport and heavy-equipment sector — one of the widest employment doors open to a mechanical engineer."
+    },
+    connections:{ requires:[{ar:"الديناميكا الحرارية 2 (همك212)", en:"Thermodynamics 2 (همك212)"}] },
+    resources:[
+      { title:{ar:"أساسيات محركات الاحتراق الداخلي (معارف، عربي، مجاني)", en:"Fundamentals of Internal Combustion Engines (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/22242/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-%D9%85%D8%AD%D8%B1%D9%83%D8%A7%D8%AA-%D8%A7%D9%84%D8%A7%D8%AD%D8%AA%D8%B1%D8%A7%D9%82-%D8%A7%D9%84%D8%AF%D8%A7%D8%AE%D9%84%D9%8A-video", lang:"ar", reason:{ar:"شرح عربي مجاني لدورة التشغيل بأشواطها الأربعة ولمكوّنات المحرك الرئيسية — الأسطوانات والمكابس وشمعات الإشعال — مع المقارنة بين محركات البنزين والديزل، وهي أول ما يُبنى عليه المقرر", en:"A free Arabic explanation of the operating cycle with its four strokes and of the engine's main components — cylinders, pistons, spark plugs — with a comparison between petrol and diesel engines, which is the first thing the course builds on"} }
+    ]
+  },
+  "ذكاء101": {
+    explain:{
+      ar:"مدخل مبكّر يعرّفك بما هو الذكاء الاصطناعي فعلًا قبل أن تدرسه بعمق: كيف يُمثَّل العالم داخل الآلة، ما الفرق بين نظام يتبع قواعد ونظام يتعلم من بيانات، وأين يُستعمل كل نوع وأين يفشل.",
+      en:"An early entry point that shows you what artificial intelligence actually is before you study it in depth: how the world is represented inside a machine, the difference between a system that follows rules and one that learns from data, and where each is used and where each fails."
+    },
+    why:{
+      ar:"وضعُ هذا المقرر في المستوى الثاني مقصود: تعرف مبكرًا إلى أين يمكن أن يقودك التخصص، فتقرأ ما بعده من مقررات — الخوارزميات والإحصاء وقواعد البيانات — وأنت تعرف لماذا تدرسها لا لأنها في الخطة فحسب.",
+      en:"Placing this course in level two is deliberate: you learn early where the major can take you, so you read the courses that follow — algorithms, statistics, databases — knowing why you're studying them rather than merely because they're in the plan."
+    },
+    connections:{ leadsTo:[{ar:"الذكاء الاصطناعي (COMP 441)", en:"Artificial Intelligence (COMP 441)"}] },
+    resources:[
+      { title:{ar:"الذكاء الاصطناعي والأنظمة الخبيرة — الوحدة الأولى بالعربية (جامعة القدس المفتوحة، مجاني)", en:"Artificial Intelligence and Expert Systems — First Arabic Unit (Al-Quds Open University, Free)"}, url:"https://mbabubaker.wordpress.com/aies/", lang:"ar", partial:true, verified:"2026-08-17", reason:{ar:"تنبيه صريح: هذه صفحة المقرر الجامعي الكامل بخمس وحدات، وهي نفسها المستخدمة في مقرر الذكاء الاصطناعي المتقدم (COMP 441). في مستواك الثاني تكفيك الوحدة الأولى وحدها — ماهية أنظمة الذكاء الاصطناعي — والبقية ستعودين إليها في المستوى السابع، فلا تُرهقي نفسك بها الآن", en:"Stated plainly: this is the page of the full five-unit university course, the same one used for the advanced Artificial Intelligence course (COMP 441). At your second level the first unit alone is enough — the nature of AI systems — and you will come back to the rest in level seven, so don't burden yourself with it now"} }
+    ]
+  },
+  "عرب102": {
+    explain:{
+      ar:"قواعد الكتابة العربية الصحيحة عمليًا: الهمزات ومواضعها، الألف اللينة، علامات الترقيم، والأخطاء الإملائية الشائعة — ثم تحرير النص وتنظيم فقراته حتى يصل المعنى بلا لبس.",
+      en:"The rules of correct Arabic writing in practice: the hamza and where it falls, the soft alif, punctuation, and common spelling errors — then editing a text and organizing its paragraphs so the meaning arrives unambiguously."
+    },
+    why:{
+      ar:"المهندس يكتب أكثر مما يتصور: تقارير فنية، مراسلات مع مقاولين، مواصفات مشروع. وتقرير مليء بالأخطاء الإملائية يُضعف الثقة في محتواه التقني مهما كان دقيقًا.",
+      en:"An engineer writes more than he expects: technical reports, correspondence with contractors, project specifications. A report full of spelling errors weakens trust in its technical content however precise that content is."
+    },
+    resources:[
+      { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling Course (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: تغطي الشق الإملائي من المقرر — كتابة الكلمات وفق القواعد، التشكيل، وتصحيح الأخطاء الشائعة — لا مهارات التحرير والصياغة كاملة. وهي الجزء الذي يتعثر فيه أكثر الطلاب، والتسجيل بلا رسوم", en:"Stated plainly: it covers the spelling half of the course — writing words by the rules, diacritics, and correcting common errors — not the full editing and composition skills. It is the part most students stumble on, and enrollment is free of charge"} }
+    ]
+  },
+  "ENGL 304": {
+    explain:{
+      ar:"نوعان لهما قواعد مختلفة تمامًا: الترجمة الإعلامية حيث الخبر يُنقل بسرعة ودقة وحياد، والترجمة السياحية حيث النص يُعاد بناؤه ليجذب زائرًا من ثقافة أخرى لا لينقل حرفًا بحرف.",
+      en:"Two kinds with entirely different rules: media translation, where a news item is carried across quickly, accurately and neutrally, and tourism translation, where the text is rebuilt to attract a visitor from another culture rather than to move it word by word."
+    },
+    why:{
+      ar:"هذان المجالان أوسع أبواب العمل الفعلية أمام المترجم في السعودية اليوم — الهيئات السياحية والمواقع الإخبارية توظّف أكثر من غيرها بكثير. وموسم الرياض والعُلا ونيوم كلها تحتاج من ينقل صورتها للعالم.",
+      en:"These two fields are the widest real employment doors open to a translator in Saudi Arabia today — tourism authorities and news outlets hire far more than anyone else. Riyadh Season, AlUla and NEOM all need someone to carry their image to the world."
+    },
+    connections:{ requires:[{ar:"مقدمة في الترجمة (ENGL 203)", en:"Intro to Translation (ENGL 203)"}] },
+    resources:[
+      { title:{ar:"كورس مقدمة في أساسيات الترجمة (يوتيوب، عربي، مجاني)", en:"Introduction to Translation Basics (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL9CKq5c1HtdU0qj80mEPfCM1ID7iGxsO9", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"تنبيه صريح: دورة عامة في الترجمة لا متخصصة في الإعلامية والسياحية، وهي نفسها المستخدمة في مقرر مقدمة في الترجمة. أدرجناها لأن قواعد الإيجاز والحياد التي تشرحها هي أساس النص الإخباري، ولم نجد بعدُ مصدرًا عربيًا حرًّا يخص هذين النوعين تحديدًا", en:"Stated plainly: a general translation course rather than one specialized in media and tourism, and the same one used for Intro to Translation. We included it because the concision and neutrality it teaches are the foundation of news writing, and we have not yet found a free Arabic source covering these two kinds specifically"} }
     ]
   },
   "ARAB 210": {
@@ -2532,7 +2683,7 @@ const COURSE_ENRICHMENT = {
     },
     resources:[
       { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية", en:"Duolingo — English Learning App"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"مجاني بالكامل، يبني المفردات والقواعد تدريجيًا بجلسات قصيرة يومية", en:"Completely free, builds vocabulary and grammar gradually through short daily sessions"} },
-      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} }
+      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", lang:"ar", verified:"2026-08-17", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} }
     ]
   },
   "ARB 102": {
@@ -2752,7 +2903,7 @@ const COURSE_ENRICHMENT = {
     connections:{ leadsTo:[{ar:"قواعد 1 (ENGL 102)", en:"Grammar 1 (ENGL 102)"},{ar:"اللغة الإنجليزية 2 (ENGL 104)", en:"English Language 2 (ENGL 104)"}] },
     resources:[
       { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية", en:"Duolingo — English Learning App"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"مجاني بالكامل، يبني المفردات والقواعد تدريجيًا بجلسات قصيرة يومية — مثالي كممارسة يومية موازية للمقرر، لا بديل عنه", en:"Completely free, builds vocabulary and grammar gradually through short daily sessions — ideal as daily practice alongside the course, not a replacement for it"} },
-      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين — بديل لمن يحتاج شرحًا عربيًا كاملًا لا مجرد تطبيق تفاعلي", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners — for anyone who needs full Arabic explanation, not just an interactive app"} }
+      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", lang:"ar", verified:"2026-08-17", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين — بديل لمن يحتاج شرحًا عربيًا كاملًا لا مجرد تطبيق تفاعلي", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners — for anyone who needs full Arabic explanation, not just an interactive app"} }
     ]
   },
   "ENGL 201": {
@@ -4356,6 +4507,7 @@ const StudentModule = {
       university:data.university, universityId:data.universityId||null,
       college:data.college, collegeId:data.collegeId||null,
       major:data.major, majorId:data.majorId||null, level:data.level,
+      name:data.name||"",
       theme:null,
       createdAt:Date.now()
     });
@@ -4364,6 +4516,10 @@ const StudentModule = {
   update(data){
     const s = this.current();
     if(s) dbUpdate("students", s.id, { university:data.university, universityId:data.universityId||null, college:data.college, collegeId:data.collegeId||null, major:data.major, majorId:data.majorId||null, level:data.level });
+  },
+  updateName(name){
+    const s = this.current();
+    if(s) dbUpdate("students", s.id, { name:(name||"").trim() });
   },
   updateLang(lang){
     const s = this.current();
@@ -4981,7 +5137,7 @@ function renderWelcome(){
 function renderOnboarding(){
   applyDir();
   const s = t();
-  const obDraft = { companion:"", universityId:"", university:"", collegeId:"", college:"", majorId:"", major:"", levelId:"", level:"" };
+  const obDraft = { name:"", companion:"", universityId:"", university:"", collegeId:"", college:"", majorId:"", major:"", levelId:"", level:"" };
 
   app.innerHTML = `
     <section class="screen no-tabbar">
@@ -4990,6 +5146,11 @@ function renderOnboarding(){
         <p class="type-body" style="color:var(--ink-muted); margin-top:6px;">${s.onboardSub}</p>
       </div>
       <div class="screen-content stack">
+        <div class="field-group">
+          <label class="field-label" for="obName">${s.studentNameLabel}</label>
+          <input type="text" class="field" id="obName" placeholder="${s.studentNamePh}" autocomplete="given-name">
+          <p class="field-error" id="obNameError">${s.studentNameRequired}</p>
+        </div>
         <div class="field-group">
           <span class="field-label">${s.companionSectionLabel}</span>
           <div style="display:flex; gap:8px;">
@@ -5016,16 +5177,19 @@ function renderOnboarding(){
     femaleBtn.classList.toggle("btn-primary", obDraft.companion==="female");
     femaleBtn.classList.toggle("btn-secondary", obDraft.companion!=="female");
   }
+  document.getElementById("obName").addEventListener("input", ()=>{ document.getElementById("obNameError").classList.remove("show"); });
   maleBtn.addEventListener("click", ()=>{ obDraft.companion="male"; document.getElementById("obCompanionError").classList.remove("show"); refreshCompanionUI(); });
   femaleBtn.addEventListener("click", ()=>{ obDraft.companion="female"; document.getElementById("obCompanionError").classList.remove("show"); refreshCompanionUI(); });
 
   document.getElementById("obStart").addEventListener("click", ()=>{
     let valid = validateProfileDraft("ob", obDraft);
+    obDraft.name = document.getElementById("obName").value.trim();
+    if(!obDraft.name){ document.getElementById("obNameError").classList.add("show"); valid = false; }
     if(!obDraft.companion){ document.getElementById("obCompanionError").classList.add("show"); valid = false; }
     if(!valid) return;
 
     const student = StudentModule.create({
-      lang: lang(), companion:obDraft.companion, university:obDraft.university, universityId:obDraft.universityId, college:obDraft.college, collegeId:obDraft.collegeId, major:obDraft.major, majorId:obDraft.majorId, level:obDraft.level
+      lang: lang(), name:obDraft.name, companion:obDraft.companion, university:obDraft.university, universityId:obDraft.universityId, college:obDraft.college, collegeId:obDraft.collegeId, major:obDraft.major, majorId:obDraft.majorId, level:obDraft.level
     });
     const journey = JourneyModule.ensureFor(student.id);
     SemesterModule.createFirst(journey.id, obDraft.level || LEVELS[0][lang()]);
@@ -5174,7 +5338,7 @@ function renderToday(){
     <section class="screen">
       <div class="screen-header">
         <div>
-          <div class="screen-header-title">${student.companion==='female' ? s.companionFemaleLabel : s.companionMaleLabel}</div>
+          <div class="screen-header-title">${student.name ? escapeHtml(s.greetingReturning(student.name)) : (student.companion==='female' ? s.companionFemaleLabel : s.companionMaleLabel)}</div>
           <div class="screen-header-sub">${s.todayGreeting}</div>
         </div>
         <button type="button" class="btn-icon" id="settingsBtn" aria-label="${s.settingsBtn}">${ICON.settings}</button>
@@ -5190,6 +5354,10 @@ function renderToday(){
         ${renderInstallBannerHtml()}
 
         <div class="quick-tools">
+          <button type="button" class="quick-tool" id="todaySearch">
+            <span class="quick-tool-icon">${ICON.lens}</span>
+            <span class="quick-tool-title">${s.searchEntryLabel}</span>
+          </button>
           ${hasRefGlossaryToday ? `<button type="button" class="quick-tool" id="todayRefGlossary">
             <span class="quick-tool-icon">${ICON.openBook}</span>
             <span class="quick-tool-title">${s.refGlossaryEntryLabel}</span>
@@ -5223,6 +5391,7 @@ function renderToday(){
   `;
   wireTabBar();
   wireInstallBanner(renderToday);
+  document.getElementById("todaySearch").addEventListener("click", ()=>{ globalSearchQuery=""; renderSearch(); });
   const todayRef = document.getElementById("todayRefGlossary");
   if(todayRef) todayRef.addEventListener("click", ()=>{ toolsOrigin="today"; refGlossaryPage=0; renderReferenceGlossary(); });
   const todayTranslate = document.getElementById("todayLiveTranslate");
@@ -5673,6 +5842,14 @@ function renderCourseNotebook(courseId){
               <span class="card-body" style="${badge?'padding-inline-end:30px;':''}">
                 ${n.type==="drawing" || n.type==="image"
                   ? `<img src="${n.dataUrl}" style="width:100%; border-radius:var(--r-sm); display:block;" alt="">`
+                  : n.type==="file"
+                  ? `<span style="display:flex; align-items:center; gap:10px; width:100%;">
+                       <span class="card-icon" style="flex-shrink:0;">${ICON.download}</span>
+                       <span style="min-width:0;">
+                         <span class="type-body" style="font-weight:600; display:block; word-break:break-word;">${escapeHtml(n.fileName||"")}</span>
+                         <span class="type-caption" style="color:var(--ink-muted);">${formatFileSize(n.fileSize)} · ${s.notebookOpenFileLabel}</span>
+                       </span>
+                     </span>`
                   : `<span class="type-body" style="white-space:pre-wrap;">${escapeHtml(n.text)}</span>`}
               </span>
               ${n.hardestPoint ? `<div style="margin-top:8px; padding:8px 10px; background:rgba(var(--attention-rgb),.14); border-radius:var(--r-sm); width:100%;"><span class="type-caption" style="color:var(--attention); font-weight:700;">${s.noteHardestPointLabel}</span><p class="type-caption" style="margin-top:2px; white-space:pre-wrap;">${escapeHtml(n.hardestPoint)}</p></div>` : ""}
@@ -5680,10 +5857,21 @@ function renderCourseNotebook(courseId){
             </button>
           `;}).join("")}
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:var(--sp-5);">
-          <button type="button" class="btn btn-secondary" id="notebookAddNote" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.pencil}<span>${s.notebookAddNoteBtn}</span></button>
-          <button type="button" class="btn btn-secondary" id="notebookAddImage" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.image}<span>${s.notebookAddImageBtn}</span></button>
+        <div class="action-row" style="margin-bottom:var(--sp-5);">
+          <button type="button" class="action-tile" id="notebookAddNote">
+            <span class="action-tile-icon">${ICON.pencil}</span>
+            <span>${s.notebookAddNoteBtn}</span>
+          </button>
+          <button type="button" class="action-tile" id="notebookAddImage">
+            <span class="action-tile-icon">${ICON.image}</span>
+            <span>${s.notebookAddImageBtn}</span>
+          </button>
+          <button type="button" class="action-tile" id="notebookAddFile">
+            <span class="action-tile-icon">${ICON.download}</span>
+            <span>${s.notebookAddFileBtn}</span>
+          </button>
           <input type="file" id="notebookImageInput" accept="image/*" style="display:none;">
+          <input type="file" id="notebookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" style="display:none;">
         </div>
 
         <div class="section-label">${s.notebookChecksLabel}</div>
@@ -5701,7 +5889,12 @@ function renderCourseNotebook(courseId){
             </div>`;
           }).join("")}
         </div>
-        <button type="button" class="btn btn-secondary" id="notebookAddCheck" style="margin-bottom:var(--sp-5); display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.lens}<span>${s.notebookAddCheckBtn}</span></button>
+        <div class="action-row" style="margin-bottom:var(--sp-5);">
+          <button type="button" class="action-tile" id="notebookAddCheck">
+            <span class="action-tile-icon">${ICON.lens}</span>
+            <span>${s.notebookAddCheckBtn}</span>
+          </button>
+        </div>
 
         <div class="section-label">${s.notebookExamsLabel}</div>
         <div class="stack" style="margin-bottom:var(--sp-3);">
@@ -5716,7 +5909,12 @@ function renderCourseNotebook(courseId){
             </div>
           `).join("")}
         </div>
-        <button type="button" class="btn btn-secondary" id="notebookAddExam" style="display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.event}<span>${s.notebookAddExamBtn}</span></button>
+        <div class="action-row">
+          <button type="button" class="action-tile" id="notebookAddExam">
+            <span class="action-tile-icon">${ICON.event}</span>
+            <span>${s.notebookAddExamBtn}</span>
+          </button>
+        </div>
 
         <button type="button" class="btn btn-primary" id="downloadNotebookBtn" style="margin-top:var(--sp-5); display:flex; align-items:center; justify-content:center; gap:8px;">${ICON.openBook}<span>${s.downloadNotebookBtn}</span></button>
       </div>
@@ -5732,9 +5930,37 @@ function renderCourseNotebook(courseId){
     reader.onload = ()=>{ NotebookModule.addImageNote(courseId, reader.result, "default"); renderCourseNotebook(courseId); };
     reader.readAsDataURL(file);
   });
+  document.getElementById("notebookAddFile").addEventListener("click", ()=>{ document.getElementById("notebookFileInput").click(); });
+  document.getElementById("notebookFileInput").addEventListener("change", (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    /* There is no server behind this app: a file lives inside the browser's
+       own storage, which is a few megabytes in total. Better to refuse a
+       large file with a clear reason than to silently break the notebook. */
+    if(file.size > NOTEBOOK_MAX_FILE_BYTES){
+      showConfirmSheet({ title:s.notebookAddFileBtn, text:s.notebookFileTooBig(NOTEBOOK_MAX_FILE_MB), confirmLabel:s.confirmOk, hideCancel:true });
+      e.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        NotebookModule.addFileNote(courseId, reader.result, file.name, file.size, "default");
+        renderCourseNotebook(courseId);
+      }catch(err){
+        showConfirmSheet({ title:s.notebookAddFileBtn, text:s.notebookStorageFull, confirmLabel:s.confirmOk, hideCancel:true });
+      }
+    };
+    reader.readAsDataURL(file);
+  });
   document.querySelectorAll("[data-note-id]").forEach(card=>{
     card.addEventListener("click", ()=>{
       const note = nb.notes.find(n=>n.id===card.dataset.noteId);
+      if(note.type==="file"){
+        const w = window.open();
+        if(w) w.location.href = note.dataUrl;
+        return;
+      }
       if(note.type==="image"){
         showConfirmSheet({
           title:s.notebookDeleteNoteConfirmTitle, text:s.notebookDeleteNoteConfirmText, confirmLabel:s.confirmDelete, danger:true,
@@ -6656,6 +6882,14 @@ const NotebookModule = {
     nb.notes.unshift({ id:genId(), type:"image", dataUrl, color:color||"default", createdAt:Date.now() });
     dbSave();
   },
+  /* A file rides in the same notes array as everything else — no second
+     structure to keep in sync, and it shows up in the notebook in the order
+     the student added it, next to the note it belongs with. */
+  addFileNote(courseId, dataUrl, fileName, fileSize, color){
+    const nb = this.get(courseId);
+    nb.notes.unshift({ id:genId(), type:"file", dataUrl, fileName, fileSize, color:color||"default", createdAt:Date.now() });
+    dbSave();
+  },
   updateDrawingNote(courseId, noteId, dataUrl, color, extras){
     const nb = this.get(courseId);
     const note = nb.notes.find(n=>n.id===noteId);
@@ -6700,20 +6934,32 @@ function unarchiveSkill(skillId){
 /* Skill families and their colours. The key is the part of the category id
    before the underscore, so "study_cs" and "study_translation" share one hue:
    the kind of skill matters more to a student than which major files it. */
-/* Muted, natural tones rather than bright screen colours: names anyone would
-   recognise — ochre, clay, sage, slate teal, dusty blue, lavender, old rose.
-   Saturation is kept low on purpose so filled cards stay readable for long
-   stretches and don't glare behind reading glasses. The key stays the family,
-   never the major, so "study" looks the same in every programme. */
+/* Bright, friendly hues in the register students already know from the apps
+   on their phone — amber, coral, mint, sky, indigo, violet, pink. Vividness
+   here costs nothing in comfort because the colour is never a bright field
+   under dark text: it always arrives as a low-opacity wash beneath light ink,
+   so saturation reads as personality rather than glare. The key stays the
+   family, never the major, so "study" looks the same in every programme. */
 const SKILL_FAMILY_RGB = {
-  mindset:"196,164,95",
-  exams:"192,130,104",
-  study:"134,165,124",
-  foundation:"111,156,150",
-  planning:"126,158,187",
-  subject:"154,143,181",
-  practical:"180,132,154"
+  mindset:"245,176,66",
+  exams:"244,109,95",
+  study:"62,214,150",
+  foundation:"79,197,232",
+  planning:"122,146,255",
+  subject:"186,124,240",
+  practical:"246,124,171"
 };
+/* Largest file the notebook will take. LocalStorage gives a handful of
+   megabytes for everything the student has saved, and base64 inflates a file
+   by about a third, so this cap keeps one PDF from filling the whole app. */
+const NOTEBOOK_MAX_FILE_MB = 2;
+const NOTEBOOK_MAX_FILE_BYTES = NOTEBOOK_MAX_FILE_MB * 1024 * 1024;
+function formatFileSize(bytes){
+  if(!bytes && bytes !== 0) return "";
+  if(bytes < 1024) return bytes + " B";
+  if(bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
 function skillFamilyRgb(skill){
   const id = (skill && skill.category && skill.category.id) || "study_universal";
   return SKILL_FAMILY_RGB[id.split("_")[0]] || "201,138,46";
@@ -7114,6 +7360,158 @@ let refGlossaryPage = 0;
 let toolsOrigin = "glossary";
 const REF_GLOSSARY_PER_PAGE = 5;
 const REF_GLOSSARY_ACCENTS = ["#D9A15E","#6FB3B8","#C77B7B","#7FA88C","#9B8BC4"];
+let globalSearchQuery = "";
+/* Arabic is written with several spellings of the same letter — أ إ آ for alef,
+   ة for ه at a word's end — and students type whichever comes first. Folding
+   those together (and dropping diacritics) means a search for "احصاء" finds
+   "إحصاء" too, which is the difference between the tool working and the
+   student concluding the app has nothing on the subject. */
+function normalizeSearchText(str){
+  return (str || "")
+    .replace(/[\u064B-\u0652\u0670]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/ـ/g, "")
+    .toLowerCase()
+    .trim();
+}
+/* Everything the student can reach, gathered in one place. This exists because
+   a student who can't find what they own concludes it isn't there — and the
+   most useful thing a student can do when a lecture doesn't land is find
+   another way into the same subject, fast. */
+function collectSearchResults(query){
+  const l = lang();
+  const q = normalizeSearchText(query);
+  const out = { courses:[], resources:[], skills:[], terms:[] };
+  if(q.length < 2) return out;
+  const hit = (...parts)=> normalizeSearchText(parts.filter(Boolean).join(" ")).includes(q);
+
+  const student = StudentModule.current();
+  const catalog = COURSE_CATALOG[catalogKeyFor(student)];
+  if(catalog){
+    Object.keys(catalog).forEach(levelId=>{
+      catalog[levelId].forEach(c=>{
+        const key = Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k));
+        const e = key ? COURSE_ENRICHMENT[key] : null;
+        const inCourse = hit(c) || (e && (hit(e.explain[l]) || hit(e.why[l])));
+        if(inCourse) out.courses.push({ catalogString:c, levelId });
+        if(e && e.resources){
+          e.resources.forEach(r=>{
+            if(hit(r.title[l]) || hit(r.reason[l]) || hit(c)){
+              out.resources.push({ catalogString:c, resource:r });
+            }
+          });
+        }
+      });
+    });
+  }
+
+  SKILLS.forEach(sk=>{
+    if(hit(sk.title[l]) || hit(sk.intro[l]) || hit((sk.tips[l]||[]).join(" ")) || hit(sk.mistake[l]) || hit(sk.exercise[l])){
+      out.skills.push(sk);
+    }
+  });
+
+  const glossary = (student && REFERENCE_GLOSSARY[student.collegeId]) || [];
+  glossary.forEach(([term, meaning])=>{
+    if(hit(term) || hit(meaning)) out.terms.push([term, meaning]);
+  });
+
+  return out;
+}
+function renderSearch(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const res = collectSearchResults(globalSearchQuery);
+  const total = res.courses.length + res.resources.length + res.skills.length + res.terms.length;
+  const typed = globalSearchQuery.trim().length >= 2;
+
+  const group = (label, items)=> items.length ? `
+    <div class="section-label">${label}</div>
+    <div class="stack" style="margin-bottom:var(--sp-4);">${items.join("")}</div>` : "";
+
+  const courseCards = res.courses.slice(0, 8).map(c=>`
+    <button type="button" class="card" data-search-course="${escapeHtml(c.catalogString)}">
+      <span class="card-icon">${ICON.openBook}</span>
+      <span class="card-body">
+        <span class="card-title">${escapeHtml(c.catalogString.split(" - ").slice(1).join(" - ") || c.catalogString)}</span>
+        <span class="card-meta">${escapeHtml(c.catalogString.split(" - ")[0])}</span>
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
+    </button>`);
+
+  const resourceCards = res.resources.slice(0, 8).map(r=>`
+    <button type="button" class="card" data-search-course="${escapeHtml(r.catalogString)}">
+      <span class="card-icon">${ICON.spark}</span>
+      <span class="card-body">
+        <span class="card-title">${escapeHtml(r.resource.title[l])}</span>
+        <span class="card-meta">${resourceBadge(r.resource, l)} · ${escapeHtml(r.catalogString.split(" - ")[0])}</span>
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
+    </button>`);
+
+  const skillCards = res.skills.slice(0, 8).map(sk=>`
+    <button type="button" class="card" data-search-skill="${sk.id}">
+      <span class="card-icon" style="background:rgba(${skillFamilyRgb(sk)},.16); color:rgb(${skillFamilyRgb(sk)});">${ICON[sk.icon]}</span>
+      <span class="card-body">
+        <span class="card-title">${escapeHtml(sk.title[l])}</span>
+        <span class="card-meta">${sk.category ? escapeHtml(sk.category[l]) : ""}</span>
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
+    </button>`);
+
+  const termCards = res.terms.slice(0, 8).map(([term, meaning])=>`
+    <div class="card" style="cursor:default; align-items:flex-start;">
+      <span class="card-icon">${ICON.textTool}</span>
+      <span class="card-body">
+        <span class="card-title">${escapeHtml(term)}</span>
+        <span class="card-meta" style="white-space:normal;">${escapeHtml(meaning)}</span>
+      </span>
+    </div>`);
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="searchBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.searchEntryLabel}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <input type="text" class="field" id="searchInput" placeholder="${s.searchPlaceholder}" value="${escapeHtml(globalSearchQuery)}" autocomplete="off" style="margin-bottom:var(--sp-4);">
+        ${!typed ? `<p class="type-body" style="color:var(--ink-muted); line-height:1.7;">${s.searchPrompt}</p>`
+        : total === 0 ? `
+          <div class="empty-state">
+            <div class="empty-icon">${ICON.lens}</div>
+            <p class="empty-text">${s.searchNoResults}</p>
+          </div>` : `
+          <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-3);">${s.searchResultCount(total)}</p>
+          ${group(s.searchGroupCourses, courseCards)}
+          ${group(s.searchGroupResources, resourceCards)}
+          ${group(s.searchGroupSkills, skillCards)}
+          ${group(s.searchGroupTerms, termCards)}`}
+      </div>
+    </section>
+  `;
+  document.getElementById("searchBack").addEventListener("click", ()=>{ globalSearchQuery=""; renderToday(); });
+  const input = document.getElementById("searchInput");
+  input.addEventListener("input", (e)=>{
+    globalSearchQuery = e.target.value;
+    const pos = e.target.selectionStart;
+    renderSearch();
+    const next = document.getElementById("searchInput");
+    next.focus();
+    try{ next.setSelectionRange(pos, pos); }catch(err){}
+  });
+  if(globalSearchQuery) { input.focus(); try{ input.setSelectionRange(input.value.length, input.value.length); }catch(err){} }
+  document.querySelectorAll("[data-search-course]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ openLibraryCoursePreview(btn.dataset.searchCourse); });
+  });
+  document.querySelectorAll("[data-search-skill]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ skillDetailActiveSection="tips"; renderSkillDetail(btn.dataset.searchSkill); });
+  });
+}
 function renderReferenceGlossary(){
   applyDir();
   const s = t();
@@ -7351,7 +7749,7 @@ function openReflectionViewSheet(semester){
   overlay.querySelector("#reflectionViewClose").addEventListener("click", close);
 }
 
-function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm }){
+function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm, hideCancel }){
   const s = t();
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
@@ -7361,13 +7759,14 @@ function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm }){
       <div class="sheet-title">${title}</div>
       <p class="type-body" style="color:var(--ink-muted); margin-bottom:16px;">${text}</p>
       <button type="button" class="btn btn-primary" id="confirmYes" style="${danger?'background:var(--attention);':''} margin-bottom:8px;">${confirmLabel}</button>
-      <button type="button" class="btn btn-secondary" id="confirmNo">${s.cancel}</button>
+      ${hideCancel ? "" : `<button type="button" class="btn btn-secondary" id="confirmNo">${s.cancel}</button>`}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
   function close(after){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 300); }
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
-  overlay.querySelector("#confirmNo").addEventListener("click", ()=>close());
+  const noBtn = overlay.querySelector("#confirmNo");
+  if(noBtn) noBtn.addEventListener("click", ()=>close());
   overlay.querySelector("#confirmYes").addEventListener("click", ()=>close(onConfirm));
 }
 
@@ -8039,6 +8438,10 @@ function renderProfileEditSettings(){
         <span style="width:40px;"></span>
       </div>
       <div class="screen-content">
+        <div class="field-group">
+          <label class="field-label" for="setName">${s.studentNameLabel}</label>
+          <input type="text" class="field" id="setName" value="${escapeHtml(student.name||"")}" placeholder="${s.studentNamePh}" autocomplete="given-name">
+        </div>
         ${buildProfilePickerFields("set", s)}
         <button type="button" class="btn btn-primary" id="setSave" style="margin-top:var(--sp-2);">${s.saveChangesBtn}</button>
       </div>
@@ -8051,6 +8454,7 @@ function renderProfileEditSettings(){
 
   document.getElementById("setSave").addEventListener("click", ()=>{
     if(!validateProfileDraft("set", setDraft)) return;
+    StudentModule.updateName(document.getElementById("setName").value);
     StudentModule.update(setDraft);
     renderSettings();
   });
