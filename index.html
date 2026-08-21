@@ -1162,6 +1162,28 @@ const STR = {
     skillNudgeLabel:"مهارة تناسب هذه اللحظة",
     skillsStartHereLabel:"ابدأ من هنا",
     inviteEntryLabel:"شارك التطبيق مع زميل",
+    resetEntryLabel:"ابدأ من جديد",
+    planChangedTitle:"تغيّرت خطتك",
+    passedMarkBtn:"أنهيتُ هذه المادة",
+    devEntryLabel:"تصفّح كل الخطط",
+    devNote:"وضع المطوّر: يبدّل الخطة المعروضة في المكتبة وجدول المراجع بلا مساس ببياناتك. اختر «خطتي» للعودة.",
+    devMineLabel:"خطتي",
+    devActiveLabel:"معروضة الآن",
+    devTitle:"تصفّح الخطط",
+    resetConfirmTitle2:"تأكيد أخير",
+    resetConfirmText2:"لا رجعة بعد هذه الخطوة. سيبدأ التطبيق فارغًا كأنك تفتحه لأول مرة.",
+    resetConfirmBtn2:"نعم، امسح كل شيء",
+    passedUnmarkBtn:"لم أنهها بعد",
+    passedBadge:"مجتازة",
+    passedNote:"عُلّمت مجتازة — تظهر في خطتك ولا تُحسب ضمن المتبقي.",
+    passedCount:(n)=>`${n} مادة مجتازة`,
+    planChangedText:"مقررات فصلك الحالي من الخطة السابقة. هل نستبدلها بمقررات الخطة الجديدة؟ ستبقى دفاترك محفوظة للمقررات التي تحمل الاسم نفسه فقط.",
+    planChangedConfirm:"استبدل المقررات",
+    planChangedKeep:"أبقِ مقرراتي",
+    resetNote:"يمسح كل شيء ويعيدك لشاشة التسجيل — لتجرّب خطة أخرى أو تسلّم التطبيق لغيرك.",
+    resetConfirmTitle:"تمسح كل شيء؟",
+    resetConfirmText:"سيُحذف اسمك وخطتك ودفاترك وملاحظاتك واختباراتك نهائيًا، ولا يمكن التراجع. احفظ ما يهمك قبل المتابعة.",
+    resetConfirmBtn:"امسح وابدأ من جديد",
     inviteNote:"صفحة تعريفية تشرح التطبيق — أرسلها لمن تظنه ينتفع به.",
     skillsStartHereNote:"ثلاث مهارات تُغني عن غيرها إن لم تقرأ سواها.",
     skillTryNowBtn:"جرّبها الآن في دفترك",
@@ -1512,6 +1534,28 @@ const STR = {
     skillNudgeLabel:"A skill for this moment",
     skillsStartHereLabel:"Start here",
     inviteEntryLabel:"Share the app with a classmate",
+    resetEntryLabel:"Start over",
+    planChangedTitle:"Your plan changed",
+    passedMarkBtn:"I've completed this course",
+    devEntryLabel:"Browse every plan",
+    devNote:"Developer mode: switches the plan shown in the library and reference map without touching your data. Choose \"My plan\" to return.",
+    devMineLabel:"My plan",
+    devActiveLabel:"showing now",
+    devTitle:"Browse plans",
+    resetConfirmTitle2:"Final confirmation",
+    resetConfirmText2:"There is no way back after this. The app will start empty, as if opened for the first time.",
+    resetConfirmBtn2:"Yes, erase everything",
+    passedUnmarkBtn:"Not completed yet",
+    passedBadge:"Completed",
+    passedNote:"Marked as completed — it stays in your plan but isn't counted as remaining.",
+    passedCount:(n)=>`${n} completed`,
+    planChangedText:"This term's courses belong to your previous plan. Replace them with the new plan's courses? Notebooks stay only for courses keeping the same name.",
+    planChangedConfirm:"Replace courses",
+    planChangedKeep:"Keep my courses",
+    resetNote:"Erases everything and returns you to sign-up — to try another plan or hand the app to someone else.",
+    resetConfirmTitle:"Erase everything?",
+    resetConfirmText:"Your name, plan, notebooks, notes and exams will be permanently deleted and cannot be recovered. Save anything you need first.",
+    resetConfirmBtn:"Erase and start over",
     inviteNote:"An introduction page explaining the app — send it to someone you think would benefit.",
     skillsStartHereNote:"Three skills worth more than the rest, if you read nothing else.",
     skillTryNowBtn:"Try it now in your notebook",
@@ -1684,7 +1728,7 @@ const COLLEGES = [
   {id:"design", ar:"كلية التصميم والفنون", en:"College of Design & Arts"}
 ];
 const COLLEGE_MAJORS = {
-  eng: [["الهندسة المدنية","Civil Engineering"],["الهندسة الكهربائية","Electrical Engineering"],["الهندسة الميكانيكية","Mechanical Engineering"],["الهندسة الكيميائية","Chemical Engineering"],["هندسة الصناعات","Industrial Engineering"],["السلامة الصناعية","Industrial Safety"],["مهارات تشغيل الرافعات","Crane and Forklift Operation"],["هندسة الحاسب","Computer Engineering"]],
+  eng: [["الهندسة المدنية","Civil Engineering"],["الهندسة الكهربائية","Electrical Engineering"],["الهندسة الميكانيكية","Mechanical Engineering"],["الهندسة الكيميائية","Chemical Engineering"],["هندسة الصناعات","Industrial Engineering"],["السنة التحضيرية (سنة المهارات)","Skills Year (Foundation)"],["مهارات تشغيل الرافعات","Crane and Forklift Operation"],["هندسة الحاسب","Computer Engineering"]],
   cs: [["علوم الحاسب","Computer Science"],["تقنية المعلومات","Information Technology"],["هندسة البرمجيات","Software Engineering"],["نظم المعلومات","Information Systems"],["الذكاء الاصطناعي","Artificial Intelligence"],["الأمن السيبراني","Cybersecurity"]],
   bus: [["إدارة الأعمال","Business Administration"],["التمويل","Finance"],["المحاسبة","Accounting"],["التسويق","Marketing"],["نظم المعلومات الإدارية","Management Information Systems"],["إدارة الموارد البشرية","Human Resources Management"]],
   med: [["الطب والجراحة","Medicine & Surgery"]],
@@ -2616,6 +2660,7 @@ const COURSE_ENRICHMENT = {
       ar:"كل ما ستدرسه لاحقًا في الهندسة الصناعية مبني على هذا المقرر: بحوث العمليات، النمذجة، الطرق العددية. ومن يتقنه مبكرًا يمشي بقية الخطة بأريحية.",
       en:"Everything you'll later study in industrial engineering rests on this course: operations research, modelling, numerical methods. Master it early and the rest of the plan comes easier."
     },
+    connections:{ leadsTo:[{ar:"تفاضل وتكامل 2 (MATH102)", en:"Calculus II (MATH102)"}, {ar:"فيزياء عامة 1 (PHYS101)", en:"General Physics I (PHYS101)"}] },
     resources:[
       { title:{ar:"تفاضل وتكامل 1 — Calculus 1 (يوتيوب، ٢١ محاضرة، عربي، مجاني)", en:"Calculus 1 (YouTube, 21 lectures, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", lang:"ar", verified:"2026-08-18", reason:{ar:"محاضرات جامعية عربية كاملة من مبادرة جامعتك — النهايات والاتصال والمشتقات وتطبيقاتها بالترتيب الجامعي المعتاد، مجانية بلا تسجيل", en:"Complete Arabic university lectures from the Jami3atak initiative — limits, continuity, derivatives and applications in the usual order, free with no registration"} },
       { title:{ar:"MIT 18.01 — تمارين واختبارات بحلولها (مجاني)", en:"MIT 18.01 — Problem Sets and Exams with Solutions (Free)"}, url:"https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"مصدر للتمرين لا للشرح: تمارين واختبارات بحلولها الكاملة من معهد ماساتشوستس. ابدأ بالشرح العربي أعلاه ثم اختبر نفسك هنا — والمسائل الرياضية تُقرأ بالرموز أكثر من اللغة", en:"A source for practice rather than explanation: problem sets and exams with full solutions from MIT. Start with the Arabic explanation above, then test yourself here"} }
@@ -2631,6 +2676,7 @@ const COURSE_ENRICHMENT = {
       ar:"التكامل أداة الجمع المستمر — وبه تُحسب الأحمال والتكاليف التراكمية والاحتمالات المتصلة التي ستقابلها في الإحصاء وبحوث العمليات.",
       en:"Integration is the tool of continuous summation — used for loads, cumulative costs and the continuous probabilities you'll meet in statistics and operations research."
     },
+    connections:{ requires:[{ar:"تفاضل وتكامل 1 (MATH101)", en:"Calculus I (MATH101)"}], leadsTo:[{ar:"تفاضل وتكامل 3 (MATH201)", en:"Calculus III (MATH201)"}, {ar:"الاحتمالات والإحصاء الهندسي (STAT200)", en:"Engineering Probability & Statistics (STAT200)"}, {ar:"الجبر الخطي (MATH203)", en:"Linear Algebra (MATH203)"}] },
     resources:[
       { title:{ar:"تفاضل وتكامل 1 — Calculus 1 (يوتيوب، ٢١ محاضرة، عربي، مجاني)", en:"Calculus 1 (YouTube, 21 lectures, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", lang:"ar", verified:"2026-08-18", reason:{ar:"محاضرات جامعية عربية كاملة من مبادرة جامعتك — النهايات والاتصال والمشتقات وتطبيقاتها بالترتيب الجامعي المعتاد، مجانية بلا تسجيل", en:"Complete Arabic university lectures from the Jami3atak initiative — limits, continuity, derivatives and applications in the usual order, free with no registration"} },
       { title:{ar:"MIT 18.01 — تمارين واختبارات بحلولها (مجاني)", en:"MIT 18.01 — Problem Sets and Exams with Solutions (Free)"}, url:"https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"مصدر للتمرين لا للشرح: تمارين واختبارات بحلولها الكاملة من معهد ماساتشوستس. ابدأ بالشرح العربي أعلاه ثم اختبر نفسك هنا — والمسائل الرياضية تُقرأ بالرموز أكثر من اللغة", en:"A source for practice rather than explanation: problem sets and exams with full solutions from MIT. Start with the Arabic explanation above, then test yourself here"} }
@@ -2894,6 +2940,7 @@ const COURSE_ENRICHMENT = {
       ar:"الهندسة الكيميائية تقوم على موازين: مادة وطاقة وكمية حركة. وهذا المقرر يعلّمك أولها — ومن أتقن مفهوم الاتزان هنا وجده يتكرر في كل مقرر تخصصي بعده.",
       en:"Chemical engineering rests on balances: of mass, of energy, of momentum. This course teaches you the first of them — and whoever grasps equilibrium here meets it again in every specialized course that follows."
     },
+    connections:{ requires:[{ar:"تفاضل وتكامل 1 — متزامن (MATH101)", en:"Calculus I — concurrent (MATH101)"}], leadsTo:[{ar:"فيزياء عامة 2 (PHYS102)", en:"General Physics II (PHYS102)"}] },
     resources:[
       { title:{ar:"فيزياء عامة 101 — حل مسائل كتاب سيروي (يوتيوب، ٢٩ فيديو، عربي، مجاني)", en:"General Physics 101 — Serway Problem Solving (YouTube, 29 videos, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PLQewEPwm2NbzjSnrgZNVjseIGSuhQVaQ7", lang:"ar", verified:"2026-08-18", reason:{ar:"مبنية على كتاب سيروي المعتمد جامعيًا، وتركّز على حل المسائل لا الشرح النظري وحده — وهذا ما يُختبر فيه الطالب فعلًا", en:"Built on the university-standard Serway textbook, focused on solving problems rather than theory alone"} }
     ]
@@ -2908,6 +2955,7 @@ const COURSE_ENRICHMENT = {
       ar:"أدوات القياس في المصنع الكيميائي كلها كهربائية: مجسّات الحرارة والضغط والتدفق. ومن يفهم الإشارة الكهربائية يعرف متى يكذب المجسّ، ومن لا يفهمها يثق برقم خاطئ.",
       en:"Every measuring instrument in a chemical plant is electrical: temperature, pressure and flow sensors. Whoever understands the electrical signal knows when a sensor is lying; whoever doesn't trusts a wrong number."
     },
+    connections:{ requires:[{ar:"فيزياء عامة 1 (PHYS101)", en:"General Physics I (PHYS101)"}], leadsTo:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}] },
     resources:[
       { title:{ar:"فيزياء عامة 2 — الكهربية والمغناطيسية، د. حسن مريدي (عربي، مجاني)", en:"General Physics 2 — Dr. Hasan Maridi (Arabic, Free)"}, url:"https://sites.google.com/site/hasanmaridi/physics102", lang:"ar", verified:"2026-08-15", reason:{ar:"صفحة مقرر عربية كاملة: كتاب المقرر للتحميل، سبعة فصول، ثلاثة واجبات، نموذجا الاختبار النصفي والنهائي، ودليل التجارب", en:"A complete Arabic course page: the book to download, seven chapters, three homework sets, midterm and final papers, and a lab manual"} }
     ]
@@ -2921,7 +2969,7 @@ const COURSE_ENRICHMENT = {
       ar:"المهندس الكيميائي يحلّ معادلات لا تُحلّ يدويًا: اتزان مراحل، وحسابات تكرارية للمفاعلات. والبرمجة هي ما يجعل هذه المسائل ممكنة أصلًا — ولهذا يعود المقرر لاحقًا في معمل الحوسبة (CHE306).",
       en:"A chemical engineer solves equations no hand can: stage equilibria and iterative reactor calculations. Programming is what makes those problems possible at all — which is why it returns later in the computing lab (CHE306)."
     },
-    connections:{ leadsTo:[{ar:"معمل الحوسبة للهندسة الكيميائية (CHE306)", en:"CHE Computing Lab (CHE306)"}] },
+    connections:{ leadsTo:[{ar:"مقدمة في علم البيانات (CSE203)", en:"Intro to Data Science (CSE203)"}] },
     resources:[
       { title:{ar:"مواد مقرر مقدمة في البرمجة C++‎ — تمارين واختبارات بحلولها (مجاني)", en:"Introduction to Programming (C++) — Exercises and Solved Exams (Free)"}, url:"https://mbabubaker.wordpress.com/cpp/", lang:"en", partial:true, verified:"2026-08-15", reason:{ar:"اختبارات قصيرة بحلولها، اختبار نصفي محلول، اختبار مراجعة نهائي محلول، وأمثلة أكواد مشروحة. تنبيه: المواد بالإنجليزية وهي للتمرين لا للشرح", en:"Quizzes with solutions, a solved midterm and final review, and annotated example code. Note: in English, and for practice rather than explanation"} }
     ]
@@ -2936,6 +2984,7 @@ const COURSE_ENRICHMENT = {
       ar:"لا قراءة في مصنع بلا خطأ قياس، ولا دفعة إنتاج مطابقة تمامًا لسابقتها. والإحصاء هو ما يفرّق بين تغيّر حقيقي في العملية وبين تشويش عابر — وهذا قرار يُكلّف المال حين يُخطأ فيه.",
       en:"No plant reading is free of measurement error, and no batch matches the last exactly. Statistics is what separates a real process shift from passing noise — a decision that costs money when it goes wrong."
     },
+    connections:{ requires:[{ar:"تفاضل وتكامل 2 (MATH102)", en:"Calculus II (MATH102)"}], leadsTo:[{ar:"مقدمة في علم البيانات (CSE203)", en:"Intro to Data Science (CSE203)"}] },
     resources:[
       { title:{ar:"Probability and Statistics — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Probability and Statistics — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/111105041", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوميش كومار، مصمَّم لطلاب العلوم والهندسة، وكل مفهوم فيه مشروح بأمثلة ومسائل تطبيقية. وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Somesh Kumar designed for science and engineering students, every concept explained through worked examples"} }
     ]
@@ -2950,6 +2999,7 @@ const COURSE_ENRICHMENT = {
       ar:"أي وحدة فصل متعددة المراحل تنتهي إلى نظام معادلات خطية كبير. والجبر الخطي هو أداة حلّه — وبدونه تبقى مقررات الفصل وانتقال المادة حسابات يدوية لا تُنجَز.",
       en:"Any multi-stage separation unit ends in a large system of linear equations. Linear algebra is the tool that solves it — without it, separation and mass transfer stay hand calculations that never finish."
     },
+    connections:{ requires:[{ar:"تفاضل وتكامل 2 (MATH102)", en:"Calculus II (MATH102)"}] },
     resources:[
       { title:{ar:"محاضرات الجبر الخطي (يوتيوب، ١٦ محاضرة، عربي، مجاني)", en:"Linear Algebra Lectures (YouTube, 16 lectures, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL6uPDJZGhQEqgzfmFJv3j1M2lwegqVWj_", lang:"ar", verified:"2026-08-15", reason:{ar:"سلسلة عربية مجانية تغطي المصفوفات والمحددات والفضاءات المتجهية بالتسلسل الجامعي المعتاد", en:"A free Arabic series covering matrices, determinants and vector spaces in the usual university sequence"} }
     ]
@@ -2964,6 +3014,7 @@ const COURSE_ENRICHMENT = {
       ar:"أغلب الصناعة الكيميائية في المملكة — من سابك إلى أرامكو — قائمة على مشتقات الهيدروكربونات. وهذا المقرر هو لغة تلك الصناعة، وليس مادة عامة تُجتاز.",
       en:"Most of the Kingdom's chemical industry — from SABIC to Aramco — is built on hydrocarbon derivatives. This course is that industry's language, not a general requirement to pass."
     },
+    connections:{ requires:[{ar:"كيمياء عامة 2 (CHEM102)", en:"General Chemistry II (CHEM102)"}] },
     resources:[
       { title:{ar:"دورة الكيمياء العضوية (معارف، ٣٦ درسًا، ٧ ساعات، عربي، مجاني)", en:"Organic Chemistry (M3aarf, 36 lessons, 7 hours, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/7020/Organic-Chemistry-video", lang:"ar", reason:{ar:"ستة وثلاثون درسًا بالعربية تغطي بنية المركبات العضوية وخصائصها وتفاعلاتها، مع ربطها بصناعة البوليمرات والدواء — وهو الجانب الأقرب لطالب الهندسة الكيميائية", en:"Thirty-six Arabic lessons on the structure, properties and reactions of organic compounds, tied to the polymer and pharmaceutical industries"} }
     ]
@@ -2978,7 +3029,7 @@ const COURSE_ENRICHMENT = {
       ar:"اتزان الأطوار هو ما يجعل التقطير والامتصاص والاستخلاص ممكنة أصلًا. فهذا المقرر ليس مادة نظرية بل الأساس الذي تقف عليه كل وحدة فصل ستصممها بعده — ولهذا جعلته الخطة متطلبًا لعمليات الفصل.",
       en:"Phase equilibrium is what makes distillation, absorption and extraction possible at all. This course isn't theory but the ground every separation unit you later design stands on — which is why the plan makes it a prerequisite for separation processes."
     },
-    connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"},{ar:"المعادلات التفاضلية (MATH202)", en:"Differential Equations (MATH202)"}], leadsTo:[{ar:"عمليات الفصل (CHE304)", en:"Separation Processes (CHE304)"}] },
+    connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}, {ar:"المعادلات التفاضلية (MATH202)", en:"Differential Equations (MATH202)"}], leadsTo:[{ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operation (CHE302)"}, {ar:"عمليات انتقال المادة (CHE303)", en:"Mass Transfer Operation (CHE303)"}, {ar:"عمليات الفصل (CHE304)", en:"Separation Processes (CHE304)"}] },
     resources:[
       { title:{ar:"Chemical Engineering Thermodynamics — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Engineering Thermodynamics — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101004", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للدكتور سانديب روي من معهد التقنية الهندي ببومباي، وله كتاب إلكتروني مرافق نشرته NPTEL. يغطي القانونين الأول والثاني، الخواص الديناميكية للموائع الحقيقية، واتزان الأطوار — وهو محور المقرر. بالإنجليزية لعدم وجود مقابل عربي حر بهذا العمق، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Dr. Sandip Roy of IIT Bombay, with a companion e-book published by NPTEL. It covers the first and second laws, the thermodynamic properties of real fluids, and phase equilibria — the core of this course. In English for want of a free Arabic equivalent at this depth"} }
     ]
@@ -2993,6 +3044,7 @@ const COURSE_ENRICHMENT = {
       ar:"المهندس يلتقي بالكيمياء حيث لا يتوقع: تآكل المعادن، احتراق الوقود، سلوك المواد تحت الحرارة، ومعالجة المياه. وطالب الهندسة الكيميائية تحديدًا يبني عليه كل مقرراته التخصصية بلا استثناء.",
       en:"An engineer meets chemistry where he doesn't expect it: metal corrosion, fuel combustion, how materials behave under heat, water treatment. A chemical engineering student in particular builds every specialized course on it."
     },
+    connections:{ leadsTo:[{ar:"كيمياء عامة 2 (CHEM102)", en:"General Chemistry II (CHEM102)"}] },
     resources:[
       { title:{ar:"5.111SC Principles of Chemical Science — معهد ماساتشوستس للتقنية (مجاني)", en:"5.111SC Principles of Chemical Science — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/5-111sc-principles-of-chemical-science-fall-2014/", lang:"en", verified:"2026-08-18", reason:{ar:"نسخة OCW Scholar المعدّة خصيصًا للدارس المستقل: خمس وحدات متسلسلة (الذرة، الروابط والبنية، الديناميكا الحرارية والاتزان، العناصر الانتقالية والأكسدة والاختزال، حركية التفاعلات)، بمحاضرات مصوّرة وملاحظات ومجموعات تمارين واختبارات **بحلولها الكاملة**. بلا تسجيل. لم نجد مقرر كيمياء عامة جامعيًا عربيًا حرًّا — الموجود مستوى ثانوي لا جامعي، ولم نقبله. وزر اقرأها بالعربية يعرّب صفحات المقرر", en:"The OCW Scholar version built for independent learners: five sequential units (the atom, bonding and structure, thermodynamics and equilibrium, transition metals and redox, kinetics), with video lectures, notes, problem sets and exams with full solutions. No registration. We found no free Arabic university-level general chemistry course — what exists is secondary-school level, which we did not accept"} }
     ]
@@ -3006,6 +3058,7 @@ const COURSE_ENRICHMENT = {
       ar:"عنوان المقرر نفسه يقول المقصود: العقيدة وآثارها. أي أنه لا يُطلب منك حفظ مسائل بل أن ترى أثرها في يومك — وهذا ما يميّز من يدرسه ليجتاز عمّن يدرسه لينتفع.",
       en:"The course's own title says its intent: creed and its consequences. You aren't asked to memorize positions but to see their effect on your day — which separates whoever studies it to pass from whoever studies it to benefit."
     },
+    connections:{ leadsTo:[{ar:"الأخلاق والحوكمة (AIS211)", en:"Ethics and Governance (AIS211)"}] },
     resources:[
       { title:{ar:"الموسوعة العقدية — الدرر السنية (مرجع نصي مجاني)", en:"The Creed Encyclopedia — Dorar.net (Free text reference)"}, url:"https://dorar.net/aqeeda", lang:"ar", verified:"2026-08-15", reason:{ar:"موسوعة مجانية بلا تسجيل في ثلاثة عشر كتابًا تغطي أبواب العقيدة بالترتيب نفسه تقريبًا الذي يسير عليه المقرر، ومنهجية الموقع مراجعة ومعتمدة من متخصصين في جامعات سعودية", en:"A free encyclopedia requiring no registration, in thirteen books covering the topics of creed in nearly the order this course follows; the site's methodology is reviewed by specialists at Saudi universities"} }
     ]
@@ -3019,7 +3072,7 @@ const COURSE_ENRICHMENT = {
       ar:"أغلب مراجع تخصصك الهندسي بالإنجليزية، وكذلك أدلة الأجهزة ومواصفات الموردين. وهذا المقرر ليس مادة عامة تُجتاز، بل المفتاح الذي تُقرأ به بقية الخطة.",
       en:"Most of your engineering references are in English, and so are equipment manuals and supplier specifications. This isn't a general requirement to pass but the key that unlocks the rest of the plan."
     },
-    connections:{ leadsTo:[{ar:"الإنجليزية للكتابة الأكاديمية (ENGL102)", en:"English for Academic Writing (ENGL102)"}] },
+    connections:{ leadsTo:[{ar:"مقدمة في كتابة التقارير (ENGL102)", en:"Intro to Report Writing (ENGL102)"}] },
     resources:[
       { title:{ar:"Purdue OWL — General Writing: أساسيات الكتابة الأكاديمية (مجاني)", en:"Purdue OWL — General Writing: Academic Writing Basics (Free)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", verified:"2026-08-18", reason:{ar:"مختبر الكتابة بجامعة بيردو: مرجع مفتوح بلا تسجيل يغطي بناء الفقرة والحجّة، صياغة عبارة الأطروحة، أنماط الكتابة الوصفية والحجاجية والسردية، وقسم كامل موجّه لمن الإنجليزية لغته الثانية. بالإنجليزية بطبيعة المقرر نفسه — فأنت تتعلم الكتابة بها لا عنها، وزر اقرأها بالعربية يعرّب التعليمات إن احتجت", en:"Purdue University's Writing Lab: an open reference, no registration, covering paragraph and argument construction, thesis statements, expository, argumentative and narrative modes, and a full section for those whose second language is English. In English by the nature of the course itself"} }
     ]
@@ -3033,7 +3086,7 @@ const COURSE_ENRICHMENT = {
       ar:"التقرير هو مخرَج عمل المهندس الأول: تقرير عطل، تقرير اختبار، تقرير تحسين. وقد يكون تحليلك ممتازًا ثم يُهمَل لأن تقريرك لم يوصله — والفرق مهارة تُتعلَّم لا موهبة.",
       en:"The report is an engineer's primary output: a fault report, a test report, an improvement report. Your analysis may be excellent and still be ignored because the report didn't carry it — and the difference is a learned skill, not a talent."
     },
-    connections:{ requires:[{ar:"مقدمة في الخطاب الأكاديمي (ENGL101)", en:"Intro to Academic Discourse (ENGL101)"}] },
+    connections:{ requires:[{ar:"مقدمة في الخطاب الأكاديمي (ENGL101)", en:"Intro to Academic Discourse (ENGL101)"}], leadsTo:[{ar:"التواصل الأكاديمي والمهني (ENGL201)", en:"Academic & Professional Communication (ENGL201)"}] },
     resources:[
       { title:{ar:"Purdue OWL — الكتابة المهنية والتقنية وكتابة التقارير (مجاني)", en:"Purdue OWL — Professional and Technical Writing (Free)"}, url:"https://owl.purdue.edu/owl/subject_specific_writing/professional_technical_writing", lang:"en", verified:"2026-08-18", reason:{ar:"القسم المخصص لكتابة التقارير والمذكرات والمراسلات المهنية والملخصات العلمية — وهو بالضبط ما يطلبه هذا المقرر لا الكتابة العامة. مرجع مفتوح بلا تسجيل، وزر اقرأها بالعربية يعرّب الصفحة", en:"The section devoted to reports, memoranda, professional correspondence and scientific abstracts — precisely what this course asks for rather than general writing. An open reference with no registration"} }
     ]
@@ -3060,6 +3113,7 @@ const COURSE_ENRICHMENT = {
       ar:"هذا المقرر أُوجد لسبب: كثير من الطلاب يصلون الجامعة بأخطاء إملائية ثابتة لم ينبّههم عليها أحد. وتصحيحها الآن أسهل بكثير من تصحيحها بعد التخرج في تقرير يقرأه مديرك.",
       en:"This course exists for a reason: many students reach university with settled spelling errors nobody flagged. Correcting them now is far easier than correcting them after graduation, in a report your manager reads."
     },
+    connections:{ leadsTo:[{ar:"الكتابة المهنية (AIS201)", en:"Professional Writing (AIS201)"}] },
     resources:[
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: تغطي الشق الإملائي — الهمزات والألف اللينة والتشكيل وتصحيح الأخطاء الشائعة — لا مهارات التعبير والتحرير كاملة. وهي الجزء الذي يتعثر فيه أكثر الطلاب، والتسجيل بلا رسوم", en:"Stated plainly: it covers the spelling half — hamza forms, the soft alif, diacritics and common errors — not the full expression and editing skills. It is the part most students stumble on, and enrollment is free"} }
     ]
@@ -3112,6 +3166,7 @@ const COURSE_ENRICHMENT = {
       ar:"يأتي هذا المقرر في مستوى متقدم بعد الأخلاق والحوكمة، وهذا مقصود: بعد أن عرفت الخُلُق الفردي، تنظر في حقوق الآخرين عليك — وهو ما ستُحاسَب عليه مهنيًا حين تدير فريقًا أو تتعامل مع مورّد.",
       en:"This course comes at an advanced level after ethics and governance, and that is deliberate: having learned individual character, you now look at others' rights over you — what you will be answerable for professionally when you lead a team or deal with a supplier."
     },
+    connections:{ requires:[{ar:"الأخلاق والحوكمة (AIS211)", en:"Ethics and Governance (AIS211)"}] },
     resources:[
       { title:{ar:"موسوعة الأخلاق والسلوك — الدرر السنية (مرجع نصي مجاني)", en:"Encyclopedia of Ethics and Conduct — Dorar.net (Free text reference)"}, url:"https://dorar.net/alakhlaq", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"موسوعة مجانية بلا تسجيل تشرح أكثر من مائة خُلُق، ومنهجية الموقع معتمدة من الجمعية الفقهية السعودية. تنبيه صريح: مرجع في الأخلاق لا في حقوق الإنسان كنظام قانوني — خذ منه أبواب العدل والأمانة وحق الجار والأجير وأداء الحقوق، ودع الجانب الحقوقي المعاصر لمرجع المقرر", en:"A free encyclopedia requiring no registration, explaining over a hundred character traits, its methodology endorsed by the Saudi Fiqh Association. Stated plainly: a reference on ethics rather than on human rights as a legal system — take its chapters on justice, trust, and the rights of a neighbour and an employee, and leave the contemporary rights framework to the course reference"} }
     ]
@@ -3125,6 +3180,7 @@ const COURSE_ENRICHMENT = {
       ar:"الهندسة الكيميائية تحديدًا مهنة قراراتها تمسّ أرواحًا وبيئة: تسريب يُغطّى، أو اختبار سلامة يُختصر، أو مواصفة تُخفَّض لتوفير كلفة. وهذا المقرر هو ما يُبنى عليه رفضك حين يُطلب منك ذلك.",
       en:"Chemical engineering in particular is a profession whose decisions touch lives and the environment: a leak covered up, a safety test shortened, a specification lowered to save cost. This course is what your refusal rests on when you are asked to do so."
     },
+    connections:{ requires:[{ar:"العقيدة وآثارها (AIS111)", en:"Belief & Its Consequences (AIS111)"}], leadsTo:[{ar:"حقوق الإنسان في الإسلام (AIS311)", en:"Human Rights in Islam (AIS311)"}] },
     resources:[
       { title:{ar:"موسوعة الأخلاق والسلوك — الدرر السنية (مرجع نصي مجاني)", en:"Encyclopedia of Ethics and Conduct — Dorar.net (Free text reference)"}, url:"https://dorar.net/alakhlaq", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"موسوعة مجانية بلا تسجيل تشرح أكثر من مائة خُلُق، ومنهجية الموقع معتمدة من الجمعية الفقهية السعودية. تنبيه صريح: مرجع في الأخلاق لا في حقوق الإنسان كنظام قانوني — خذ منه أبواب العدل والأمانة وحق الجار والأجير وأداء الحقوق، ودع الجانب الحقوقي المعاصر لمرجع المقرر", en:"A free encyclopedia requiring no registration, explaining over a hundred character traits, its methodology endorsed by the Saudi Fiqh Association. Stated plainly: a reference on ethics rather than on human rights as a legal system — take its chapters on justice, trust, and the rights of a neighbour and an employee, and leave the contemporary rights framework to the course reference"} }
     ]
@@ -3139,7 +3195,7 @@ const COURSE_ENRICHMENT = {
       ar:"كل ما يتغيّر مع الزمن في مصنع كيميائي يُوصَف بمعادلة تفاضلية: تركيز في مفاعل، حرارة في مبادل، مستوى في خزان. وهذا المقرر متطلب سابق للديناميكا الحرارية وديناميكا العمليات والتحكم — أي أنه بوابة نصف تخصصك.",
       en:"Everything that changes with time in a chemical plant is described by a differential equation: a concentration in a reactor, a temperature in an exchanger, a level in a tank. This course is a prerequisite for thermodynamics and for process dynamics and control — the gateway to half your major."
     },
-    connections:{ requires:[{ar:"تفاضل وتكامل 3 (MATH201)", en:"Calculus III (MATH201)"}], leadsTo:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (CHE301)", en:"Chemical Engineering Thermodynamics (CHE301)"}] },
+    connections:{ requires:[{ar:"تفاضل وتكامل 3 (MATH201)", en:"Calculus III (MATH201)"}], leadsTo:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (CHE301)", en:"CHE Thermodynamics (CHE301)"}] },
     resources:[
       { title:{ar:"18.03 Differential Equations — معهد ماساتشوستس للتقنية (مجاني)", en:"18.03 Differential Equations — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/18-03-differential-equations-spring-2010/", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر MIT كاملًا بلا تسجيل: محاضرات مصوّرة، ملاحظات وتمارين للأستاذين ماتاك وميلر، ومجموعات تمارين واختبارات بحلولها. مقرر تصفه الجامعة بأنه متطلب سابق لأكثر من ١٤٠ مقررًا عندها — وهذا يقول لك مكانته. بالإنجليزية، والمعادلات تُقرأ بالرموز أكثر من اللغة، وزر اقرأها بالعربية يعرّب الصفحات", en:"MIT's full course with no registration: video lectures, notes and exercises by Professors Mattuck and Miller, and problem sets and exams with solutions. The university describes it as a prerequisite for over 140 of its own courses — which tells you its standing. In English, though equations are read through symbols more than language"} }
     ]
@@ -3168,7 +3224,7 @@ const COURSE_ENRICHMENT = {
       ar:"الحرارة والتركيز والسرعة في أي وحدة صناعية تتغيّر في ثلاثة اتجاهات وفي الزمن معًا — لا في اتجاه واحد. وهذا المقرر هو ما يجعل وصف ذلك ممكنًا، وبدونه تبقى معادلات انتقال الحرارة والمادة رموزًا لا تُقرأ.",
       en:"Temperature, concentration and velocity in any industrial unit vary in three directions and in time together — not along one axis. This course is what makes describing that possible; without it the heat and mass transfer equations stay unreadable symbols."
     },
-    connections:{ leadsTo:[{ar:"المعادلات التفاضلية (MATH202)", en:"Differential Equations (MATH202)"}] },
+    connections:{ requires:[{ar:"تفاضل وتكامل 2 (MATH102)", en:"Calculus II (MATH102)"}], leadsTo:[{ar:"المعادلات التفاضلية (MATH202)", en:"Differential Equations (MATH202)"}] },
     resources:[
       { title:{ar:"18.02SC Multivariable Calculus — معهد ماساتشوستس للتقنية (مجاني)", en:"18.02SC Multivariable Calculus — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/18-02sc-multivariable-calculus-fall-2010/", lang:"en", verified:"2026-08-18", reason:{ar:"نسخة OCW Scholar المعدّة للدارس المستقل — بترتيب يمشي وحده بلا محاضر: تفاضل وتكامل المتجهات لدوال أكثر من متغير، بمحاضرات وملاحظات ومجموعات تمارين واختبارات بحلولها الكاملة، ومحاكاات تفاعلية تساعد على تخيّل الأسطح في الفضاء", en:"The OCW Scholar version built for independent study — sequenced to work without an instructor: differential, integral and vector calculus for functions of several variables, with lectures, notes, problem sets and exams with full solutions, plus interactive simulations that help picture surfaces in space"} }
     ]
@@ -3196,6 +3252,7 @@ const COURSE_ENRICHMENT = {
       ar:"هذا المقرر يجيب عن سؤال يؤرق كل طالب في سنته الثانية: ماذا سأعمل بالضبط بعد التخرج؟ ومن يعرف شكل المهنة مبكرًا يختار مقرراته الاختيارية وتدريبه الصيفي بوعي لا بالصدفة.",
       en:"This course answers the question that troubles every second-year student: what exactly will I do after graduation? Whoever sees the shape of the profession early chooses their electives and summer training deliberately rather than by chance."
     },
+    connections:{ leadsTo:[{ar:"المهنة الهندسية 2 (PRO301)", en:"Engineering Profession II (PRO301)"}] },
     resources:[
       { title:{ar:"إدارة المشروعات الاحترافية PMP (معارف، ٦٨ درسًا، ٣٢ ساعة، عربي، مجاني)", en:"Professional Project Management PMP (M3aarf, 68 lessons, 32 hours, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15345/%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9-%D8%A7%D9%84%D9%85%D8%B4%D8%A7%D8%B1%D9%8A%D8%B9-pmp-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة في إدارة المشاريع لا في المهنة الهندسية بعمومها. أدرجناها لأن الجزء العملي من هذا المقرر مشروع يُدار بهذه الأدوات، ولأن مهارات التخطيط والجدولة هي أول ما يُطلب من المهندس المبتدئ. الجانب المهني والأخلاقي يبقى من مرجع المقرر", en:"Stated plainly: a project management course rather than one on the engineering profession broadly. We included it because this course's practical half is a project run with these tools, and because planning and scheduling are the first things asked of a junior engineer. The professional and ethical side stays with the course reference"} }
     ]
@@ -3210,7 +3267,7 @@ const COURSE_ENRICHMENT = {
       ar:"عمليات الفصل هي **جوهر المصنع الكيميائي**: مصفاة البترول برجها ليس إلا تقطيرًا، ومحطة التحلية فصلٌ للملح عن الماء. ومن يتقن هذا المقرر يفهم لماذا يبدو أي مصنع كيميائي في العالم على ما هو عليه.",
       en:"Separation processes are the heart of a chemical plant: a refinery's tower is nothing but distillation, and a desalination plant is separating salt from water. Whoever masters this course understands why every chemical plant in the world looks the way it does."
     },
-    connections:{ requires:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (CHE301)", en:"Chemical Engineering Thermodynamics (CHE301)"}], leadsTo:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}] },
+    connections:{ requires:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (CHE301)", en:"CHE Thermodynamics (CHE301)"}] },
     resources:[
       { title:{ar:"Mass Transfer Operations II — NPTEL، معهد التقنية الهندي جواهاتي (مجاني)", en:"Mass Transfer Operations II — NPTEL, IIT Guwahati (Free)"}, url:"https://nptel.ac.in/courses/103103154", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ شاندان داس من معهد التقنية الهندي بجواهاتي، يغطي عمليات الفصل واحدةً واحدة: الامتصاص، الاستخلاص، الترشيح، الترطيب، التجفيف، والتبلور — وهي بعينها وحدات هذا المقرر. مجاني بالتسجيل والتعلّم، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Chandan Das of IIT Guwahati covering the separation operations one by one: absorption, extraction, leaching, humidification, drying and crystallization — precisely this course's units. Free to enrol and learn from"} }
     ]
@@ -3439,7 +3496,7 @@ const COURSE_ENRICHMENT = {
       ar:"المصنع الكيميائي لا يعمل بيد إنسان بل بحلقات تحكم تعمل ليل نهار. ومن يفهم كيف تُضبط هذه الحلقات يمنع الانحراف قبل أن يصير حادثًا — وهذا أكثر ما يميّز مهندس العمليات في موقع العمل.",
       en:"A chemical plant doesn't run by a human hand but by control loops working day and night. Whoever understands how those loops are tuned stops a drift before it becomes an incident — the sharpest mark of a process engineer on site."
     },
-    connections:{ requires:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}] },
+    connections:{ requires:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}], leadsTo:[{ar:"تصميم العمليات واقتصادياتها (CHE403)", en:"Process Design and Economics (CHE403)"}] },
     resources:[
       { title:{ar:"Chemical Process Control — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Process Control — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101142", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوجيت جوجوار من معهد التقنية الهندي ببومباي، يبدأ بالتحليل الديناميكي لسلوك المنظومات الكيميائية ثم ينتقل إلى التحكم فيها فالمتحكمات المتقدمة — وهو ترتيب هذا المقرر نفسه. مبني على مراجع المقرر المعروفة (Bequette وLuyben وStephanopoulos). بالإنجليزية لعدم وجود مقابل عربي حر، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Sujit Jogwar of IIT Bombay, beginning with the dynamic analysis of chemical systems, then moving to controlling them and on to advanced controllers — this course's own sequence. Built on the standard references (Bequette, Luyben, Stephanopoulos)"} }
     ]
@@ -3453,7 +3510,7 @@ const COURSE_ENRICHMENT = {
       ar:"هذا المقرر الذي يجعلك مهندسًا لا حاسبًا: فالتصميم الذي لا يُبرَّر اقتصاديًا لا يُنفَّذ مهما كان بارعًا. وهو أقرب مقرراتك إلى ما ستفعله فعلًا في أرامكو أو سابك.",
       en:"This is the course that makes you an engineer rather than a calculator: a design that can't be justified economically doesn't get built, however clever. It is the closest course to what you will actually do at Aramco or SABIC."
     },
-    connections:{ requires:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}] },
+    connections:{ requires:[{ar:"ديناميكا العمليات والتحكم (CHE402)", en:"Process Dynamics and Control (CHE402)"}] },
     resources:[
       { title:{ar:"Process Design Decisions and Project Economics — NPTEL، معهد التقنية الهندي جواهاتي (مجاني)", en:"Process Design Decisions and Project Economics — NPTEL, IIT Guwahati (Free)"}, url:"https://archive.nptel.ac.in/courses/103/103/103103039/", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر يجمع شقّي هذا المقرر معًا: قرارات تصميم العملية واقتصاديات المشروع — وهو ما يصعب إيجاده مجتمعًا في مصدر واحد. محفوظ على أرشيف NPTEL الرسمي، وهو أثبت من نطاقهم الحديث كما تبيّن لنا", en:"A course joining both halves of this one: process design decisions and project economics — hard to find combined in a single source. Held on NPTEL's official archive, which has proved steadier than their newer domain"} }
     ]
@@ -3467,6 +3524,7 @@ const COURSE_ENRICHMENT = {
       ar:"أنت على بُعد فصل من التخرج، وهذا المقرر آخر فرصة منظّمة لتسأل: ما الذي يُتوقَّع مني في أول يوم عمل؟ ومن يأخذه بجدية يدخل سوق العمل وقد عرف قواعده قبل أن يدفع ثمن تعلّمها.",
       en:"You are a semester from graduating, and this is the last organized chance to ask what will be expected of you on your first day at work. Whoever takes it seriously enters the job market knowing its rules before paying to learn them."
     },
+    connections:{ requires:[{ar:"المهنة الهندسية 2 (PRO301)", en:"Engineering Profession II (PRO301)"}] },
     resources:[
       { title:{ar:"Ethics in Engineering Practice — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Ethics in Engineering Practice — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/110105097", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في أخلاقيات الممارسة الهندسية لا في المهنة بجوانبها كلها. أدرجناه لأنه يغطي أهم ما في هذا المقرر: مسؤوليات المهندس المهنية، حقوق مكان العمل، والمسؤولية تجاه البيئة والسلامة. أما الجانب الوظيفي والتدريبي فيبقى مما تقدّمه الكلية", en:"Stated plainly: a course on the ethics of engineering practice rather than on the profession in all its aspects. We included it because it covers the most important part of this course: an engineer's professional responsibilities, workplace rights, and responsibility toward the environment and safety"} }
     ]
@@ -3871,7 +3929,7 @@ const COURSE_ENRICHMENT = {
       ar:"المبادل الحراري هو أكثر معدة تتكرر في أي مصنع كيميائي — تسخين وتبريد قبل كل خطوة تقريبًا. ومن يحسن حسابه يوفّر على المنشأة طاقةً كل يوم، ومن يخطئ فيه يدفع الفرق طوال عمر الوحدة.",
       en:"The heat exchanger is the most repeated piece of equipment in any chemical plant — heating and cooling before nearly every step. Whoever sizes it well saves the facility energy daily; whoever gets it wrong pays the difference for the unit's whole life."
     },
-    connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}], leadsTo:[{ar:"عمليات الفصل (CHE304)", en:"Separation Processes (CHE304)"}] },
+    connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}, {ar:"الديناميكا الحرارية — متزامن (CHE301)", en:"CHE Thermodynamics — concurrent (CHE301)"}], leadsTo:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}] },
     resources:[
       { title:{ar:"Heat Transfer — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Heat Transfer — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105140", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوناندو داسغوبتا من معهد التقنية الهندي بخاراغبور — عميد البحث الممول سابقًا وزميل الأكاديمية الوطنية للهندسة، وله أكثر من ١٤٠ بحثًا محكّمًا. يبدأ بالمفاهيم والمعادلات الحاكمة ثم يتدرج إلى تصميم وحدات التبادل الحراري الصناعية فعلًا. مجاني بالتسجيل والتعلّم", en:"A complete course by Prof. Sunando DasGupta of IIT Kharagpur — formerly Dean of Sponsored Research, a Fellow of the National Academy of Engineering with over 140 peer-reviewed papers. It begins with concepts and governing equations and builds up to designing actual industrial heat transfer units. Free to enrol and learn from"} }
     ]
@@ -3899,7 +3957,7 @@ const COURSE_ENRICHMENT = {
       ar:"الحرارة تنتقل من الساخن للبارد، والمادة تنتقل من المركّز للمخفّف — والمعادلات متشابهة إلى حد يدهش. ومن يلاحظ هذا التماثل يدرس المقررين بنصف الجهد، وهو مفتاح كل عمليات الفصل بعده.",
       en:"Heat moves from hot to cold, and matter from concentrated to dilute — and the equations are alike to a surprising degree. Whoever notices that symmetry studies both courses at half the effort, and it is the key to every separation process that follows."
     },
-    connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}] },
+    connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}, {ar:"الديناميكا الحرارية — متزامن (CHE301)", en:"CHE Thermodynamics — concurrent (CHE301)"}], leadsTo:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}] },
     resources:[
       { title:{ar:"Heat Transfer — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Heat Transfer — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105140", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في انتقال الحرارة لا انتقال المادة، وهو المستخدم في مقرر انتقال الحرارة (CHE302). أدرجناه عمدًا لأن معادلات الظاهرتين متماثلة بنيويًا — من فهم قوانين التوصيل يفهم قوانين الانتشار بتغيير الرموز. استعمله لبناء الحدس، وابقَ على مرجع مقررك للتفاصيل الخاصة بانتقال المادة", en:"Stated plainly: a heat transfer course rather than a mass transfer one, the same used for CHE302. We included it deliberately because the two phenomena's equations are structurally identical — whoever understands conduction understands diffusion by changing the symbols. Use it to build intuition, and keep your course reference for mass-transfer specifics"} }
     ]
@@ -3914,7 +3972,7 @@ const COURSE_ENRICHMENT = {
       ar:"هذا المقرر هو الذي يعلّمك التفكير كمهندس كيميائي: ترسم حدودًا حول جزء من المصنع وتسأل ماذا يدخل وماذا يخرج. وكل مقرر تخصصي بعده — الديناميكا الحرارية وانتقال الحرارة والمادة والمفاعلات — يفترض أنك أتقنت هذه المهارة.",
       en:"This is the course that teaches you to think like a chemical engineer: you draw a boundary around part of the plant and ask what enters and what leaves. Every specialized course after it — thermodynamics, heat and mass transfer, reactors — assumes you mastered that skill."
     },
-    connections:{ leadsTo:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (CHE301)", en:"Chemical Engineering Thermodynamics (CHE301)"}] },
+    connections:{ requires:[{ar:"فيزياء عامة 2 (PHYS102)", en:"General Physics II (PHYS102)"}, {ar:"كيمياء عامة 2 (CHEM102)", en:"General Chemistry II (CHEM102)"}], leadsTo:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (CHE301)", en:"CHE Thermodynamics (CHE301)"}, {ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operation (CHE302)"}, {ar:"عمليات انتقال المادة (CHE303)", en:"Mass Transfer Operation (CHE303)"}] },
     resources:[
       { title:{ar:"Material and Energy Balances — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Material and Energy Balances — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106076", lang:"en", reason:{ar:"مقرر أساسي للأستاذين شانكار نارسيمهان وتانماي باساك من معهد التقنية الهندي بمدراس، يغطي بالضبط ما يغطيه هذا المقرر: الوحدات والأبعاد، الحسابات الكيميائية القياسية، موازين المادة مع التدوير والتجاوز والتنقية، الاحتراق، سلوك الغاز المثالي، وموازين الطاقة وحرارة التفاعل والتكوين، وتحليل درجات الحرية. تنبيه على مستوى التحقق: تأكدنا من المقرر وأستاذيه من مصادر متعددة، وصفحة NPTEL منعت الفحص الآلي وقت الإضافة", en:"A foundational course by Professors Shankar Narasimhan and Tanmay Basak of IIT Madras covering exactly what this course covers: units and dimensions, stoichiometric calculations, material balances with recycle, bypass and purge, combustion, ideal gas behaviour, energy balances with heats of reaction and formation, and degree-of-freedom analysis. A note on verification: the course and its instructors were confirmed from several sources; the NPTEL page refused automated checking at the time of adding"} }
     ]
@@ -3929,7 +3987,7 @@ const COURSE_ENRICHMENT = {
       ar:"المفاعل هو قلب المصنع الكيميائي — الموضع الذي تتحول فيه المادة فعلًا، وكل ما حوله تجهيز له أو فصل لنواتجه. ولهذا جعلته خطتك متطلبًا سابقًا لتصميم العمليات وللتحكم ولمشروع تخرجك معًا.",
       en:"The reactor is the heart of a chemical plant — where matter actually transforms, everything around it either preparing for it or separating its products. Which is why your plan makes it a prerequisite for process design, control and your capstone alike."
     },
-    connections:{ requires:[{ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operations (CHE302)"},{ar:"عمليات الفصل (CHE304)", en:"Separation Processes (CHE304)"}], leadsTo:[{ar:"تصميم العمليات واقتصادياتها (CHE403)", en:"Process Design and Economics (CHE403)"}] },
+    connections:{ requires:[{ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operation (CHE302)"}, {ar:"عمليات انتقال المادة (CHE303)", en:"Mass Transfer Operation (CHE303)"}], leadsTo:[{ar:"ديناميكا العمليات والتحكم (CHE402)", en:"Process Dynamics and Control (CHE402)"}] },
     resources:[
       { title:{ar:"Chemical Reaction Engineering 1 (Homogeneous Reactors) — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Chemical Reaction Engineering 1 — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106116", lang:"en", reason:{ar:"مقرر كامل للأستاذ ك. كريشنايا من معهد التقنية الهندي بمدراس في ست وأربعين محاضرة، يغطي حركية التفاعلات، تفسير بيانات المفاعل الدفعي، تصميم المفاعلات المثالية (الدفعي والخلط التام والدفق المكبسي)، والمفاعلات غير الأيزوثيرمية والأديباتية. تنبيه على مستوى التحقق: تأكدنا من وجود المقرر واسم أستاذه وجامعته من مصادر متعددة، لكن صفحة NPTEL منعت الفحص الآلي وقت الإضافة — فإن لم يفتح الرابط أخبرنا عبر زر اقتراح المرجع", en:"A complete course by Prof. K. Krishnaiah of IIT Madras in forty-six lectures covering reaction kinetics, interpreting batch reactor data, designing ideal reactors (batch, mixed flow, plug flow), and non-isothermal and adiabatic reactors. A note on verification: we confirmed the course, its instructor and institution from several sources, but the NPTEL page refused automated checking at the time of adding — if the link does not open, tell us through the suggest-a-reference button"} }
     ]
@@ -3943,6 +4001,7 @@ const COURSE_ENRICHMENT = {
       ar:"بعد التخرج ستشرح عملك لمن لا يعرف تخصصك: مدير، أو عميل، أو مورّد أجنبي. والمهندس الذي يوصل فكرته بالإنجليزية بوضوح يُسمَع رأيه، ومن لا يستطيع يبقى تنفيذيًا مهما كان بارعًا.",
       en:"After graduation you will explain your work to people outside your field: a manager, a client, a foreign supplier. An engineer who conveys an idea clearly in English gets heard; one who can't stays an implementer however capable."
     },
+    connections:{ requires:[{ar:"مقدمة في كتابة التقارير (ENGL102)", en:"Intro to Report Writing (ENGL102)"}] },
     resources:[
       { title:{ar:"Purdue OWL — General Writing: أساسيات الكتابة الأكاديمية (مجاني)", en:"Purdue OWL — General Writing (Free)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", verified:"2026-08-18", reason:{ar:"مختبر الكتابة بجامعة بيردو: مرجع مفتوح بلا تسجيل يغطي بناء الحجّة، صياغة الأطروحة، أنماط الكتابة، وقسمًا كاملًا لمن الإنجليزية لغته الثانية. بالإنجليزية بطبيعة المقرر — فأنت تتعلم التواصل بها لا عنها", en:"Purdue University's Writing Lab: an open reference covering argument construction, thesis statements, writing modes, and a full section for second-language English writers"} }
     ]
@@ -3956,6 +4015,7 @@ const COURSE_ENRICHMENT = {
       ar:"مراسلاتك مع الجهات الحكومية والمقاولين ستكون بالعربية. وتقرير سليم اللغة يُقرأ بثقة، وآخر مليء بالأخطاء يُشكَّك في محتواه التقني قبل أن يُقرأ.",
       en:"Your correspondence with government bodies and contractors will be in Arabic. A linguistically sound report is read with confidence; one full of errors has its technical content doubted before it is read."
     },
+    connections:{ requires:[{ar:"أسس اللغة (AIS101)", en:"Language Foundation (AIS101)"}], leadsTo:[{ar:"التواصل اللغوي الفعّال (AIS301)", en:"Effective Language Communication (AIS301)"}] },
     resources:[
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: تغطي الشق الإملائي — الهمزات والترقيم والأخطاء الشائعة — لا مهارات الصياغة كاملة. وهي أكثر ما يتعثر فيه الطلاب، والتسجيل بلا رسوم", en:"Stated plainly: it covers the spelling half — hamza forms, punctuation and common errors — not full composition. It is where students stumble most"} }
     ]
@@ -3969,6 +4029,7 @@ const COURSE_ENRICHMENT = {
       ar:"مشروع تخرجك ستعرضه أمام لجنة، وأول اجتماع عمل ستُطلب فيه رأيك. وهذا المقرر هو التمرين على تلك اللحظات قبل أن تأتي.",
       en:"You will present your capstone before a committee, and your opinion will be asked in your first work meeting. This course is the rehearsal for those moments before they arrive."
     },
+    connections:{ requires:[{ar:"الكتابة المهنية (AIS201)", en:"Professional Writing (AIS201)"}] },
     resources:[
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: تغطي الشق الإملائي — الهمزات والترقيم والأخطاء الشائعة — لا مهارات الصياغة كاملة. وهي أكثر ما يتعثر فيه الطلاب، والتسجيل بلا رسوم", en:"Stated plainly: it covers the spelling half — hamza forms, punctuation and common errors — not full composition. It is where students stumble most"} }
     ]
@@ -3982,7 +4043,7 @@ const COURSE_ENRICHMENT = {
       ar:"الاتزان والحركية اللذان تتعلمهما هنا هما مدخل مقررين تخصصيين كاملين لاحقًا: الديناميكا الحرارية للهندسة الكيميائية، وهندسة التفاعلات. من يتقنهما الآن يوفّر على نفسه فصلين من المعاناة.",
       en:"The equilibrium and kinetics you learn here are the entrance to two whole specialized courses later: chemical engineering thermodynamics, and reaction engineering. Master them now and spare yourself two semesters of struggle."
     },
-    connections:{ requires:[{ar:"كيمياء عامة 1 (CHEM101)", en:"General Chemistry I (CHEM101)"}], leadsTo:[{ar:"الكيمياء العضوية (CHEM201)", en:"Organic Chemistry (CHEM201)"}] },
+    connections:{ requires:[{ar:"كيمياء عامة 1 (CHEM101)", en:"General Chemistry I (CHEM101)"}], leadsTo:[{ar:"الكيمياء العضوية (CHEM201)", en:"Organic Chemistry (CHEM201)"}, {ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}, {ar:"الكيمياء التحليلية (CHEM302)", en:"Analytical Chemistry (CHEM302)"}] },
     resources:[
       { title:{ar:"5.111SC Principles of Chemical Science — معهد ماساتشوستس للتقنية (مجاني)", en:"5.111SC Principles of Chemical Science — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/5-111sc-principles-of-chemical-science-fall-2014/", lang:"en", verified:"2026-08-18", reason:{ar:"نسخة OCW Scholar المعدّة للدارس المستقل: وحداتها الأخيرة — الديناميكا الحرارية والاتزان، العناصر الانتقالية والأكسدة والاختزال، وحركية التفاعلات — هي بعينها محتوى كيمياء عامة 2، بمحاضرات وتمارين واختبارات بحلولها. لم نجد مقررًا جامعيًا عربيًا حرًّا في الكيمياء العامة", en:"The OCW Scholar edition for independent learners: its later units — thermodynamics and equilibrium, transition metals and redox, kinetics — are precisely the content of General Chemistry II, with problem sets and exams with solutions"} }
     ]
@@ -3996,7 +4057,7 @@ const COURSE_ENRICHMENT = {
       ar:"المصنع الكيميائي اليوم يولّد آلاف القراءات في الساعة من حساساته. ومن يعرف كيف يقرأ هذا الكم يكتشف انحرافًا قبل أن يصير عطلًا — وهذه مهارة صارت تُطلب من مهندس العمليات لا من محلل البيانات وحده.",
       en:"A chemical plant today generates thousands of sensor readings an hour. Whoever knows how to read that volume spots a drift before it becomes a failure — a skill now asked of the process engineer, not only the data analyst."
     },
-    connections:{ requires:[{ar:"مقدمة في البرمجة (CSE101)", en:"Intro to Computer Programming (CSE101)"}] },
+    connections:{ requires:[{ar:"مقدمة في البرمجة (CSE101)", en:"Intro to Computer Programming (CSE101)"}, {ar:"الاحتمالات والإحصاء الهندسي (STAT200)", en:"Engineering Probability & Statistics (STAT200)"}] },
     resources:[
       { title:{ar:"Data Science & Analysis — علم البيانات وتحليلها (معارف، عربي، مجاني)", en:"Data Science & Analysis (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/8859", lang:"ar", reason:{ar:"دورة عربية مجانية تتناول إعداد البيانات للتحليل: التنقية والتجميع والمعالجة، ثم مراجعة النتائج لكشف الأنماط — بنفس ترتيب المقرر من البيانات الخام إلى الرؤية النهائية", en:"A free Arabic course covering data preparation for analysis: cleaning, aggregation and processing, then reviewing results to uncover patterns — in the course's own order"} }
     ]
@@ -4010,6 +4071,7 @@ const COURSE_ENRICHMENT = {
       ar:"هذا المقرر يأتي في منتصف الطريق بين معرفة المهنة والتخرج، وهو الوقت المناسب لتسأل: أي مهندس أريد أن أكون؟ فالقرارات الأخلاقية في هذا التخصص لا تُختبر في القاعة بل في موقع فيه ضغط ووقت ضيق.",
       en:"This course sits midway between learning the profession and graduating — the right time to ask what kind of engineer you want to be. Ethical decisions in this field aren't tested in a classroom but on a site under pressure and short of time."
     },
+    connections:{ requires:[{ar:"المهنة الهندسية 1 (PRO201)", en:"Engineering Profession I (PRO201)"}], leadsTo:[{ar:"المهنة الهندسية 3 (PRO401)", en:"Engineering Profession III (PRO401)"}] },
     resources:[
       { title:{ar:"Ethics in Engineering Practice — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Ethics in Engineering Practice — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/110105097", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في أخلاقيات الممارسة الهندسية لا في المهنة بجوانبها كلها. يغطي مسؤوليات المهندس، حقوق مكان العمل، والمسؤولية البيئية والسلامة — وهي صلب هذا المقرر. أما الجانب التدريبي فمن كليتك", en:"Stated plainly: a course on the ethics of engineering practice rather than the profession entire. It covers an engineer's responsibilities, workplace rights, and environmental and safety responsibility — this course's core"} }
     ]
@@ -5226,6 +5288,7 @@ const COURSE_ENRICHMENT = {
       ar:"كل رقم في تقرير مختبر خرج من عملية تحليل لها حدود دقة وخطأ. ومهندس كيميائي يعرف كيف أُنتج الرقم يعرف متى يثق به ومتى يعيد التحليل — وهذا يفصل بين قرار سليم وآخر مبني على قياس رديء.",
       en:"Every number in a lab report came from an analysis with its own precision and error limits. A chemical engineer who knows how the number was produced knows when to trust it and when to repeat the analysis."
     },
+    connections:{ requires:[{ar:"كيمياء عامة 2 (CHEM102)", en:"General Chemistry II (CHEM102)"}] },
     resources:[
       { title:{ar:"5.111SC Principles of Chemical Science — معهد ماساتشوستس للتقنية (مجاني)", en:"5.111SC Principles of Chemical Science — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/5-111sc-principles-of-chemical-science-fall-2014/", lang:"en", verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في الكيمياء العامة لا في الكيمياء التحليلية. أدرجناه لأن وحدته عن الاتزان الكيميائي والأحماض والقواعد هي الأساس النظري لكل معايرة وتحليل كمي. أما الأجهزة التحليلية والطرق الطيفية والكروماتوغرافية فتبقى من مرجع مقررك ومعمله", en:"Stated plainly: a general chemistry course rather than analytical chemistry. Its unit on chemical equilibrium and acid-base behaviour is the theoretical basis of every titration and quantitative analysis. Instrumental, spectroscopic and chromatographic methods stay with your course reference and lab"} }
     ]
@@ -5596,6 +5659,165 @@ const COURSE_ENRICHMENT = {
     },
     resources:[
       { title:{ar:"Applied Ergonomics — NPTEL، معهد التقنية الهندي كانبور (مجاني)", en:"Applied Ergonomics — NPTEL, IIT Kanpur (Free)"}, url:"https://nptel.ac.in/courses/112104222", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في الأرجونوميكس لا في التربية البدنية. أدرجناه لأن أنفع ما فيه لك عملي مباشر: الميكانيكا الحيوية للرفع، الوضعيات الصحيحة، وحدود الجسم في العمل المتكرر — وهي ما يحفظ ظهرك في مهنة يبدأ فيها ألم الظهر مبكرًا", en:"Stated plainly: an ergonomics course rather than physical education. What serves you in it is directly practical: the biomechanics of lifting, correct postures, and bodily limits in repetitive work"} }
+    ]
+  },
+  "CS 230": {
+    explain:{
+      ar:"تصميم المنطق الرقمي: أنظمة الأعداد والترميز، جبر بول وتبسيط الدوال بخرائط كارنو، الدوائر التوافقية — الجامعات والمقارنات والمازجات، ثم القلّابات والدوائر التتابعية والعدّادات.",
+      en:"Digital logic design: number systems and codes, Boolean algebra and Karnaugh map minimization, combinational circuits — adders, comparators and multiplexers — then flip-flops, sequential circuits and counters."
+    },
+    why:{
+      ar:"هذا المقرر ينزل بك إلى الطبقة التي تحت البرمجة كلها: كيف يصير الصفر والواحد جمعًا وذاكرةً وقرارًا. ومن يفهمه يقرأ معمارية الحاسب بعده كأنها امتداد طبيعي، ومن لا يفهمه يحفظها حفظًا.",
+      en:"This course takes you down to the layer beneath all programming: how zero and one become addition, memory and decision. Whoever understands it reads computer architecture afterwards as a natural extension; whoever doesn't memorizes it."
+    },
+    connections:{ leadsTo:[{ar:"معمارية وتنظيم الحاسب (CS 242)", en:"Computer Architecture and Organization (CS 242)"}] },
+    resources:[
+      { title:{ar:"Switching Circuits and Logic Design — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Switching Circuits and Logic Design — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105185", lang:"en", verified:"2026-08-20", reason:{ar:"مقرر كامل للأستاذ إندرانيل سينغوبتا، رئيس قسم علوم الحاسب سابقًا بمعهد التقنية الهندي بخاراغبور وله أكثر من مئتي بحث منشور. يغطي بالترتيب: أنظمة الأعداد والترميز وكشف الأخطاء، جبر بول والتبسيط، تصميم الدوائر التوافقية — الجامعات والمقارنات والمازجات، تمثيل الدوال، ثم القلّابات SR وD وJK وT والدوائر التتابعية. المحتوى والواجبات مجانية بالكامل", en:"A complete course by Prof. Indranil Sengupta, former head of computer science at IIT Kharagpur with over two hundred publications. It covers, in order: number systems, codes and error detection, Boolean algebra and minimization, combinational circuit design — adders, comparators, multiplexers — function representation, then SR, D, JK and T flip-flops and sequential circuits. All content and assignments are free"} }
+    ]
+  },
+  "COMP 434": {
+    explain:{
+      ar:"الحوسبة المتوازية والموزعة: نماذج التوازي، تقسيم المسألة على معالجات متعددة، التزامن وتبادل الرسائل، قياس التسريع وحدوده، والأنظمة الموزّعة وتحدياتها.",
+      en:"Parallel and distributed computing: models of parallelism, partitioning a problem across processors, synchronization and message passing, measuring speedup and its limits, and distributed systems and their challenges."
+    },
+    why:{
+      ar:"لم تعد المعالجات تزداد سرعة كما كانت — صارت تزداد عددًا. فالبرنامج الذي لا يعرف كيف يستعمل ثمانية أنوية يستعمل واحدة ويترك سبعًا معطّلة. وهذا المقرر هو ما يجعلك تستعملها كلها.",
+      en:"Processors no longer get faster as they once did — they get more numerous. A program that doesn't know how to use eight cores uses one and leaves seven idle. This course is what lets you use them all."
+    },
+    resources:[
+      { title:{ar:"Design and Analysis of Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Design and Analysis of Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106131", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في تصميم وتحليل الخوارزميات لا في الحوسبة المتوازية. أدرجناه لأن تحليل التعقيد الذي يعلّمه هو أداة الحكم على أي خوارزمية متوازية: كم تختصر فعلًا، وأين يقف التسريع. أما نماذج التوازي وMPI وOpenMP فتبقى من مرجع مقررك ومعمله", en:"Stated plainly: an algorithm design and analysis course rather than parallel computing. We included it because the complexity analysis it teaches is the tool for judging any parallel algorithm: how much it actually saves and where the speedup stops"} }
+    ]
+  },
+  "COMP 451": {
+    explain:{
+      ar:"نمذجة ومحاكاة البيانات: بناء نموذج رياضي للنظام، توليد الأعداد العشوائية والتوزيعات، محاكاة الأحداث المنفصلة، التحقق من صحة النموذج، وتحليل نتائج المحاكاة إحصائيًا.",
+      en:"Data modelling and simulation: building a mathematical model of a system, random number generation and distributions, discrete-event simulation, model validation, and statistical analysis of simulation results."
+    },
+    why:{
+      ar:"المحاكاة تجيبك عن سؤال لا تستطيع تجربته في الواقع: ماذا لو تضاعف عدد المستخدمين؟ ماذا لو تعطّل خادم؟ ومن يبني نموذجًا موثوقًا يجرّب القرار قبل أن يدفع ثمنه.",
+      en:"Simulation answers a question you cannot test in reality: what if the users double? what if a server fails? Whoever builds a trustworthy model tries the decision before paying for it."
+    },
+    resources:[
+      { title:{ar:"Design and Analysis of Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Design and Analysis of Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106131", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في الخوارزميات لا في النمذجة والمحاكاة. أدرجناه لأن المحاكاة في جوهرها خوارزمية تُنفَّذ ملايين المرات — ومن لا يقدّر تعقيدها الزمني يبني نموذجًا صحيحًا لا ينتهي حسابه. أما توليد الأعداد العشوائية ونماذج الطوابير فتبقى من مرجع مقررك", en:"Stated plainly: an algorithms course rather than modelling and simulation. A simulation is at heart an algorithm run millions of times — whoever can't judge its time complexity builds a correct model that never finishes"} }
+    ]
+  },
+  "COMP 417": {
+    explain:{
+      ar:"تطوير تطبيقات المؤسسات: معمارية التطبيقات متعددة الطبقات، خدمات الخلفية وواجهات البرمجة، التعامل مع قواعد بيانات مؤسسية، إدارة الهوية والصلاحيات، والنشر والتوسّع.",
+      en:"Enterprise application development: multi-tier application architecture, back-end services and APIs, working with enterprise databases, identity and permission management, and deployment and scaling."
+    },
+    why:{
+      ar:"الفرق بين تطبيق يعمل على جهازك وتطبيق تعتمد عليه منشأة هو ما يعلّمه هذا المقرر: أن يخدم آلافًا في وقت واحد، وأن يعرف من يفعل ماذا، وألّا يسقط إن سقط خادم.",
+      en:"The difference between an app that runs on your machine and one an organization depends on is what this course teaches: serving thousands at once, knowing who does what, and not falling when one server does."
+    },
+    resources:[
+      { title:{ar:"Introduction to Modern Application Development — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Modern Application Development — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106156", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ غوراف رينا، وطريقته تناسب هذا المقرر تحديدًا: يأخذ تطبيق سطح مكتب لمستخدم واحد ويحوّله تدريجيًا إلى تطبيق موزّع يخدم آلافًا — فترى بعينك متى تظهر الحاجة لفصل الواجهة عن الخادم، ولإدارة الهوية، ولقواعد البيانات الموزّعة. وهذا هو بالضبط ما يعنيه تطوير تطبيقات المؤسسات", en:"A course by Prof. Gaurav Raina whose method suits this course precisely: it takes a single-user desktop application and gradually morphs it into a distributed app serving thousands — so you see exactly when the front-end/back-end split, identity management and distributed databases become necessary"} }
+    ]
+  },
+  "MIS 409": {
+    explain:{
+      ar:"إدارة موارد المعلومات: تصنيف أصول المعلومات وتقييمها، حوكمة البيانات وجودتها، سياسات الوصول والاحتفاظ، الامتثال وحماية الخصوصية، والتخطيط الاستراتيجي لموارد المعلومات.",
+      en:"Information resource management: classifying and valuing information assets, data governance and quality, access and retention policy, compliance and privacy protection, and strategic planning of information resources."
+    },
+    why:{
+      ar:"البيانات أصلٌ من أصول المنشأة كالمباني والمعدات — لكنها الأصل الوحيد الذي يزيد بالاستعمال ويفسد بالإهمال. وهذا المقرر يعلّمك أن تديرها كأصل: تعرف ما تملك، ومن يصل إليه، ومتى يُتلف.",
+      en:"Data is an organizational asset like buildings and equipment — but the only one that grows with use and spoils with neglect. This course teaches you to manage it as an asset: knowing what you hold, who reaches it, and when it is destroyed."
+    },
+    resources:[
+      { title:{ar:"Database Management System — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Database Management System — NPTEL, IIT Kharagpur (Free)"}, url:"https://elearn.nptel.ac.in/shop/nptel/data-base-management-system/", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في قواعد البيانات لا في إدارة موارد المعلومات. أدرجناه لأن موارد المعلومات في أي منشأة تسكن قواعد بياناتها — ومن يفهم التخزين والفهرسة وسلامة البيانات يفهم ما يديره فعلًا. أما حوكمة البيانات وسياسات الوصول وتقييم أصول المعلومات فتبقى من مرجع مقررك", en:"Stated plainly: a database course rather than information resource management. An organization's information resources live in its databases — whoever understands storage, indexing and data integrity understands what he is actually managing"} }
+    ]
+  },
+  "ISLM102": {
+    explain:{
+      ar:"النظام الاقتصادي في الإسلام: مصادر المال ومقاصد الشريعة فيه، الملكية وضوابطها، الزكاة، المعاملات المالية المشروعة والمحرّمة، والربا والغرر، والاقتصاد الإسلامي المعاصر.",
+      en:"The economic system in Islam: sources of wealth and the aims of the law regarding it, ownership and its limits, zakat, permitted and prohibited financial dealings, riba and gharar, and contemporary Islamic economics."
+    },
+    why:{
+      ar:"ستوقّع عقودًا وتدير ميزانيات وتتعامل مع بنوك وتمويل. وهذا المقرر هو ما يجعلك تعرف حدود ما يجوز قبل أن توقّع — لا بعد أن تكتشف أن العقد فيه ما لا يرضيك.",
+      en:"You will sign contracts, manage budgets and deal with banks and financing. This course is what lets you know the limits of what is permitted before you sign — rather than after discovering the contract holds what you cannot accept."
+    },
+    resources:[
+      { title:{ar:"مقرر الثقافة الإسلامية — المقرر الإلكتروني الكامل (جامعة القدس المفتوحة، مجاني)", en:"Islamic Culture — Full Open E-Course (Al-Quds Open University, Free)"}, url:"https://osol.qou.edu/contents/0206/index.html", lang:"ar", partial:true, verified:"2026-08-15", reason:{ar:"تنبيه صريح: مقرر في الثقافة الإسلامية عمومًا لا في النظام الاقتصادي وحده، ووحدته الخامسة تعالج القضايا المعاصرة ومنها المعاملات المالية. أدرجناه لأننا بحثنا مرتين عن مصدر عربي حر في الاقتصاد الإسلامي فلم نجد إلا بطاقات مراجعة وملفات خلف تسجيل، ولم نقبلها. خذ الوحدة الخامسة تحديدًا", en:"Stated plainly: a general Islamic culture course rather than one on the economic system alone; its fifth unit addresses contemporary issues including financial dealings. We searched twice for a free Arabic source on Islamic economics and found only flashcards and files behind registration, which we did not accept"} }
+    ]
+  },
+  "LRSK 106": {
+    explain:{
+      ar:"التفكير الناقد وحل المشكلات: تحليل الحجج وتقييمها، التمييز بين الرأي والدليل، المغالطات الشائعة، تقييم مصداقية المصادر، ومنهجية حل المشكلات واتخاذ القرار.",
+      en:"Critical thinking and problem solving: analysing and evaluating arguments, distinguishing opinion from evidence, common fallacies, judging source credibility, and problem-solving and decision-making method."
+    },
+    why:{
+      ar:"تخصصك كله قائم على الحكم: هل هذا التعرض خطر فعلًا؟ هل هذا الإجراء كافٍ؟ هل التقرير الذي بين يديك دليل أم انطباع؟ وهذا المقرر يعلّمك أن تسأل قبل أن تصدّق — وأن تطالب بالدليل حتى ممن هو أعلى منك.",
+      en:"Your whole field rests on judgement: is this exposure truly hazardous? is this control enough? is the report before you evidence or impression? This course teaches you to ask before believing — and to require evidence even from someone above you."
+    },
+    resources:[
+      { title:{ar:"College Success — OpenStax، جامعة رايس الأمريكية (كتاب مفتوح مجاني)", en:"College Success — OpenStax, Rice University (Free open textbook)"}, url:"https://openstax.org/details/books/college-success", lang:"en", partial:true, verified:"2026-08-20", reason:{ar:"تنبيه صريح: كتاب في مهارات النجاح الجامعي، وفيه فصل كامل عن التفكير — التفكير الناقد، تقييم المصادر، الاستدلال، وحل المشكلات — وهو صلب هذا المقرر. كتاب مفتوح مجاني برخصة المشاع الإبداعي بلا تسجيل، وأمثلته من حياة الطالب لا من الفلسفة المجردة. أما المنطق الصوري والمغالطات بتفصيلها فتبقى من مرجع مقررك", en:"Stated plainly: a college success textbook containing a full chapter on thinking — critical thinking, evaluating sources, reasoning and problem solving — which is this course's core. A free open textbook under a Creative Commons licence, its examples drawn from student life rather than abstract philosophy"} }
+    ]
+  },
+  "PUBH 231": {
+    explain:{
+      ar:"مقدمة في الصحة العامة: مفهوم الصحة ومحدداتها، مستويات الوقاية الثلاثة، صحة المجتمع والفئات الضعيفة، تعزيز الصحة، ودور الصحة العامة في مواجهة الأوبئة والكوارث.",
+      en:"Introduction to public health: the concept of health and its determinants, the three levels of prevention, community health and vulnerable populations, health promotion, and public health's role in epidemics and disasters."
+    },
+    why:{
+      ar:"الصحة المهنية فرعٌ من الصحة العامة لا علمٌ منفصل عنها — وهذا المقرر يعرّفك بالجذع الذي تنتمي إليه. ومستويات الوقاية الثلاثة التي تتعلمها هنا ستستعملها في كل تقييم مخاطر تجريه بعدها.",
+      en:"Occupational health is a branch of public health, not a separate science — and this course introduces you to the trunk you belong to. The three levels of prevention you learn here you will use in every risk assessment you ever run."
+    },
+    connections:{ leadsTo:[{ar:"مبادئ علم الأوبئة (EPID 212)", en:"Principles of Epidemiology (EPID 212)"}] },
+    resources:[
+      { title:{ar:"Population Health for Nurses — OpenStax، جامعة رايس الأمريكية (كتاب مفتوح مجاني)", en:"Population Health for Nurses — OpenStax (Free open textbook)"}, url:"https://openstax.org/details/books/population-health", lang:"en", partial:true, verified:"2026-08-20", reason:{ar:"تنبيه صريح: كتاب في صحة السكان موجَّه لطلاب التمريض لا مقرر صحة عامة قائم بذاته. أدرجناه لأن مباحثه واحدة: محددات الصحة، الوقاية بمستوياتها، صحة المجتمع والفئات الضعيفة، والتدخلات الصحية — وهي صلب مقدمة الصحة العامة. كتاب مفتوح مجاني بلا تسجيل", en:"Stated plainly: a population health textbook aimed at nursing students rather than a standalone public health course. Its subject matter is the same: determinants of health, levels of prevention, community health and vulnerable populations, and health interventions"} }
+    ]
+  },
+  "EPID 212": {
+    explain:{
+      ar:"مبادئ علم الأوبئة: قياس المرض في المجتمع، معدلات الحدوث والانتشار، تصاميم الدراسات الوبائية، تقصّي الفاشيات، ومراقبة الأمراض وترصّدها.",
+      en:"Principles of epidemiology: measuring disease in a population, incidence and prevalence rates, epidemiological study designs, outbreak investigation, and disease surveillance."
+    },
+    why:{
+      ar:"علم الأوبئة هو ما يحوّل ملاحظتك إلى دليل: أن تثبت أن هذا المرض أكثر بين عمال هذا القسم، وأن الفرق ليس صدفة. ومن يتقنه يستطيع أن يقول لإدارته «عندنا مشكلة» ومعه أرقام لا تُردّ.",
+      en:"Epidemiology turns your observation into evidence: proving this illness is commoner among one department's workers and that the difference isn't chance. Whoever masters it can tell management there is a problem, backed by numbers that cannot be waved away."
+    },
+    connections:{ requires:[{ar:"مقدمة في الصحة العامة (PUBH 231)", en:"Introduction to Public Health (PUBH 231)"}] },
+    resources:[
+      { title:{ar:"Population Health for Nurses — OpenStax، جامعة رايس الأمريكية (كتاب مفتوح مجاني)", en:"Population Health for Nurses — OpenStax (Free open textbook)"}, url:"https://openstax.org/details/books/population-health", lang:"en", partial:true, verified:"2026-08-20", reason:{ar:"تنبيه صريح: كتاب في صحة السكان لا مقرر أوبئة كامل، لكنه يعالج ما يحتاجه مقررك: قياس المرض في المجتمع، معدلات الحدوث والانتشار، تقصّي الفاشيات، ومراقبة الأمراض. أما تصاميم الدراسات الوبائية وحساب المخاطر النسبية فتبقى من مرجع مقررك", en:"Stated plainly: a population health textbook rather than a full epidemiology course, but it addresses what yours needs: measuring disease in a community, incidence and prevalence rates, outbreak investigation, and disease surveillance"} }
+    ]
+  },
+  "PUBH 210": {
+    explain:{
+      ar:"أنظمة الرعاية الصحية: تنظيم الخدمات الصحية ومستوياتها، الوصول للرعاية والعوائق أمامه، تمويل الرعاية الصحية، جودة الخدمة وقياسها، والسياسات الصحية.",
+      en:"Health care systems: how health services are organized and tiered, access to care and its barriers, health care financing, service quality and its measurement, and health policy."
+    },
+    why:{
+      ar:"أخصائي السلامة يحيل عاملًا مصابًا، ويتابع مراقبته الصحية، ويتعامل مع التأمين والتقارير الطبية. ومن يفهم كيف يعمل النظام الصحي يوصل عامله للرعاية سريعًا، ومن لا يفهمه يضيع بينه وبين الإجراءات.",
+      en:"A safety specialist refers an injured worker, follows up his health surveillance, and deals with insurance and medical reports. Whoever understands how the health system works gets his worker cared for quickly; whoever doesn't gets lost between it and the paperwork."
+    },
+    resources:[
+      { title:{ar:"Population Health for Nurses — OpenStax، جامعة رايس الأمريكية (كتاب مفتوح مجاني)", en:"Population Health for Nurses — OpenStax (Free open textbook)"}, url:"https://openstax.org/details/books/population-health", lang:"en", partial:true, verified:"2026-08-20", reason:{ar:"تنبيه صريح: كتاب في صحة السكان، وفيه ما يخص هذا المقرر: تنظيم الخدمات الصحية ومستوياتها، الوصول للرعاية والعوائق أمامه، وتمويل الرعاية والسياسات الصحية. أما النظام الصحي السعودي تحديدًا وبرامج التحول الوطني فتبقى من مرجع مقررك", en:"Stated plainly: a population health textbook containing what this course needs: how health services are organized and tiered, access to care and its barriers, and care financing and health policy. The Saudi health system specifically stays with your course reference"} }
+    ]
+  },
+  "ENGL 404": {
+    explain:{
+      ar:"إدارة مشاريع الترجمة: تقدير حجم المشروع وزمنه، التسعير، توزيع المهام على المترجمين، إدارة الذاكرة الترجمية والمصطلحات، المراجعة وضبط الجودة، والتعامل مع العميل والتسليم.",
+      en:"Translation project management: estimating a project's size and time, pricing, distributing work among translators, managing translation memory and terminology, review and quality control, and client handling and delivery."
+    },
+    why:{
+      ar:"أكثر المترجمين يعملون لحسابهم، ومن يقبل مشروعًا لا يعرف كيف يقدّر وقته يسلّم متأخرًا أو يخسر فيه. وهذا المقرر هو ما ينقلك من مترجم يُوظَّف إلى مترجم يدير مشروعًا وفريقًا.",
+      en:"Most translators work for themselves, and whoever accepts a project without knowing how to estimate its time delivers late or loses on it. This course moves you from a translator who is hired to one who runs a project and a team."
+    },
+    resources:[
+      { title:{ar:"إدارة المشروعات الاحترافية PMP (معارف، ٦٨ درسًا، ٣٢ ساعة، عربي، مجاني)", en:"Professional Project Management PMP (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15345/%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9-%D8%A7%D9%84%D9%85%D8%B4%D8%A7%D8%B1%D9%8A%D8%B9-pmp-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة عامة في إدارة المشاريع لا في إدارة مشاريع الترجمة تحديدًا. أدرجناها لأن أدوات المهنة واحدة: تقدير الحجم والوقت، التسعير، الجدولة، إدارة الجودة والمراجعة، والتعامل مع العميل — وهي كل ما يُدار به مشروع ترجمة. وهي عربية كاملة ومجانية، ولم نجد مصدرًا عربيًا حرًّا يخص إدارة مشاريع الترجمة وحدها", en:"Stated plainly: a general project management course rather than one on translation project management. The tools are the same: estimating size and time, pricing, scheduling, quality management and review, and handling the client — everything a translation project is run with. It is fully Arabic and free"} }
+    ]
+  },
+  "ENGL 305": {
+    explain:{
+      ar:"أنماط أدبية: الأنواع الأدبية الكبرى — الرواية والقصة القصيرة والشعر والمسرح، خصائص كل نمط وبنيته، وقراءة نماذج منها قراءة تحليلية.",
+      en:"Literary genres: the major literary forms — the novel, short story, poetry and drama, the characteristics and structure of each, and reading selected texts analytically."
+    },
+    why:{
+      ar:"مترجم الأدب لا ينقل الكلمات بل الأثر: إيقاع الشعر، وصوت الراوي، وتوتر الحوار المسرحي. ومن لا يعرف خصائص النمط الأدبي يترجم الجملة صحيحة ويقتل النص — وهذا أصعب ما في الترجمة الأدبية.",
+      en:"A literary translator carries not words but effect: a poem's rhythm, a narrator's voice, the tension of stage dialogue. Whoever doesn't know a genre's characteristics translates the sentence correctly and kills the text — the hardest thing in literary translation."
+    },
+    resources:[
+      { title:{ar:"مساقات الأدب والنقد — منصة إدراك (بالعربية، مجاني)", en:"Literature and Criticism Courses — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/", lang:"ar", partial:true, reason:{ar:"تنبيه على مستوى التحقق: هذه صفحة مساقات إدراك العامة لا مساقًا بعينه — بحثنا عن مصدر عربي حر يخص الأنماط الأدبية (الرواية والقصة والشعر والمسرح وخصائص كل نمط) فلم نجد مساقًا مطابقًا نثق به. أدرجنا بوابة إدراك لأنها أقرب منصة عربية موثوقة قد تُضيف مساقًا في الأدب، وننصحك بمراجعة قائمة مساقاتها. وأخبرنا عبر زر اقتراح المرجع إن وجدت أفضل — هذا المقرر هو آخر ما لم نُغلقه", en:"A verification note: this is Edraak's general course listing rather than a specific course — we searched for a free Arabic source on literary genres (the novel, short story, poetry and drama and the characteristics of each) and found no matching course we could trust. We list Edraak's portal as the nearest trustworthy Arabic platform likely to add one. Tell us through the suggest-a-reference button if you find better"} }
     ]
   },
   "ARAB 210": {
@@ -6668,7 +6890,13 @@ function matchingTechniqueSkillId(courseName){
   if(/نحو|صرف/.test(courseName)) return "grammar-study-technique";
   return null;
 }
+/* A developer override, used by the plan browser below. It changes only what
+   the library and reference map display — never the student's own record — so
+   the owner can walk through all eleven plans checking courses and references
+   without re-registering or disturbing a real profile. */
+let devPlanOverride = null;
 function catalogKeyFor(student){
+  if(devPlanOverride && COURSE_CATALOG[devPlanOverride]) return devPlanOverride;
   if(!student) return null;
   return `${student.universityId}-${student.collegeId}-${student.majorId}`;
 }
@@ -10135,6 +10363,136 @@ const CONTACT = {
   email: "ara1979fat@gmail.com"
 };
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
+/* Deleting the app from the home screen does not delete its data: that lives
+   in the browser's own storage and survives reinstalling. So a student who
+   wants a clean start — or who wants to try a different programme — needs an
+   explicit way to ask for one, rather than discovering their old plan waiting
+   for them after what they thought was a fresh install. */
+/* Changing the programme changes the plan and the library at once, but the
+   courses already added to this term stay as they were — so a student who
+   switches major keeps seeing the old major's courses on their Today screen
+   and concludes the change didn't work. This offers to rebuild the term from
+   the new plan, and never does it silently: the courses are the student's. */
+/* Students arrive mid-way: transfers, diploma holders whose courses were
+   credited, anyone repeating a year. Their plan is right but parts of it are
+   already behind them, and a plan that keeps showing finished work as pending
+   stops being a map of where they are. Marking a course completed keeps it
+   visible — it is part of their degree — while taking it out of what remains.
+   Stored by course code, so it survives a course being renamed or re-added. */
+/* Every plan we carry, labelled by its own institution. Royal Commission
+   colleges are listed separately on purpose: a student belongs to their own
+   college, not to the authority above it. */
+function allPlanEntries(){
+  const l = lang();
+  return Object.keys(COURSE_CATALOG).map(key=>{
+    const parts = key.split("-");
+    const uniId = parts[0];
+    const collegeId = parts[1];
+    const majorIdx = +parts[parts.length-1];
+    const uni = SAUDI_UNIVERSITIES.find(u=>u.id===uniId);
+    const majors = COLLEGE_MAJORS[parts[2]] || [];
+    const major = majors[majorIdx];
+    const college = COLLEGES.find(c=>c.id===collegeId);
+    return {
+      key,
+      major: major ? major[l==="ar"?0:1] : key,
+      org: uni ? uni[l] : uniId,
+      college: college ? college[l] : ""
+    };
+  }).sort((a,b)=>a.org.localeCompare(b.org, l==="ar"?"ar":"en"));
+}
+function renderDevPlans(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const mine = (()=>{ const keep = devPlanOverride; devPlanOverride = null; const k = catalogKeyFor(StudentModule.current()); devPlanOverride = keep; return k; })();
+  const rows = allPlanEntries();
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="devBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.devTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-4); line-height:1.65;">${s.devNote}</p>
+        <div class="stack">
+          <button type="button" class="card" data-dev-plan="__mine__">
+            <span class="card-icon" style="${devPlanOverride?'':'color:var(--support); background:rgba(88,182,144,.16);'}">${ICON.check}</span>
+            <span class="card-body">
+              <span class="card-title">${s.devMineLabel}</span>
+              <span class="card-meta">${escapeHtml(mine)}</span>
+            </span>
+          </button>
+          ${rows.map(r=>{
+            const active = devPlanOverride === r.key;
+            return `
+            <button type="button" class="card" data-dev-plan="${r.key}" style="${active?'border-color:rgba(88,182,144,.4);':''}">
+              <span class="card-icon" style="${active?'color:var(--support); background:rgba(88,182,144,.16);':''}">${active ? ICON.check : ICON.openBook}</span>
+              <span class="card-body">
+                <span class="card-title">${escapeHtml(r.major)}</span>
+                <span class="card-meta">${escapeHtml(r.org)}${active ? " · " + s.devActiveLabel : ""}</span>
+              </span>
+              <span class="card-chevron">${chevronFwd()}</span>
+            </button>`;
+          }).join("")}
+        </div>
+      </div>
+    </section>`;
+  document.getElementById("devBack").addEventListener("click", ()=>{ renderSettings(); });
+  document.querySelectorAll("[data-dev-plan]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const k = btn.dataset.devPlan;
+      devPlanOverride = (k === "__mine__") ? null : k;
+      libraryActiveLevel = null;
+      renderCourseLibrary();
+    });
+  });
+}
+function passedCodes(){
+  const student = StudentModule.current();
+  return (student && Array.isArray(student.passed)) ? student.passed : [];
+}
+function isPassed(catalogString){
+  const code = String(catalogString).split(" - ")[0].trim();
+  return passedCodes().indexOf(code) !== -1;
+}
+function togglePassed(catalogString){
+  const student = StudentModule.current();
+  if(!student) return false;
+  const code = String(catalogString).split(" - ")[0].trim();
+  const list = passedCodes().slice();
+  const at = list.indexOf(code);
+  if(at === -1) list.push(code); else list.splice(at, 1);
+  StudentModule.update({ passed: list });
+  return at === -1;
+}
+function rebuildSemesterFromPlan(){
+  const student = StudentModule.current();
+  if(!student) return;
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return;
+  const catalog = COURSE_CATALOG[catalogKeyFor(student)];
+  const levelId = levelIdForLabel(semester.label) || levelIdForLabel(student.level);
+  const wanted = (catalog && levelId && catalog[levelId]) ? catalog[levelId] : [];
+  if(!wanted.length) return;
+  CourseModule.listForSemester(semester.id).forEach(c=>CourseModule.delete(c.id));
+  wanted.forEach(name=>CourseModule.create(semester.id, { name }));
+}
+function wipeEverything(){
+  const done = ()=>{ DB = emptyDB(); applyDir(); renderWelcome(); };
+  try{ localStorage.removeItem(DB_KEY); }catch(e){}
+  idbOpen().then(db=>{
+    if(!db) return done();
+    try{
+      const tx = db.transaction(IDB_STORE, "readwrite");
+      tx.objectStore(IDB_STORE).delete(DB_KEY);
+      tx.oncomplete = done; tx.onerror = done; tx.onabort = done;
+    }catch(e){ done(); }
+  }).catch(done);
+}
 /* No server, no form, no collected data: we hand the student's own messaging
    app a ready-written message and step out of the way. Whether they send it,
    and what they add to it, stays entirely theirs. */
@@ -10278,18 +10636,19 @@ function renderCourseLibrary(){
           }).join("")}
         </div>
         <div style="padding-inline:var(--sp-4);">
-          <div class="section-label" style="margin-top:0;">${availableLevels.find(lv=>lv.id===libraryActiveLevel) ? availableLevels.find(lv=>lv.id===libraryActiveLevel)[l] : ''}</div>
+          <div class="section-label" style="margin-top:0;">${availableLevels.find(lv=>lv.id===libraryActiveLevel) ? availableLevels.find(lv=>lv.id===libraryActiveLevel)[l] : ''}${(()=>{ const d = currentCourses.filter(isPassed).length; return d ? ` <span style="color:var(--support); font-weight:400;">· ${s.passedCount(d)}</span>` : ""; })()}</div>
           <div class="stack" id="libraryCourseList">
             ${currentCourses.map(c=>{
               const code = c.split(" - ")[0].trim();
               const name = c.split(" - ").slice(1).join(" - ") || c;
               const isEnriched = !!Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k));
+              const done = isPassed(c);
               return `
-              <button type="button" class="card" data-library-course="${escapeHtml(c)}" style="${isEnriched?'':'opacity:.72;'}">
-                <span class="card-icon" style="${isEnriched?'':'color:var(--ink-muted); background:var(--surface);'}">${isEnriched ? ICON.check : ICON.openBook}</span>
+              <button type="button" class="card" data-library-course="${escapeHtml(c)}" style="${done?'opacity:.55;':(isEnriched?'':'opacity:.72;')}">
+                <span class="card-icon" style="${done?'color:var(--support); background:rgba(88,182,144,.16);':(isEnriched?'':'color:var(--ink-muted); background:var(--surface);')}">${(done||isEnriched) ? ICON.check : ICON.openBook}</span>
                 <span class="card-body">
-                  <span class="card-title">${escapeHtml(name)}</span>
-                  <span class="card-meta">${code} · ${isEnriched ? s.libraryEnrichedLabel : s.libraryNotYetLabel}</span>
+                  <span class="card-title" style="${done?'text-decoration:line-through; text-decoration-color:rgba(255,255,255,.35);':''}">${escapeHtml(name)}</span>
+                  <span class="card-meta">${code} · ${done ? s.passedBadge : (isEnriched ? s.libraryEnrichedLabel : s.libraryNotYetLabel)}</span>
                 </span>
                 <span class="card-chevron">${chevronFwd()}</span>
               </button>`;
@@ -10328,6 +10687,8 @@ function openLibraryCoursePreview(catalogString){
     <div class="sheet" style="max-height:80vh; overflow-y:auto;">
       <div class="sheet-handle"></div>
       <div class="sheet-title">${escapeHtml(name)}</div>
+      <button type="button" class="btn btn-secondary" id="passedToggle" style="width:100%; margin-bottom:var(--sp-3); ${isPassed(catalogString) ? 'color:var(--support); border-color:rgba(88,182,144,.4);' : ''}">${isPassed(catalogString) ? s.passedUnmarkBtn : s.passedMarkBtn}</button>
+      ${isPassed(catalogString) ? `<p class="type-caption" style="color:var(--ink-muted); margin:-6px 0 var(--sp-3); line-height:1.6;">${s.passedNote}</p>` : ""}
       ${enrichment ? `
         <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[l])}</p>
         <p class="type-body" style="color:var(--ink-muted); font-size:var(--fs-caption); margin-bottom:var(--sp-3);"><strong>${s.enrichmentWhyLabel}</strong> ${escapeHtml(enrichment.why[l])}</p>
@@ -10348,6 +10709,14 @@ function openLibraryCoursePreview(catalogString){
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
   function close(){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); }, 300); }
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  const passedBtn = overlay.querySelector("#passedToggle");
+  if(passedBtn) passedBtn.addEventListener("click", ()=>{
+    togglePassed(catalogString);
+    close();
+    /* Redraw whichever screen asked for this sheet, so the change is visible
+       straight away rather than on the next visit. */
+    if(document.getElementById("libraryCourseList")) renderCourseLibrary();
+  });
 }
 function renderJourney(){
   applyDir();
@@ -12278,7 +12647,10 @@ function renderSettings(){
         ${CONTACT.whatsapp ? `<button type="button" class="btn btn-secondary" id="inviteBtn" style="margin-top:var(--sp-2);">${s.inviteEntryLabel}</button>
         <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.inviteNote}</p>` : ""}
         <button type="button" class="btn btn-secondary" id="aboutBtn" style="margin-top:var(--sp-2);">${s.aboutEntryLabel}</button>
-        <button type="button" class="btn btn-secondary" id="resetBtn" style="color:var(--attention); margin-top:var(--sp-2);">${s.resetLabel}</button>
+        <button type="button" class="btn btn-secondary" id="devPlansBtn" style="margin-top:var(--sp-2);">${s.devEntryLabel}</button>
+        <button type="button" class="btn btn-secondary" id="resetBtn" style="margin-top:var(--sp-5); color:var(--attention); border-color:rgba(216,112,96,.35);">${s.resetEntryLabel}</button>
+        <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.resetNote}</p>
+
       </div>
     </section>
   `;
@@ -12301,6 +12673,29 @@ function renderSettings(){
     window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
   });
   document.getElementById("aboutBtn").addEventListener("click", ()=>{ renderAbout(); });
+  document.getElementById("devPlansBtn").addEventListener("click", ()=>{ renderDevPlans(); });
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    /* Erasing everything is asked twice on purpose: the first sheet explains
+       what goes, the second makes the person say it again after reading. One
+       mis-tap should never cost a student their notebooks. */
+    showConfirmSheet({
+      title: s.resetConfirmTitle,
+      text: s.resetConfirmText,
+      confirmLabel: s.resetConfirmBtn,
+      danger: true,
+      onConfirm: ()=>{
+        setTimeout(()=>{
+          showConfirmSheet({
+            title: s.resetConfirmTitle2,
+            text: s.resetConfirmText2,
+            confirmLabel: s.resetConfirmBtn2,
+            danger: true,
+            onConfirm: wipeEverything
+          });
+        }, 340);
+      }
+    });
+  });
   document.getElementById("langAr").addEventListener("click", ()=>{ StudentModule.updateLang("ar"); renderSettings(); });
   document.getElementById("langEn").addEventListener("click", ()=>{ StudentModule.updateLang("en"); renderSettings(); });
   document.getElementById("companionMale").addEventListener("click", ()=>{ StudentModule.updateCompanion("male"); renderSettings(); });
@@ -12357,8 +12752,19 @@ function renderProfileEditSettings(){
 
   document.getElementById("setSave").addEventListener("click", ()=>{
     if(!validateProfileDraft("set", setDraft)) return;
+    const before = catalogKeyFor(student);
     StudentModule.updateName(document.getElementById("setName").value);
     StudentModule.update(setDraft);
+    const after = catalogKeyFor(StudentModule.current());
+    if(before !== after && COURSE_CATALOG[after]){
+      showConfirmSheet({
+        title: s.planChangedTitle,
+        text: s.planChangedText,
+        confirmLabel: s.planChangedConfirm,
+        onConfirm: ()=>{ rebuildSemesterFromPlan(); renderSettings(); }
+      });
+      return;
+    }
     renderSettings();
   });
 }
