@@ -425,6 +425,82 @@ ul,ol{ list-style:none; }
    visible, so the courses always began below the fold. The explanations now
    live behind one small button in the header, and the level chips sit
    directly under it, so the list starts at the top of the screen. */
+/* Bare circular icons told a student nothing: a plus, a grid and a book with
+   no words. Each tool now carries its name under it — the icon aids
+   recognition, the word carries the meaning. */
+/* Five day columns and a narrow time column: the whole week visible at once,
+   which is the entire point of a timetable. Cells stay square-ish and the
+   course name is clipped rather than wrapped, so rows keep their rhythm. */
+.grid-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 calc(var(--sp-4) * -1); padding:0 var(--sp-4); }
+.tt{ width:100%; border-collapse:separate; border-spacing:3px; min-width:320px; }
+.tt th{
+  font-size:10.5px; font-weight:700; color:var(--ink-muted);
+  padding:4px 2px; text-align:center; font-family:inherit;
+}
+.tt td{ padding:0; }
+.tt-time{
+  font-size:9.5px; color:var(--ink-muted); text-align:center;
+  white-space:nowrap; width:36px; line-height:1.25;
+}
+.tt-cell{
+  width:100%; min-height:46px; border-radius:9px; padding:5px 3px;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  background:var(--surface); border:1px solid rgba(255,255,255,.05);
+  color:var(--ink-muted); font-family:inherit; font-size:9.5px; line-height:1.25;
+  overflow:hidden;
+}
+.tt-cell-full{ color:#fff; font-weight:600; font-size:9.5px; border:none; }
+.tt-cell span{
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+  overflow:hidden; word-break:break-word;
+}
+.tt-cell:active{ transform:scale(.95); }
+.hub-card{
+  display:flex; flex-direction:column; align-items:stretch; gap:7px; width:100%;
+  padding:16px; border-radius:var(--r-md); text-align:start;
+  background:linear-gradient(120deg, rgba(var(--sk),.13), rgba(255,255,255,.03));
+  border:1px solid rgba(var(--sk),.26);
+  transition:transform 180ms var(--ease-spring);
+}
+.hub-card:active{ transform:scale(.98); }
+.hub-card-top{ display:flex; align-items:center; gap:9px; }
+.hub-card-icon{
+  width:32px; height:32px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--sk),.22); color:rgb(var(--sk));
+}
+.hub-card-icon svg{ width:16px; height:16px; }
+.hub-card-label{ font-size:11px; font-weight:700; color:rgb(var(--sk)); letter-spacing:.02em; }
+.hub-card-title{ font-size:var(--fs-body); font-weight:700; line-height:1.4; }
+.hub-card-why{ font-size:var(--fs-caption); color:var(--ink-muted); line-height:1.6; }
+.glass-plate{
+  background:var(--surface); border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r-md); padding:var(--sp-4); margin-bottom:var(--sp-4);
+}
+.tool-row{ display:flex; gap:8px; }
+.tool-tile{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:10px 6px; border-radius:var(--r-md);
+  background:var(--surface); border:1px solid rgba(255,255,255,.07);
+  color:var(--ink); font-family:inherit; font-size:11.5px; font-weight:600;
+  transition:transform 180ms var(--ease-spring), background 200ms var(--ease);
+}
+.tool-tile:active{ transform:scale(.96); }
+.tool-tile svg{ width:19px; height:19px; color:var(--accent); }
+
+/* Long lists are read a page at a time rather than by endless scrolling: the
+   student always knows how much is left and can never lose their place. */
+.pager{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-top:var(--sp-3);
+}
+.pager-btn{
+  padding:8px 15px; border-radius:999px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.08);
+  color:var(--ink); font-family:inherit; font-size:12.5px; font-weight:600;
+}
+.pager-btn:disabled{ opacity:.35; }
+.pager-count{ font-size:12.5px; color:var(--ink-muted); font-weight:600; }
 .lib-head{
   display:flex; align-items:center; gap:8px;
   padding:0 var(--sp-4) var(--sp-3);
@@ -1219,6 +1295,35 @@ const STR = {
     setTabDisplay:"العرض",
     libInfoBtn:"عن هذه الخطة",
     prepTabReview:"ما لم تفهمه",
+    toolNotebook:"الدفتر",
+    weekendTitle:"عطلة نهاية الأسبوع",
+    gridEmptyCell:"—",
+    gridAddHint:"اضغط أي خانة فارغة لتضع فيها محاضرة",
+    gridPeriodsLabel:"عدد الحصص في اليوم",
+    hubTitleNew:"ماذا أفعل حين…",
+    hubNowLabel:"يناسبك الآن",
+    hubNowWhyExam:"لديك اختبار قريب",
+    hubNowWhyStart:"أول الفصل — الوقت المناسب للتخطيط",
+    hubNowWhyStuck:"سجّلت مواضيع لم تفهمها",
+    hubNowWhyDefault:"مهارة تبدأ بها",
+    hubMineLabel:"من تخصصك",
+    hubNextLabel:"لم تقرأها بعد",
+    hubSearchPlaceholder:"اكتب ما يزعجك… مثال: أنسى بسرعة",
+    hubSearchEmpty:"لا مهارة تطابق ما كتبت. جرّب كلمة أخرى.",
+    hubBrowseAll:"تصفّح كل المهارات",
+    hubBrowseBack:"عودة",
+    weekendSub:"يومان لا محاضرات فيهما — اكتب فيهما خطتك للمراجعة.",
+    weekendPlaceholder:"مثال: السبت صباحًا — مراجعة الفصل الثالث من التفاضل، ثم حل عشر مسائل.",
+    weekendSaved:"خطتك محفوظة في جهازك",
+    scheduleColorsBtn:"ألوان المقررات",
+    scheduleTabWeek:"أيام الدراسة",
+    scheduleTabWeekend:"الجمعة والسبت",
+    toolSchedule:"الجدول",
+    toolAddCourse:"أضف مقررًا",
+    toolAddEvent:"أضف حدثًا",
+    pageOf:(a,b)=>`${a} من ${b}`,
+    nextPage:"التالي",
+    prevPage:"السابق",
     prepTabExams:"اختباراتك",
     prepTabSources:"مراجع المادة",
     libInfoTitle:"عن هذه الخطة",
@@ -1605,6 +1710,35 @@ const STR = {
     setTabDisplay:"Display",
     libInfoBtn:"About this plan",
     prepTabReview:"To review",
+    toolNotebook:"Notebook",
+    weekendTitle:"Weekend",
+    gridEmptyCell:"—",
+    gridAddHint:"Tap any empty cell to put a class in it",
+    gridPeriodsLabel:"Periods per day",
+    hubTitleNew:"What do I do when…",
+    hubNowLabel:"For you right now",
+    hubNowWhyExam:"You have an exam coming",
+    hubNowWhyStart:"Start of term — the time to plan",
+    hubNowWhyStuck:"You logged topics you didn't understand",
+    hubNowWhyDefault:"A skill to begin with",
+    hubMineLabel:"From your field",
+    hubNextLabel:"You haven't read this yet",
+    hubSearchPlaceholder:"Type what's bothering you… e.g. I forget quickly",
+    hubSearchEmpty:"No skill matches that. Try another word.",
+    hubBrowseAll:"Browse every skill",
+    hubBrowseBack:"Back",
+    weekendSub:"Two days without classes — write your revision plan for them.",
+    weekendPlaceholder:"e.g. Saturday morning — review chapter 3 of calculus, then work ten problems.",
+    weekendSaved:"Your plan is saved on your device",
+    scheduleColorsBtn:"Course colours",
+    scheduleTabWeek:"Class days",
+    scheduleTabWeekend:"Fri & Sat",
+    toolSchedule:"Schedule",
+    toolAddCourse:"Add course",
+    toolAddEvent:"Add event",
+    pageOf:(a,b)=>`${a} of ${b}`,
+    nextPage:"Next",
+    prevPage:"Previous",
     prepTabExams:"Your exams",
     prepTabSources:"Course sources",
     libInfoTitle:"About this plan",
@@ -9237,7 +9371,7 @@ function renderSemester(){
   const semesterEventsHtml = semester ? `
     <div class="section-label" style="display:flex; align-items:center; justify-content:space-between; margin-top:0;">
       <span>${s.semesterEventsLabel}</span>
-      <button type="button" class="btn-icon" id="addSemesterEventBtn" aria-label="${s.addEventBtn}" style="width:30px; height:30px;">${ICON.plus}</button>
+      <button type="button" class="lib-info-btn" id="addSemesterEventBtn">${ICON.plus}<span>${s.toolAddEvent}</span></button>
     </div>
     ${semesterEvents.length ? `<div class="stack" style="margin-bottom:var(--sp-5);">${semesterEvents.map(e=>{
       const past = isEventPast(e);
@@ -9281,12 +9415,15 @@ function renderSemester(){
           ${semester ? `<div class="screen-header-sub">${escapeHtml(semester.label)}</div>` : ""}
         </div>
         ${semester ? `<div style="display:flex; gap:8px;">
-          <button type="button" class="btn-icon" id="rawNotebookBtn" aria-label="${s.rawNotebookTitle}">${ICON.openBook}</button>
-          <button type="button" class="btn-icon" id="weeklyScheduleBtn" aria-label="${s.weeklyScheduleEntryLabel}">${ICON.weekGrid}</button>
-          <button type="button" class="btn-icon" id="addCourseBtn" aria-label="${s.addCourseBtn}">${ICON.plus}</button>
+          <span style="width:8px;"></span>
         </div>` : ""}
       </div>
       <div class="screen-content">
+        <div class="tool-row" style="margin-bottom:var(--sp-4);">
+          <button type="button" class="tool-tile" id="rawNotebookBtn">${ICON.openBook}<span>${s.toolNotebook}</span></button>
+          <button type="button" class="tool-tile" id="weeklyScheduleBtn">${ICON.weekGrid}<span>${s.toolSchedule}</span></button>
+          <button type="button" class="tool-tile" id="addCourseBtn">${ICON.plus}<span>${s.toolAddCourse}</span></button>
+        </div>
         ${semesterEventsHtml}
         <div class="section-label">${s.coursesLabel}</div>
         ${bodyHtml}
@@ -10556,6 +10693,68 @@ let settingsTab = "display";
    scrolling past two sections to reach the third. Tabs let a student go
    straight to the one they opened the screen for. */
 let prepTab = "review";
+/* Which page of a long list is showing. Reset whenever the list itself
+   changes, so a student never lands on a page that no longer exists. */
+/* The schedule showed five days stacked one under another, plus a colour
+   legend on top — so reaching Thursday meant scrolling past everything else.
+   One day at a time now, chosen from a row of tabs, with the weekend given
+   its own place: two days that carry no classes but carry the revision, and
+   a student who has nowhere to write that plan simply doesn't make one. */
+/* A timetable exists before it is filled: a student recognises the shape of
+   their week from school, and an empty grid invites them to fill it in a way
+   a blank list never does. Six periods by default because that covers the
+   longest university day here; the student can raise or lower it, and the
+   times are only a starting point — every slot is editable once tapped. */
+const DEFAULT_PERIODS = [
+  { start:"08:00", end:"08:50" },
+  { start:"09:00", end:"09:50" },
+  { start:"10:00", end:"10:50" },
+  { start:"11:00", end:"11:50" },
+  { start:"12:00", end:"12:50" },
+  { start:"13:00", end:"13:50" }
+];
+function periodsFor(semester){
+  const n = (semester && semester.periodCount) || DEFAULT_PERIODS.length;
+  const out = [];
+  for(let i = 0; i < n; i++){
+    out.push(DEFAULT_PERIODS[i] || { start:"", end:"" });
+  }
+  return out;
+}
+/* A session belongs to the period whose start time it is nearest to, so a
+   class the student moved to 09:15 still sits in the second row rather than
+   vanishing from the grid. */
+function periodIndexFor(session, periods){
+  const toMin = (hhmm)=>{
+    const m = /^(\d{1,2}):(\d{2})/.exec(hhmm || "");
+    return m ? (+m[1])*60 + (+m[2]) : null;
+  };
+  const at = toMin(session.startTime);
+  if(at === null) return 0;
+  /* The slot a class falls within, not the one it is arithmetically nearest:
+     a lecture at 10:40 belongs to the ten o'clock period even though eleven
+     is closer on the clock. Anything before the first period sits in it. */
+  let idx = 0;
+  periods.forEach((p, i)=>{
+    const s = toMin(p.start);
+    if(s !== null && s <= at) idx = i;
+  });
+  return idx;
+}
+let scheduleDay = null;
+let scheduleTab = "week";
+let libraryPage = 0;
+let refMapLevel = null;
+const PAGE_SIZE = 5;
+function pagerHtml(page, total, s, attr){
+  if(total <= 1) return "";
+  return `
+    <div class="pager">
+      <button type="button" class="pager-btn" data-${attr}="prev" ${page<=0?"disabled":""}>${s.prevPage}</button>
+      <span class="pager-count">${s.pageOf(page+1, total)}</span>
+      <button type="button" class="pager-btn" data-${attr}="next" ${page>=total-1?"disabled":""}>${s.nextPage}</button>
+    </div>`;
+}
 function showWelcomeToast(){
   if(welcomeShown) return;
   const student = StudentModule.current();
@@ -10670,8 +10869,20 @@ function renderReferenceMap(){
         <span style="width:40px;"></span>
       </div>
       <div class="screen-content">
-        <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.refMapStats(courseCount, resourceCount, verifiedCount)}</p>
-        ${levels.map(lv=>`
+        <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-3);">${s.refMapStats(courseCount, resourceCount, verifiedCount)}</p>
+        ${(()=>{ if(!refMapLevel || !levels.find(lv=>lv.id===refMapLevel)) refMapLevel = levels.length ? levels[0].id : null; return ""; })()}
+        <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:7px; margin-bottom:var(--sp-4);">
+          ${levels.map((lv,i)=>{
+            const on = lv.id === refMapLevel;
+            const n = catalog[lv.id].filter(c=>Object.keys(COURSE_ENRICHMENT).find(x=>c.trim().startsWith(x))).length;
+            return `
+            <button type="button" class="level-chip ${on?'level-chip-active':''}" data-refmap-level="${lv.id}">
+              <span class="level-chip-num">${i+1}</span>
+              <span class="level-chip-count">${n}/${catalog[lv.id].length}</span>
+            </button>`;
+          }).join("")}
+        </div>
+        ${levels.filter(lv=>lv.id===refMapLevel).map(lv=>`
           <div class="section-label">${lv[l]}</div>
           <div class="stack" style="margin-bottom:var(--sp-4);">
             ${catalog[lv.id].map(c=>{
@@ -10701,6 +10912,17 @@ function renderReferenceMap(){
     </section>
   `;
   document.getElementById("refMapBack").addEventListener("click", ()=>{ renderCourseLibrary(); });
+  document.querySelectorAll("[data-refmap-level]").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      if(chip.dataset.refmapLevel === refMapLevel) return;
+      refMapLevel = chip.dataset.refmapLevel;
+      renderReferenceMap();
+      /* Land at the top of the newly chosen level rather than wherever the
+         previous one happened to be scrolled to. */
+      const content = document.querySelector(".screen-content");
+      if(content) content.scrollTop = 0;
+    });
+  });
 }
 /* A plain reading sheet: a title and a few paragraphs. Used where an
    explanation matters but should not occupy a screen the person came to for
@@ -10772,8 +10994,13 @@ function renderCourseLibrary(){
         </div>
         <div style="padding-inline:var(--sp-4);">
           <div class="section-label" style="margin-top:0;">${availableLevels.find(lv=>lv.id===libraryActiveLevel) ? availableLevels.find(lv=>lv.id===libraryActiveLevel)[l] : ''}${(()=>{ const d = currentCourses.filter(isPassed).length; return d ? ` <span style="color:var(--support); font-weight:400;">· ${s.passedCount(d)}</span>` : ""; })()}</div>
+          ${(()=>{
+            const totalPages = Math.max(1, Math.ceil(currentCourses.length / PAGE_SIZE));
+            if(libraryPage > totalPages-1) libraryPage = 0;
+            return "";
+          })()}
           <div class="stack" id="libraryCourseList">
-            ${currentCourses.map(c=>{
+            ${currentCourses.slice(libraryPage*PAGE_SIZE, libraryPage*PAGE_SIZE+PAGE_SIZE).map(c=>{
               const code = c.split(" - ")[0].trim();
               const name = c.split(" - ").slice(1).join(" - ") || c;
               const isEnriched = !!Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k));
@@ -10788,6 +11015,9 @@ function renderCourseLibrary(){
                 <span class="card-chevron">${chevronFwd()}</span>
               </button>`;
             }).join("")}
+          </div>
+          <div style="padding:0 var(--sp-4) var(--sp-4);">
+            ${pagerHtml(libraryPage, Math.max(1, Math.ceil(currentCourses.length / PAGE_SIZE)), s, "lib-page")}
           </div>
         </div>`}
       </div>
@@ -10807,10 +11037,17 @@ function renderCourseLibrary(){
       paragraphs: [ s.librarySub ].concat(catalogHasEnglishSource(catalog) ? [ s.libraryEnglishNotice ] : [])
     });
   });
+  document.querySelectorAll("[data-lib-page]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      libraryPage += (btn.dataset.libPage === "next") ? 1 : -1;
+      renderCourseLibrary();
+    });
+  });
   document.querySelectorAll("[data-library-level]").forEach(chip=>{
     chip.addEventListener("click", ()=>{
       if(chip.dataset.libraryLevel === libraryActiveLevel) return;
       libraryActiveLevel = chip.dataset.libraryLevel;
+      libraryPage = 0;
       renderCourseLibrary();
     });
   });
@@ -11307,6 +11544,97 @@ const SKILLS_START_HERE = ["how-to-learn", "study-plan", "exam-prep"];
 function startHereSkills(){
   return SKILLS_START_HERE.map(id=>SKILLS.find(sk=>sk.id===id)).filter(sk=>sk && !isSkillArchived(sk.id));
 }
+/* Forty-eight equal tiles told a student nothing about which of them was
+   their weapon today, so the shelf became noise. The hub now answers one
+   question — what should I read now — with three skills and a reason for
+   each, and keeps the rest behind a search, because a student doesn't look
+   for "a skill", they look for a way out of a situation they are in. */
+let hubSearch = "";
+let hubBrowseAll = false;
+
+function hubExamSoon(){
+  const student = StudentModule.current();
+  if(!student) return false;
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return false;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return false;
+  const soon = Date.now() + 12*24*60*60*1000;
+  return (CourseModule.listForSemester(semester.id) || []).some(c=>
+    (AcademicEventModule.listForCourse(c.id) || []).some(e=>{
+      const at = new Date(e.date).getTime();
+      return at >= Date.now() && at <= soon;
+    })
+  );
+}
+function hubHasUnclear(){
+  const student = StudentModule.current();
+  if(!student) return false;
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return false;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return false;
+  return (CourseModule.listForSemester(semester.id) || []).some(c=>{
+    const nb = DB.courseNotebooks && DB.courseNotebooks[c.id];
+    return nb && (nb.checks || []).some(ch=>ch.understood === false);
+  });
+}
+/* One skill, with the reason it was chosen — a suggestion the student can
+   agree or disagree with, rather than an unexplained pick. */
+function hubNowSkill(){
+  const s = t();
+  const pick = (catId)=>{
+    const pool = SKILLS.filter(sk=>sk.category && sk.category.id === catId && !isSkillArchived(sk.id));
+    return pool.length ? pool[new Date().getDate() % pool.length] : null;
+  };
+  if(hubExamSoon()){ const sk = pick("exams_universal"); if(sk) return { sk, why: s.hubNowWhyExam }; }
+  if(hubHasUnclear()){ const sk = pick("study_universal"); if(sk) return { sk, why: s.hubNowWhyStuck }; }
+  const planning = pick("planning_universal");
+  if(planning) return { sk: planning, why: s.hubNowWhyStart };
+  const any = startHereSkills()[0];
+  return any ? { sk: any, why: s.hubNowWhyDefault } : null;
+}
+function hubMineSkill(){
+  const student = StudentModule.current();
+  const pool = SKILLS.filter(sk=> sk.scope && sk.scope.type !== "universal"
+    && skillAppliesToStudent(sk, student) && !isSkillArchived(sk.id));
+  return pool.length ? pool[new Date().getDate() % pool.length] : null;
+}
+function hubNextSkill(exclude){
+  const taken = exclude.filter(Boolean).map(sk=>sk.id);
+  const pool = startHereSkills().concat(
+    SKILLS.filter(sk=>(!sk.scope || sk.scope.type==="universal") && !isSkillArchived(sk.id))
+  ).filter(sk=>taken.indexOf(sk.id) === -1);
+  return pool.length ? pool[0] : null;
+}
+/* Searching the way a student would ask: their words against everything the
+   skill says, not just its title. */
+function hubSearchResults(){
+  const q = normalizeSearchText(hubSearch);
+  if(q.length < 2) return null;
+  const l = lang();
+  return SKILLS.filter(sk=>{
+    if(isSkillArchived(sk.id)) return false;
+    /* tips, like every other field here, is a {ar,en} pair rather than a
+       list — searching the wrong shape would have quietly matched nothing. */
+    const hay = [sk.title, sk.desc, sk.intro, sk.tips, sk.mistake, sk.exercise]
+      .map(f=>f && f[l]).filter(Boolean).join(" ");
+    return normalizeSearchText(hay).includes(q);
+  });
+}
+function hubCardHtml(sk, label, why, s, l){
+  if(!sk) return "";
+  const rgb = skillFamilyRgb(sk);
+  return `
+    <button type="button" class="hub-card" data-hub-skill="${sk.id}" style="--sk:${rgb};">
+      <span class="hub-card-top">
+        <span class="hub-card-icon">${ICON[sk.icon] || ICON.check}</span>
+        <span class="hub-card-label">${label}</span>
+      </span>
+      <span class="hub-card-title">${escapeHtml(sk.title[l])}</span>
+      ${why ? `<span class="hub-card-why">${escapeHtml(why)}</span>` : ""}
+    </button>`;
+}
 function skillNudgeFor(context, student){
   const major = (student && student.majorId) || "";
   const suffix = major.indexOf("cs") !== -1 ? "cs"
@@ -11413,9 +11741,32 @@ function renderSkillsHub(){
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
-        <div class="screen-header-title">${s.skillsHubTitle}</div>
+        <div class="screen-header-title">${hubBrowseAll ? s.skillsHubTitle : s.hubTitleNew}</div>
       </div>
       <div class="screen-content">
+        ${!hubBrowseAll ? `
+        <input type="text" class="field" id="hubSearch" placeholder="${s.hubSearchPlaceholder}" value="${escapeHtml(hubSearch)}" autocomplete="off" style="margin-bottom:var(--sp-4);">
+        ${(()=>{
+          const found = hubSearchResults();
+          if(found){
+            if(!found.length) return `<p class="type-caption" style="color:var(--ink-muted);">${s.hubSearchEmpty}</p>`;
+            return `<div class="stack">${found.map(sk=>hubCardHtml(sk, sk.category ? sk.category[l] : "", "", s, l)).join("")}</div>`;
+          }
+          const now = hubNowSkill();
+          const mine = hubMineSkill();
+          const next = hubNextSkill([now && now.sk, mine]);
+          return `<div class="stack">
+            ${now ? hubCardHtml(now.sk, s.hubNowLabel, now.why, s, l) : ""}
+            ${mine ? hubCardHtml(mine, s.hubMineLabel, "", s, l) : ""}
+            ${next ? hubCardHtml(next, s.hubNextLabel, "", s, l) : ""}
+          </div>`;
+        })()}
+        <div class="tool-row" style="margin-top:var(--sp-5);">
+          <button type="button" class="tool-tile" id="hubBrowseBtn">${ICON.weekGrid}<span>${s.hubBrowseAll}</span></button>
+          <button type="button" class="tool-tile" id="glossaryEntry">${ICON.openBook}<span>${s.glossaryEntryLabel}</span></button>
+        </div>
+        ` : `
+        <button type="button" class="lib-info-btn" id="hubBackBtn" style="margin-bottom:var(--sp-4);">${chevronBack()}<span>${s.hubBrowseBack}</span></button>
         ${hasSpecific ? `
         <div class="segmented" style="margin-bottom:var(--sp-3);">
           <button type="button" class="segmented-btn ${skillsHubTab==='specific'?'segmented-active':''}" id="tabSpecific">${s.skillsSpecificLabel}</button>
@@ -11440,11 +11791,29 @@ function renderSkillsHub(){
         </div>
         ${archivedCount > 0 ? `
         <button type="button" class="type-caption" id="skillsArchiveEntry" style="display:block; margin:var(--sp-4) auto 0; background:none; border:none; text-decoration:underline; color:var(--ink-muted);">${s.skillsArchiveLabel(archivedCount)}</button>` : ""}
+        `}
       </div>
       ${renderTabBar("skills")}
     </section>
   `;
   wireTabBar();
+  document.querySelectorAll("[data-hub-skill]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ skillDetailActiveSection = "tips"; renderSkillDetail(btn.dataset.hubSkill); });
+  });
+  const hubSearchEl = document.getElementById("hubSearch");
+  if(hubSearchEl){
+    hubSearchEl.addEventListener("input", (e)=>{
+      hubSearch = e.target.value;
+      const pos = e.target.selectionStart;
+      renderSkillsHub();
+      const again = document.getElementById("hubSearch");
+      if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(err){} }
+    });
+  }
+  const browseBtn = document.getElementById("hubBrowseBtn");
+  if(browseBtn) browseBtn.addEventListener("click", ()=>{ hubBrowseAll = true; renderSkillsHub(); });
+  const hubBack = document.getElementById("hubBackBtn");
+  if(hubBack) hubBack.addEventListener("click", ()=>{ hubBrowseAll = false; renderSkillsHub(); });
   const glossaryBtn = document.getElementById("glossaryEntry");
   if(glossaryBtn) glossaryBtn.addEventListener("click", ()=>{ renderGlossary(); });
   const archiveBtn = document.getElementById("skillsArchiveEntry");
@@ -12329,6 +12698,12 @@ function renderWeeklySchedule(){
   const courses = CourseModule.listForSemester(semester.id);
   const sessions = WeeklyScheduleModule.listForSemester(semester.id);
   const days = WEEKDAYS.slice(0,5); // Sunday–Thursday, the academic week
+  /* Open on today when today is a class day, otherwise on Sunday: a student
+     checking their schedule almost always wants today first. */
+  if(scheduleDay === null || !days.find(d=>d.id===scheduleDay)){
+    const today = new Date().getDay();
+    scheduleDay = days.find(d=>d.id===today) ? today : days[0].id;
+  }
 
   app.innerHTML = `
     <section class="screen no-tabbar">
@@ -12344,17 +12719,48 @@ function renderWeeklySchedule(){
           <div class="empty-title">${s.scheduleNoCoursesTitle}</div>
           <p class="empty-text">${s.scheduleNoCoursesText}</p>
         </div>` : `
-        <div class="section-label" style="margin-top:0;">${s.courseColorsLabel}</div>
-        <div class="stack" style="margin-bottom:var(--sp-5);">
-          ${courses.map(c=>`
-            <button type="button" class="card" data-color-course="${c.id}" style="padding:10px var(--sp-4);">
-              <span style="width:22px; height:22px; border-radius:50%; background:${courseColorFor(c)}; flex-shrink:0; border:2px solid rgba(255,255,255,.25);"></span>
-              <span class="card-body"><span class="card-title" style="font-size:var(--fs-body);">${escapeHtml(c.name)}</span></span>
-              <span class="type-caption" style="color:var(--ink-muted);">${s.changeColorHint}</span>
-            </button>
-          `).join("")}
+        <div class="set-tabs" style="margin-top:0;">
+          ${[["week",s.scheduleTabWeek],["weekend",s.scheduleTabWeekend]].map(([id,label])=>`
+            <button type="button" class="set-tab ${scheduleTab===id?'set-tab-active':''}" data-sched-tab="${id}">${label}</button>`).join("")}
         </div>
-        ` + days.map(day=>{
+        ${scheduleTab==="weekend" ? `
+        <div class="glass-plate">
+          <div class="section-label" style="margin-top:0;">${s.weekendTitle}</div>
+          <p class="type-caption" style="color:var(--ink-muted); margin:0 0 var(--sp-3); line-height:1.65;">${s.weekendSub}</p>
+          <textarea id="weekendPlan" class="field" rows="9" placeholder="${s.weekendPlaceholder}" style="resize:none; line-height:1.8;">${escapeHtml(semester.weekendPlan || "")}</textarea>
+          <p class="type-caption" style="color:var(--ink-muted); margin-top:8px;" id="weekendStatus"></p>
+        </div>` : `
+        ${(()=>{
+          const periods = periodsFor(semester);
+          const cellFor = (dayId, pi)=>{
+            const found = sessions.filter(x=>x.dayOfWeek===dayId)
+              .find(x=>periodIndexFor(x, periods) === pi);
+            if(!found) return `<button type="button" class="tt-cell" data-tt-add="${dayId}" data-tt-period="${pi}">${s.gridEmptyCell}</button>`;
+            const course = courses.find(c=>c.id===found.courseId);
+            const clr = courseColorFor(course);
+            return `<button type="button" class="tt-cell tt-cell-full" data-tt-session="${found.id}" style="background:${clr};"><span>${escapeHtml(course ? course.name : "—")}</span></button>`;
+          };
+          return `
+          <div class="grid-wrap">
+            <table class="tt">
+              <thead><tr><th></th>${days.map(d=>`<th>${escapeHtml(d[l].slice(0,3))}</th>`).join("")}</tr></thead>
+              <tbody>
+                ${periods.map((p,pi)=>`
+                  <tr>
+                    <td class="tt-time">${escapeHtml(p.start)}</td>
+                    ${days.map(d=>`<td>${cellFor(d.id, pi)}</td>`).join("")}
+                  </tr>`).join("")}
+              </tbody>
+            </table>
+          </div>
+          <p class="type-caption" style="color:var(--ink-muted); margin:var(--sp-3) 0 var(--sp-4);">${s.gridAddHint}</p>
+          <div class="tool-row">
+            <button type="button" class="tool-tile" id="scheduleColorsBtn">${ICON.check}<span>${s.scheduleColorsBtn}</span></button>
+            <button type="button" class="tool-tile" id="periodsFewer">${ICON.close}<span>${s.gridPeriodsLabel}: ${periods.length}</span></button>
+            <button type="button" class="tool-tile" id="periodsMore">${ICON.plus}<span>${s.gridPeriodsLabel}</span></button>
+          </div>`;
+        })()}
+        ` + [].map(day=>{
           const daySessions = sessions.filter(sess=>sess.dayOfWeek===day.id);
           return `
           <div style="margin-bottom:var(--sp-5);">
@@ -12378,11 +12784,63 @@ function renderWeeklySchedule(){
               }).join("")}
             </div>`}
           </div>`;
-        }).join("")}
+        }).join("") + `
+        `}`}
       </div>
     </section>
   `;
   document.getElementById("scheduleBack").addEventListener("click", ()=>{ renderSemester(); });
+  document.querySelectorAll("[data-sched-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.schedTab === scheduleTab) return;
+      scheduleTab = btn.dataset.schedTab;
+      renderWeeklySchedule();
+    });
+  });
+  document.querySelectorAll("[data-tt-add]").forEach(cell=>{
+    cell.addEventListener("click", ()=>{
+      const periods = periodsFor(semester);
+      const p = periods[+cell.dataset.ttPeriod] || { start:"08:00", end:"08:50" };
+      openSessionSheet(semester.id, courses, +cell.dataset.ttAdd, null, renderWeeklySchedule, p);
+    });
+  });
+  document.querySelectorAll("[data-tt-session]").forEach(cell=>{
+    cell.addEventListener("click", ()=>{
+      openSessionSheet(semester.id, courses, null, WeeklyScheduleModule.get(cell.dataset.ttSession), renderWeeklySchedule);
+    });
+  });
+  const fewer = document.getElementById("periodsFewer");
+  if(fewer) fewer.addEventListener("click", ()=>{
+    const n = periodsFor(semester).length;
+    if(n <= 3) return;
+    dbUpdate("semesters", semester.id, { periodCount: n - 1 });
+    renderWeeklySchedule();
+  });
+  const more = document.getElementById("periodsMore");
+  if(more) more.addEventListener("click", ()=>{
+    const n = periodsFor(semester).length;
+    if(n >= DEFAULT_PERIODS.length) return;
+    dbUpdate("semesters", semester.id, { periodCount: n + 1 });
+    renderWeeklySchedule();
+  });
+  const colorsBtn = document.getElementById("scheduleColorsBtn");
+  if(colorsBtn) colorsBtn.addEventListener("click", ()=>{
+    openListSheetOfCourses(courses, renderWeeklySchedule);
+  });
+  const plan = document.getElementById("weekendPlan");
+  if(plan){
+    let timer = null;
+    plan.addEventListener("input", ()=>{
+      /* Saved as they write, quietly: a plan lost because the screen changed
+         is a plan they won't write twice. */
+      if(timer) clearTimeout(timer);
+      timer = setTimeout(()=>{
+        dbUpdate("semesters", semester.id, { weekendPlan: plan.value });
+        const st = document.getElementById("weekendStatus");
+        if(st) st.textContent = t().weekendSaved;
+      }, 500);
+    });
+  }
   document.querySelectorAll("[data-add-day]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ openSessionSheet(semester.id, courses, +btn.dataset.addDay, null, renderWeeklySchedule); });
   });
@@ -12393,6 +12851,34 @@ function renderWeeklySchedule(){
     card.addEventListener("click", ()=>{
       openSessionSheet(semester.id, courses, null, WeeklyScheduleModule.get(card.dataset.sessionId), renderWeeklySchedule);
     });
+  });
+}
+/* The colour legend used to sit permanently at the top of the schedule,
+   pushing the days down. It is a setting, not a daily view, so it moved
+   behind a button. */
+function openListSheetOfCourses(courses, onDone){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.courseColorsLabel}</div>
+      <div class="stack">
+        ${courses.map(c=>`
+          <button type="button" class="card" data-color-course="${c.id}" style="padding:10px var(--sp-4);">
+            <span style="width:22px; height:22px; border-radius:50%; background:${courseColorFor(c)}; flex-shrink:0; border:2px solid rgba(255,255,255,.25);"></span>
+            <span class="card-body"><span class="card-title" style="font-size:var(--fs-body);">${escapeHtml(c.name)}</span></span>
+            <span class="type-caption" style="color:var(--ink-muted);">${s.changeColorHint}</span>
+          </button>`).join("")}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = ()=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>overlay.remove(), 260); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelectorAll("[data-color-course]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ close(); openCourseColorSheet(btn.dataset.colorCourse, onDone); });
   });
 }
 function openCourseColorSheet(courseId, onDone){
@@ -12424,7 +12910,7 @@ function openCourseColorSheet(courseId, onDone){
     });
   });
 }
-function openSessionSheet(semesterId, courses, presetDay, existingSession, onDone){
+function openSessionSheet(semesterId, courses, presetDay, existingSession, onDone, presetPeriod){
   const s = t();
   const l = lang();
   const editing = !!existingSession;
@@ -12451,11 +12937,11 @@ function openSessionSheet(semesterId, courses, presetDay, existingSession, onDon
       <div style="display:flex; gap:10px;">
         <div class="field-group" style="flex:1;">
           <label class="field-label" for="sessStart">${s.sessionStartLabel}</label>
-          <input type="time" class="field" id="sessStart" value="${editing?escapeHtml(existingSession.startTime):'08:00'}">
+          <input type="time" class="field" id="sessStart" value="${editing?escapeHtml(existingSession.startTime):escapeHtml((presetPeriod&&presetPeriod.start)||'08:00')}">
         </div>
         <div class="field-group" style="flex:1;">
           <label class="field-label" for="sessEnd">${s.sessionEndLabel}</label>
-          <input type="time" class="field" id="sessEnd" value="${editing?escapeHtml(existingSession.endTime):'10:00'}">
+          <input type="time" class="field" id="sessEnd" value="${editing?escapeHtml(existingSession.endTime):escapeHtml((presetPeriod&&presetPeriod.end)||'10:00')}">
         </div>
       </div>
       <p class="field-error" id="sessTimeError">${s.sessionTimeError}</p>
