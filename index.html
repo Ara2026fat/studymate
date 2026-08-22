@@ -1291,6 +1291,14 @@ const STR = {
     planChangedTitle:"تغيّرت خطتك",
     passedMarkBtn:"أنهيتُ هذه المادة",
     devEntryLabel:"تصفّح كل الخطط",
+    contactShort:"سؤال أو اقتراح مرجع",
+    inviteShort:"أرسل صفحة التعريف بالتطبيق",
+    aboutShort:"الفكرة، والمصادر، والحقوق",
+    devLockTitle:"وضع المطوّر",
+    devLockText:"هذه الشاشة لصاحب التطبيق. أدخل كلمة المرور للمتابعة.",
+    devLockPlaceholder:"كلمة المرور",
+    devLockWrong:"كلمة المرور غير صحيحة.",
+    devUnlock:"دخول",
     welcomeBack:(name)=>name ? `أهلًا بك، ${name}` : "أهلًا بك",
     setTabDisplay:"العرض",
     libInfoBtn:"عن هذه الخطة",
@@ -1706,6 +1714,14 @@ const STR = {
     planChangedTitle:"Your plan changed",
     passedMarkBtn:"I've completed this course",
     devEntryLabel:"Browse every plan",
+    contactShort:"A question, or suggest a reference",
+    inviteShort:"Send the app's introduction page",
+    aboutShort:"The idea, the sources, and the rights",
+    devLockTitle:"Developer mode",
+    devLockText:"This screen is for the app's owner. Enter the password to continue.",
+    devLockPlaceholder:"Password",
+    devLockWrong:"Wrong password.",
+    devUnlock:"Enter",
     welcomeBack:(name)=>name ? `Welcome, ${name}` : "Welcome",
     setTabDisplay:"Display",
     libInfoBtn:"About this plan",
@@ -1838,6 +1854,8 @@ const ICON = {
   mic:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="17.5" x2="12" y2="21.5"/><line x1="8.5" y1="21.5" x2="15.5" y2="21.5"/></svg>`,
   book:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.2"/><line x1="9" y1="7.5" x2="15" y2="7.5"/><line x1="9" y1="11.5" x2="15" y2="11.5"/><line x1="9" y1="15.5" x2="13" y2="15.5"/></svg>`,
   event:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>`,
+  message:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/></svg>`,
+  share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.4 10.8l7.2-4.1M8.4 13.2l7.2 4.1"/></svg>`,
   info:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.01"/></svg>`,
   weekGrid:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="4.5" x2="8" y2="19.5"/><line x1="13" y1="4.5" x2="13" y2="19.5"/><line x1="17" y1="9.5" x2="17" y2="19.5" opacity="0"/></svg>`,
   bell:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
@@ -10614,6 +10632,42 @@ function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Every plan we carry, labelled by its own institution. Royal Commission
    colleges are listed separately on purpose: a student belongs to their own
    college, not to the authority above it. */
+/* The plan browser exists for the app's owner, not for students: a student
+   seeing ten other programmes learns nothing and only wonders which is
+   really theirs. It stays hidden until the copyright line is tapped seven
+   times and the password given, and the unlock lives in memory only — so
+   closing the app locks it again, and a borrowed phone reveals nothing.
+
+   Change DEV_PASSCODE to whatever you like; it is the only place it appears. */
+const DEV_PASSCODE = "arafat2026";
+let devUnlocked = false;
+let devTapCount = 0;
+function openDevLock(onUnlocked){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.devLockTitle}</div>
+      <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-3); line-height:1.65;">${s.devLockText}</p>
+      <input type="password" class="field" id="devPass" placeholder="${s.devLockPlaceholder}" autocomplete="off" style="margin-bottom:var(--sp-2);">
+      <p class="type-caption" id="devPassErr" style="color:var(--attention); min-height:16px; margin:0 0 var(--sp-2);"></p>
+      <button type="button" class="btn btn-primary" style="width:100%;" id="devPassGo">${s.devUnlock}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = ()=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>overlay.remove(), 260); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  const tryIt = ()=>{
+    const val = overlay.querySelector("#devPass").value;
+    if(val === DEV_PASSCODE){ devUnlocked = true; close(); onUnlocked(); return; }
+    overlay.querySelector("#devPassErr").textContent = s.devLockWrong;
+  };
+  overlay.querySelector("#devPassGo").addEventListener("click", tryIt);
+  overlay.querySelector("#devPass").addEventListener("keydown", (e)=>{ if(e.key === "Enter") tryIt(); });
+  setTimeout(()=>{ const f = overlay.querySelector("#devPass"); if(f) f.focus(); }, 320);
+}
 function allPlanEntries(){
   const l = lang();
   return Object.keys(COURSE_CATALOG).map(key=>{
@@ -13282,13 +13336,8 @@ function renderSettings(){
         <button type="button" class="btn btn-secondary" id="resetBtn" style="margin-top:var(--sp-5); color:var(--attention); border-color:rgba(216,112,96,.35);">${s.resetEntryLabel}</button>
         <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.resetNote}</p>` : ""}
         ${settingsTab==="app" ? `
-        ${hasContact() ? `<button type="button" class="btn btn-secondary" id="contactBtn" style="margin-top:var(--sp-2);">${s.contactEntryLabel}</button>
-        <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.contactNote}</p>` : ""}
-        ${CONTACT.whatsapp ? `<button type="button" class="btn btn-secondary" id="inviteBtn" style="margin-top:var(--sp-2);">${s.inviteEntryLabel}</button>
-        <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.inviteNote}</p>` : ""}
-        <button type="button" class="btn btn-secondary" id="aboutBtn" style="margin-top:var(--sp-2);">${s.aboutEntryLabel}</button>
         ${(()=>{ const on = isStandalone(); return `
-        <div class="card" style="cursor:default; align-items:flex-start; margin-top:var(--sp-4);">
+        <div class="card" style="cursor:default; align-items:flex-start; margin-bottom:var(--sp-4);">
           <span class="card-icon" style="${on?'color:var(--support); background:rgba(88,182,144,.16);':''}">${on ? ICON.check : ICON.download}</span>
           <span class="card-body">
             <span class="card-title">${on ? s.installStatusYes : s.installStatusNo}</span>
@@ -13296,11 +13345,57 @@ function renderSettings(){
             ${(!on && deferredInstallPrompt) ? `<button type="button" class="btn btn-primary" id="settingsInstallBtn" style="margin-top:var(--sp-3); padding:10px;">${s.installNowBtn}</button>` : ""}
           </span>
         </div>`; })()}
-        <button type="button" class="btn btn-secondary" id="devPlansBtn" style="margin-top:var(--sp-2);">${s.devEntryLabel}</button>` : ""}
+        <div class="stack">
+          ${hasContact() ? `
+          <button type="button" class="card" id="contactBtn">
+            <span class="card-icon">${ICON.message}</span>
+            <span class="card-body">
+              <span class="card-title">${s.contactEntryLabel}</span>
+              <span class="card-meta">${s.contactShort}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>` : ""}
+          ${CONTACT.whatsapp ? `
+          <button type="button" class="card" id="inviteBtn">
+            <span class="card-icon">${ICON.share}</span>
+            <span class="card-body">
+              <span class="card-title">${s.inviteEntryLabel}</span>
+              <span class="card-meta">${s.inviteShort}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>` : ""}
+          <button type="button" class="card" id="aboutBtn">
+            <span class="card-icon">${ICON.info}</span>
+            <span class="card-body">
+              <span class="card-title">${s.aboutEntryLabel}</span>
+              <span class="card-meta">${s.aboutShort}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+          ${devUnlocked ? `
+          <button type="button" class="card" id="devPlansBtn">
+            <span class="card-icon" style="color:var(--accent);">${ICON.weekGrid}</span>
+            <span class="card-body">
+              <span class="card-title">${s.devEntryLabel}</span>
+              <span class="card-meta">${s.devLockTitle}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>` : ""}
+        </div>` : ""}
 
       </div>
     </section>
   `;
+  /* Seven taps on the copyright line, then the password: hidden enough that
+     no student stumbles into it, reachable enough that the owner never has to
+     hunt for it. */
+  const foot = document.getElementById("creditFooter");
+  if(foot && !devUnlocked) foot.addEventListener("click", ()=>{
+    devTapCount++;
+    if(devTapCount < 7) return;
+    devTapCount = 0;
+    openDevLock(()=>{ settingsTab = "app"; renderSettings(); });
+  });
   document.querySelectorAll("[data-set-tab]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       if(btn.dataset.setTab === settingsTab) return;
