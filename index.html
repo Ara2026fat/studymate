@@ -477,6 +477,11 @@ ul,ol{ list-style:none; }
   background:var(--surface); border:1px solid rgba(255,255,255,.07);
   border-radius:var(--r-md); padding:var(--sp-4); margin-bottom:var(--sp-4);
 }
+/* A label with an icon beside it: the icon says "this does something", the
+   label says what. Buttons that were text alone read as prose on a dark
+   screen and were being skipped. */
+.btn svg{ width:16px; height:16px; flex-shrink:0; }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; }
 .tool-row{ display:flex; gap:8px; }
 .tool-tile{
   flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
@@ -9274,7 +9279,7 @@ function renderToday(){
         </div>
         ${sessionsNote}
         ${dayGuidanceNote}
-        ${reminder.event.isEvaluative ? `<button type="button" class="btn btn-secondary" id="prepStartBtn" data-event-id="${reminder.event.id}" style="margin-top:var(--sp-3); width:100%;">${s.prepStartBtn}</button>` : ""}
+        ${reminder.event.isEvaluative ? `<button type="button" class="btn btn-secondary" id="prepStartBtn" data-event-id="${reminder.event.id}" style="margin-top:var(--sp-3); width:100%;">${ICON.event}<span>${s.prepStartBtn}</span></button>` : ""}
       </div>`;
   }
 
@@ -9445,7 +9450,7 @@ function renderSemester(){
         ${semesterEventsHtml}
         <div class="section-label">${s.coursesLabel}</div>
         ${bodyHtml}
-        ${semester ? `<button type="button" class="btn btn-secondary" id="endSemesterBtn" style="margin-top:var(--sp-5);">${s.endSemesterAction}</button>` : ""}
+        ${semester ? `<button type="button" class="btn btn-secondary" id="endSemesterBtn" style="margin-top:var(--sp-5);">${ICON.check}<span>${s.endSemesterAction}</span></button>` : ""}
       </div>
       ${renderTabBar("semester")}
     </section>
@@ -9585,7 +9590,7 @@ function renderCourseView(courseId){
               ${arabicVersionLink(r, lang())}
             </a>
           `).join("")}
-          ${hasContact() ? `<button type="button" class="btn btn-secondary" id="suggestResourceBtn" style="width:100%; margin-top:var(--sp-3); font-size:var(--fs-caption);">${s.suggestResourceBtn}</button>` : ""}` : ""}
+          ${hasContact() ? `<button type="button" class="btn btn-secondary" id="suggestResourceBtn" style="width:100%; margin-top:var(--sp-3); font-size:var(--fs-caption);">${ICON.message}<span>${s.suggestResourceBtn}</span></button>` : ""}` : ""}
         </div>` : `
         <div class="callout" style="margin-bottom:var(--sp-4);">
           <div class="callout-label">${s.courseBriefLabel}</div>
@@ -9685,7 +9690,7 @@ function renderExamPrepHub(eventId){
             </div>
           `).join("")}
         </div>`}
-        <button type="button" class="btn btn-secondary" id="prepAddExam" style="margin-bottom:var(--sp-4);">${s.notebookAddExamBtn}</button>
+        <button type="button" class="btn btn-secondary" id="prepAddExam" style="margin-bottom:var(--sp-4);">${ICON.plus}<span>${s.notebookAddExamBtn}</span></button>
         ` : ""}
         ${prepTab==="sources" ? `
 
@@ -11123,7 +11128,7 @@ function openLibraryCoursePreview(catalogString){
     <div class="sheet" style="max-height:80vh; overflow-y:auto;">
       <div class="sheet-handle"></div>
       <div class="sheet-title">${escapeHtml(name)}</div>
-      <button type="button" class="btn btn-secondary" id="passedToggle" style="width:100%; margin-bottom:var(--sp-3); ${isPassed(catalogString) ? 'color:var(--support); border-color:rgba(88,182,144,.4);' : ''}">${isPassed(catalogString) ? s.passedUnmarkBtn : s.passedMarkBtn}</button>
+      <button type="button" class="btn btn-secondary" id="passedToggle" style="width:100%; margin-bottom:var(--sp-3); ${isPassed(catalogString) ? 'color:var(--support); border-color:rgba(88,182,144,.4);' : ''}">${ICON.check}<span>${isPassed(catalogString) ? s.passedUnmarkBtn : s.passedMarkBtn}</span></button>
       ${isPassed(catalogString) ? `<p class="type-caption" style="color:var(--ink-muted); margin:-6px 0 var(--sp-3); line-height:1.6;">${s.passedNote}</p>` : ""}
       ${enrichment ? `
         <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[l])}</p>
@@ -11975,7 +11980,7 @@ function renderSkillDetail(skillId){
         <div class="skill-panel-label">${s.exerciseLabel}</div>
         <p class="skill-panel-text">${escapeHtml(skill.exercise[l])}</p>
         ${tryNowCourses().length ? `
-        <button type="button" class="btn btn-secondary" id="skillTryNow" style="width:100%; margin-top:var(--sp-3); font-size:var(--fs-caption);">${s.skillTryNowBtn}</button>
+        <button type="button" class="btn btn-secondary" id="skillTryNow" style="width:100%; margin-top:var(--sp-3); font-size:var(--fs-caption);">${ICON.book}<span>${s.skillTryNowBtn}</span></button>
         <p class="type-caption" style="color:var(--ink-muted); margin:6px 0 0; line-height:1.6;">${s.skillTryNowNote}</p>` : ""}
       </div>`
   };
@@ -12101,8 +12106,8 @@ function renderGlossary(){
           <p class="type-body">${s.reviewDueText(dueCount)}</p>
         </button>` : ""}
         <div style="display:flex; gap:8px; margin-bottom:var(--sp-4);">
-          ${hasRefGlossary ? `<button type="button" class="btn btn-secondary" id="refGlossaryBtn" style="flex:1;">${s.refGlossaryEntryLabel}</button>` : ""}
-          <button type="button" class="btn btn-secondary" id="liveTranslateBtn" style="flex:1;">${s.liveTranslateEntryLabel}</button>
+          ${hasRefGlossary ? `<button type="button" class="btn btn-secondary" id="refGlossaryBtn" style="flex:1;">${ICON.openBook}<span>${s.refGlossaryEntryLabel}</span></button>` : ""}
+          <button type="button" class="btn btn-secondary" id="liveTranslateBtn" style="flex:1;">${ICON.message}<span>${s.liveTranslateEntryLabel}</span></button>
         </div>
         <div class="segmented" style="margin-bottom:var(--sp-4);">
           <button type="button" class="segmented-btn ${filter==='all'?'segmented-active':''}" data-filter="all">${s.termFilterAll}</button>
@@ -13332,8 +13337,8 @@ function renderSettings(){
           </span>
           <span class="card-chevron">${chevronFwd()}</span>
         </button>
-        <button type="button" class="btn btn-secondary" id="mirrorBtn" style="margin-top:var(--sp-2);">${s.mirrorEntryLabel}</button>
-        <button type="button" class="btn btn-secondary" id="resetBtn" style="margin-top:var(--sp-5); color:var(--attention); border-color:rgba(216,112,96,.35);">${s.resetEntryLabel}</button>
+        <button type="button" class="btn btn-secondary" id="mirrorBtn" style="margin-top:var(--sp-2);">${ICON.weekGrid}<span>${s.mirrorEntryLabel}</span></button>
+        <button type="button" class="btn btn-secondary" id="resetBtn" style="margin-top:var(--sp-5); color:var(--attention); border-color:rgba(216,112,96,.35);">${ICON.close}<span>${s.resetEntryLabel}</span></button>
         <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.resetNote}</p>` : ""}
         ${settingsTab==="app" ? `
         ${(()=>{ const on = isStandalone(); return `
