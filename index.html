@@ -413,6 +413,55 @@ ul,ol{ list-style:none; }
 
 /* The contextual nudge: quiet enough not to compete with the screen's own
    purpose, coloured enough to be recognised as a skill rather than a button. */
+/* A greeting that arrives and leaves on its own: the student is told the app
+   knows them, then it gets out of the way rather than occupying the screen. */
+/* Settings held everything in one column: language, companion, text size,
+   seven theme swatches, profile, mirror, contact, invite, about, install
+   status, plan browser and reset — a screen you had to scroll twice to read.
+   Split into three tabs, each short enough to see at once, so a person finds
+   a setting by choosing a subject rather than by hunting up and down. */
+/* The library opened with a paragraph, a reference-map card and sometimes an
+   English-sources notice — three blocks of reading before a single course was
+   visible, so the courses always began below the fold. The explanations now
+   live behind one small button in the header, and the level chips sit
+   directly under it, so the list starts at the top of the screen. */
+.lib-head{
+  display:flex; align-items:center; gap:8px;
+  padding:0 var(--sp-4) var(--sp-3);
+}
+.lib-info-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 12px; border-radius:999px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.08);
+  color:var(--ink-muted); font-family:inherit; font-size:12px; font-weight:600;
+}
+.lib-info-btn svg{ width:13px; height:13px; }
+.set-tabs{
+  display:flex; gap:6px; margin-bottom:var(--sp-4);
+  background:var(--surface); border-radius:var(--r-md); padding:4px;
+}
+.set-tab{
+  flex:1; padding:9px 6px; border-radius:calc(var(--r-md) - 4px); border:none;
+  background:none; color:var(--ink-muted); font-family:inherit;
+  font-size:var(--fs-caption); font-weight:600;
+  transition:background 220ms var(--ease), color 220ms var(--ease);
+}
+.set-tab-active{ background:rgba(var(--accent-rgb),.16); color:var(--accent); }
+.welcome-toast{
+  position:fixed; top:calc(env(safe-area-inset-top, 0px) + 12px);
+  inset-inline-start:50%; transform:translate(50%, -18px);
+  z-index:80; display:flex; align-items:center; gap:9px;
+  padding:9px 16px; border-radius:999px;
+  background:rgba(var(--accent-rgb),.16); border:1px solid rgba(var(--accent-rgb),.34);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  color:var(--ink); font-size:var(--fs-caption); font-weight:600;
+  box-shadow:0 10px 28px rgba(0,0,0,.3);
+  opacity:0; transition:opacity 420ms var(--ease), transform 420ms var(--ease);
+  pointer-events:none; max-width:88vw;
+}
+.welcome-toast.in{ opacity:1; transform:translate(50%, 0); }
+.welcome-toast svg{ width:15px; height:15px; color:var(--accent); flex-shrink:0; }
+@media (prefers-reduced-motion:reduce){ .welcome-toast{ transition:none; } }
 .skill-nudge{
   display:flex; align-items:center; gap:var(--sp-3); width:100%;
   padding:var(--sp-3); margin-bottom:var(--sp-4);
@@ -1166,6 +1215,20 @@ const STR = {
     planChangedTitle:"تغيّرت خطتك",
     passedMarkBtn:"أنهيتُ هذه المادة",
     devEntryLabel:"تصفّح كل الخطط",
+    welcomeBack:(name)=>name ? `أهلًا بك، ${name}` : "أهلًا بك",
+    setTabDisplay:"العرض",
+    libInfoBtn:"عن هذه الخطة",
+    prepTabReview:"ما لم تفهمه",
+    prepTabExams:"اختباراتك",
+    prepTabSources:"مراجع المادة",
+    libInfoTitle:"عن هذه الخطة",
+    libLevelPickLabel:"المستوى",
+    setTabAccount:"حسابي",
+    setTabApp:"التطبيق",
+    installStatusYes:"التطبيق مثبّت على جهازك",
+    installStatusYesNote:"يعمل بلا إنترنت، وبياناتك محفوظة في جهازك.",
+    installStatusNo:"التطبيق غير مثبّت بعد",
+    installStatusNoNote:"ثبّته على شاشتك الرئيسية ليعمل بلا إنترنت ويفتح كتطبيق مستقل.",
     devNote:"وضع المطوّر: يبدّل الخطة المعروضة في المكتبة وجدول المراجع بلا مساس ببياناتك. اختر «خطتي» للعودة.",
     devMineLabel:"خطتي",
     devActiveLabel:"معروضة الآن",
@@ -1538,6 +1601,20 @@ const STR = {
     planChangedTitle:"Your plan changed",
     passedMarkBtn:"I've completed this course",
     devEntryLabel:"Browse every plan",
+    welcomeBack:(name)=>name ? `Welcome, ${name}` : "Welcome",
+    setTabDisplay:"Display",
+    libInfoBtn:"About this plan",
+    prepTabReview:"To review",
+    prepTabExams:"Your exams",
+    prepTabSources:"Course sources",
+    libInfoTitle:"About this plan",
+    libLevelPickLabel:"Level",
+    setTabAccount:"Account",
+    setTabApp:"App",
+    installStatusYes:"The app is installed on your device",
+    installStatusYesNote:"It works offline, and your data stays on your device.",
+    installStatusNo:"The app isn't installed yet",
+    installStatusNoNote:"Add it to your home screen so it works offline and opens as its own app.",
     devNote:"Developer mode: switches the plan shown in the library and reference map without touching your data. Choose \"My plan\" to return.",
     devMineLabel:"My plan",
     devActiveLabel:"showing now",
@@ -1627,6 +1704,7 @@ const ICON = {
   mic:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="17.5" x2="12" y2="21.5"/><line x1="8.5" y1="21.5" x2="15.5" y2="21.5"/></svg>`,
   book:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.2"/><line x1="9" y1="7.5" x2="15" y2="7.5"/><line x1="9" y1="11.5" x2="15" y2="11.5"/><line x1="9" y1="15.5" x2="13" y2="15.5"/></svg>`,
   event:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>`,
+  info:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.01"/></svg>`,
   weekGrid:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="4.5" x2="8" y2="19.5"/><line x1="13" y1="4.5" x2="13" y2="19.5"/><line x1="17" y1="9.5" x2="17" y2="19.5" opacity="0"/></svg>`,
   bell:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
   compass:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 2 2-5 5-2z"/></svg>`,
@@ -9415,7 +9493,12 @@ function renderExamPrepHub(eventId){
           <div class="hero-sub">${daysLabel}${remaining!==null ? ` · ${s.sessionsRemainingLabel(remaining)}` : ""}</div>
         </div>
 
-        <div class="section-label">${s.prepNeedsReviewLabel}</div>
+        <div class="set-tabs" style="margin-top:var(--sp-2);">
+          ${[["review",s.prepTabReview],["exams",s.prepTabExams]].concat(enrichment && enrichment.resources.length ? [["sources",s.prepTabSources]] : []).map(([id,label])=>`
+            <button type="button" class="set-tab ${prepTab===id?'set-tab-active':''}" data-prep-tab="${id}">${label}</button>`).join("")}
+        </div>
+        ${prepTab==="review" ? `
+        <div class="section-label" style="margin-top:0;">${s.prepNeedsReviewLabel}</div>
         ${needsReview.length===0 ? `
         <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.prepNeedsReviewEmpty}</p>` : `
         <div class="stack" style="margin-bottom:var(--sp-4);">
@@ -9431,8 +9514,9 @@ function renderExamPrepHub(eventId){
             </div>`;
           }).join("")}
         </div>`}
-
-        <div class="section-label">${s.notebookExamsLabel}</div>
+        ` : ""}
+        ${prepTab==="exams" ? `
+        <div class="section-label" style="margin-top:0;">${s.notebookExamsLabel}</div>
         ${nb.exams.length===0 ? `
         <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-3);">${s.notebookExamsEmpty}</p>` : `
         <div class="stack" style="margin-bottom:var(--sp-3);">
@@ -9447,6 +9531,8 @@ function renderExamPrepHub(eventId){
           `).join("")}
         </div>`}
         <button type="button" class="btn btn-secondary" id="prepAddExam" style="margin-bottom:var(--sp-4);">${s.notebookAddExamBtn}</button>
+        ` : ""}
+        ${prepTab==="sources" ? `
 
         ${enrichment && enrichment.resources.length ? `
         <div class="callout" style="margin-bottom:var(--sp-4);">
@@ -9460,15 +9546,24 @@ function renderExamPrepHub(eventId){
             </a>
           `).join("")}
         </div>` : ""}
+        ` : ""}
 
         <button type="button" class="btn btn-primary" id="prepGoNotebook">${s.prepGoNotebookBtn}</button>
       </div>
     </section>
   `;
   wireSkillNudge();
+  document.querySelectorAll("[data-prep-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.prepTab === prepTab) return;
+      prepTab = btn.dataset.prepTab;
+      renderExamPrepHub(eventId);
+    });
+  });
   document.getElementById("prepBack").addEventListener("click", ()=>{ renderCourseView(course.id); });
   document.getElementById("prepGoNotebook").addEventListener("click", ()=>{ renderCourseNotebook(course.id); });
-  document.getElementById("prepAddExam").addEventListener("click", ()=>{ openPastExamSheet(course.id, ()=>renderExamPrepHub(eventId)); });
+  const prepAdd = document.getElementById("prepAddExam");
+  if(prepAdd) prepAdd.addEventListener("click", ()=>{ openPastExamSheet(course.id, ()=>renderExamPrepHub(eventId)); });
 }
 /* Compiles a course's notebook (notes, understanding checks, past exams)
    into one clean, printable document — the browser's own "print" dialog
@@ -10449,6 +10544,34 @@ function renderDevPlans(){
     });
   });
 }
+/* Shown once per app launch, not on every screen change: a greeting that
+   repeated all day would become noise, and the point is recognition, not
+   decoration. */
+let welcomeShown = false;
+/* Which settings tab is open. Kept outside the render so returning from a
+   sub-screen puts the person back where they were, not at the top. */
+let settingsTab = "display";
+/* Exam prep stacked three unrelated lists — topics not understood, recorded
+   exams, and the course's sources — one under another, so preparing meant
+   scrolling past two sections to reach the third. Tabs let a student go
+   straight to the one they opened the screen for. */
+let prepTab = "review";
+function showWelcomeToast(){
+  if(welcomeShown) return;
+  const student = StudentModule.current();
+  if(!student) return;
+  welcomeShown = true;
+  const s = t();
+  const el = document.createElement("div");
+  el.className = "welcome-toast";
+  el.innerHTML = `${ICON.sparkle || ICON.check}<span>${escapeHtml(s.welcomeBack(student.name || ""))}</span>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ el.classList.add("in"); }); });
+  setTimeout(()=>{
+    el.classList.remove("in");
+    setTimeout(()=>{ el.remove(); }, 500);
+  }, 2600);
+}
 function passedCodes(){
   const student = StudentModule.current();
   return (student && Array.isArray(student.passed)) ? student.passed : [];
@@ -10579,6 +10702,28 @@ function renderReferenceMap(){
   `;
   document.getElementById("refMapBack").addEventListener("click", ()=>{ renderCourseLibrary(); });
 }
+/* A plain reading sheet: a title and a few paragraphs. Used where an
+   explanation matters but should not occupy a screen the person came to for
+   something else. */
+function openInfoSheet({ title, paragraphs }){
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${escapeHtml(title)}</div>
+      ${(paragraphs||[]).map(p=>`<p class="type-body" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-3);">${escapeHtml(p)}</p>`).join("")}
+      <button type="button" class="btn btn-secondary" style="width:100%;" data-info-close>${t().closeLabel || "إغلاق"}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = ()=>{
+    overlay.classList.remove("sheet-open");
+    setTimeout(()=>overlay.remove(), 260);
+  };
+  overlay.querySelector("[data-info-close]").addEventListener("click", close);
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+}
 function renderCourseLibrary(){
   applyDir();
   const s = t();
@@ -10601,22 +10746,12 @@ function renderCourseLibrary(){
         <div class="screen-header-title">${s.libraryTitle}</div>
       </div>
       <div class="screen-content" style="padding-inline-start:0; padding-inline-end:0;">
-        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-3); padding-inline:var(--sp-4);">${s.librarySub}</p>
         ${catalog ? `
-        <div style="padding:0 var(--sp-4) var(--sp-4);">
-          <button type="button" class="card" id="openRefMap">
-            <span class="card-icon">${ICON.weekGrid}</span>
-            <span class="card-body">
-              <span class="card-title">${s.refMapEntry}</span>
-              <span class="card-meta">${s.refMapSub}</span>
-            </span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>
-        </div>` : ""}
-        ${catalogHasEnglishSource(catalog) ? `
-        <div style="margin:0 var(--sp-4) var(--sp-4); padding:var(--sp-3); border-radius:var(--r-md); background:rgba(var(--accent-rgb),.09);">
-          <span class="type-caption" style="color:var(--ink); line-height:1.65;">${s.libraryEnglishNotice}</span>
-        </div>` : ""}
+        <div class="lib-head">
+          <button type="button" class="lib-info-btn" id="libInfoBtn">${ICON.info}<span>${s.libInfoBtn}</span></button>
+          <button type="button" class="lib-info-btn" id="openRefMap" style="color:var(--accent); border-color:rgba(var(--accent-rgb),.3);">${ICON.weekGrid}<span>${s.refMapEntry}</span></button>
+        </div>` : `
+        <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-3); padding-inline:var(--sp-4);">${s.librarySub}</p>`}
         ${!catalog ? `
         <div class="empty-state" style="padding-inline:var(--sp-4);">
           <div class="empty-icon">${ICON.openBook}</div>
@@ -10662,6 +10797,16 @@ function renderCourseLibrary(){
   wireTabBar();
   const refMapBtn = document.getElementById("openRefMap");
   if(refMapBtn) refMapBtn.addEventListener("click", ()=>{ renderReferenceMap(); });
+  const libInfo = document.getElementById("libInfoBtn");
+  /* The two explanations that used to sit above the list — what this screen is,
+     and why some sources are in English — are still one tap away, just not in
+     the way of the courses. */
+  if(libInfo) libInfo.addEventListener("click", ()=>{
+    openInfoSheet({
+      title: s.libInfoTitle,
+      paragraphs: [ s.librarySub ].concat(catalogHasEnglishSource(catalog) ? [ s.libraryEnglishNotice ] : [])
+    });
+  });
   document.querySelectorAll("[data-library-level]").forEach(chip=>{
     chip.addEventListener("click", ()=>{
       if(chip.dataset.libraryLevel === libraryActiveLevel) return;
@@ -12596,6 +12741,11 @@ function renderSettings(){
         <span style="width:40px;"></span>
       </div>
       <div class="screen-content">
+        <div class="set-tabs">
+          ${[["display",s.setTabDisplay],["account",s.setTabAccount],["app",s.setTabApp]].map(([id,label])=>`
+            <button type="button" class="set-tab ${settingsTab===id?'set-tab-active':''}" data-set-tab="${id}">${label}</button>`).join("")}
+        </div>
+        ${settingsTab==="display" ? `
         <div class="field-group">
           <span class="field-label">${s.languageLabel}</span>
           <div style="display:flex; gap:8px;">
@@ -12632,7 +12782,8 @@ function renderSettings(){
               </button>
             `).join("")}
           </div>
-        </div>
+        </div>` : ""}
+        ${settingsTab==="account" ? `
         <button type="button" class="card" id="profileEditEntry" style="margin-bottom:var(--sp-3);">
           <span class="card-icon">${ICON.compass}</span>
           <span class="card-body">
@@ -12642,24 +12793,43 @@ function renderSettings(){
           <span class="card-chevron">${chevronFwd()}</span>
         </button>
         <button type="button" class="btn btn-secondary" id="mirrorBtn" style="margin-top:var(--sp-2);">${s.mirrorEntryLabel}</button>
+        <button type="button" class="btn btn-secondary" id="resetBtn" style="margin-top:var(--sp-5); color:var(--attention); border-color:rgba(216,112,96,.35);">${s.resetEntryLabel}</button>
+        <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.resetNote}</p>` : ""}
+        ${settingsTab==="app" ? `
         ${hasContact() ? `<button type="button" class="btn btn-secondary" id="contactBtn" style="margin-top:var(--sp-2);">${s.contactEntryLabel}</button>
         <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.contactNote}</p>` : ""}
         ${CONTACT.whatsapp ? `<button type="button" class="btn btn-secondary" id="inviteBtn" style="margin-top:var(--sp-2);">${s.inviteEntryLabel}</button>
         <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.inviteNote}</p>` : ""}
         <button type="button" class="btn btn-secondary" id="aboutBtn" style="margin-top:var(--sp-2);">${s.aboutEntryLabel}</button>
-        <button type="button" class="btn btn-secondary" id="devPlansBtn" style="margin-top:var(--sp-2);">${s.devEntryLabel}</button>
-        <button type="button" class="btn btn-secondary" id="resetBtn" style="margin-top:var(--sp-5); color:var(--attention); border-color:rgba(216,112,96,.35);">${s.resetEntryLabel}</button>
-        <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.resetNote}</p>
+        ${(()=>{ const on = isStandalone(); return `
+        <div class="card" style="cursor:default; align-items:flex-start; margin-top:var(--sp-4);">
+          <span class="card-icon" style="${on?'color:var(--support); background:rgba(88,182,144,.16);':''}">${on ? ICON.check : ICON.download}</span>
+          <span class="card-body">
+            <span class="card-title">${on ? s.installStatusYes : s.installStatusNo}</span>
+            <span class="card-meta" style="white-space:normal;">${on ? s.installStatusYesNote : s.installStatusNoNote}</span>
+            ${(!on && deferredInstallPrompt) ? `<button type="button" class="btn btn-primary" id="settingsInstallBtn" style="margin-top:var(--sp-3); padding:10px;">${s.installNowBtn}</button>` : ""}
+          </span>
+        </div>`; })()}
+        <button type="button" class="btn btn-secondary" id="devPlansBtn" style="margin-top:var(--sp-2);">${s.devEntryLabel}</button>` : ""}
 
       </div>
     </section>
   `;
+  document.querySelectorAll("[data-set-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.setTab === settingsTab) return;
+      settingsTab = btn.dataset.setTab;
+      renderSettings();
+    });
+  });
   document.getElementById("settingsBack").addEventListener("click", ()=>{ renderToday(); });
   document.querySelectorAll("[data-text-size]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ StudentModule.updateTextSize(btn.dataset.textSize); renderSettings(); });
   });
-  document.getElementById("profileEditEntry").addEventListener("click", ()=>{ renderProfileEditSettings(); });
-  document.getElementById("mirrorBtn").addEventListener("click", ()=>{ renderWeeklyMirror(); });
+  const profileEntry = document.getElementById("profileEditEntry");
+  if(profileEntry) profileEntry.addEventListener("click", ()=>{ renderProfileEditSettings(); });
+  const mirrorBtn = document.getElementById("mirrorBtn");
+  if(mirrorBtn) mirrorBtn.addEventListener("click", ()=>{ renderWeeklyMirror(); });
   const contactBtn = document.getElementById("contactBtn");
   if(contactBtn) contactBtn.addEventListener("click", ()=>{ openContact(s.contactGeneralIntro, s.contactSubject); });
   const inviteBtn = document.getElementById("inviteBtn");
@@ -12672,9 +12842,20 @@ function renderSettings(){
     if(navigator.share){ navigator.share({ text }).catch(()=>{}); return; }
     window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
   });
-  document.getElementById("aboutBtn").addEventListener("click", ()=>{ renderAbout(); });
-  document.getElementById("devPlansBtn").addEventListener("click", ()=>{ renderDevPlans(); });
-  document.getElementById("resetBtn").addEventListener("click", ()=>{
+  const aboutBtn = document.getElementById("aboutBtn");
+  if(aboutBtn) aboutBtn.addEventListener("click", ()=>{ renderAbout(); });
+  const setInstall = document.getElementById("settingsInstallBtn");
+  if(setInstall) setInstall.addEventListener("click", async ()=>{
+    if(!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    renderSettings();
+  });
+  const devBtn = document.getElementById("devPlansBtn");
+  if(devBtn) devBtn.addEventListener("click", ()=>{ renderDevPlans(); });
+  const resetBtn = document.getElementById("resetBtn");
+  if(resetBtn) resetBtn.addEventListener("click", ()=>{
     /* Erasing everything is asked twice on purpose: the first sheet explains
        what goes, the second makes the person say it again after reading. One
        mis-tap should never cost a student their notebooks. */
@@ -12696,10 +12877,14 @@ function renderSettings(){
       }
     });
   });
-  document.getElementById("langAr").addEventListener("click", ()=>{ StudentModule.updateLang("ar"); renderSettings(); });
-  document.getElementById("langEn").addEventListener("click", ()=>{ StudentModule.updateLang("en"); renderSettings(); });
-  document.getElementById("companionMale").addEventListener("click", ()=>{ StudentModule.updateCompanion("male"); renderSettings(); });
-  document.getElementById("companionFemale").addEventListener("click", ()=>{ StudentModule.updateCompanion("female"); renderSettings(); });
+  const langAr = document.getElementById("langAr");
+  if(langAr) langAr.addEventListener("click", ()=>{ StudentModule.updateLang("ar"); renderSettings(); });
+  const langEn = document.getElementById("langEn");
+  if(langEn) langEn.addEventListener("click", ()=>{ StudentModule.updateLang("en"); renderSettings(); });
+  const compM = document.getElementById("companionMale");
+  if(compM) compM.addEventListener("click", ()=>{ StudentModule.updateCompanion("male"); renderSettings(); });
+  const compF = document.getElementById("companionFemale");
+  if(compF) compF.addEventListener("click", ()=>{ StudentModule.updateCompanion("female"); renderSettings(); });
   document.querySelectorAll(".theme-swatch").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       StudentModule.updateTheme(btn.dataset.themeId || null);
@@ -12707,17 +12892,6 @@ function renderSettings(){
     });
   });
 
-  document.getElementById("resetBtn").addEventListener("click", ()=>{
-    showConfirmSheet({
-      title:s.resetConfirmTitle, text:s.resetConfirmText, confirmLabel:s.confirmDelete, danger:true,
-      onConfirm:()=>{
-        DB = emptyDB();
-        dbSave();
-        activeTab = "today";
-        boot();
-      }
-    });
-  });
 }
 function renderProfileEditSettings(){
   applyDir();
@@ -12781,6 +12955,7 @@ function startApp(){
     if(!student.companion) dbUpdate("students", student.id, { companion:"male" }); // pre-existing records default silently; visible/editable in Settings
     applyDir();
     renderToday();
+    setTimeout(showWelcomeToast, 420);
   }
   else{ applyDir(); renderWelcome(); }
   if("serviceWorker" in navigator){
