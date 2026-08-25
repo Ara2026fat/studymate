@@ -1369,6 +1369,8 @@ const STR = {
     devEntryLabel:"تصفّح كل الخطط",
     contactShort:"سؤال أو اقتراح مرجع",
     eventTypeLabel:"نوع الحدث",
+    plansReadyLabel:"خطط جاهزة",
+    plansOtherLabel:"تخصصات أخرى",
     evtQuiz:"اختبار قصير (كويز)",
     evtSurprise:"اختبار مفاجئ",
     evtMidterm:"اختبار نصف فصلي",
@@ -1804,6 +1806,8 @@ const STR = {
     devEntryLabel:"Browse every plan",
     contactShort:"A question, or suggest a reference",
     eventTypeLabel:"Event type",
+    plansReadyLabel:"Ready plans",
+    plansOtherLabel:"Other programmes",
     evtQuiz:"Quiz",
     evtSurprise:"Pop quiz",
     evtMidterm:"Midterm exam",
@@ -2075,6 +2079,38 @@ const COLLEGE_MAJORS = {
   arch: [["العمارة","Architecture"],["التخطيط العمراني","Urban Planning"],["التصميم الداخلي","Interior Design"]],
   design: [["التصميم الجرافيكي","Graphic Design"],["تصميم الأزياء","Fashion Design"]]
 };
+/* An institute is not a university: choosing معهد الجبيل التقني and being
+   shown كلية الحاسبات and علوم الحاسب makes the app look like it doesn't know
+   where the student is. The plans we carry already say which colleges and
+   majors each institution actually has, so ask them.
+
+   Institutions we don't carry keep the full list — a student at a university
+   we've never seen must still be able to describe themselves. */
+function plansIndex(){
+  const out = {};
+  Object.keys(COURSE_CATALOG).forEach(key=>{
+    const parts = key.split("-");
+    const uni = parts[0], college = parts[1], majorId = parts[2] + "-" + parts[3];
+    if(!out[uni]) out[uni] = {};
+    if(!out[uni][college]) out[uni][college] = [];
+    if(out[uni][college].indexOf(majorId) === -1) out[uni][college].push(majorId);
+  });
+  return out;
+}
+function collegesForUniversity(uniId){
+  const idx = plansIndex()[uniId];
+  if(!idx) return COLLEGES;
+  const ids = Object.keys(idx);
+  const known = COLLEGES.filter(c=>ids.indexOf(c.id) !== -1);
+  return known.length ? known : COLLEGES;
+}
+function majorsForUniversityCollege(uniId, collegeId){
+  const all = majorList(collegeId);
+  const idx = plansIndex()[uniId];
+  if(!idx || !idx[collegeId]) return all;
+  const ours = all.filter(m=>idx[collegeId].indexOf(m.id) !== -1);
+  return ours.length ? ours : all;
+}
 function majorList(collegeId){
   const list = COLLEGE_MAJORS[collegeId];
   if(!list) return [];
@@ -9092,6 +9128,10 @@ function wireProfilePickers(prefix, draft, onChange){
       title: s.universityLabel, options: INSTITUTIONS.map(x=>({id:x.id, ar:x.ar, en:x.en})),
       selectedId: draft.universityId, searchable:true, showOther:true,
       onSelect:(val)=>{
+        /* A college chosen under the previous institution may not exist under
+           the new one, so the two fields below reset rather than carry over a
+           combination that no plan matches. */
+        draft.collegeId=""; draft.college=""; draft.majorId=""; draft.major="";
         if(val===OTHER_ID){ draft.universityId=OTHER_ID; draft.university=""; }
         else{ draft.universityId=val; draft.university=obLabel(INSTITUTIONS, val); }
         refreshProfilePickerUI(prefix, draft); if(onChange) onChange();
@@ -9102,7 +9142,7 @@ function wireProfilePickers(prefix, draft, onChange){
 
   document.getElementById(prefix+"CollegeTrigger").addEventListener("click", ()=>{
     openPickerSheet({
-      title: s.collegeLabel, options: COLLEGES.map(x=>({id:x.id, ar:x.ar, en:x.en})),
+      title: s.collegeLabel, options: collegesForUniversity(draft.universityId).map(x=>({id:x.id, ar:x.ar, en:x.en})),
       selectedId: draft.collegeId, searchable:false, showOther:true,
       onSelect:(val)=>{
         if(val===OTHER_ID){ draft.collegeId=OTHER_ID; draft.college=""; }
@@ -9115,7 +9155,7 @@ function wireProfilePickers(prefix, draft, onChange){
 
   document.getElementById(prefix+"MajorTrigger").addEventListener("click", ()=>{
     if(!draft.collegeId || draft.collegeId===OTHER_ID) return;
-    const opts = majorList(draft.collegeId);
+    const opts = majorsForUniversityCollege(draft.universityId, draft.collegeId);
     openPickerSheet({
       title: s.majorLabel, options: opts.map(x=>({id:x.id, ar:x.ar, en:x.en})),
       selectedId: draft.majorId, searchable:opts.length>8, showOther:true,
