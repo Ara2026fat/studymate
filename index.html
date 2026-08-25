@@ -2097,6 +2097,32 @@ function plansIndex(){
   });
   return out;
 }
+/* Institutions whose plans we actually carry come first, then everyone else
+   alphabetically. A student whose programme is ready shouldn't have to scroll
+   past forty universities we know nothing about to find their own. */
+function institutionsRanked(){
+  const idx = plansIndex();
+  const l = lang();
+  const covered = [], rest = [];
+  INSTITUTIONS.forEach(x=>{ (idx[x.id] ? covered : rest).push(x); });
+  const byName = (a,b)=>String(a[l]).localeCompare(String(b[l]), l==="ar" ? "ar" : "en");
+  covered.sort(byName); rest.sort(byName);
+  return covered.concat(rest);
+}
+/* An institute with one department shouldn't ask which department. When the
+   plans leave only one possible college, fill it in and let the student move
+   straight to the programme — one fewer question with only one answer. */
+function autoFillSoleCollege(draft){
+  if(!draft.universityId || draft.universityId === OTHER_ID) return false;
+  const cols = collegesForUniversity(draft.universityId);
+  const idx = plansIndex()[draft.universityId];
+  if(!idx || cols.length !== 1) return false;
+  if(draft.collegeId === cols[0].id) return false;
+  draft.collegeId = cols[0].id;
+  draft.college = obLabel(COLLEGES, cols[0].id);
+  draft.majorId = ""; draft.major = "";
+  return true;
+}
 function collegesForUniversity(uniId){
   const idx = plansIndex()[uniId];
   if(!idx) return COLLEGES;
@@ -9068,7 +9094,7 @@ function buildProfilePickerFields(prefix, s){
       </div>
       <p class="field-error" id="${prefix}UniversityError">${s.nameRequired}</p>
     </div>
-    <div class="field-group">
+    <div class="field-group" id="${prefix}CollegeGroup">
       <label class="field-label">${s.collegeLabel}</label>
       <button type="button" class="picker-trigger" id="${prefix}CollegeTrigger">
         <span class="picker-value placeholder" id="${prefix}CollegeValue">${s.selectPh}</span>
@@ -9105,6 +9131,17 @@ function refreshProfilePickerUI(prefix, draft){
   const colEl = document.getElementById(prefix+"CollegeValue");
   colEl.textContent = draft.collegeId===OTHER_ID ? s.otherOption : (draft.college || s.selectPh);
   colEl.classList.toggle("placeholder", !draft.college && draft.collegeId!==OTHER_ID);
+  /* An institute with a single department has nothing to ask here: the row is
+     hidden rather than shown pre-answered, because a question with one answer
+     is not a question. The value is still set on the draft, so nothing
+     downstream — the plan key, the library, the reference map — changes. */
+  const colGroup = document.getElementById(prefix+"CollegeGroup");
+  if(colGroup){
+    const sole = draft.universityId && draft.universityId!==OTHER_ID
+      && plansIndex()[draft.universityId]
+      && collegesForUniversity(draft.universityId).length === 1;
+    colGroup.classList.toggle("hidden", !!sole);
+  }
 
   const majBtn = document.getElementById(prefix+"MajorTrigger");
   const majEl = document.getElementById(prefix+"MajorValue");
@@ -9125,7 +9162,7 @@ function wireProfilePickers(prefix, draft, onChange){
   const s = t();
   document.getElementById(prefix+"UniversityTrigger").addEventListener("click", ()=>{
     openPickerSheet({
-      title: s.universityLabel, options: INSTITUTIONS.map(x=>({id:x.id, ar:x.ar, en:x.en})),
+      title: s.universityLabel, options: institutionsRanked().map(x=>({id:x.id, ar:x.ar, en:x.en})),
       selectedId: draft.universityId, searchable:true, showOther:true,
       onSelect:(val)=>{
         /* A college chosen under the previous institution may not exist under
@@ -9134,6 +9171,7 @@ function wireProfilePickers(prefix, draft, onChange){
         draft.collegeId=""; draft.college=""; draft.majorId=""; draft.major="";
         if(val===OTHER_ID){ draft.universityId=OTHER_ID; draft.university=""; }
         else{ draft.universityId=val; draft.university=obLabel(INSTITUTIONS, val); }
+        autoFillSoleCollege(draft);
         refreshProfilePickerUI(prefix, draft); if(onChange) onChange();
       }
     });
