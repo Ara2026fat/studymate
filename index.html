@@ -32,6 +32,9 @@
   --accent:#C98A2E;
   --accent-rgb:201,138,46;
   --accent-soft:rgba(201,138,46,.16);
+  /* The second ambient hue: a companion to the accent, never the same colour,
+     so the two fields read as depth rather than one big blur. */
+  --field-2:120,160,200;
   --attention:#E89478;
   --attention-rgb:232,148,120;
   --attention-soft:rgba(232,148,120,.14);
@@ -107,6 +110,7 @@ body[data-companion="female"]{
    Shadows replace the dark theme's glow: on a light surface, depth comes
    from a soft shadow beneath a card, not from a lighter fill inside it. */
 body[data-theme="daylight"]{
+  --field-2:120,170,210;
   --background:#F4F6FA;
   --surface:#FFFFFF;
   --surface-glass:rgba(20,30,60,.045);
@@ -169,30 +173,37 @@ body[data-theme="daylight"] .waypoint-marker-current{ color:#FFFFFF; }
 body[data-theme="daylight"] .level-chip-active{ color:#FFFFFF; }
 body[data-theme="daylight"] .empty-icon{ color:var(--ink-muted); }
 body[data-theme="night"]{
+  --field-2:120,150,210;
   --background:#0B0E14; --surface:#161C28; --surface-glass:rgba(107,155,209,.06);
   --accent:#6B9BD1; --accent-rgb:107,155,209; --accent-soft:rgba(107,155,209,.16);
 }
 body[data-theme="obsidian"]{
+  --field-2:200,140,90;
   --background:#0D0B08; --surface:#1E1912; --surface-glass:rgba(201,151,77,.06);
   --accent:#C9974D; --accent-rgb:201,151,77; --accent-soft:rgba(201,151,77,.16);
 }
 body[data-theme="petrol"]{
+  --field-2:80,180,170;
   --background:#081815; --surface:#132824; --surface-glass:rgba(63,184,168,.06);
   --accent:#3FB8A8; --accent-rgb:63,184,168; --accent-soft:rgba(63,184,168,.16);
 }
 body[data-theme="plum"]{
+  --field-2:200,110,150;
   --background:#180A14; --surface:#281423; --surface-glass:rgba(212,107,148,.06);
   --accent:#D46B94; --accent-rgb:212,107,148; --accent-soft:rgba(212,107,148,.16);
 }
 body[data-theme="royal"]{
+  --field-2:90,120,230;
   --background:#070B1C; --surface:#131A34; --surface-glass:rgba(76,126,240,.06);
   --accent:#4C7EF0; --accent-rgb:76,126,240; --accent-soft:rgba(76,126,240,.16);
 }
 body[data-theme="forest"]{
+  --field-2:150,175,110;
   --background:#0A120A; --surface:#162115; --surface-glass:rgba(156,173,94,.06);
   --accent:#9CAD5E; --accent-rgb:156,173,94; --accent-soft:rgba(156,173,94,.16);
 }
 body[data-theme="sandy"]{
+  --field-2:210,160,100;
   --background:#170F09; --surface:#271C10; --surface-glass:rgba(217,161,94,.06);
   --accent:#D9A15E; --accent-rgb:217,161,94; --accent-soft:rgba(217,161,94,.16);
 }
@@ -208,7 +219,36 @@ body{
   touch-action:manipulation;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
+  position:relative;
 }
+/* ---- Ambient field -------------------------------------------------------
+   Two colour fields drifting behind everything, tinted by the programme's own
+   accent. They move over half a minute — slow enough that nobody catches them
+   moving, present enough that the screen stops feeling like a flat sheet.
+   Drawn once on the body, never in a screen, so switching tabs costs nothing. */
+body:before, body:after{
+  content:""; position:fixed; border-radius:50%; pointer-events:none; z-index:0;
+  filter:blur(90px); opacity:.30;
+}
+body:before{
+  width:60vw; height:60vw; max-width:460px; max-height:460px;
+  top:-14vh; inset-inline-end:-18vw;
+  background:rgb(var(--accent-rgb));
+  animation:field-a 34s var(--ease) infinite alternate;
+}
+body:after{
+  width:56vw; height:56vw; max-width:420px; max-height:420px;
+  bottom:-16vh; inset-inline-start:-16vw;
+  background:rgb(var(--field-2, var(--accent-rgb)));
+  animation:field-b 42s var(--ease) infinite alternate;
+}
+@keyframes field-a{ to{ transform:translate3d(-6vw, 8vh, 0) scale(1.14); } }
+@keyframes field-b{ to{ transform:translate3d(7vw, -7vh, 0) scale(1.10); } }
+/* On a light page the same fields must be far fainter, or the whole screen
+   takes on a colour cast and text contrast drops. */
+body[data-theme="daylight"]:before{ opacity:.13; }
+body[data-theme="daylight"]:after{ opacity:.10; }
+.screen, .tab-bar, .sheet-overlay, #creditFooter{ position:relative; z-index:1; }
 body[data-text-size="large"]{ --type-scale:1.13; }
 body[data-text-size="xlarge"]{ --type-scale:1.28; }
 html[lang="en"] body{ font-family:var(--font-en); line-height:var(--lh-en); }
@@ -318,9 +358,39 @@ ul,ol{ list-style:none; }
   border:1px solid rgba(255,255,255,.07);
   border-radius:var(--r-md); box-shadow:var(--shadow-card);
   padding:var(--sp-3) var(--sp-4);
+  position:relative; overflow:hidden;
   transition:transform 220ms var(--ease-spring), box-shadow 220ms var(--ease);
 }
+/* A single lit hairline along the top edge — the trick that makes a flat
+   rectangle read as a raised surface catching light from above. */
+.card:before{
+  content:""; position:absolute; top:0; inset-inline:10%; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+  pointer-events:none;
+}
+body[data-theme="daylight"] .card:before{
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
+}
 .card:active{ transform:scale(.975); box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 1px 3px rgba(0,0,0,.3); }
+
+/* ---- Entrance ------------------------------------------------------------
+   Cards arrive in sequence rather than appearing all at once: eight items
+   landing together reads as a page loading, the same eight arriving 40ms
+   apart reads as a page being laid out for you. Six steps only — beyond that
+   the last item feels late. */
+.stack > *{ animation:rise 420ms var(--ease) backwards; }
+.stack > *:nth-child(1){ animation-delay:0ms; }
+.stack > *:nth-child(2){ animation-delay:40ms; }
+.stack > *:nth-child(3){ animation-delay:80ms; }
+.stack > *:nth-child(4){ animation-delay:120ms; }
+.stack > *:nth-child(5){ animation-delay:160ms; }
+.stack > *:nth-child(n+6){ animation-delay:200ms; }
+@keyframes rise{ from{ opacity:0; transform:translateY(10px); } }
+.hero{ animation:rise 500ms var(--ease) backwards; }
+@media (prefers-reduced-motion:reduce){
+  .stack > *, .hero{ animation:none; }
+  body:before, body:after{ animation:none; }
+}
 .card-icon{
   width:42px; height:42px; border-radius:var(--r-sm); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
@@ -526,6 +596,47 @@ ul,ol{ list-style:none; }
   overflow:hidden; word-break:break-word;
 }
 .tt-cell:active{ transform:scale(.95); }
+/* The app knew the exam was in three days and that two topics were marked
+   "not understood" — and said nothing. Saying it is what makes a student feel
+   accompanied rather than merely equipped: one line, in their own facts, with
+   the action already prepared. Never more than one, never every day. */
+.knows{
+  display:flex; align-items:flex-start; gap:11px; width:100%; text-align:start;
+  padding:15px 16px; margin-bottom:var(--sp-4); border-radius:var(--r-md);
+  background:linear-gradient(115deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.05));
+  border:1px solid rgba(var(--accent-rgb),.3);
+  transition:transform 180ms var(--ease-spring);
+}
+.knows:active{ transform:scale(.985); }
+.knows-icon{
+  width:34px; height:34px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--accent-rgb),.22); color:var(--accent);
+}
+.knows-icon svg{ width:17px; height:17px; }
+.knows-text{ flex:1; min-width:0; font-size:var(--fs-body); line-height:1.6; font-weight:600; }
+.knows-go{ font-size:var(--fs-caption); font-weight:700; color:var(--accent); flex-shrink:0; align-self:center; }
+.mic-lang{
+  position:absolute; bottom:-3px; inset-inline-end:-3px;
+  min-width:17px; height:15px; padding:0 3px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--accent); color:#fff; font-size:9px; font-weight:800;
+  line-height:1; border:1.5px solid var(--background);
+}
+/* Quiet, not a trophy: the title sits in the accent colour and the distance
+   under it in plain text. It should read like a fact the app happens to know,
+   not a prize being dangled. */
+.horizon{
+  display:flex; flex-direction:column; gap:3px; align-items:center; text-align:center;
+  padding:var(--sp-4); margin-bottom:var(--sp-4);
+  border-radius:var(--r-md);
+  background:linear-gradient(150deg, rgba(var(--accent-rgb),.10), transparent 70%);
+  border:1px solid rgba(var(--accent-rgb),.20);
+}
+.horizon-label{ font-size:11.5px; font-weight:700; color:var(--ink-muted); letter-spacing:.02em; }
+.horizon-title{ font-family:inherit; font-size:var(--fs-heading); font-weight:800; color:var(--accent); line-height:1.3; }
+.horizon-line{ font-size:var(--fs-body); font-weight:600; color:var(--ink); }
+.horizon-note{ font-size:11px; color:var(--ink-muted); margin-top:2px; }
 .hub-card{
   display:flex; flex-direction:column; align-items:stretch; gap:7px; width:100%;
   padding:16px; border-radius:var(--r-md); text-align:start;
@@ -737,16 +848,25 @@ ul,ol{ list-style:none; }
   transition:background 220ms var(--ease-spring), color 220ms var(--ease), box-shadow 220ms var(--ease);
 }
 .segmented-active{ background:rgba(var(--accent-rgb),.18); color:var(--ink); box-shadow:var(--shadow-card); }
-.theme-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--sp-2); margin-top:var(--sp-2); }
+/* Eight full-width gradient banners filled half the screen and read as a
+   fairground. A theme is a colour, so it is shown as one: a small disc the
+   size of the choice it represents, four to a row, with its name beneath. */
 .theme-swatch{
-  display:flex; flex-direction:column; gap:6px; padding:var(--sp-2);
-  border-radius:var(--r-md); border:1.5px solid transparent;
-  transition:border-color 200ms var(--ease), transform 200ms var(--ease-spring);
+  display:flex; flex-direction:column; align-items:center; gap:5px; padding:6px 2px;
+  border-radius:var(--r-sm); border:1.5px solid transparent; background:none;
+  transition:transform 200ms var(--ease-spring);
 }
-.theme-swatch:active{ transform:scale(.97); }
-.theme-swatch-active{ border-color:var(--accent); background:rgba(var(--accent-rgb),.08); }
-.theme-swatch-preview{ display:block; width:100%; height:22px; border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.1); opacity:.72; }
-.theme-swatch-label{ font-size:11px; font-weight:600; color:var(--ink-muted); text-align:center; }
+.theme-swatch:active{ transform:scale(.94); }
+.theme-swatch-preview{
+  display:block; width:34px; height:34px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.14); position:relative;
+}
+.theme-swatch-active .theme-swatch-preview{
+  box-shadow:0 0 0 2px var(--background), 0 0 0 4px var(--accent);
+}
+.theme-swatch-label{ font-size:10px; font-weight:600; color:var(--ink-muted); text-align:center; line-height:1.3; }
+.theme-swatch-active .theme-swatch-label{ color:var(--accent); }
+.theme-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px 6px; margin-top:var(--sp-2); }
 .callout{
   background:var(--surface); border:1px solid rgba(255,255,255,.06);
   border-radius:var(--r-md);
@@ -924,8 +1044,13 @@ ul,ol{ list-style:none; }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .hero{ background:linear-gradient(160deg, rgba(var(--accent-rgb),.14), var(--surface) 60%); }
 }
-.hero-eyebrow{ font-size:var(--fs-caption); color:var(--ink-muted); font-weight:600; margin-bottom:var(--sp-1); }
-.hero-title{ font-size:var(--fs-display); font-weight:600; margin-bottom:var(--sp-1); }
+.hero-eyebrow{
+  font-size:11.5px; color:var(--accent); font-weight:700;
+  letter-spacing:.06em; margin-bottom:var(--sp-2);
+}
+/* Tighter tracking at display size: large Arabic type set at default spacing
+   reads loose and unconfident. */
+.hero-title{ font-size:var(--fs-display); font-weight:700; letter-spacing:-.01em; margin-bottom:var(--sp-1); }
 .hero-sub{ font-size:var(--fs-body); color:var(--ink-muted); margin-bottom:var(--sp-4); }
 
 .section-label{ font-size:var(--fs-caption); font-weight:600; color:var(--ink-muted); margin:0 0 var(--sp-3); }
@@ -1370,6 +1495,34 @@ const STR = {
     contactShort:"سؤال أو اقتراح مرجع",
     eventTypeLabel:"نوع الحدث",
     plansReadyLabel:"خطط جاهزة",
+    mirrorShort:"كيف مرّ أسبوعك، وما تريد تغييره",
+    micLangAr:"عربي",
+    backupTitle:"نسخة احتياطية",
+    horizonLabel:"بينك وبين لقب",
+    horizonCourses:(n)=>n===1 ? "مقرر واحد" : (n===2 ? "مقرران" : (n<11 ? `${n} مقررات` : `${n} مقررًا`)),
+    horizonLevels:(n)=>n===1 ? "مستوى واحد" : (n===2 ? "مستويان" : (n<11 ? `${n} مستويات` : `${n} مستوى`)),
+    horizonDone:"وصلت. تبقّى أن تُسلّم.",
+    horizonNote:"يُحتسب بما علّمته مجتازًا.",
+    knowExamSoonUnclear:(course, days, n)=>`${days === 0 ? `اختبارك في ${course} اليوم` : `اختبارك في ${course} بعد ${days === 1 ? "يوم" : (days === 2 ? "يومين" : `${days} أيام`)}`}، وقد سجّلت ${n === 1 ? "موضوعًا لم تفهمه" : (n === 2 ? "موضوعين لم تفهمهما" : `${n} مواضيع لم تفهمها`)}. نبدأ بها؟`,
+    knowExamSoon:(course, days)=>`${days === 0 ? `اختبارك في ${course} اليوم` : `اختبارك في ${course} بعد ${days === 1 ? "يوم" : (days === 2 ? "يومين" : `${days} أيام`)}`}. أتريد أن نستعدّ له الآن؟`,
+    knowUnclear:(course, n)=>`في ${course} ${n === 1 ? "موضوع سجّلت أنك لم تفهمه، ولم تعد إليه بعد" : (n === 2 ? "موضوعان سجّلت أنك لم تفهمهما، ولم تعد إليهما بعد" : `${n} مواضيع سجّلت أنك لم تفهمها، ولم تعد إليها بعد`)}.`,
+    knowNoNotes:(course)=>`لم تكتب صفحة واحدة في دفتر ${course} هذا الأسبوع.`,
+    knowBackAfterGap:(days)=>`أهلًا بعودتك — غبتَ ${days === 1 ? "يومًا" : (days === 2 ? "يومين" : `${days} أيام`)}، ولا شيء ضاع. خطتك كما تركتها.`,
+    knowFirstDay:"أول يوم لك هنا. ابدأ بمقرر واحد، وسيتضح الباقي.",
+    knowAction:"ابدأ",
+    backupNote:"كل ما في التطبيق — دفاترك وخطتك وملاحظاتك — في ملف واحد. احفظه في بريدك أو درايفك.",
+    backupExport:"احفظ نسخة",
+    backupImport:"استعد نسخة",
+    backupImportNote:"سيستبدل كل ما في التطبيق الآن بما في الملف.",
+    backupDone:(n)=>`حُفظت نسختك — ${n}`,
+    backupBadFile:"هذا الملف ليس نسخة من استدي ميت.",
+    backupConfirmTitle:"استبدال بياناتك؟",
+    backupConfirmText:"كل ما في التطبيق الآن سيُستبدل بما في الملف. احفظ نسخة أولًا إن كان فيه ما يهمك.",
+    backupConfirmBtn:"استعد النسخة",
+    backupRestored:"استُعيدت نسختك",
+    micLangEn:"إنجليزي",
+    micLangHint:"اختر لغة كلامك قبل التسجيل — النطق الإنجليزي داخل التعرّف العربي يُكتب حروفًا عربية.",
+    resetShort:"امسح كل شيء وابدأ بخطة أخرى",
     plansOtherLabel:"تخصصات أخرى",
     evtQuiz:"اختبار قصير (كويز)",
     evtSurprise:"اختبار مفاجئ",
@@ -1807,6 +1960,34 @@ const STR = {
     contactShort:"A question, or suggest a reference",
     eventTypeLabel:"Event type",
     plansReadyLabel:"Ready plans",
+    mirrorShort:"How your week went, and what to change",
+    micLangAr:"Arabic",
+    backupTitle:"Backup",
+    horizonLabel:"Between you and the title",
+    horizonCourses:(n)=>n===1 ? "one course" : `${n} courses`,
+    horizonLevels:(n)=>n===1 ? "one level" : `${n} levels`,
+    horizonDone:"You've arrived. All that's left is to hand it in.",
+    horizonNote:"Counted against what you marked completed.",
+    knowExamSoonUnclear:(course, days, n)=>`Your ${course} exam is ${days === 0 ? "today" : (days === 1 ? "in a day" : `in ${days} days`)}, and you logged ${n === 1 ? "a topic you didn't understand" : `${n} topics you didn't understand`}. Start there?`,
+    knowExamSoon:(course, days)=>`Your ${course} exam is ${days === 0 ? "today" : (days === 1 ? "in a day" : `in ${days} days`)}. Shall we prepare now?`,
+    knowUnclear:(course, n)=>`In ${course} there ${n === 1 ? "is a topic" : `are ${n} topics`} you logged as not understood. You haven't come back to them.`,
+    knowNoNotes:(course)=>`You haven't written a single page in your ${course} notebook this week.`,
+    knowBackAfterGap:(days)=>`Welcome back — you were away ${days} days, and nothing was lost. Your plan is as you left it.`,
+    knowFirstDay:"Your first day here. Begin with one course; the rest becomes clear.",
+    knowAction:"Start",
+    backupNote:"Everything in the app — your notebooks, plan and notes — in one file. Keep it in your email or drive.",
+    backupExport:"Save a copy",
+    backupImport:"Restore a copy",
+    backupImportNote:"This will replace everything currently in the app.",
+    backupDone:(n)=>`Saved — ${n}`,
+    backupBadFile:"That file isn't a StudyMate backup.",
+    backupConfirmTitle:"Replace your data?",
+    backupConfirmText:"Everything in the app will be replaced by the file's contents. Save a copy first if anything here matters.",
+    backupConfirmBtn:"Restore",
+    backupRestored:"Your copy has been restored",
+    micLangEn:"English",
+    micLangHint:"Pick the language you're speaking before recording — English spoken into Arabic recognition comes out spelled in Arabic letters.",
+    resetShort:"Erase everything and start another plan",
     plansOtherLabel:"Other programmes",
     evtQuiz:"Quiz",
     evtSurprise:"Pop quiz",
@@ -2086,6 +2267,194 @@ const COLLEGE_MAJORS = {
 
    Institutions we don't carry keep the full list — a student at a university
    we've never seen must still be able to describe themselves. */
+/* We told students the notebook would outlive their degree, then kept it in
+   one browser on one phone. A stolen handset, a cracked screen or a cleared
+   browser would have taken six years with it — so the promise needed a way
+   out of the device. One file, saved by the student wherever they keep things
+   that matter, restorable on any phone. No account, no server, no upload. */
+/* What the app already knows but never said. Checked in order of urgency, and
+   it stops at the first thing that is true — a student facing an exam in two
+   days does not also need to hear about an empty notebook. */
+function whatWeKnow(){
+  const student = StudentModule.current();
+  if(!student) return null;
+  const s = t();
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return null;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return null;
+  const courses = CourseModule.listForSemester(semester.id) || [];
+  if(!courses.length) return { text:s.knowFirstDay, go:null, icon:"compass" };
+
+  const daysTo = (iso)=>{
+    const at = new Date(iso); at.setHours(0,0,0,0);
+    const now = new Date(); now.setHours(0,0,0,0);
+    return Math.round((at - now) / 86400000);
+  };
+  const unclearIn = (courseId)=>{
+    const nb = DB.courseNotebooks && DB.courseNotebooks[courseId];
+    return nb ? (nb.checks || []).filter(c=>c.understood === false).length : 0;
+  };
+
+  /* 1. An exam within a week — the most pressing thing a student owns. */
+  let soonest = null;
+  courses.forEach(c=>{
+    (AcademicEventModule.listForCourse(c.id) || []).forEach(e=>{
+      const d = daysTo(e.date);
+      if(d < 0 || d > 7) return;
+      if(!soonest || d < soonest.days) soonest = { days:d, course:c, event:e };
+    });
+  });
+  if(soonest){
+    const n = unclearIn(soonest.course.id);
+    return {
+      text: n ? s.knowExamSoonUnclear(soonest.course.name, soonest.days, n)
+              : s.knowExamSoon(soonest.course.name, soonest.days),
+      go: ()=>renderExamPrepHub(soonest.event.id),
+      icon: "event"
+    };
+  }
+
+  /* 2. Topics marked "not understood" and never revisited. */
+  const stuck = courses.map(c=>({ c, n:unclearIn(c.id) })).filter(x=>x.n > 0)
+                       .sort((a,b)=>b.n - a.n)[0];
+  if(stuck) return { text:s.knowUnclear(stuck.c.name, stuck.n), go:()=>renderCourseNotebook(stuck.c.id), icon:"close" };
+
+  /* 3. A course with classes this week but no page written. */
+  const weekStart = startOfThisWeek();
+  const sessions = WeeklyScheduleModule.listForSemester(semester.id) || [];
+  const silent = courses.find(c=>
+    sessions.some(x=>x.courseId === c.id) &&
+    !NotebookModule.get(c.id).notes.some(n=>n.createdAt >= weekStart)
+  );
+  if(silent) return { text:s.knowNoNotes(silent.name), go:()=>renderCourseNotebook(silent.id), icon:"book" };
+
+  return null;
+}
+/* Returning after a long absence deserves a welcome, not a scoreboard: no
+   streak broken, no days counted against them. */
+function gapGreeting(){
+  const student = StudentModule.current();
+  if(!student || !student.lastSeen) return null;
+  const days = Math.floor((Date.now() - student.lastSeen) / 86400000);
+  return days >= 6 ? t().knowBackAfterGap(days) : null;
+}
+/* The title a plan ends in, in the student's own gender. Not used to address
+   them — being called "يا مهندس" for four years becomes a pleasantry they stop
+   hearing — but to measure the distance to it, which is the thing that lifts
+   someone's head on a heavy evening. */
+const MAJOR_TITLES = {
+  "cs-0":       { m:"مختص علوم حاسب", f:"مختصة علوم حاسب", en:"Computer Scientist" },
+  "eng-2":      { m:"مهندس ميكانيكي", f:"مهندسة ميكانيكية", en:"Mechanical Engineer" },
+  "eng-3":      { m:"مهندس كيميائي", f:"مهندسة كيميائية", en:"Chemical Engineer" },
+  "eng-4":      { m:"مهندس صناعي", f:"مهندسة صناعية", en:"Industrial Engineer" },
+  "eng-5":      { m:"فنّي سلامة", f:"فنّية سلامة", en:"Safety Technician" },
+  "eng-6":      { m:"مشغّل رافعات معتمد", f:"مشغّلة رافعات معتمدة", en:"Certified Crane Operator" },
+  "bus-4":      { m:"محلّل نظم معلومات", f:"محلّلة نظم معلومات", en:"Information Systems Analyst" },
+  "ams-5":      { m:"أخصائي صحة وسلامة مهنية", f:"أخصائية صحة وسلامة مهنية", en:"Occupational Health and Safety Specialist" },
+  "arts-0":     { m:"مترجم", f:"مترجمة", en:"Translator" }
+};
+function majorTitle(student){
+  const entry = MAJOR_TITLES[student && student.majorId];
+  if(!entry) return null;
+  if(lang() !== "ar") return entry.en;
+  return (student.companion === "female") ? entry.f : entry.m;
+}
+/* Distance measured the way the student experiences it — courses still owed
+   and levels still to sit — and honest about credited work: a diploma holder
+   who marked fourteen courses completed should see fourteen fewer. */
+function horizonHtml(){
+  const student = StudentModule.current();
+  if(!student) return "";
+  const title = majorTitle(student);
+  if(!title) return "";
+  const catalog = COURSE_CATALOG[catalogKeyFor(student)];
+  if(!catalog) return "";
+  const s = t();
+  const l = lang();
+  const levels = LEVELS.filter(lv=>catalog[lv.id] && catalog[lv.id].length);
+  const here = levelIdForLabel(student.level);
+  const hereAt = Math.max(0, levels.findIndex(lv=>lv.id === here));
+  let courses = 0, levelsLeft = 0;
+  levels.forEach((lv, i)=>{
+    if(i < hereAt) return;
+    const remaining = catalog[lv.id].filter(c=>!isPassed(c));
+    if(remaining.length) levelsLeft++;
+    courses += remaining.length;
+  });
+  if(!courses){
+    return `<div class="horizon"><span class="horizon-title">${escapeHtml(title)}</span><span class="horizon-line">${s.horizonDone}</span></div>`;
+  }
+  return `
+    <div class="horizon">
+      <span class="horizon-label">${s.horizonLabel}</span>
+      <span class="horizon-title">${escapeHtml(title)}</span>
+      <span class="horizon-line">${s.horizonCourses(courses)} · ${s.horizonLevels(levelsLeft)}</span>
+      <span class="horizon-note">${s.horizonNote}</span>
+    </div>`;
+}
+function knowsHtml(){
+  const gap = gapGreeting();
+  if(gap) return `<div class="knows"><span class="knows-icon">${ICON.check}</span><span class="knows-text">${escapeHtml(gap)}</span></div>`;
+  const k = whatWeKnow();
+  if(!k) return "";
+  const tag = k.go ? "button" : "div";
+  return `<${tag} type="button" class="knows" ${k.go ? 'id="knowsCard"' : 'style="cursor:default;"'}>
+    <span class="knows-icon">${ICON[k.icon] || ICON.compass}</span>
+    <span class="knows-text">${escapeHtml(k.text)}</span>
+    ${k.go ? `<span class="knows-go">${t().knowAction}</span>` : ""}
+  </${tag}>`;
+}
+function backupFileName(){
+  const d = new Date();
+  const pad = (n)=>String(n).padStart(2, "0");
+  const student = StudentModule.current();
+  const who = (student && student.name) ? student.name.replace(/[^\p{L}\p{N}]+/gu, "-").slice(0, 20) : "";
+  const stamp = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  return who ? `studymate-${who}-${stamp}.json` : `studymate-${stamp}.json`;
+}
+function exportBackup(){
+  const payload = {
+    app: "studymate",
+    schema: DB_VERSION,
+    savedAt: new Date().toISOString(),
+    data: DB
+  };
+  const blob = new Blob([JSON.stringify(payload)], { type:"application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = backupFileName();
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  return a.download;
+}
+/* Restoring is destructive, so it is checked before it is offered: a file
+   that isn't ours is refused by name rather than silently wiping a term's
+   work with nonsense. */
+function importBackup(file, onDone, onError){
+  const reader = new FileReader();
+  reader.onerror = ()=>onError();
+  reader.onload = ()=>{
+    let parsed = null;
+    try{ parsed = JSON.parse(reader.result); }catch(e){ return onError(); }
+    if(!parsed || parsed.app !== "studymate" || !parsed.data || !parsed.data.students) return onError();
+    onDone(parsed);
+  };
+  reader.readAsText(file);
+}
+function applyBackup(parsed){
+  DB = parsed.data;
+  const blank = emptyDB();
+  Object.keys(blank).forEach(tb=>{ if(!DB[tb]) DB[tb] = blank[tb]; });
+  DB.version = DB_VERSION;
+  dbSave();
+  activeTab = "today";
+  applyDir();
+  renderToday();
+}
 function plansIndex(){
   const out = {};
   Object.keys(COURSE_CATALOG).forEach(key=>{
@@ -9486,6 +9855,7 @@ function renderToday(){
           <div class="hero-sub">${escapeHtml(student.major)}${student.university? ' · '+escapeHtml(student.university):''}</div>
           <div class="type-caption">${s.coursesCount(courses.length)}</div>
         </div>
+        ${knowsHtml()}
 
         ${renderInstallBannerHtml()}
 
@@ -9526,6 +9896,11 @@ function renderToday(){
     </section>
   `;
   wireTabBar();
+  const knowsBtn = document.getElementById("knowsCard");
+  if(knowsBtn) knowsBtn.addEventListener("click", ()=>{ const k = whatWeKnow(); if(k && k.go) k.go(); });
+  /* Remembering when they were last here is what makes a welcome back
+     possible; it never leaves the device. */
+  if(student) StudentModule.update({ lastSeen: Date.now() });
   wireInstallBanner(renderToday);
   document.getElementById("todaySearch").addEventListener("click", ()=>{ globalSearchQuery=""; renderSearch(); });
   const todayRef = document.getElementById("todayRefGlossary");
@@ -11398,6 +11773,7 @@ function renderJourney(){
         <div class="screen-header-title">${s.journeyTitle}</div>
       </div>
       <div class="screen-content">
+        ${horizonHtml()}
         ${bodyHtml}
       </div>
       ${renderTabBar("journey")}
@@ -11530,6 +11906,17 @@ const UNDERSTANDING_REASONS = [
 /* Voice input for any text field — graceful degradation when the browser
    doesn't support speech recognition (hides the mic button entirely rather
    than showing a broken control). */
+/* Speech recognition transcribes within one language: an English word spoken
+   into Arabic recognition isn't translated or left in Latin script — it is
+   spelled out phonetically in Arabic letters, which is what a student sees as
+   "طلع كلام غلط". No setting fixes that from inside; the engine has to be told
+   which language it is hearing.
+
+   So the mic carries its own language switch. Long-press it (or tap the small
+   badge on it) to flip between Arabic and English, and the choice sticks for
+   the rest of the session — a student quoting English terms all evening
+   shouldn't set it each time. */
+let micLang = null;
 function attachVoiceInput(buttonEl, targetEl){
   if(!buttonEl || !targetEl) return;
   const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -11537,10 +11924,35 @@ function attachVoiceInput(buttonEl, targetEl){
     buttonEl.style.display = "none";
     return;
   }
+  if(micLang === null) micLang = lang() === "ar" ? "ar-SA" : "en-US";
   const recognition = new SpeechRecognitionCtor();
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
   let listening = false;
+
+  /* A two-letter badge on the mic showing what it will listen for, so the
+     student knows before speaking rather than after reading the result. */
+  const badge = document.createElement("span");
+  badge.className = "mic-lang";
+  const paint = ()=>{
+    badge.textContent = micLang === "ar-SA" ? "ع" : "EN";
+    buttonEl.setAttribute("title", t().micLangHint);
+  };
+  paint();
+  buttonEl.style.position = "relative";
+  buttonEl.appendChild(badge);
+  const flip = (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    micLang = micLang === "ar-SA" ? "en-US" : "ar-SA";
+    paint();
+    if(listening){ try{ recognition.stop(); }catch(err){} }
+  };
+  badge.addEventListener("click", flip);
+  let pressTimer = null;
+  buttonEl.addEventListener("pointerdown", ()=>{ pressTimer = setTimeout(()=>{ pressTimer = null; flip(new Event("x")); }, 520); });
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>
+    buttonEl.addEventListener(ev, ()=>{ if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; } }));
 
   recognition.addEventListener("result", (e)=>{
     const transcript = e.results[0][0].transcript;
@@ -11560,7 +11972,7 @@ function attachVoiceInput(buttonEl, targetEl){
   buttonEl.addEventListener("click", ()=>{
     if(listening){ recognition.stop(); return; }
     try{
-      recognition.lang = lang()==="ar" ? "ar-SA" : "en-US";
+      recognition.lang = micLang;
       recognition.start();
       listening = true;
       buttonEl.classList.add("mic-listening");
@@ -13590,9 +14002,39 @@ function renderSettings(){
           </span>
           <span class="card-chevron">${chevronFwd()}</span>
         </button>
-        <button type="button" class="btn btn-secondary" id="mirrorBtn" style="margin-top:var(--sp-2);">${ICON.weekGrid}<span>${s.mirrorEntryLabel}</span></button>
-        <button type="button" class="btn btn-secondary" id="resetBtn" style="margin-top:var(--sp-5); color:var(--attention); border-color:rgba(216,112,96,.35);">${ICON.close}<span>${s.resetEntryLabel}</span></button>
-        <p class="type-caption" style="color:var(--ink-muted); margin-top:6px; line-height:1.6;">${s.resetNote}</p>` : ""}
+        <div class="stack">
+          <button type="button" class="card" id="mirrorBtn">
+            <span class="card-icon">${ICON.weekGrid}</span>
+            <span class="card-body">
+              <span class="card-title">${s.mirrorEntryLabel}</span>
+              <span class="card-meta">${s.mirrorShort}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+          <div class="card" style="cursor:default; flex-direction:column; align-items:stretch; gap:var(--sp-3);">
+            <span style="display:flex; align-items:center; gap:var(--sp-3);">
+              <span class="card-icon" style="color:var(--support); background:rgba(88,182,144,.16);">${ICON.download}</span>
+              <span class="card-body">
+                <span class="card-title">${s.backupTitle}</span>
+                <span class="card-meta" style="white-space:normal;">${s.backupNote}</span>
+              </span>
+            </span>
+            <span style="display:flex; gap:8px;">
+              <button type="button" class="btn btn-secondary" id="backupExportBtn" style="flex:1; font-size:var(--fs-caption); padding:11px;">${ICON.download}<span>${s.backupExport}</span></button>
+              <button type="button" class="btn btn-secondary" id="backupImportBtn" style="flex:1; font-size:var(--fs-caption); padding:11px;">${ICON.openBook}<span>${s.backupImport}</span></button>
+            </span>
+            <input type="file" id="backupFile" accept="application/json,.json" style="display:none;">
+            <span class="type-caption" id="backupStatus" style="color:var(--ink-muted); min-height:16px;"></span>
+          </div>
+          <button type="button" class="card" id="resetBtn" style="margin-top:var(--sp-4); border-color:rgba(216,112,96,.28);">
+            <span class="card-icon" style="color:var(--attention); background:var(--attention-soft);">${ICON.close}</span>
+            <span class="card-body">
+              <span class="card-title" style="color:var(--attention);">${s.resetEntryLabel}</span>
+              <span class="card-meta">${s.resetShort}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+        </div>` : ""}
         ${settingsTab==="app" ? `
         ${(()=>{ const on = isStandalone(); return `
         <div class="card" style="cursor:default; align-items:flex-start; margin-bottom:var(--sp-4);">
@@ -13693,6 +14135,34 @@ function renderSettings(){
   });
   const devBtn = document.getElementById("devPlansBtn");
   if(devBtn) devBtn.addEventListener("click", ()=>{ renderDevPlans(); });
+  const expBtn = document.getElementById("backupExportBtn");
+  if(expBtn) expBtn.addEventListener("click", ()=>{
+    const name = exportBackup();
+    const st = document.getElementById("backupStatus");
+    if(st){ st.style.color = "var(--support)"; st.textContent = s.backupDone(name); }
+  });
+  const impBtn = document.getElementById("backupImportBtn");
+  const impFile = document.getElementById("backupFile");
+  if(impBtn && impFile){
+    impBtn.addEventListener("click", ()=>impFile.click());
+    impFile.addEventListener("change", ()=>{
+      const file = impFile.files && impFile.files[0];
+      impFile.value = "";
+      if(!file) return;
+      const st = document.getElementById("backupStatus");
+      importBackup(file, (parsed)=>{
+        showConfirmSheet({
+          title: s.backupConfirmTitle,
+          text: s.backupConfirmText,
+          confirmLabel: s.backupConfirmBtn,
+          danger: true,
+          onConfirm: ()=>applyBackup(parsed)
+        });
+      }, ()=>{
+        if(st){ st.style.color = "var(--attention)"; st.textContent = s.backupBadFile; }
+      });
+    });
+  }
   const resetBtn = document.getElementById("resetBtn");
   if(resetBtn) resetBtn.addEventListener("click", ()=>{
     /* Erasing everything is asked twice on purpose: the first sheet explains
