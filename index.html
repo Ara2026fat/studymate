@@ -1499,6 +1499,7 @@ const STR = {
     micLangAr:"عربي",
     backupTitle:"نسخة احتياطية",
     horizonLabel:"بينك وبين لقب",
+    coursesFilled:(n)=>`أضفنا ${n} من مقررات مستواك — احذف ما لا تدرسه.`,
     horizonCourses:(n)=>n===1 ? "مقرر واحد" : (n===2 ? "مقرران" : (n<11 ? `${n} مقررات` : `${n} مقررًا`)),
     horizonLevels:(n)=>n===1 ? "مستوى واحد" : (n===2 ? "مستويان" : (n<11 ? `${n} مستويات` : `${n} مستوى`)),
     horizonDone:"وصلت. تبقّى أن تُسلّم.",
@@ -1964,6 +1965,7 @@ const STR = {
     micLangAr:"Arabic",
     backupTitle:"Backup",
     horizonLabel:"Between you and the title",
+    coursesFilled:(n)=>`We added ${n} courses from your level — remove any you aren't taking.`,
     horizonCourses:(n)=>n===1 ? "one course" : `${n} courses`,
     horizonLevels:(n)=>n===1 ? "one level" : `${n} levels`,
     horizonDone:"You've arrived. All that's left is to hand it in.",
@@ -9697,7 +9699,8 @@ function renderOnboarding(){
       lang: lang(), name:obDraft.name, companion:obDraft.companion, university:obDraft.university, universityId:obDraft.universityId, college:obDraft.college, collegeId:obDraft.collegeId, major:obDraft.major, majorId:obDraft.majorId, level:obDraft.level
     });
     const journey = JourneyModule.ensureFor(student.id);
-    SemesterModule.createFirst(journey.id, obDraft.level || LEVELS[0][lang()]);
+    const firstSemester = SemesterModule.createFirst(journey.id, obDraft.level || LEVELS[0][lang()]);
+    fillSemesterFromPlan(firstSemester && firstSemester.id, obDraft.level || LEVELS[0][lang()]);
 
     activeTab = "today";
     const flagMsg = flagshipMessage(student);
@@ -11391,6 +11394,16 @@ function pagerHtml(page, total, s, attr){
       <button type="button" class="pager-btn" data-${attr}="next" ${page>=total-1?"disabled":""}>${s.nextPage}</button>
     </div>`;
 }
+/* A brief confirmation that something happened, then out of the way. Same
+   shape as the greeting, so the app speaks in one voice. */
+function showToast(message){
+  const el = document.createElement("div");
+  el.className = "welcome-toast";
+  el.innerHTML = `${ICON.check}<span>${escapeHtml(message)}</span>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>el.classList.add("in")); });
+  setTimeout(()=>{ el.classList.remove("in"); setTimeout(()=>el.remove(), 500); }, 3200);
+}
 function showWelcomeToast(){
   if(welcomeShown) return;
   const student = StudentModule.current();
@@ -11424,6 +11437,34 @@ function togglePassed(catalogString){
   if(at === -1) list.push(code); else list.splice(at, 1);
   StudentModule.update({ passed: list });
   return at === -1;
+}
+/* A student who has just told us their institution, programme and level has
+   already told us their courses — they are printed in the plan. Making them
+   type all seven again was the app asking a question it knew the answer to,
+   and an empty first screen after all that setup reads as "this app has
+   nothing for me".
+
+   Courses already marked completed are skipped, so someone joining at level
+   four with credited work doesn't get them back. Nothing is locked: whatever
+   we add can be deleted, and anything missing can be added. */
+function fillSemesterFromPlan(semesterId, levelLabel){
+  const student = StudentModule.current();
+  if(!student || !semesterId) return 0;
+  const catalog = COURSE_CATALOG[catalogKeyFor(student)];
+  if(!catalog) return 0;
+  const levelId = levelIdForLabel(levelLabel) || levelIdForLabel(student.level);
+  const wanted = (levelId && catalog[levelId]) ? catalog[levelId] : [];
+  if(!wanted.length) return 0;
+  const existing = (CourseModule.listForSemester(semesterId) || []).map(c=>c.name);
+  let added = 0;
+  wanted.forEach(entry=>{
+    if(isPassed(entry)) return;
+    const name = entry;
+    if(existing.indexOf(name) !== -1) return;
+    CourseModule.create(semesterId, { name, professor:"" });
+    added++;
+  });
+  return added;
 }
 function rebuildSemesterFromPlan(){
   const student = StudentModule.current();
@@ -14236,9 +14277,22 @@ function renderProfileEditSettings(){
   document.getElementById("setSave").addEventListener("click", ()=>{
     if(!validateProfileDraft("set", setDraft)) return;
     const before = catalogKeyFor(student);
+    const beforeLevel = student.level;
     StudentModule.updateName(document.getElementById("setName").value);
     StudentModule.update(setDraft);
     const after = catalogKeyFor(StudentModule.current());
+    /* Moving up a level is the commonest change of all, and the courses of the
+       new level are as knowable as the first level's were. */
+    if(before === after && setDraft.level && setDraft.level !== beforeLevel){
+      const st2 = StudentModule.current();
+      const jr = JourneyModule.forStudent(st2.id);
+      const sem = jr ? SemesterModule.current(jr.id) : null;
+      if(sem){
+        dbUpdate("semesters", sem.id, { label: setDraft.level });
+        const n = fillSemesterFromPlan(sem.id, setDraft.level);
+        if(n){ renderSettings(); showToast(t().coursesFilled(n)); return; }
+      }
+    }
     if(before !== after && COURSE_CATALOG[after]){
       showConfirmSheet({
         title: s.planChangedTitle,
