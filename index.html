@@ -46,11 +46,18 @@
      never cost anyone the ability to read, so the size lives in Settings
      instead, where it applies to every screen at once and stays put. */
   --type-scale:1;
-  --fs-display:calc(28px * var(--type-scale));
-  --fs-heading:calc(20px * var(--type-scale));
-  --fs-subheading:calc(17px * var(--type-scale));
-  --fs-body:calc(15px * var(--type-scale));
-  --fs-caption:calc(13px * var(--type-scale));
+  /* Arabic sets larger than Latin at the same nominal size — its letterforms
+     carry more vertical detail — so a scale tuned by eye on Latin comes out
+     shouting in Arabic. Every step drops a notch: the screen holds more, the
+     hierarchy is carried by weight and colour rather than sheer size, and the
+     app stops looking like it was set for someone reading without glasses.
+     The three text-size settings still multiply these, so anyone who needs
+     the old scale gets it by choosing "كبير". */
+  --fs-display:calc(24px * var(--type-scale));
+  --fs-heading:calc(17.5px * var(--type-scale));
+  --fs-subheading:calc(15px * var(--type-scale));
+  --fs-body:calc(14px * var(--type-scale));
+  --fs-caption:calc(12px * var(--type-scale));
 
   /* spacing scale */
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px;
@@ -155,9 +162,9 @@ body[data-theme="daylight"] .btn-secondary{
 body[data-theme="daylight"] .sheet{ background:#FFFFFF; }
 body[data-theme="daylight"] .sheet-overlay{ background:rgba(20,30,60,.32); }
 body[data-theme="daylight"] .tab-bar{
-  background:rgba(255,255,255,.92);
+  background:color-mix(in srgb, #FFFFFF 92%, transparent);
   border-color:rgba(20,30,60,.10);
-  box-shadow:0 -2px 20px rgba(20,30,60,.07);
+  box-shadow:0 10px 26px rgba(20,30,60,.10), 0 2px 6px rgba(20,30,60,.06), inset 0 1px 0 rgba(255,255,255,.9);
 }
 body[data-theme="daylight"] .welcome-toast{
   background:rgba(46,111,199,.10); border-color:rgba(46,111,199,.26);
@@ -391,12 +398,16 @@ body[data-theme="daylight"] .card:before{
   .stack > *, .hero{ animation:none; }
   body:before, body:after{ animation:none; }
 }
+/* An icon is a signpost beside a label, not a billboard. At 34px it reads
+   clearly and leaves the title as the loudest thing in the row, which is the
+   correct order — the words carry the meaning. */
 .card-icon{
-  width:42px; height:42px; border-radius:var(--r-sm); flex-shrink:0;
+  width:34px; height:34px; border-radius:10px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(var(--accent-rgb),.14);
+  background:rgba(var(--accent-rgb),.13);
   color:var(--accent);
 }
+.card-icon svg{ width:17px; height:17px; }
 .card-body{ flex:1; min-width:0; }
 .card-title{ display:block; font-size:var(--fs-subheading); font-weight:500; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .card-meta{ display:block; font-size:var(--fs-caption); color:var(--ink-muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -667,13 +678,13 @@ body[data-theme="daylight"] .card:before{
 .tool-row{ display:flex; gap:8px; }
 .tool-tile{
   flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
-  padding:10px 6px; border-radius:var(--r-md);
+  padding:9px 6px; border-radius:var(--r-md);
   background:var(--surface); border:1px solid rgba(255,255,255,.07);
-  color:var(--ink); font-family:inherit; font-size:11.5px; font-weight:600;
+  color:var(--ink); font-family:inherit; font-size:11px; font-weight:600;
   transition:transform 180ms var(--ease-spring), background 200ms var(--ease);
 }
 .tool-tile:active{ transform:scale(.96); }
-.tool-tile svg{ width:19px; height:19px; color:var(--accent); }
+.tool-tile svg{ width:17px; height:17px; color:var(--accent); }
 
 /* Long lists are read a page at a time rather than by endless scrolling: the
    student always knows how much is left and can never lose their place. */
@@ -749,20 +760,22 @@ body[data-theme="daylight"] .card:before{
 .quick-tools{ gap:var(--sp-2); margin-bottom:var(--sp-4); }
 .quick-tools{ display:grid; grid-template-columns:repeat(3,1fr); }
 .quick-tool{
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
-  padding:var(--sp-3) 6px; min-height:78px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  padding:var(--sp-3) 6px; min-height:64px;
   background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:var(--r-md);
   color:var(--ink); text-align:center;
   transition:transform 180ms var(--ease-spring);
 }
 .quick-tool:active{ transform:scale(.97); }
+/* No plate behind the glyph here: three plated squares in a row was three
+   competing blocks. The icon sits directly on the tile in the accent colour. */
 .quick-tool-icon{
-  width:32px; height:32px; border-radius:var(--r-sm); flex-shrink:0;
+  width:auto; height:auto; border-radius:0; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(var(--accent-rgb),.16); color:var(--accent);
+  background:none; color:var(--accent);
 }
-.quick-tool-icon svg{ width:17px; height:17px; }
-.quick-tool-title{ font-size:11.5px; font-weight:600; line-height:1.3; }
+.quick-tool-icon svg{ width:19px; height:19px; }
+.quick-tool-title{ font-size:11px; font-weight:600; line-height:1.3; }
 
 .glossary-pager{ display:flex; align-items:center; justify-content:center; gap:var(--sp-3); margin-top:var(--sp-4); }
 .glossary-pager .btn-icon[disabled]{ opacity:.3; }
@@ -840,14 +853,27 @@ body[data-theme="daylight"] .card:before{
   font-size:11px; font-weight:700; color:var(--ink-muted);
   background:rgba(255,255,255,.07); border-radius:6px; padding:2px 7px;
 }
+/* The old control was a wide glowing capsule with a drop shadow — the visual
+   language of software from a decade ago. A segmented control today is a
+   quiet track with the selected segment lifted on a plain surface: no glow,
+   no gradient, the state carried by contrast alone. */
 .segmented{
-  display:flex; background:var(--surface); border:1px solid rgba(255,255,255,.06); border-radius:999px; padding:3px; margin-bottom:var(--sp-4);
+  display:flex; background:var(--surface-glass, rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:3px;
+  margin-bottom:var(--sp-4);
 }
 .segmented-btn{
-  flex:1; padding:9px var(--sp-3); border-radius:999px; font-size:var(--fs-caption); font-weight:600; color:var(--ink-muted);
-  transition:background 220ms var(--ease-spring), color 220ms var(--ease), box-shadow 220ms var(--ease);
+  flex:1; padding:8px var(--sp-3); border-radius:9px;
+  font-size:var(--fs-caption); font-weight:600; color:var(--ink-muted);
+  transition:background 200ms var(--ease), color 200ms var(--ease);
 }
-.segmented-active{ background:rgba(var(--accent-rgb),.18); color:var(--ink); box-shadow:var(--shadow-card); }
+.segmented-active{
+  background:var(--surface); color:var(--ink);
+  box-shadow:0 1px 2px rgba(0,0,0,.28);
+}
+body[data-theme="daylight"] .segmented-active{
+  background:#FFFFFF; box-shadow:0 1px 2px rgba(20,30,60,.12);
+}
 /* Eight full-width gradient banners filled half the screen and read as a
    fairground. A theme is a colour, so it is shown as one: a small disc the
    size of the choice it represents, four to a row, with its name beneath. */
@@ -858,13 +884,13 @@ body[data-theme="daylight"] .card:before{
 }
 .theme-swatch:active{ transform:scale(.94); }
 .theme-swatch-preview{
-  display:block; width:34px; height:34px; border-radius:50%;
+  display:block; width:28px; height:28px; border-radius:50%;
   border:1px solid rgba(255,255,255,.14); position:relative;
 }
 .theme-swatch-active .theme-swatch-preview{
   box-shadow:0 0 0 2px var(--background), 0 0 0 4px var(--accent);
 }
-.theme-swatch-label{ font-size:10px; font-weight:600; color:var(--ink-muted); text-align:center; line-height:1.3; }
+.theme-swatch-label{ font-size:9.5px; font-weight:600; color:var(--ink-muted); text-align:center; line-height:1.25; }
 .theme-swatch-active .theme-swatch-label{ color:var(--accent); }
 .theme-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px 6px; margin-top:var(--sp-2); }
 .callout{
@@ -972,19 +998,28 @@ body[data-theme="daylight"] .card:before{
 }
 
 /* Tab bar */
+/* The bar used to be painted white regardless of theme — a bright slab across
+   the bottom of an otherwise dark app, and the first thing the eye lands on
+   in every screenshot. It now takes the theme's own surface, lifted slightly
+   and blurred, so it reads as glass over the page rather than a foreign
+   object sitting on top of it. */
 .tab-bar{
   position:fixed; bottom:calc(var(--footer-h) + 10px); left:10px; right:10px; z-index:50;
   max-width:calc(var(--app-max-w) - 20px); margin:0 auto;
-  background:rgba(255,255,255,.90);
+  background:color-mix(in srgb, var(--surface) 86%, transparent);
   border-radius:22px;
   box-shadow:
-    0 14px 28px rgba(0,0,0,.32),
-    0 4px 10px rgba(0,0,0,.20),
-    inset 0 1px 0 rgba(255,255,255,.9);
-  -webkit-backdrop-filter:blur(18px) saturate(160%); backdrop-filter:blur(18px) saturate(160%);
-  border:1px solid rgba(255,255,255,.6);
+    0 14px 30px rgba(0,0,0,.34),
+    0 3px 10px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.10);
+  -webkit-backdrop-filter:blur(20px) saturate(160%); backdrop-filter:blur(20px) saturate(160%);
+  border:1px solid rgba(255,255,255,.09);
   padding:var(--sp-2) var(--sp-2) var(--sp-2);
   display:flex;
+}
+/* Browsers without color-mix still need a sane bar. */
+@supports not (background:color-mix(in srgb, red 50%, blue)){
+  .tab-bar{ background:var(--surface); }
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .tab-bar{ background:var(--surface); }
@@ -1050,7 +1085,7 @@ body[data-theme="daylight"] .card:before{
 }
 /* Tighter tracking at display size: large Arabic type set at default spacing
    reads loose and unconfident. */
-.hero-title{ font-size:var(--fs-display); font-weight:700; letter-spacing:-.01em; margin-bottom:var(--sp-1); }
+.hero-title{ font-size:var(--fs-display); font-weight:700; letter-spacing:-.015em; line-height:1.22; margin-bottom:var(--sp-1); }
 .hero-sub{ font-size:var(--fs-body); color:var(--ink-muted); margin-bottom:var(--sp-4); }
 
 .section-label{ font-size:var(--fs-caption); font-weight:600; color:var(--ink-muted); margin:0 0 var(--sp-3); }
@@ -1500,6 +1535,7 @@ const STR = {
     backupTitle:"نسخة احتياطية",
     horizonLabel:"بينك وبين لقب",
     coursesFilled:(n)=>`أضفنا ${n} من مقررات مستواك — احذف ما لا تدرسه.`,
+    buildLabel:"إصدار التطبيق",
     horizonCourses:(n)=>n===1 ? "مقرر واحد" : (n===2 ? "مقرران" : (n<11 ? `${n} مقررات` : `${n} مقررًا`)),
     horizonLevels:(n)=>n===1 ? "مستوى واحد" : (n===2 ? "مستويان" : (n<11 ? `${n} مستويات` : `${n} مستوى`)),
     horizonDone:"وصلت. تبقّى أن تُسلّم.",
@@ -1966,6 +2002,7 @@ const STR = {
     backupTitle:"Backup",
     horizonLabel:"Between you and the title",
     coursesFilled:(n)=>`We added ${n} courses from your level — remove any you aren't taking.`,
+    buildLabel:"App build",
     horizonCourses:(n)=>n===1 ? "one course" : `${n} courses`,
     horizonLevels:(n)=>n===1 ? "one level" : `${n} levels`,
     horizonDone:"You've arrived. All that's left is to hand it in.",
@@ -11207,6 +11244,10 @@ function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
    closing the app locks it again, and a borrowed phone reveals nothing.
 
    Change DEV_PASSCODE to whatever you like; it is the only place it appears. */
+/* Stamped at build time. Shown in Settings so a stale cached copy can be
+   identified in one glance instead of guessed at — three separate confusions
+   this month traced back to an old build still installed on the phone. */
+const BUILD_ID = "2026-08-26 20:57";
 const DEV_PASSCODE = "arafat2026";
 let devUnlocked = false;
 let devTapCount = 0;
@@ -14105,6 +14146,13 @@ function renderSettings(){
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>` : ""}
+          <div class="card" style="cursor:default;">
+            <span class="card-icon">${ICON.info}</span>
+            <span class="card-body">
+              <span class="card-title">${s.buildLabel}</span>
+              <span class="card-meta" dir="ltr" style="text-align:start;">${BUILD_ID}</span>
+            </span>
+          </div>
           <button type="button" class="card" id="aboutBtn">
             <span class="card-icon">${ICON.info}</span>
             <span class="card-body">
