@@ -116,6 +116,72 @@ body[data-companion="female"]{
 
    Shadows replace the dark theme's glow: on a light surface, depth comes
    from a soft shadow beneath a card, not from a lighter fill inside it. */
+/* Paper: warm and low-glare, for long reading indoors. */
+body[data-theme="paper"]{
+  --field-2:196,150,110;
+  --background:#F7F3EC;
+  --surface:#FFFDF9;
+  --surface-glass:rgba(60,45,30,.05);
+  --ink:#1E1A15;
+  --ink-muted:#6A6055;
+  --line:rgba(60,45,30,.14);
+  --accent:#8C5F27;
+  --accent-rgb:140,95,39;
+  --accent-soft:rgba(140,95,39,.12);
+  --attention:#B4523A;
+  --attention-rgb:180,82,58;
+  --attention-soft:rgba(180,82,58,.10);
+  --support:#2E7A55;
+  --shadow-card:0 1px 2px rgba(60,45,30,.06), 0 6px 18px rgba(60,45,30,.07);
+}
+/* Mist: cool, near-white, the brightest of the three. */
+body[data-theme="mist"]{
+  --field-2:120,190,190;
+  --background:#EEF3F5;
+  --surface:#FFFFFF;
+  --surface-glass:rgba(20,45,55,.05);
+  --ink:#10202A;
+  --ink-muted:#526672;
+  --line:rgba(20,45,55,.13);
+  --accent:#0F7A8C;
+  --accent-rgb:15,122,140;
+  --accent-soft:rgba(15,122,140,.11);
+  --attention:#BE5540;
+  --attention-rgb:190,85,64;
+  --attention-soft:rgba(190,85,64,.10);
+  --support:#1D7A5E;
+  --shadow-card:0 1px 2px rgba(20,45,55,.06), 0 6px 18px rgba(20,45,55,.07);
+}
+/* The light themes share Daylight's component overrides. */
+body[data-theme="paper"] .card, body[data-theme="mist"] .card,
+body[data-theme="paper"] .tool-tile, body[data-theme="mist"] .tool-tile,
+body[data-theme="paper"] .lib-info-btn, body[data-theme="mist"] .lib-info-btn,
+body[data-theme="paper"] .tt-cell, body[data-theme="mist"] .tt-cell,
+body[data-theme="paper"] .set-tabs, body[data-theme="mist"] .set-tabs{
+  border-color:var(--line);
+}
+body[data-theme="paper"] .tt-cell, body[data-theme="mist"] .tt-cell,
+body[data-theme="paper"] .sheet, body[data-theme="mist"] .sheet,
+body[data-theme="paper"] .field, body[data-theme="mist"] .field,
+body[data-theme="paper"] textarea.field, body[data-theme="mist"] textarea.field,
+body[data-theme="paper"] select.field, body[data-theme="mist"] select.field,
+body[data-theme="paper"] .btn-secondary, body[data-theme="mist"] .btn-secondary,
+body[data-theme="paper"] .segmented-active, body[data-theme="mist"] .segmented-active{
+  background:var(--surface); border-color:var(--line); color:var(--ink);
+}
+body[data-theme="paper"] .card:before, body[data-theme="mist"] .card:before{
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
+}
+body[data-theme="paper"] .tab-bar, body[data-theme="mist"] .tab-bar{
+  background:color-mix(in srgb, var(--surface) 92%, transparent);
+  border-color:var(--line);
+  box-shadow:0 10px 26px rgba(20,30,60,.10), inset 0 1px 0 rgba(255,255,255,.9);
+}
+body[data-theme="paper"] .sheet-overlay, body[data-theme="mist"] .sheet-overlay{ background:rgba(20,30,40,.30); }
+body[data-theme="paper"]:before, body[data-theme="mist"]:before{ opacity:.13; }
+body[data-theme="paper"]:after, body[data-theme="mist"]:after{ opacity:.10; }
+body[data-theme="paper"] .tt-cell-full, body[data-theme="mist"] .tt-cell-full{ color:#FFFFFF; }
+body[data-theme="paper"] .level-chip-active, body[data-theme="mist"] .level-chip-active{ color:#FFFFFF; }
 body[data-theme="daylight"]{
   --field-2:120,170,210;
   --background:#F4F6FA;
@@ -180,39 +246,39 @@ body[data-theme="daylight"] .waypoint-marker-current{ color:#FFFFFF; }
 body[data-theme="daylight"] .level-chip-active{ color:#FFFFFF; }
 body[data-theme="daylight"] .empty-icon{ color:var(--ink-muted); }
 body[data-theme="night"]{
-  --field-2:120,150,210;
-  --background:#0B0E14; --surface:#161C28; --surface-glass:rgba(107,155,209,.06);
-  --accent:#6B9BD1; --accent-rgb:107,155,209; --accent-soft:rgba(107,155,209,.16);
+  --field-2:120,150,210
+  --background:#131A26; --surface:#1D2637; --surface-glass:rgba(127,169,220,.07);
+  --accent:#7FA9DC; --accent-rgb:127,169,220; --accent-soft:rgba(127,169,220,.15);
 }
 body[data-theme="obsidian"]{
-  --field-2:200,140,90;
-  --background:#0D0B08; --surface:#1E1912; --surface-glass:rgba(201,151,77,.06);
-  --accent:#C9974D; --accent-rgb:201,151,77; --accent-soft:rgba(201,151,77,.16);
+  --field-2:200,150,90
+  --background:#191713; --surface:#252119; --surface-glass:rgba(210,164,94,.07);
+  --accent:#D2A45E; --accent-rgb:210,164,94; --accent-soft:rgba(210,164,94,.15);
 }
 body[data-theme="petrol"]{
-  --field-2:80,180,170;
-  --background:#081815; --surface:#132824; --surface-glass:rgba(63,184,168,.06);
-  --accent:#3FB8A8; --accent-rgb:63,184,168; --accent-soft:rgba(63,184,168,.16);
+  --field-2:80,180,170
+  --background:#10221F; --surface:#1A322D; --surface-glass:rgba(79,194,176,.07);
+  --accent:#4FC2B0; --accent-rgb:79,194,176; --accent-soft:rgba(79,194,176,.15);
 }
 body[data-theme="plum"]{
-  --field-2:200,110,150;
-  --background:#180A14; --surface:#281423; --surface-glass:rgba(212,107,148,.06);
-  --accent:#D46B94; --accent-rgb:212,107,148; --accent-soft:rgba(212,107,148,.16);
+  --field-2:200,120,160
+  --background:#20121C; --surface:#2E1C29; --surface-glass:rgba(217,130,166,.07);
+  --accent:#D982A6; --accent-rgb:217,130,166; --accent-soft:rgba(217,130,166,.15);
 }
 body[data-theme="royal"]{
-  --field-2:90,120,230;
-  --background:#070B1C; --surface:#131A34; --surface-glass:rgba(76,126,240,.06);
-  --accent:#4C7EF0; --accent-rgb:76,126,240; --accent-soft:rgba(76,126,240,.16);
+  --field-2:100,130,230
+  --background:#101728; --surface:#1B2543; --surface-glass:rgba(123,147,238,.07);
+  --accent:#7B93EE; --accent-rgb:123,147,238; --accent-soft:rgba(123,147,238,.15);
 }
 body[data-theme="forest"]{
-  --field-2:150,175,110;
-  --background:#0A120A; --surface:#162115; --surface-glass:rgba(156,173,94,.06);
-  --accent:#9CAD5E; --accent-rgb:156,173,94; --accent-soft:rgba(156,173,94,.16);
+  --field-2:140,180,120
+  --background:#111B13; --surface:#1B291D; --surface-glass:rgba(143,190,122,.07);
+  --accent:#8FBE7A; --accent-rgb:143,190,122; --accent-soft:rgba(143,190,122,.15);
 }
 body[data-theme="sandy"]{
-  --field-2:210,160,100;
-  --background:#170F09; --surface:#271C10; --surface-glass:rgba(217,161,94,.06);
-  --accent:#D9A15E; --accent-rgb:217,161,94; --accent-soft:rgba(217,161,94,.16);
+  --field-2:210,165,110
+  --background:#1E1710; --surface:#2C2219; --surface-glass:rgba(221,174,114,.07);
+  --accent:#DDAE72; --accent-rgb:221,174,114; --accent-soft:rgba(221,174,114,.15);
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -648,6 +714,58 @@ body[data-theme="daylight"] .card:before{
 .horizon-title{ font-family:inherit; font-size:var(--fs-heading); font-weight:800; color:var(--accent); line-height:1.3; }
 .horizon-line{ font-size:var(--fs-body); font-weight:600; color:var(--ink); }
 .horizon-note{ font-size:11px; color:var(--ink-muted); margin-top:2px; }
+/* ---- Notebook page -------------------------------------------------------
+   A page, not a form. Ruled paper in the theme's own ink, the course and the
+   date across the top the way a student writes them by hand, and the tools
+   down the side within thumb reach rather than buried in a menu. */
+.page-sheet{
+  position:relative; width:100%; border-radius:var(--r-md); overflow:hidden;
+  background:var(--surface); border:1px solid var(--line, rgba(255,255,255,.08));
+  box-shadow:var(--shadow-card);
+  touch-action:none;
+}
+.page-canvas{ display:block; width:100%; height:auto; }
+.page-head{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding:10px var(--sp-3); border-bottom:1px solid var(--line, rgba(255,255,255,.08));
+  background:color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.page-head .ph-course{ font-weight:700; font-size:var(--fs-caption); }
+.page-head .ph-date{ font-size:11px; color:var(--ink-muted); }
+.page-head input{
+  flex:1; min-width:90px; background:none; border:none; color:var(--ink);
+  font-family:inherit; font-size:var(--fs-caption); padding:2px 0;
+}
+.page-head input::placeholder{ color:var(--ink-muted); }
+
+.page-tools{
+  display:flex; gap:6px; flex-wrap:wrap; justify-content:center;
+  padding:var(--sp-3) 0 0;
+}
+.ptool{
+  width:40px; height:40px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); border:1px solid var(--line, rgba(255,255,255,.08));
+  color:var(--ink-muted); transition:transform 160ms var(--ease-spring);
+}
+.ptool svg{ width:18px; height:18px; }
+.ptool:active{ transform:scale(.9); }
+.ptool-on{ background:rgba(var(--accent-rgb),.16); border-color:rgba(var(--accent-rgb),.35); color:var(--accent); }
+.ptool-rec{ background:rgba(var(--attention-rgb),.18); border-color:rgba(var(--attention-rgb),.4); color:var(--attention); }
+.pen-colors{ display:flex; gap:7px; justify-content:center; padding-top:var(--sp-3); }
+.pen-dot{
+  width:24px; height:24px; border-radius:50%; border:2px solid transparent;
+  transition:transform 160ms var(--ease-spring);
+}
+.pen-dot-on{ border-color:var(--ink); transform:scale(1.12); }
+.pen-sizes{ display:flex; gap:7px; justify-content:center; align-items:center; padding-top:var(--sp-3); }
+.pen-size{
+  width:34px; height:26px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+  background:var(--surface); border:1px solid var(--line, rgba(255,255,255,.08));
+}
+.pen-size i{ display:block; border-radius:99px; background:var(--ink-muted); }
+.pen-size-on{ border-color:var(--accent); }
+.pen-size-on i{ background:var(--accent); }
 .hub-card{
   display:flex; flex-direction:column; align-items:stretch; gap:7px; width:100%;
   padding:16px; border-radius:var(--r-md); text-align:start;
@@ -1536,6 +1654,28 @@ const STR = {
     horizonLabel:"بينك وبين لقب",
     coursesFilled:(n)=>`أضفنا ${n} من مقررات مستواك — احذف ما لا تدرسه.`,
     buildLabel:"إصدار التطبيق",
+    pageOpenBtn:"صفحة جديدة",
+    pageTitle:"صفحة الدفتر",
+    pageTopicPh:"الموضوع (اختياري)",
+    pageWeekPh:"الأسبوع",
+    penTool:"قلم",
+    highlightTool:"تظليل",
+    eraserTool:"ممحاة",
+    textTool:"كتابة",
+    undoTool:"تراجع",
+    clearTool:"مسح الكل",
+    imageTool:"صورة",
+    fileTool:"ملف",
+    voiceTool:"صوت",
+    voiceRecording:"يسجّل…",
+    voiceSaved:"حُفظت الملاحظة الصوتية",
+    voiceUnsupported:"جهازك لا يدعم التسجيل الصوتي.",
+    pageSaved:"حُفظت الصفحة",
+    pageEmpty:"الصفحة فارغة — ارسم أو اكتب شيئًا أولًا.",
+    penSize:"سمك القلم",
+    clearConfirmTitle:"مسح الصفحة؟",
+    clearConfirmText:"سيُمحى كل ما رسمته في هذه الصفحة. لا يمكن التراجع بعدها.",
+    clearConfirmBtn:"امسح",
     horizonCourses:(n)=>n===1 ? "مقرر واحد" : (n===2 ? "مقرران" : (n<11 ? `${n} مقررات` : `${n} مقررًا`)),
     horizonLevels:(n)=>n===1 ? "مستوى واحد" : (n===2 ? "مستويان" : (n<11 ? `${n} مستويات` : `${n} مستوى`)),
     horizonDone:"وصلت. تبقّى أن تُسلّم.",
@@ -2003,6 +2143,28 @@ const STR = {
     horizonLabel:"Between you and the title",
     coursesFilled:(n)=>`We added ${n} courses from your level — remove any you aren't taking.`,
     buildLabel:"App build",
+    pageOpenBtn:"New page",
+    pageTitle:"Notebook page",
+    pageTopicPh:"Topic (optional)",
+    pageWeekPh:"Week",
+    penTool:"Pen",
+    highlightTool:"Highlight",
+    eraserTool:"Eraser",
+    textTool:"Type",
+    undoTool:"Undo",
+    clearTool:"Clear",
+    imageTool:"Image",
+    fileTool:"File",
+    voiceTool:"Voice",
+    voiceRecording:"Recording…",
+    voiceSaved:"Voice note saved",
+    voiceUnsupported:"Your device doesn't support recording.",
+    pageSaved:"Page saved",
+    pageEmpty:"Nothing on the page yet — draw or write something first.",
+    penSize:"Pen size",
+    clearConfirmTitle:"Clear the page?",
+    clearConfirmText:"Everything drawn on this page will be erased. This can't be undone.",
+    clearConfirmBtn:"Clear",
     horizonCourses:(n)=>n===1 ? "one course" : `${n} courses`,
     horizonLevels:(n)=>n===1 ? "one level" : `${n} levels`,
     horizonDone:"You've arrived. All that's left is to hand it in.",
@@ -2158,13 +2320,15 @@ const THEMES = [
   /* Daylight sits first because a student reading outdoors needs it most, and
      because a list of seven dark shades gave them no way out of the dark. */
   { id:"daylight", bg:"#F4F6FA", accent:"#2E6FC7", ar:"نهاري", en:"Daylight" },
-  { id:"night", bg:"#0B0E14", accent:"#6B9BD1", ar:"ليلي", en:"Night" },
-  { id:"obsidian", bg:"#0D0B08", accent:"#C9974D", ar:"أوبسيديان", en:"Obsidian" },
-  { id:"petrol", bg:"#081815", accent:"#3FB8A8", ar:"بترولي", en:"Petrol" },
-  { id:"plum", bg:"#180A14", accent:"#D46B94", ar:"برقوقي", en:"Plum" },
-  { id:"royal", bg:"#070B1C", accent:"#4C7EF0", ar:"أزرق ملكي", en:"Royal Blue" },
-  { id:"forest", bg:"#0A120A", accent:"#9CAD5E", ar:"أخضر عميق", en:"Deep Green" },
-  { id:"sandy", bg:"#170F09", accent:"#D9A15E", ar:"رملي", en:"Sandy" }
+  { id:"mist", bg:"#EEF3F5", accent:"#0F7A8C", ar:"ضبابي", en:"Mist" },
+  { id:"paper", bg:"#F7F3EC", accent:"#8C5F27", ar:"ورقي", en:"Paper" },
+  { id:"night", bg:"#131A26", accent:"#7FA9DC", ar:"ليلي", en:"Night" },
+  { id:"obsidian", bg:"#191713", accent:"#D2A45E", ar:"كهرماني", en:"Amber" },
+  { id:"petrol", bg:"#10221F", accent:"#4FC2B0", ar:"بترولي", en:"Petrol" },
+  { id:"plum", bg:"#20121C", accent:"#D982A6", ar:"خُزامى", en:"Lilac" },
+  { id:"royal", bg:"#101728", accent:"#7B93EE", ar:"أزرق ملكي", en:"Royal" },
+  { id:"forest", bg:"#111B13", accent:"#8FBE7A", ar:"غابة", en:"Forest" },
+  { id:"sandy", bg:"#1E1710", accent:"#DDAE72", ar:"رملي", en:"Sand" }
 ];
 
 /* ============================================================
@@ -2183,6 +2347,18 @@ const ICON = {
   event:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>`,
   message:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/></svg>`,
   share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.4 10.8l7.2-4.1M8.4 13.2l7.2 4.1"/></svg>`,
+  trash:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.5A1.5 1.5 0 0 1 11 4h2a1.5 1.5 0 0 1 1.5 1.5V7"/><path d="M6.5 7l.8 12a2 2 0 0 0 2 1.9h5.4a2 2 0 0 0 2-1.9L17.5 7"/><path d="M10.5 11v6M13.5 11v6"/></svg>`,
+  archive:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.5h17V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19z"/><path d="M2.6 4.5h18.8v3H2.6z"/><path d="M10 12h4"/></svg>`,
+  personM:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20.5c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>`,
+  personF:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.6" r="3.4"/><path d="M7.4 20.5l2-6.2h5.2l2 6.2z"/></svg>`,
+  pen:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 3.9l3.6 3.6L8.4 19.2l-4.5.9.9-4.5z"/><path d="M14.4 6l3.6 3.6"/></svg>`,
+  marker:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-3 3v3h3l3-3"/><path d="M13.5 4.5l6 6-7 7-6-6z"/></svg>`,
+  eraser:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 20.5H20"/><path d="M14.5 3.9l5.6 5.6-8 8H6.4L3.5 14.6z"/></svg>`,
+  undo:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h10a5.5 5.5 0 0 1 0 11h-4"/><path d="M7.5 5.2L3.6 9l3.9 3.8"/></svg>`,
+  keyboard:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="6" width="18.8" height="12" rx="2"/><path d="M6.5 9.5v.01M10 9.5v.01M13.5 9.5v.01M17 9.5v.01M6.5 12.8v.01M10 12.8v.01M13.5 12.8v.01M17 12.8v.01M8.5 15.6h7"/></svg>`,
+  image:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="4.6" width="17.6" height="14.8" rx="2.2"/><circle cx="8.6" cy="9.6" r="1.7"/><path d="M4 17l4.6-4.4 3.3 3.1 3-2.7 5.1 4.6"/></svg>`,
+  mic:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.6" width="6" height="11" rx="3"/><path d="M5.4 11.4a6.6 6.6 0 0 0 13.2 0"/><path d="M12 18v3.4"/></svg>`,
+  paperclip:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5l-8 8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.4 3.4 0 0 1 4.8 4.8l-8.4 8.4a1.8 1.8 0 0 1-2.5-2.5l7.7-7.7"/></svg>`,
   info:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.01"/></svg>`,
   weekGrid:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="4.5" x2="8" y2="19.5"/><line x1="13" y1="4.5" x2="13" y2="19.5"/><line x1="17" y1="9.5" x2="17" y2="19.5" opacity="0"/></svg>`,
   bell:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
@@ -7698,6 +7874,31 @@ function matchingTechniqueSkillId(courseName){
    the owner can walk through all eleven plans checking courses and references
    without re-registering or disturbing a real profile. */
 let devPlanOverride = null;
+/* Records made by earlier builds can hold a college that was never filled in,
+   or a combination that predates a plan being renamed. Their key then matches
+   nothing, and the student silently loses the library, the reference map, the
+   glossary and the course tools — with no error to explain it, which is
+   exactly what happened on a tester's phone.
+
+   So before trusting a key, we check it resolves; if it doesn't, we look for
+   a plan at the same institution with the same programme and adopt its key.
+   Repaired once, saved, and never mentioned to the student — they only notice
+   that their library is there. */
+function repairStudentPlanKey(){
+  const student = StudentModule.current();
+  if(!student || !student.universityId || !student.majorId) return false;
+  const key = `${student.universityId}-${student.collegeId}-${student.majorId}`;
+  if(COURSE_CATALOG[key]) return false;
+  const match = Object.keys(COURSE_CATALOG).find(k=>{
+    const parts = k.split("-");
+    return parts[0] === student.universityId
+      && (parts[2] + "-" + parts[3]) === student.majorId;
+  });
+  if(!match) return false;
+  const collegeId = match.split("-")[1];
+  StudentModule.update({ collegeId, college: obLabel(COLLEGES, collegeId) });
+  return true;
+}
 function catalogKeyFor(student){
   if(devPlanOverride && COURSE_CATALOG[devPlanOverride]) return devPlanOverride;
   if(!student) return null;
@@ -9367,9 +9568,11 @@ function lang(){ const s = StudentModule.current(); return s ? s.lang : "ar"; }
 /* The phone's own status bar and browser chrome follow this colour; leaving it
    dark under a light theme puts a black strip above a white page. */
 function applyThemeChrome(){
-  const light = document.body.dataset.theme === "daylight";
+  const th = document.body.dataset.theme;
+  const light = th === "daylight" || th === "paper" || th === "mist";
   const meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute("content", light ? "#F4F6FA" : "#0D1119");
+  const lightBg = { daylight:"#F4F6FA", paper:"#F7F3EC", mist:"#EEF3F5" }[th] || "#F4F6FA";
+  if(meta) meta.setAttribute("content", light ? lightBg : "#0D1119");
   document.documentElement.style.colorScheme = light ? "light" : "dark";
 }
 function applyDir(){
@@ -9698,8 +9901,8 @@ function renderOnboarding(){
         <div class="field-group">
           <span class="field-label">${s.companionSectionLabel}</span>
           <div style="display:flex; gap:8px;">
-            <button type="button" class="btn btn-secondary" id="obCompanionMale" style="flex:1;">${s.companionMaleLabel}</button>
-            <button type="button" class="btn btn-secondary" id="obCompanionFemale" style="flex:1;">${s.companionFemaleLabel}</button>
+            <button type="button" class="btn btn-secondary" id="obCompanionMale" style="flex:1;">${ICON.personM}<span>${s.companionMaleLabel}</span></button>
+            <button type="button" class="btn btn-secondary" id="obCompanionFemale" style="flex:1;">${ICON.personF}<span>${s.companionFemaleLabel}</span></button>
           </div>
           <p class="field-error" id="obCompanionError">${s.companionRequired}</p>
         </div>
@@ -10403,6 +10606,328 @@ function downloadNotebook(courseId){
   document.getElementById("printNotebookArea").innerHTML = html;
   window.print();
 }
+
+/* ============================================================
+   NOTEBOOK PAGE — a sheet the student writes on
+   ------------------------------------------------------------
+   Everything a page needs lives on the page: the course, the day and the
+   date across the top; pen, highlighter and eraser down the tool strip; and
+   an image, a file or a spoken note dropped straight in. Saving produces one
+   drawing note in the course notebook, so it travels in the backup and
+   appears in search alongside everything else — no second store to keep in
+   sync, no attachment that exists only on this screen.
+   ============================================================ */
+let pageTool = "pen";
+let pageColor = null;
+let pageWidth = 3;
+let pageStrokes = [];
+let pageRecorder = null;
+let pageRecChunks = [];
+
+const PAGE_PALETTE = ["#2E6FC7", "#E0533C", "#1E9E63", "#E5A93A", "#8E63C6", "#111820"];
+
+function pageDateLine(){
+  const d = new Date();
+  const l = lang();
+  const day = d.toLocaleDateString(l === "ar" ? "ar-SA" : "en-GB", { weekday:"long" });
+  const date = d.toLocaleDateString(l === "ar" ? "ar-SA" : "en-GB", { year:"numeric", month:"long", day:"numeric" });
+  return `${day} · ${date}`;
+}
+
+function renderNotebookPage(courseId){
+  applyDir();
+  const s = t();
+  const course = dbGet("courses", courseId);
+  if(!course) return renderSemester();
+  if(!pageColor) pageColor = PAGE_PALETTE[0];
+  pageStrokes = [];
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="pgBack" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.pageTitle}</div>
+        <button type="button" class="btn-icon" id="pgSave" aria-label="${s.saveBtn}">${ICON.check}</button>
+      </div>
+      <div class="screen-content">
+        <div class="page-sheet">
+          <div class="page-head">
+            <span class="ph-course">${escapeHtml(course.name)}</span>
+            <span class="ph-date">${pageDateLine()}</span>
+            <input type="text" id="pgTopic" placeholder="${s.pageTopicPh}" autocomplete="off">
+          </div>
+          <canvas class="page-canvas" id="pgCanvas"></canvas>
+        </div>
+
+        <div class="page-tools">
+          <button type="button" class="ptool ptool-on" data-ptool="pen" title="${s.penTool}">${ICON.pen}</button>
+          <button type="button" class="ptool" data-ptool="marker" title="${s.highlightTool}">${ICON.marker}</button>
+          <button type="button" class="ptool" data-ptool="eraser" title="${s.eraserTool}">${ICON.eraser}</button>
+          <button type="button" class="ptool" id="pgUndo" title="${s.undoTool}">${ICON.undo}</button>
+          <button type="button" class="ptool" id="pgText" title="${s.textTool}">${ICON.keyboard}</button>
+          <button type="button" class="ptool" id="pgImage" title="${s.imageTool}">${ICON.image}</button>
+          <button type="button" class="ptool" id="pgFile" title="${s.fileTool}">${ICON.paperclip}</button>
+          <button type="button" class="ptool" id="pgVoice" title="${s.voiceTool}">${ICON.mic}</button>
+          <button type="button" class="ptool" id="pgClear" title="${s.clearTool}">${ICON.trash}</button>
+        </div>
+
+        <div class="pen-colors">
+          ${PAGE_PALETTE.map(c=>`<button type="button" class="pen-dot ${c===pageColor?'pen-dot-on':''}" data-pen-color="${c}" style="background:${c};" aria-label="${c}"></button>`).join("")}
+        </div>
+        <div class="pen-sizes">
+          ${[2,3,6,10].map(w=>`<button type="button" class="pen-size ${w===pageWidth?'pen-size-on':''}" data-pen-size="${w}" aria-label="${s.penSize} ${w}"><i style="width:${w*2}px; height:${w*2}px;"></i></button>`).join("")}
+        </div>
+
+        <p class="type-caption" id="pgStatus" style="text-align:center; color:var(--ink-muted); min-height:18px; margin-top:var(--sp-3);"></p>
+
+        <input type="file" id="pgImageFile" accept="image/*" style="display:none;">
+        <input type="file" id="pgAnyFile" style="display:none;">
+      </div>
+    </section>`;
+
+  const canvas = document.getElementById("pgCanvas");
+  const status = document.getElementById("pgStatus");
+  const say = (msg, tone)=>{ status.style.color = tone || "var(--ink-muted)"; status.textContent = msg; };
+
+  /* The sheet is drawn at device resolution so strokes stay crisp on a phone,
+     while CSS keeps it the width of the column. */
+  const ratio = Math.min(window.devicePixelRatio || 1, 2.5);
+  const cssW = canvas.parentElement.clientWidth;
+  const cssH = Math.round(cssW * 1.32);
+  canvas.style.height = cssH + "px";
+  canvas.width = Math.round(cssW * ratio);
+  canvas.height = Math.round(cssH * ratio);
+  const ctx = canvas.getContext("2d");
+  ctx.scale(ratio, ratio);
+
+  const themeInk = getComputedStyle(document.body).getPropertyValue("--ink").trim() || "#111820";
+  const paper = getComputedStyle(document.body).getPropertyValue("--surface").trim() || "#ffffff";
+
+  /* Ruled lines, faint, in the theme's ink — redrawn under every repaint so
+     erasing never eats the paper itself. */
+  function paintPaper(){
+    ctx.save();
+    ctx.fillStyle = paper;
+    ctx.fillRect(0, 0, cssW, cssH);
+    ctx.strokeStyle = themeInk;
+    ctx.globalAlpha = .10;
+    ctx.lineWidth = 1;
+    for(let y = 34; y < cssH; y += 30){
+      ctx.beginPath(); ctx.moveTo(10, y); ctx.lineTo(cssW - 10, y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function repaint(){
+    paintPaper();
+    pageStrokes.forEach(st=>{
+      if(st.type === "image" && st.img){
+        ctx.drawImage(st.img, st.x, st.y, st.w, st.h);
+        return;
+      }
+      if(st.type === "text"){
+        ctx.save();
+        ctx.fillStyle = st.color;
+        ctx.font = `600 ${st.size}px var(--font-ar), system-ui, sans-serif`;
+        ctx.textAlign = (lang() === "ar") ? "right" : "left";
+        st.lines.forEach((ln, i)=>ctx.fillText(ln, st.x, st.y + i * (st.size * 1.5)));
+        ctx.restore();
+        return;
+      }
+      if(!st.points.length) return;
+      ctx.save();
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.strokeStyle = st.erase ? paper : st.color;
+      ctx.globalAlpha = st.marker ? .35 : 1;
+      ctx.lineWidth = st.width;
+      ctx.beginPath();
+      ctx.moveTo(st.points[0].x, st.points[0].y);
+      st.points.forEach(pt=>ctx.lineTo(pt.x, pt.y));
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+  repaint();
+
+  /* Drawing. Pointer events cover finger, pen and mouse in one path, and the
+     canvas keeps the pointer so a stroke isn't cut short by leaving the sheet. */
+  let drawing = false;
+  const posOf = (e)=>{
+    const r = canvas.getBoundingClientRect();
+    return { x:(e.clientX - r.left), y:(e.clientY - r.top) };
+  };
+  canvas.addEventListener("pointerdown", (e)=>{
+    drawing = true;
+    canvas.setPointerCapture(e.pointerId);
+    pageStrokes.push({
+      type:"stroke", points:[posOf(e)],
+      color: pageColor,
+      width: pageTool === "eraser" ? Math.max(pageWidth * 4, 16) : (pageTool === "marker" ? pageWidth * 4 : pageWidth),
+      marker: pageTool === "marker",
+      erase: pageTool === "eraser"
+    });
+    repaint();
+  });
+  canvas.addEventListener("pointermove", (e)=>{
+    if(!drawing) return;
+    pageStrokes[pageStrokes.length - 1].points.push(posOf(e));
+    repaint();
+  });
+  ["pointerup","pointercancel"].forEach(ev=>canvas.addEventListener(ev, ()=>{ drawing = false; }));
+
+  document.querySelectorAll("[data-ptool]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      pageTool = btn.dataset.ptool;
+      document.querySelectorAll("[data-ptool]").forEach(b=>b.classList.toggle("ptool-on", b === btn));
+    });
+  });
+  document.querySelectorAll("[data-pen-color]").forEach(dot=>{
+    dot.addEventListener("click", ()=>{
+      pageColor = dot.dataset.penColor;
+      document.querySelectorAll("[data-pen-color]").forEach(d=>d.classList.toggle("pen-dot-on", d === dot));
+    });
+  });
+  document.querySelectorAll("[data-pen-size]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      pageWidth = +btn.dataset.penSize;
+      document.querySelectorAll("[data-pen-size]").forEach(b=>b.classList.toggle("pen-size-on", b === btn));
+    });
+  });
+  document.getElementById("pgUndo").addEventListener("click", ()=>{ pageStrokes.pop(); repaint(); });
+  document.getElementById("pgClear").addEventListener("click", ()=>{
+    showConfirmSheet({
+      title:s.clearConfirmTitle, text:s.clearConfirmText, confirmLabel:s.clearConfirmBtn, danger:true,
+      onConfirm:()=>{ pageStrokes = []; repaint(); }
+    });
+  });
+
+  /* Typing on the page: the keyboard is a tool like the pen, so text lands on
+     the sheet as part of the drawing rather than in a separate field. */
+  document.getElementById("pgText").addEventListener("click", ()=>{
+    openTextEntrySheet((value)=>{
+      if(!value.trim()) return;
+      const size = Math.max(15, pageWidth * 5);
+      const maxChars = Math.floor((cssW - 30) / (size * .52));
+      const lines = [];
+      value.split("\n").forEach(par=>{
+        let line = "";
+        par.split(" ").forEach(word=>{
+          if((line + " " + word).trim().length > maxChars){ lines.push(line.trim()); line = word; }
+          else line = (line + " " + word).trim();
+        });
+        lines.push(line);
+      });
+      const lastY = pageStrokes.reduce((y, st)=>Math.max(y, st.type === "text" ? st.y + st.lines.length * size * 1.5 : 0), 40);
+      pageStrokes.push({
+        type:"text", lines, color:pageColor, size,
+        x: (lang() === "ar") ? cssW - 14 : 14,
+        y: Math.min(lastY + 8, cssH - 20)
+      });
+      repaint();
+    });
+  });
+
+  /* An image is placed on the sheet itself, scaled to fit the width, so it can
+     be drawn on and annotated like anything else on the page. */
+  const imgInput = document.getElementById("pgImageFile");
+  document.getElementById("pgImage").addEventListener("click", ()=>imgInput.click());
+  imgInput.addEventListener("change", ()=>{
+    const file = imgInput.files && imgInput.files[0];
+    imgInput.value = "";
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const w = cssW - 28;
+        const h = w * (img.height / img.width);
+        pageStrokes.push({ type:"image", img, x:14, y:44, w, h:Math.min(h, cssH - 60) });
+        repaint();
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* Files and voice notes are attached to the course notebook rather than
+     painted on the sheet — a PDF has no place on a page of handwriting, but it
+     belongs with the note it was mentioned in. */
+  const anyInput = document.getElementById("pgAnyFile");
+  document.getElementById("pgFile").addEventListener("click", ()=>anyInput.click());
+  anyInput.addEventListener("change", ()=>{
+    const file = anyInput.files && anyInput.files[0];
+    anyInput.value = "";
+    if(!file) return;
+    if(file.size > 2 * 1024 * 1024){ say(t().fileTooLarge || "الملف كبير", "var(--attention)"); return; }
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      NotebookModule.addFileNote(courseId, reader.result, file.name, file.size, "default");
+      say(file.name, "var(--support)");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const voiceBtn = document.getElementById("pgVoice");
+  voiceBtn.addEventListener("click", async ()=>{
+    if(pageRecorder && pageRecorder.state === "recording"){
+      pageRecorder.stop();
+      return;
+    }
+    if(!navigator.mediaDevices || !window.MediaRecorder){ say(s.voiceUnsupported, "var(--attention)"); return; }
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      pageRecChunks = [];
+      pageRecorder = new MediaRecorder(stream);
+      pageRecorder.ondataavailable = (e)=>{ if(e.data.size) pageRecChunks.push(e.data); };
+      pageRecorder.onstop = ()=>{
+        stream.getTracks().forEach(tr=>tr.stop());
+        voiceBtn.classList.remove("ptool-rec");
+        const blob = new Blob(pageRecChunks, { type: pageRecorder.mimeType || "audio/webm" });
+        const reader = new FileReader();
+        reader.onload = ()=>{
+          NotebookModule.addFileNote(courseId, reader.result, `voice-${Date.now()}.webm`, blob.size, "default");
+          say(s.voiceSaved, "var(--support)");
+        };
+        reader.readAsDataURL(blob);
+      };
+      pageRecorder.start();
+      voiceBtn.classList.add("ptool-rec");
+      say(s.voiceRecording, "var(--attention)");
+    }catch(err){ say(s.voiceUnsupported, "var(--attention)"); }
+  });
+
+  document.getElementById("pgBack").addEventListener("click", ()=>{ renderCourseNotebook(courseId); });
+  document.getElementById("pgSave").addEventListener("click", ()=>{
+    if(!pageStrokes.length){ say(s.pageEmpty, "var(--attention)"); return; }
+    const topic = (document.getElementById("pgTopic").value || "").trim();
+    NotebookModule.addDrawingNote(courseId, canvas.toDataURL("image/png"), "default", { topic, week:"" });
+    showToast(s.pageSaved);
+    renderCourseNotebook(courseId);
+  });
+}
+
+/* A plain sheet for typing a block of text, used by the page's keyboard tool. */
+function openTextEntrySheet(onDone){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.textTool}</div>
+      <textarea class="field" id="pgTextArea" rows="5" style="resize:none;"></textarea>
+      <button type="button" class="btn btn-primary" style="width:100%; margin-top:var(--sp-3);" id="pgTextOk">${s.saveBtn}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = ()=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>overlay.remove(), 260); };
+  overlay.addEventListener("click", (e)=>{ if(e.target === overlay) close(); });
+  overlay.querySelector("#pgTextOk").addEventListener("click", ()=>{
+    const v = overlay.querySelector("#pgTextArea").value;
+    close(); onDone(v);
+  });
+  setTimeout(()=>{ const f = overlay.querySelector("#pgTextArea"); if(f) f.focus(); }, 320);
+}
+
 function renderCourseNotebook(courseId){
   applyDir();
   const s = t();
@@ -10432,6 +10957,9 @@ function renderCourseNotebook(courseId){
              of button three times in three places and had to hunt for the one
              they wanted. One strip means one place to look. -->
         <div class="toolbar" role="group" aria-label="${s.notebookToolsLabel}">
+          <button type="button" class="tool" id="notebookNewPage">
+            <span class="tool-icon">${ICON.pen}</span><span>${s.pageOpenBtn}</span>
+          </button>
           <button type="button" class="tool" id="notebookAddNote">
             <span class="tool-icon">${ICON.pencil}</span><span>${s.toolNote}</span>
           </button>
@@ -10549,6 +11077,8 @@ function renderCourseNotebook(courseId){
     });
   });
   document.getElementById("notebookBack").addEventListener("click", ()=>{ notebookSearch=""; notebookGroupBy="all"; renderCourseView(courseId); });
+  const newPageBtn = document.getElementById("notebookNewPage");
+  if(newPageBtn) newPageBtn.addEventListener("click", ()=>{ renderNotebookPage(courseId); });
   document.getElementById("notebookAddNote").addEventListener("click", ()=>{ openNoteSheet(courseId, null, ()=>renderCourseNotebook(courseId)); });
   document.getElementById("notebookAddImage").addEventListener("click", ()=>{ document.getElementById("notebookImageInput").click(); });
   document.getElementById("notebookImageInput").addEventListener("change", (e)=>{
@@ -10817,7 +11347,7 @@ function openRawNoteSheet(existingNote, onDone){
         </div>
       </div>
       <button type="button" class="btn btn-primary" id="rawSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveChangesBtn}</button>
-      ${editing ? `<button type="button" class="btn btn-secondary" id="rawDelete" style="color:var(--attention);">${s.glossaryDeleteBtn}</button>` : ""}
+      ${editing ? `<button type="button" class="btn btn-secondary" id="rawDelete" style="color:var(--attention);">${ICON.trash}<span>${s.glossaryDeleteBtn}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
@@ -10973,7 +11503,7 @@ function openNoteSheet(courseId, existingNote, onDone){
         </div>
       </div>
       <button type="button" class="btn btn-primary" id="noteSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveChangesBtn}</button>
-      ${editing ? `<button type="button" class="btn btn-secondary" id="noteDelete" style="color:var(--attention);">${s.glossaryDeleteBtn}</button>` : ""}
+      ${editing ? `<button type="button" class="btn btn-secondary" id="noteDelete" style="color:var(--attention);">${ICON.trash}<span>${s.glossaryDeleteBtn}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
@@ -12545,7 +13075,11 @@ function renderSkillsHub(){
           ).join("")}
         </div>
         ${archivedCount > 0 ? `
-        <button type="button" class="type-caption" id="skillsArchiveEntry" style="display:block; margin:var(--sp-4) auto 0; background:none; border:none; text-decoration:underline; color:var(--ink-muted);">${s.skillsArchiveLabel(archivedCount)}</button>` : ""}
+        <button type="button" class="card" id="skillsArchiveEntry" style="margin-top:var(--sp-4);">
+          <span class="card-icon" style="color:var(--ink-muted); background:var(--surface-glass);">${ICON.archive}</span>
+          <span class="card-body"><span class="card-title">${s.skillsArchiveLabel(archivedCount)}</span></span>
+          <span class="card-chevron">${chevronFwd()}</span>
+        </button>` : ""}
         `}
       </div>
       ${renderTabBar("skills")}
@@ -13196,7 +13730,7 @@ function openTermSheet(existingTerm, onDone){
         </div>
       </div>
       <button type="button" class="btn btn-primary" id="termSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveBtn}</button>
-      ${editing ? `<button type="button" class="btn btn-secondary" id="termDelete" style="color:var(--attention);">${s.glossaryDeleteBtn}</button>` : ""}
+      ${editing ? `<button type="button" class="btn btn-secondary" id="termDelete" style="color:var(--attention);">${ICON.trash}<span>${s.glossaryDeleteBtn}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
@@ -13334,7 +13868,7 @@ function openCourseFreeTextSheet(semesterId, existingCourse, onDone){
         <input type="text" class="field" id="acProf" placeholder="${s.professorPh}" value="${editing?escapeHtml(existingCourse.professor):''}" autocomplete="off">
       </div>
       <button type="button" class="btn btn-primary" id="acSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveBtn}</button>
-      ${editing ? `<button type="button" class="btn btn-secondary" id="acDelete" style="color:var(--attention);">${s.deleteCourseBtn}</button>` : ""}
+      ${editing ? `<button type="button" class="btn btn-secondary" id="acDelete" style="color:var(--attention);">${ICON.trash}<span>${s.deleteCourseBtn}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
@@ -13725,7 +14259,7 @@ function openSessionSheet(semesterId, courses, presetDay, existingSession, onDon
       </div>
       <p class="field-error" id="sessTimeError">${s.sessionTimeError}</p>
       <button type="button" class="btn btn-primary" id="sessSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveBtn}</button>
-      ${editing ? `<button type="button" class="btn btn-secondary" id="sessDelete" style="color:var(--attention);">${s.deleteEventBtn}</button>` : ""}
+      ${editing ? `<button type="button" class="btn btn-secondary" id="sessDelete" style="color:var(--attention);">${ICON.trash}<span>${s.deleteEventBtn}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
@@ -13789,7 +14323,7 @@ function openEventSheet(owner, existingEvent, onDone){
         <span class="type-body">${s.eventIsEvaluativeLabel}</span>
       </div>
       <button type="button" class="btn btn-primary" id="evSave" style="margin-bottom:${editing?'8px':'0'};">${s.saveBtn}</button>
-      ${editing ? `<button type="button" class="btn btn-secondary" id="evDelete" style="color:var(--attention);">${s.deleteEventBtn}</button>` : ""}
+      ${editing ? `<button type="button" class="btn btn-secondary" id="evDelete" style="color:var(--attention);">${ICON.trash}<span>${s.deleteEventBtn}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
@@ -14364,6 +14898,15 @@ function startApp(){
   const student = StudentModule.current();
   if(student){
     if(!student.companion) dbUpdate("students", student.id, { companion:"male" }); // pre-existing records default silently; visible/editable in Settings
+    if(repairStudentPlanKey()){
+      /* A record that was missing its plan now has one: its term may also be
+         empty for the same reason, so fill it from the level they told us. */
+      const jr = JourneyModule.forStudent(student.id);
+      const sem = jr ? SemesterModule.current(jr.id) : null;
+      if(sem && !(CourseModule.listForSemester(sem.id) || []).length){
+        fillSemesterFromPlan(sem.id, sem.label || student.level);
+      }
+    }
     applyDir();
     renderToday();
     setTimeout(showWelcomeToast, 420);
