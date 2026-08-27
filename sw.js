@@ -1,83 +1,80 @@
-/* StudyMate — Service Worker
-   Purpose:
-   1) Satisfies Chrome/Android's PWA installability criteria (a registered
-      service worker with a fetch handler) so the native "install app"
-      prompt actually fires — index.html already has the manifest and the
-      beforeinstallprompt handling ready; this was the missing piece.
-   2) Gives real offline-first behavior for the app shell, matching
-      StudyMate's existing offline-first philosophy (all data is already
-      local via localStorage — this just makes the app itself load
-      instantly and work with no connection too).
+/* StudyMate service worker
+   ---------------------------------------------------------------------------
+   The app is one HTML file, so caching it wrongly is the difference between a
+   student getting this week's fixes and staring at last month's build. Two
+   rules keep that from happening:
 
-   v2 change: the app shell (the HTML page itself) now uses a NETWORK-FIRST
-   strategy instead of cache-first. The old cache-first approach served the
-   stale cached page immediately on every load and only updated the cache
-   silently in the background — meaning the person was always one reload
-   behind, and had to delete + reinstall the app to ever see updates.
-   Network-first fixes that: every load tries to fetch the latest version
-   first, and only falls back to the cached copy if there's no connection
-   at all. Other (non-navigation) requests keep the old cache-first
-   behavior, since this is a single-file app and it barely matters there.
+   1. The cache name carries the build stamp. A new build cannot collide with
+      an old cache, and every old cache is deleted on activation — so there is
+      no way for yesterday's index.html to survive a deploy.
+
+   2. Navigations go to the network first, and fall back to the cache only when
+      the network fails. A student with signal always gets the current app; a
+      student on a bus with no signal still gets the last one that worked.
+
+   Static assets (fonts, the manifest) are cache-first, because they don't
+   change between builds and re-fetching them wastes a student's data.
 */
 
-const CACHE_NAME = "studymate-shell-v3";
-const APP_SHELL = ["./", "./index.html"];
+const BUILD = "2026-08-27-01";
+const CACHE = `studymate-${BUILD}`;
+const SHELL = ["./", "./index.html", "./manifest.json"];
 
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
+self.addEventListener("install", (event)=>{
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .catch(() => {}) // never block install on a caching failure
+    caches.open(CACHE)
+      .then(cache=>cache.addAll(SHELL).catch(()=>{}))
+      /* Take over immediately rather than waiting for every tab to close —
+         a student who reopens the app expects the update to be there. */
+      .then(()=>self.skipWaiting())
   );
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", (event)=>{
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(names=>Promise.all(names.filter(n=>n !== CACHE).map(n=>caches.delete(n))))
+      .then(()=>self.clients.claim())
   );
 });
 
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
+self.addEventListener("message", (event)=>{
+  /* The app can ask for an immediate handover after it detects a new build. */
+  if(event.data === "skip-waiting") self.skipWaiting();
+});
 
-  const isNavigation =
-    event.request.mode === "navigate" ||
-    (event.request.headers.get("accept") || "").includes("text/html");
+self.addEventListener("fetch", (event)=>{
+  const req = event.request;
+  if(req.method !== "GET") return;
 
-  if (isNavigation) {
-    // Network-first: always try to get the latest page. Only fall back to
-    // whatever's cached if the network request fails (e.g. offline).
+  const url = new URL(req.url);
+  if(url.origin !== self.location.origin) return; // let fonts and CDNs be
+
+  const isNavigation = req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html");
+
+  if(isNavigation){
     event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return networkResponse;
+      fetch(req)
+        .then(res=>{
+          const copy = res.clone();
+          caches.open(CACHE).then(c=>c.put(req, copy)).catch(()=>{});
+          return res;
         })
-        .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html")))
+        .catch(()=>caches.match(req).then(hit=>hit || caches.match("./index.html")))
     );
     return;
   }
 
-  // Non-navigation requests: cache-first with a background refresh, as before.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const networkFetch = fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return networkResponse;
-        })
-        .catch(() => cached); // offline fallback to whatever was cached
-
-      return cached || networkFetch;
+    caches.match(req).then(hit=>{
+      if(hit) return hit;
+      return fetch(req).then(res=>{
+        if(res && res.status === 200 && res.type === "basic"){
+          const copy = res.clone();
+          caches.open(CACHE).then(c=>c.put(req, copy)).catch(()=>{});
+        }
+        return res;
+      }).catch(()=>hit);
     })
   );
 });

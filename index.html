@@ -1660,6 +1660,9 @@ const STR = {
     planChangedTitle:"تغيّرت خطتك",
     passedMarkBtn:"أنهيتُ هذه المادة",
     devEntryLabel:"تصفّح كل الخطط",
+    hardRefreshLabel:"تحديث إجباري",
+    hardRefreshNote:"يمسح النسخة المخزّنة في المتصفح ويعيد تحميل أحدث بناء. بياناتك لا تُمسّ.",
+    hardRefreshDone:"جارٍ إعادة التحميل…",
     contactShort:"سؤال أو اقتراح مرجع",
     eventTypeLabel:"نوع الحدث",
     plansReadyLabel:"خطط جاهزة",
@@ -2153,6 +2156,9 @@ const STR = {
     planChangedTitle:"Your plan changed",
     passedMarkBtn:"I've completed this course",
     devEntryLabel:"Browse every plan",
+    hardRefreshLabel:"Force update",
+    hardRefreshNote:"Clears the browser's stored copy and reloads the newest build. Your data is untouched.",
+    hardRefreshDone:"Reloading…",
     contactShort:"A question, or suggest a reference",
     eventTypeLabel:"Event type",
     plansReadyLabel:"Ready plans",
@@ -11804,10 +11810,29 @@ function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at — three separate confusions
    this month traced back to an old build still installed on the phone. */
-const BUILD_ID = "2026-08-26 20:57";
+const BUILD_ID = "2026-08-27 16:49";
 const DEV_PASSCODE = "arafat2026";
 let devUnlocked = false;
 let devTapCount = 0;
+/* A cached build is invisible: the app looks the same, so every fix appears
+   not to have shipped and the real bug hides behind an imaginary one. This
+   removes the stored copy and reloads from the network — data lives in
+   IndexedDB and localStorage, neither of which is touched. */
+async function hardRefresh(){
+  try{
+    if("serviceWorker" in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
+    }
+    if(window.caches){
+      const names = await caches.keys();
+      await Promise.all(names.map(n=>caches.delete(n)));
+    }
+  }catch(e){}
+  /* A changing query string defeats any HTTP cache still holding the page. */
+  const url = location.origin + location.pathname + "?v=" + Date.now();
+  location.replace(url);
+}
 function openDevLock(onUnlocked){
   const s = t();
   const overlay = document.createElement("div");
@@ -14723,6 +14748,14 @@ function renderSettings(){
             <span class="card-chevron">${chevronFwd()}</span>
           </button>
           ${devUnlocked ? `
+          <button type="button" class="card" id="hardRefreshBtn">
+            <span class="card-icon" style="color:var(--attention); background:var(--attention-soft);">${ICON.undo}</span>
+            <span class="card-body">
+              <span class="card-title">${s.hardRefreshLabel}</span>
+              <span class="card-meta" style="white-space:normal;">${s.hardRefreshNote}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
           <button type="button" class="card" id="devPlansBtn">
             <span class="card-icon" style="color:var(--accent);">${ICON.weekGrid}</span>
             <span class="card-body">
@@ -14782,6 +14815,11 @@ function renderSettings(){
     await deferredInstallPrompt.userChoice;
     deferredInstallPrompt = null;
     renderSettings();
+  });
+  const hardBtn = document.getElementById("hardRefreshBtn");
+  if(hardBtn) hardBtn.addEventListener("click", ()=>{
+    showToast(s.hardRefreshDone);
+    setTimeout(hardRefresh, 400);
   });
   const devBtn = document.getElementById("devPlansBtn");
   if(devBtn) devBtn.addEventListener("click", ()=>{ renderDevPlans(); });
