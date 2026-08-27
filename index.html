@@ -738,6 +738,21 @@ body[data-theme="daylight"] .card:before{
 }
 .page-head input::placeholder{ color:var(--ink-muted); }
 
+/* In typing mode a real text field lies over the sheet, transparent, so the
+   ruled lines show through and the student writes on the page itself rather
+   than in a dialogue that hides the page behind a keyboard — which is what
+   made the old keyboard tool feel broken. */
+.page-type{
+  position:absolute; inset:0; width:100%; height:100%;
+  background:transparent; border:none; outline:none; resize:none;
+  color:var(--ink); font-family:var(--font-ar), system-ui, sans-serif;
+  padding:44px 16px 16px; line-height:30px; font-size:16px;
+  display:none;
+}
+.page-type::placeholder{ color:var(--ink-muted); opacity:.65; }
+.page-mode-on .page-type{ display:block; }
+.page-mode-on .page-canvas{ pointer-events:none; }
+.page-modes{ display:flex; gap:6px; margin-bottom:var(--sp-3); }
 .page-tools{
   display:flex; gap:6px; flex-wrap:wrap; justify-content:center;
   padding:var(--sp-3) 0 0;
@@ -1655,6 +1670,10 @@ const STR = {
     coursesFilled:(n)=>`أضفنا ${n} من مقررات مستواك — احذف ما لا تدرسه.`,
     buildLabel:"إصدار التطبيق",
     pageOpenBtn:"صفحة جديدة",
+    modeHand:"بخط اليد",
+    modeType:"بلوحة المفاتيح",
+    typeHere:"اكتب هنا…",
+    typedSaved:"أُضيف نصّك إلى الصفحة",
     pageTitle:"صفحة الدفتر",
     pageTopicPh:"الموضوع (اختياري)",
     pageWeekPh:"الأسبوع",
@@ -2144,6 +2163,10 @@ const STR = {
     coursesFilled:(n)=>`We added ${n} courses from your level — remove any you aren't taking.`,
     buildLabel:"App build",
     pageOpenBtn:"New page",
+    modeHand:"Handwriting",
+    modeType:"Keyboard",
+    typeHere:"Type here…",
+    typedSaved:"Your text was added to the page",
     pageTitle:"Notebook page",
     pageTopicPh:"Topic (optional)",
     pageWeekPh:"Week",
@@ -10650,13 +10673,18 @@ function renderNotebookPage(courseId){
         <button type="button" class="btn-icon" id="pgSave" aria-label="${s.saveBtn}">${ICON.check}</button>
       </div>
       <div class="screen-content">
-        <div class="page-sheet">
+        <div class="set-tabs page-modes">
+          <button type="button" class="set-tab set-tab-active" data-page-mode="hand">${ICON.pen}<span> ${s.modeHand}</span></button>
+          <button type="button" class="set-tab" data-page-mode="type">${ICON.keyboard}<span> ${s.modeType}</span></button>
+        </div>
+        <div class="page-sheet" id="pgSheet">
           <div class="page-head">
             <span class="ph-course">${escapeHtml(course.name)}</span>
             <span class="ph-date">${pageDateLine()}</span>
             <input type="text" id="pgTopic" placeholder="${s.pageTopicPh}" autocomplete="off">
           </div>
           <canvas class="page-canvas" id="pgCanvas"></canvas>
+          <textarea class="page-type" id="pgType" placeholder="${s.typeHere}"></textarea>
         </div>
 
         <div class="page-tools">
@@ -10664,7 +10692,6 @@ function renderNotebookPage(courseId){
           <button type="button" class="ptool" data-ptool="marker" title="${s.highlightTool}">${ICON.marker}</button>
           <button type="button" class="ptool" data-ptool="eraser" title="${s.eraserTool}">${ICON.eraser}</button>
           <button type="button" class="ptool" id="pgUndo" title="${s.undoTool}">${ICON.undo}</button>
-          <button type="button" class="ptool" id="pgText" title="${s.textTool}">${ICON.keyboard}</button>
           <button type="button" class="ptool" id="pgImage" title="${s.imageTool}">${ICON.image}</button>
           <button type="button" class="ptool" id="pgFile" title="${s.fileTool}">${ICON.paperclip}</button>
           <button type="button" class="ptool" id="pgVoice" title="${s.voiceTool}">${ICON.mic}</button>
@@ -10729,7 +10756,7 @@ function renderNotebookPage(courseId){
         ctx.fillStyle = st.color;
         ctx.font = `600 ${st.size}px var(--font-ar), system-ui, sans-serif`;
         ctx.textAlign = (lang() === "ar") ? "right" : "left";
-        st.lines.forEach((ln, i)=>ctx.fillText(ln, st.x, st.y + i * (st.size * 1.5)));
+        st.lines.forEach((ln, i)=>ctx.fillText(ln, st.x, st.y + i * 30));
         ctx.restore();
         return;
       }
@@ -10802,29 +10829,50 @@ function renderNotebookPage(courseId){
 
   /* Typing on the page: the keyboard is a tool like the pen, so text lands on
      the sheet as part of the drawing rather than in a separate field. */
-  document.getElementById("pgText").addEventListener("click", ()=>{
-    openTextEntrySheet((value)=>{
-      if(!value.trim()) return;
-      const size = Math.max(15, pageWidth * 5);
-      const maxChars = Math.floor((cssW - 30) / (size * .52));
-      const lines = [];
-      value.split("\n").forEach(par=>{
-        let line = "";
-        par.split(" ").forEach(word=>{
-          if((line + " " + word).trim().length > maxChars){ lines.push(line.trim()); line = word; }
-          else line = (line + " " + word).trim();
-        });
-        lines.push(line);
-      });
-      const lastY = pageStrokes.reduce((y, st)=>Math.max(y, st.type === "text" ? st.y + st.lines.length * size * 1.5 : 0), 40);
-      pageStrokes.push({
-        type:"text", lines, color:pageColor, size,
-        x: (lang() === "ar") ? cssW - 14 : 14,
-        y: Math.min(lastY + 8, cssH - 20)
-      });
-      repaint();
+  /* Two modes, one page. Handwriting gives the canvas the pointer; typing
+     hands it to a text layer sitting exactly on top. Switching is instant and
+     loses nothing — what was drawn stays drawn, what was typed stays typed. */
+  const sheet = document.getElementById("pgSheet");
+  const typeEl = document.getElementById("pgType");
+  typeEl.dir = (lang() === "ar") ? "rtl" : "ltr";
+  document.querySelectorAll("[data-page-mode]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const typing = btn.dataset.pageMode === "type";
+      sheet.classList.toggle("page-mode-on", typing);
+      document.querySelectorAll("[data-page-mode]").forEach(b=>b.classList.toggle("set-tab-active", b === btn));
+      /* The drawing tools mean nothing while typing, so they step aside rather
+         than sit there inert. */
+      document.querySelector(".page-tools").style.display = typing ? "none" : "";
+      document.querySelector(".pen-colors").style.display = typing ? "none" : "";
+      document.querySelector(".pen-sizes").style.display = typing ? "none" : "";
+      if(typing) setTimeout(()=>typeEl.focus(), 60);
     });
   });
+
+  /* Typed text is burned onto the sheet when the page is saved, wrapped to the
+     page width and starting under the header — so a saved page is one image
+     whether it was written by hand, typed, or both. */
+  function bakeTypedText(){
+    const value = typeEl.value;
+    if(!value.trim()) return;
+    const size = 16;
+    const maxChars = Math.floor((cssW - 32) / (size * .52));
+    const lines = [];
+    value.split("\n").forEach(par=>{
+      if(!par.trim()){ lines.push(""); return; }
+      let line = "";
+      par.split(" ").forEach(word=>{
+        if((line + " " + word).trim().length > maxChars){ lines.push(line.trim()); line = word; }
+        else line = (line + " " + word).trim();
+      });
+      if(line) lines.push(line.trim());
+    });
+    pageStrokes.push({
+      type:"text", lines, color:themeInk, size,
+      x: (lang() === "ar") ? cssW - 16 : 16,
+      y: 58
+    });
+  }
 
   /* An image is placed on the sheet itself, scaled to fit the width, so it can
      be drawn on and annotated like anything else on the page. */
@@ -10897,6 +10945,7 @@ function renderNotebookPage(courseId){
 
   document.getElementById("pgBack").addEventListener("click", ()=>{ renderCourseNotebook(courseId); });
   document.getElementById("pgSave").addEventListener("click", ()=>{
+    bakeTypedText();
     if(!pageStrokes.length){ say(s.pageEmpty, "var(--attention)"); return; }
     const topic = (document.getElementById("pgTopic").value || "").trim();
     NotebookModule.addDrawingNote(courseId, canvas.toDataURL("image/png"), "default", { topic, week:"" });
@@ -10905,28 +10954,6 @@ function renderNotebookPage(courseId){
   });
 }
 
-/* A plain sheet for typing a block of text, used by the page's keyboard tool. */
-function openTextEntrySheet(onDone){
-  const s = t();
-  const overlay = document.createElement("div");
-  overlay.className = "sheet-overlay";
-  overlay.innerHTML = `
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">${s.textTool}</div>
-      <textarea class="field" id="pgTextArea" rows="5" style="resize:none;"></textarea>
-      <button type="button" class="btn btn-primary" style="width:100%; margin-top:var(--sp-3);" id="pgTextOk">${s.saveBtn}</button>
-    </div>`;
-  document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = ()=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>overlay.remove(), 260); };
-  overlay.addEventListener("click", (e)=>{ if(e.target === overlay) close(); });
-  overlay.querySelector("#pgTextOk").addEventListener("click", ()=>{
-    const v = overlay.querySelector("#pgTextArea").value;
-    close(); onDone(v);
-  });
-  setTimeout(()=>{ const f = overlay.querySelector("#pgTextArea"); if(f) f.focus(); }, 320);
-}
 
 function renderCourseNotebook(courseId){
   applyDir();
