@@ -1669,6 +1669,19 @@ const STR = {
     recoverTitle:"لنكمل تسجيلك",
     factoryLabel:"استعادة ضبط المصنع",
     welcomeRestore:"لديك نسخة احتياطية؟ استعدها",
+    termsTitle:"مفكرة المادة",
+    termsToolLabel:"المفكرة",
+    termsSub:"تعبير أو مصطلح، ومعناه، ومثال عليه — تجمعها هنا فتصير مرجعك قبل الاختبار.",
+    termsEmpty:"لم تضف شيئًا بعد. أول تعبير يمرّ عليك في المحاضرة، ضعه هنا.",
+    termsAdd:"أضف تعبيرًا",
+    termsWord:"التعبير أو المصطلح",
+    termsMeaning:"معناه",
+    termsExample:"مثال عليه (اختياري)",
+    termsSearch:"ابحث في مفكرتك…",
+    termsCount:(n)=>n===1 ? "تعبير واحد" : (n===2 ? "تعبيران" : (n<11 ? `${n} تعابير` : `${n} تعبيرًا`)),
+    termsNoMatch:"لا شيء يطابق بحثك.",
+    termsDeleteTitle:"حذف هذا التعبير؟",
+    termsDeleteText:"سيُحذف من مفكرة هذه المادة نهائيًا.",
     welcomeRestoreNote:"تُعيد دفاترك وخطتك وملاحظاتك كما كانت — بلا تسجيل من جديد.",
     backupFirstBtn:"احفظ نسخة أولًا",
     factoryNote:"يمحو كل شيء من الجذر: بياناتك، والنسخة المخزّنة في المتصفح، وذاكرة التطبيق — ويعيده كأنك تفتحه لأول مرة على جهاز جديد.",
@@ -2180,6 +2193,19 @@ const STR = {
     recoverTitle:"Let's finish your registration",
     factoryLabel:"Factory reset",
     welcomeRestore:"Have a backup? Restore it",
+    termsTitle:"Course terms",
+    termsToolLabel:"Terms",
+    termsSub:"An expression or term, its meaning, and an example — collected here, they become your revision sheet.",
+    termsEmpty:"Nothing here yet. The first expression you meet in a lecture, put it here.",
+    termsAdd:"Add a term",
+    termsWord:"Expression or term",
+    termsMeaning:"Meaning",
+    termsExample:"Example (optional)",
+    termsSearch:"Search your terms…",
+    termsCount:(n)=>n===1 ? "one term" : `${n} terms`,
+    termsNoMatch:"Nothing matches your search.",
+    termsDeleteTitle:"Delete this term?",
+    termsDeleteText:"It will be removed from this course's terms permanently.",
     welcomeRestoreNote:"Brings back your notebooks, plan and notes exactly as they were — no need to register again.",
     backupFirstBtn:"Save a backup first",
     factoryNote:"Erases everything at the root: your data, the copy stored in the browser, and the app's memory — returning it to how it opens on a brand-new device.",
@@ -7307,13 +7333,14 @@ const COURSE_ENRICHMENT = {
   },
   "ENG 101": {
     explain:{
-      ar:"مقرر اللغة الإنجليزية العام الأول في خطتك — يبني الأساس اللي تحتاجه لقراءة أي مرجع تقني بالإنجليزي لاحقًا، حتى لو تخصصك حاسب لا لغة.",
-      en:"The first general English course in your plan — builds the foundation you need to read any technical reference in English later, even though your major is CS, not language."
+      ar:"مقررك مبني على كتاب Academic Progress: Reading and Writing، وست وحدات لكل منها قراءتان: أوقات الفراغ · عالم الشركات الناشئة · الأرقام القياسية · شخصيات مؤثرة · وسائل التواصل · أعماق البحار. وكل وحدة نصفان: «التركيز على القراءة» يبني القواعد والمفردات وأدوات القراءة، ثم «التركيز على الكتابة» ينتهي بمهمة كتابة واحدة تجمع ما تعلّمته في الوحدة كلها.",
+      en:"Your course is built on Academic Progress: Reading and Writing — six units, two readings each: Free Time, Start-Up World, World Records, Famous and Influential People, Social Media, and The Deep Sea. Each unit has two halves: Focus on Reading builds grammar, vocabulary and reading tools, then Focus on Writing ends in a single writing task that gathers everything the unit taught."
     },
     why:{
       ar:"أغلب مراجع البرمجة والتوثيق التقني بالإنجليزي — هذا المقرر ليس \"مادة جانبية\"، هو استثمار مباشر في قدرتك على فهم كل مادة برمجة قادمة.",
       en:"Most programming references and technical documentation are in English — this course isn't a \"side subject\", it's a direct investment in your ability to understand every upcoming programming course."
     },
+    before:{ items:[{ar:"الأبجدية وقراءة الكلمات الشائعة", en:"The alphabet and reading common words"}, {ar:"زمن المضارع البسيط", en:"The simple present tense"}, {ar:"كتابة جملة كاملة بفاعل وفعل", en:"Writing a complete sentence with a subject and a verb"}], note:{ar:"الكتاب لا يبدأ من الصفر تمامًا: الوحدة الأولى تفترض أنك تقرأ جملة إنجليزية بسيطة وتعرف المضارع البسيط. ومن يدخلها بأقل من ذلك سيجد نفسه يترجم كل سطر بدل أن يتعلم مهارة القراءة نفسها — فراجع الأساسيات في أول أسبوع، قبل أن تتراكم الوحدات.", en:"The book doesn't start from absolute zero: unit one assumes you can read a simple English sentence and know the simple present. Whoever enters below that ends up translating every line instead of learning the reading skill itself — so revise the basics in week one, before the units pile up."} },
     resources:[
       { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية", en:"Duolingo — English Learning App"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"مجاني بالكامل، يبني المفردات والقواعد تدريجيًا بجلسات قصيرة يومية", en:"Completely free, builds vocabulary and grammar gradually through short daily sessions"} },
       { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", lang:"ar", verified:"2026-08-17", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} }
@@ -7360,12 +7387,12 @@ const COURSE_ENRICHMENT = {
   },
   "COMP 111": {
     explain:{
-      ar:"هذا أول مقرر في تخصصك، ويعطيك الصورة الكبيرة قبل التفاصيل: كيف يعمل الحاسب فعليًا (المكونات، تمثيل البيانات)، وأساسيات التعامل معه، قبل ما تبدأ البرمجة الفعلية في المقرر التالي.",
-      en:"This is your major's first course, giving you the big picture before the details: how a computer actually works (components, data representation), and basic computer literacy, before real programming begins in the next course."
+      ar:"أول مقرر في تخصصك، ويبني الصورة الكبيرة قبل التفاصيل: ما الحاسب وما الذي يجيده، ثم أركانه الأربعة — العتاد والبرمجيات والناس ودورة الإدخال والمعالجة والإخراج والتخزين — ثم أنواع الأجهزة من الهاتف إلى الحاسب الفائق، والفرق بين التمثيل التماثلي والرقمي، وكيف تصير البيانات أصفارًا وآحادًا. وينتهي بسؤال يخصك أنت: أين يظهر التحول الرقمي في محيطك؟",
+      en:"The first course in your major, building the whole picture before the detail: what a computer is and what it is good at, then its four pillars — hardware, software, people, and the input-process-output-storage cycle — then device types from a phone to a supercomputer, analog against digital, and how data becomes zeros and ones. It ends with a question about your own surroundings: where do you see digital transformation around you?"
     },
     why:{
-      ar:"بدون هذا الأساس، مصطلحات مقررات البرمجة القادمة (ذاكرة، معالج، تخزين) تبقى كلمات مجردة بلا معنى ملموس.",
-      en:"Without this foundation, terms in upcoming programming courses (memory, processor, storage) stay abstract words with no concrete meaning."
+      ar:"لا يُقاس هذا المقرر بصعوبته بل بما يبنيه: المفردات التي ستستعملها في كل مقرر بعده. من يخرج منه وهو يفرّق بين البيانات والمعلومات، وبين العتاد والبرمجيات، وبين التماثلي والرقمي — يقرأ مقررات البرمجة والمعمارية بعده كأنها امتداد. ومن يمرّ عليه بالحفظ يجد نفسه يترجم كل مصطلح من جديد.",
+      en:"This course isn't measured by its difficulty but by what it builds: the vocabulary you will use in every course after it. Whoever leaves it distinguishing data from information, hardware from software, analog from digital, reads programming and architecture afterwards as a continuation."
     },
     connections:{ leadsTo:[{ar:"البرمجة 1 (COMP 112)", en:"Programming 1 (COMP 112)"}] },
     resources:[
@@ -8210,13 +8237,25 @@ function pagerHtml(page, total, s, attr){
 }
 
 /* The timetable's periods, and which one a class belongs to. */
+/* Twelve slots from eight in the morning to eight at night. Six covered a
+   morning timetable and nothing else — a student on an evening programme, or
+   one with a lab after Maghrib, had nowhere to put the class. The count is
+   still the student's to set: the grid shows only as many rows as they ask
+   for, so a morning student sees a morning timetable. */
 const DEFAULT_PERIODS = [
   { start:"08:00", end:"08:50" }, { start:"09:00", end:"09:50" },
   { start:"10:00", end:"10:50" }, { start:"11:00", end:"11:50" },
-  { start:"12:00", end:"12:50" }, { start:"13:00", end:"13:50" }
+  { start:"12:00", end:"12:50" }, { start:"13:00", end:"13:50" },
+  { start:"14:00", end:"14:50" }, { start:"15:00", end:"15:50" },
+  { start:"16:00", end:"16:50" }, { start:"17:00", end:"17:50" },
+  { start:"18:00", end:"18:50" }, { start:"19:00", end:"19:50" }
 ];
+/* Six rows unless the student asks for more: a morning timetable is the
+   common case, and twelve empty evening rows on first open would make the
+   grid look like work rather than a week. */
+const DEFAULT_PERIOD_COUNT = 6;
 function periodsFor(semester){
-  const n = (semester && semester.periodCount) || DEFAULT_PERIODS.length;
+  const n = (semester && semester.periodCount) || DEFAULT_PERIOD_COUNT;
   const out = [];
   for(let i = 0; i < n; i++) out.push(DEFAULT_PERIODS[i] || { start:"", end:"" });
   return out;
@@ -11436,6 +11475,139 @@ function renderNotebookPage(courseId){
 }
 
 
+
+/* ============================================================
+   COURSE TERMS — the words of one subject, gathered
+   ------------------------------------------------------------
+   Every course has its own vocabulary: English expressions in a language
+   course, technical terms in computing, equivalents in translation. Students
+   already collect them — on paper edges, in phone notes, scattered across
+   chats. Gathered per course, with the meaning and one example, they become
+   the revision sheet nobody had to sit down and write.
+   ============================================================ */
+let termsSearch = "";
+
+function renderCourseTerms(courseId){
+  applyDir();
+  const s = t();
+  const course = dbGet("courses", courseId);
+  if(!course) return renderSemester();
+  const all = NotebookModule.terms(courseId);
+  const q = normalizeSearchText(termsSearch);
+  const list = q.length >= 2
+    ? all.filter(x=>normalizeSearchText([x.word, x.meaning, x.example].join(" ")).includes(q))
+    : all;
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="termsBack" aria-label="Back">${chevronBack()}</button>
+        <div>
+          <div class="screen-header-title">${s.termsTitle}</div>
+          <div class="screen-header-sub">${escapeHtml(course.name)}</div>
+        </div>
+        <button type="button" class="btn-icon" id="termsAddTop" aria-label="${s.termsAdd}">${ICON.plus}</button>
+      </div>
+      <div class="screen-content">
+        ${all.length ? `
+        <input type="text" class="field" id="termsSearchInput" placeholder="${s.termsSearch}" value="${escapeHtml(termsSearch)}" autocomplete="off" style="margin-bottom:var(--sp-3);">
+        <div class="section-label" style="margin-top:0;">${s.termsCount(all.length)}</div>` : `
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-4);">${s.termsSub}</p>`}
+
+        ${!all.length ? `
+        <div class="empty-state">
+          <div class="empty-icon">${ICON.openBook}</div>
+          <p class="empty-text">${s.termsEmpty}</p>
+        </div>` : (!list.length ? `
+        <p class="type-caption" style="color:var(--ink-muted);">${s.termsNoMatch}</p>` : `
+        <div class="stack">
+          ${list.map(x=>`
+            <button type="button" class="card" data-term-id="${x.id}" style="align-items:flex-start;">
+              <span class="card-icon">${ICON.openBook}</span>
+              <span class="card-body">
+                <span class="card-title" dir="auto">${escapeHtml(x.word)}</span>
+                <span class="card-meta" style="white-space:normal;" dir="auto">${escapeHtml(x.meaning)}</span>
+                ${x.example ? `<span class="card-meta" style="white-space:normal; opacity:.75; font-style:italic;" dir="auto">${escapeHtml(x.example)}</span>` : ""}
+              </span>
+            </button>`).join("")}
+        </div>`)}
+
+        <button type="button" class="btn btn-primary" id="termsAdd" style="width:100%; margin-top:var(--sp-4);">${ICON.plus}<span>${s.termsAdd}</span></button>
+      </div>
+    </section>`;
+
+  document.getElementById("termsBack").addEventListener("click", ()=>{ termsSearch = ""; renderCourseNotebook(courseId); });
+  const open = (existing)=>openTermSheet(courseId, existing, ()=>renderCourseTerms(courseId));
+  document.getElementById("termsAdd").addEventListener("click", ()=>open(null));
+  document.getElementById("termsAddTop").addEventListener("click", ()=>open(null));
+  const search = document.getElementById("termsSearchInput");
+  if(search){
+    search.addEventListener("input", (e)=>{
+      termsSearch = e.target.value;
+      const pos = e.target.selectionStart;
+      renderCourseTerms(courseId);
+      const again = document.getElementById("termsSearchInput");
+      if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(err){} }
+    });
+  }
+  document.querySelectorAll("[data-term-id]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      open(NotebookModule.terms(courseId).find(x=>x.id===btn.dataset.termId));
+    });
+  });
+}
+
+function openTermSheet(courseId, existing, onDone){
+  const s = t();
+  const editing = !!existing;
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.termsAdd}</div>
+      <div class="field-group">
+        <label class="field-label" for="tmWord">${s.termsWord}</label>
+        <input type="text" class="field" id="tmWord" dir="auto" autocomplete="off" value="${editing?escapeHtml(existing.word):''}">
+        <p class="field-error" id="tmWordError">${s.nameRequired}</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="tmMeaning">${s.termsMeaning}</label>
+        <textarea class="field" id="tmMeaning" dir="auto" rows="2" style="resize:none;">${editing?escapeHtml(existing.meaning):''}</textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="tmExample">${s.termsExample}</label>
+        <textarea class="field" id="tmExample" dir="auto" rows="2" style="resize:none;">${editing?escapeHtml(existing.example||''):''}</textarea>
+      </div>
+      <button type="button" class="btn btn-primary" id="tmSave" style="width:100%;">${ICON.check}<span>${s.saveBtn}</span></button>
+      ${editing ? `<button type="button" class="btn btn-secondary" id="tmDelete" style="width:100%; margin-top:8px; color:var(--attention);">${ICON.trash}<span>${s.deleteBtn}</span></button>` : ""}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  setTimeout(()=>{ const f = overlay.querySelector("#tmWord"); if(f) f.focus(); }, 320);
+
+  overlay.querySelector("#tmSave").addEventListener("click", ()=>{
+    const word = overlay.querySelector("#tmWord").value.trim();
+    const meaning = overlay.querySelector("#tmMeaning").value.trim();
+    /* The word is required; a meaning can arrive later, because a student
+       often writes the term down mid-lecture and looks it up that evening. */
+    if(!word){ overlay.querySelector("#tmWordError").classList.add("show"); return; }
+    const example = overlay.querySelector("#tmExample").value.trim();
+    if(editing) NotebookModule.updateTerm(courseId, existing.id, word, meaning, example);
+    else NotebookModule.addTerm(courseId, word, meaning, example);
+    close(onDone);
+  });
+  const del = overlay.querySelector("#tmDelete");
+  if(del) del.addEventListener("click", ()=>{
+    close(()=>showConfirmSheet({
+      title:s.termsDeleteTitle, text:s.termsDeleteText, confirmLabel:s.deleteBtn, danger:true,
+      onConfirm:()=>{ NotebookModule.deleteTerm(courseId, existing.id); onDone(); }
+    }));
+  });
+}
+
 function renderCourseNotebook(courseId){
   applyDir();
   const s = t();
@@ -11465,6 +11637,9 @@ function renderCourseNotebook(courseId){
              of button three times in three places and had to hunt for the one
              they wanted. One strip means one place to look. -->
         <div class="toolbar" role="group" aria-label="${s.notebookToolsLabel}">
+          <button type="button" class="tool" id="notebookTerms">
+            <span class="tool-icon">${ICON.openBook}</span><span>${s.termsToolLabel}</span>
+          </button>
           <button type="button" class="tool" id="notebookNewPage">
             <span class="tool-icon">${ICON.pen}</span><span>${s.pageOpenBtn}</span>
           </button>
@@ -11585,6 +11760,8 @@ function renderCourseNotebook(courseId){
     });
   });
   document.getElementById("notebookBack").addEventListener("click", ()=>{ notebookSearch=""; notebookGroupBy="all"; renderCourseView(courseId); });
+  const termsBtn = document.getElementById("notebookTerms");
+  if(termsBtn) termsBtn.addEventListener("click", ()=>{ termsSearch = ""; renderCourseTerms(courseId); });
   const newPageBtn = document.getElementById("notebookNewPage");
   if(newPageBtn) newPageBtn.addEventListener("click", ()=>{ renderNotebookPage(courseId); });
   document.getElementById("notebookAddNote").addEventListener("click", ()=>{ openNoteSheet(courseId, null, ()=>renderCourseNotebook(courseId)); });
@@ -12258,7 +12435,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-01 14:32";
+const BUILD_ID = "2026-09-01 18:22";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -12841,6 +13018,29 @@ const NotebookModule = {
       dbSave();
     }
     return nb;
+  },
+  /* Terms sit beside notes in the same notebook record rather than in a store
+     of their own: that way they are exported with the backup, searched with
+     everything else, and deleted with the course — no second thing to keep in
+     step with the first. */
+  terms(courseId){
+    const nb = this.get(courseId);
+    if(!Array.isArray(nb.terms)) nb.terms = [];
+    return nb.terms;
+  },
+  addTerm(courseId, word, meaning, example){
+    const list = this.terms(courseId);
+    list.unshift({ id:genId(), word, meaning, example:example||"", createdAt:Date.now() });
+    dbSave();
+  },
+  updateTerm(courseId, termId, word, meaning, example){
+    const item = this.terms(courseId).find(x=>x.id===termId);
+    if(item){ item.word = word; item.meaning = meaning; item.example = example||""; dbSave(); }
+  },
+  deleteTerm(courseId, termId){
+    const nb = this.get(courseId);
+    nb.terms = this.terms(courseId).filter(x=>x.id!==termId);
+    dbSave();
   },
   addNote(courseId, text, color, extras){
     const nb = this.get(courseId);
