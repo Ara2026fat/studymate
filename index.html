@@ -1668,6 +1668,9 @@ const STR = {
     plansReadyLabel:"خطط جاهزة",
     recoverTitle:"لنكمل تسجيلك",
     factoryLabel:"استعادة ضبط المصنع",
+    welcomeRestore:"لديك نسخة احتياطية؟ استعدها",
+    welcomeRestoreNote:"تُعيد دفاترك وخطتك وملاحظاتك كما كانت — بلا تسجيل من جديد.",
+    backupFirstBtn:"احفظ نسخة أولًا",
     factoryNote:"يمحو كل شيء من الجذر: بياناتك، والنسخة المخزّنة في المتصفح، وذاكرة التطبيق — ويعيده كأنك تفتحه لأول مرة على جهاز جديد.",
     factoryConfirm1:"استعادة ضبط المصنع؟",
     factoryConfirm1Text:"سيُحذف كل شيء نهائيًا: اسمك وخطتك ودفاترك وملاحظاتك واختباراتك. إن كان فيها ما يهمك فاحفظ نسخة احتياطية قبل المتابعة.",
@@ -2176,6 +2179,9 @@ const STR = {
     plansReadyLabel:"Ready plans",
     recoverTitle:"Let's finish your registration",
     factoryLabel:"Factory reset",
+    welcomeRestore:"Have a backup? Restore it",
+    welcomeRestoreNote:"Brings back your notebooks, plan and notes exactly as they were — no need to register again.",
+    backupFirstBtn:"Save a backup first",
     factoryNote:"Erases everything at the root: your data, the copy stored in the browser, and the app's memory — returning it to how it opens on a brand-new device.",
     factoryConfirm1:"Factory reset?",
     factoryConfirm1Text:"Everything will be permanently deleted: your name, plan, notebooks, notes and exams. Save a backup first if any of it matters.",
@@ -7990,8 +7996,12 @@ async function factoryReset(){
    second is asked after it has been read. */
 function confirmFactoryReset(){
   const s = t();
+  /* The last chance to keep anything is here, so the offer is on the sheet
+     itself rather than in a sentence telling them to go and find it. */
   showConfirmSheet({
     title:s.factoryConfirm1, text:s.factoryConfirm1Text, confirmLabel:s.factoryGo, danger:true,
+    secondaryLabel:s.backupFirstBtn,
+    onSecondary:()=>{ const name = exportBackup(); showToast(s.backupDone(name)); },
     onConfirm:()=>{
       setTimeout(()=>{
         showConfirmSheet({
@@ -10340,9 +10350,38 @@ function renderWelcome(){
       </div>
       <div class="screen-action">
         <button type="button" class="btn btn-primary" id="welcomeStart">${ICON.chevronFwd}<span>${s.welcomeStartBtn}</span></button>
+        <button type="button" class="btn btn-secondary" id="welcomeRestoreBtn" style="margin-top:var(--sp-3);">${ICON.openBook}<span>${s.welcomeRestore}</span></button>
+        <p class="type-caption" style="color:var(--ink-muted); margin-top:8px; line-height:1.65;">${s.welcomeRestoreNote}</p>
+        <p class="type-caption" id="welcomeRestoreStatus" style="min-height:18px; margin-top:6px;"></p>
+        <input type="file" id="welcomeRestoreFile" accept="application/json,.json" style="display:none;">
       </div>
     </section>
   `;
+  /* A student who has just wiped their phone, changed device, or reset the app
+     arrives here with a file and nothing else. Making them register a second
+     time before they can restore would be asking them to build what they are
+     about to replace. */
+  const wRestore = document.getElementById("welcomeRestoreBtn");
+  const wFile = document.getElementById("welcomeRestoreFile");
+  if(wRestore && wFile){
+    wRestore.addEventListener("click", ()=>wFile.click());
+    wFile.addEventListener("change", ()=>{
+      const file = wFile.files && wFile.files[0];
+      wFile.value = "";
+      if(!file) return;
+      const st = document.getElementById("welcomeRestoreStatus");
+      importBackup(file, (parsed)=>{
+        showConfirmSheet({
+          title: s.backupConfirmTitle,
+          text: s.backupConfirmText,
+          confirmLabel: s.backupConfirmBtn,
+          onConfirm: ()=>{ applyBackup(parsed); showToast(s.backupRestored); }
+        });
+      }, ()=>{
+        if(st){ st.style.color = "var(--attention)"; st.textContent = s.backupBadFile; }
+      });
+    });
+  }
   document.getElementById("welcomeStart").addEventListener("click", ()=>{ renderOnboarding(); });
 }
 
@@ -12219,7 +12258,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-01 09:16";
+const BUILD_ID = "2026-09-01 14:32";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -13958,7 +13997,10 @@ function openReflectionViewSheet(semester){
   overlay.querySelector("#reflectionViewClose").addEventListener("click", close);
 }
 
-function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm, hideCancel }){
+/* A confirm sheet can now carry one extra action beside yes and cancel — used
+   where the safe alternative belongs on the sheet itself rather than in a
+   sentence telling the person to go and find it elsewhere. */
+function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm, hideCancel, secondaryLabel, onSecondary }){
   const s = t();
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
@@ -13968,6 +14010,7 @@ function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm, hideCa
       <div class="sheet-title">${title}</div>
       <p class="type-body" style="color:var(--ink-muted); margin-bottom:16px;">${text}</p>
       <button type="button" class="btn btn-primary" id="confirmYes" style="${danger?'background:var(--attention);':''} margin-bottom:8px;">${ICON.check}<span>${confirmLabel}</span></button>
+      ${secondaryLabel ? `<button type="button" class="btn btn-secondary" id="confirmSecondary" style="margin-bottom:8px;">${ICON.download}<span>${secondaryLabel}</span></button>` : ""}
       ${hideCancel ? "" : `<button type="button" class="btn btn-secondary" id="confirmNo">${ICON.close}<span>${s.cancel}</span></button>`}
     </div>`;
   document.body.appendChild(overlay);
@@ -13976,6 +14019,10 @@ function showConfirmSheet({ title, text, confirmLabel, danger, onConfirm, hideCa
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   const noBtn = overlay.querySelector("#confirmNo");
   if(noBtn) noBtn.addEventListener("click", ()=>close());
+  const secBtn = overlay.querySelector("#confirmSecondary");
+  /* The sheet stays open: saving a backup is a step before the decision, not
+     the decision itself. */
+  if(secBtn && onSecondary) secBtn.addEventListener("click", ()=>onSecondary());
   overlay.querySelector("#confirmYes").addEventListener("click", ()=>close(onConfirm));
 }
 
