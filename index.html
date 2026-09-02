@@ -808,6 +808,19 @@ body[data-theme="daylight"] .card:before{
    screen and were being skipped. */
 .btn svg{ width:16px; height:16px; flex-shrink:0; }
 .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+/* An icon alone is a guess. Header controls now carry their name under the
+   glyph in small type — the icon aids recognition at a glance, the word
+   removes any doubt about what will happen. Kept tiny so a row of them still
+   reads as a toolbar rather than a menu. */
+.btn-icon{ position:relative; }
+.btn-icon[data-label]:after{
+  content:attr(data-label);
+  position:absolute; top:100%; inset-inline-start:50%; transform:translateX(-50%);
+  margin-top:2px; font-size:9px; font-weight:600; color:var(--ink-muted);
+  white-space:nowrap; pointer-events:none; line-height:1;
+}
+.screen-header{ align-items:flex-start; }
+.screen-header .btn-icon[data-label]{ margin-bottom:11px; }
 .tool-row{ display:flex; gap:8px; }
 .tool-tile{
   flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
@@ -1670,6 +1683,22 @@ const STR = {
     factoryLabel:"استعادة ضبط المصنع",
     welcomeRestore:"لديك نسخة احتياطية؟ استعدها",
     termsTitle:"مفكرة المادة",
+    essaysTitle:"التعابير",
+    essaysToolLabel:"التعابير",
+    essaysSub:"المقالات والتعابير المطلوبة منك في هذه المادة — اكتبها هنا، وراجعها قبل الاختبار من مكان واحد.",
+    essaysEmpty:"لم تكتب تعبيرًا بعد. أضف عنوان أول تعبير مطلوب منك، واكتبه على مهلك.",
+    essaysAdd:"أضف تعبيرًا",
+    essaysTopic:"عنوان التعبير",
+    essaysTopicPh:"مثال: An Interesting Hobby",
+    essaysBody:"نص التعبير",
+    essaysBodyPh:"اكتب تعبيرك هنا… يُحفظ وأنت تكتب.",
+    essaysWords:(n)=>n===1 ? "كلمة واحدة" : (n===2 ? "كلمتان" : (n<11 ? `${n} كلمات` : `${n} كلمة`)),
+    essaysCount:(n)=>n===1 ? "تعبير واحد" : (n===2 ? "تعبيران" : (n<11 ? `${n} تعابير` : `${n} تعبيرًا`)),
+    essaysSearch:"ابحث في تعابيرك…",
+    essaysNoMatch:"لا تعبير يطابق بحثك.",
+    essaysDeleteTitle:"حذف هذا التعبير؟",
+    essaysDeleteText:"سيُحذف نصّه كاملًا ولا يمكن استرجاعه.",
+    essaysSaved:"محفوظ",
     termsToolLabel:"المفكرة",
     termsSub:"تعبير أو مصطلح، ومعناه، ومثال عليه — تجمعها هنا فتصير مرجعك قبل الاختبار.",
     termsEmpty:"لم تضف شيئًا بعد. أول تعبير يمرّ عليك في المحاضرة، ضعه هنا.",
@@ -2194,6 +2223,22 @@ const STR = {
     factoryLabel:"Factory reset",
     welcomeRestore:"Have a backup? Restore it",
     termsTitle:"Course terms",
+    essaysTitle:"Essays",
+    essaysToolLabel:"Essays",
+    essaysSub:"The essays and compositions this course asks of you — written here, revised before the exam from one place.",
+    essaysEmpty:"No essay yet. Add the title of the first one you've been asked for, and write it at your own pace.",
+    essaysAdd:"Add an essay",
+    essaysTopic:"Essay title",
+    essaysTopicPh:"e.g. An Interesting Hobby",
+    essaysBody:"Essay text",
+    essaysBodyPh:"Write your essay here… it saves as you type.",
+    essaysWords:(n)=>n===1 ? "one word" : `${n} words`,
+    essaysCount:(n)=>n===1 ? "one essay" : `${n} essays`,
+    essaysSearch:"Search your essays…",
+    essaysNoMatch:"No essay matches your search.",
+    essaysDeleteTitle:"Delete this essay?",
+    essaysDeleteText:"Its full text will be deleted and cannot be recovered.",
+    essaysSaved:"Saved",
     termsToolLabel:"Terms",
     termsSub:"An expression or term, its meaning, and an example — collected here, they become your revision sheet.",
     termsEmpty:"Nothing here yet. The first expression you meet in a lecture, put it here.",
@@ -2445,6 +2490,7 @@ const ICON = {
   mic:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.6" width="6" height="11" rx="3"/><path d="M5.4 11.4a6.6 6.6 0 0 0 13.2 0"/><path d="M12 18v3.4"/></svg>`,
   paperclip:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5l-8 8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.4 3.4 0 0 1 4.8 4.8l-8.4 8.4a1.8 1.8 0 0 1-2.5-2.5l7.7-7.7"/></svg>`,
   globe:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 9.6h17.6M3.2 14.4h17.6"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>`,
+  essay:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5h9L19 8v12.5H5.5z"/><path d="M14 3.5V8h4.6"/><path d="M8.4 12h7M8.4 15h7M8.4 18h4"/></svg>`,
   info:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.01"/></svg>`,
   weekGrid:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="4.5" x2="8" y2="19.5"/><line x1="13" y1="4.5" x2="13" y2="19.5"/><line x1="17" y1="9.5" x2="17" y2="19.5" opacity="0"/></svg>`,
   bell:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
@@ -7180,13 +7226,14 @@ const COURSE_ENRICHMENT = {
   },
   "ENG 102": {
     explain:{
-      ar:"استكمال طبيعي للمستوى الأول — تعميق القواعد والمفردات، مع تدريب أكبر على القراءة والكتابة الأكاديمية بالإنجليزي، تحضيرًا لمراجع مقررات الحاسب اللي كلها تقريبًا إنجليزي.",
-      en:"A natural continuation of Level 1 — deepening grammar and vocabulary, with more practice in academic reading and writing in English, preparing you for CS course references which are almost all in English."
+      ar:"الوجه الثاني من نفس السلسلة: Academic Progress — Listening and Speaking، بست وحدات تسير مع وحدات القراءة نفسها. كل وحدة نصفان: «التركيز على الاستماع» يبني القواعد والمفردات وأدوات الاستماع — التقاط الفكرة الرئيسية، وتمييز الكلمات المتصلة في النطق السريع — ثم «التركيز على التحدث» ينتهي بمهمة تحدّث واحدة تُخطَّط وتُتمرَّن ثم تُلقى أمام الصف.",
+      en:"The other half of the same series: Academic Progress — Listening and Speaking, six units running alongside the reading ones. Each unit has two halves: Focus on Listening builds grammar, vocabulary and listening tools — catching the main idea, hearing linked words in fast speech — then Focus on Speaking ends in one speaking task that is planned, rehearsed, then delivered."
     },
     why:{
-      ar:"كل مقرر برمجة قادم سيرميك بمصطلحات ورسائل خطأ بالإنجليزي — كل مستوى تتقنه هنا يقلل وقت الحيرة هناك.",
-      en:"Every upcoming programming course will hit you with English terms and error messages — every level you master here reduces confusion time there."
+      ar:"في هذا الكتاب صناديق اسمها «English for Arabic Speakers» — تلتقط أخطاء يقع فيها الناطق بالعربية تحديدًا لأنه يترجم من لغته حرفيًا. مثالها في الكتاب: نقول after tomorrow ترجمةً لـ«بعد غد»، وهي عبارة لا تُستعمل بالإنجليزية أصلًا؛ والصواب the day after tomorrow. هذه الصناديق أنفع ما في الكتاب لك، لأنها تعالج أخطاءك أنت لا أخطاء متعلّم افتراضي — وقّف عندها ولا تتجاوزها.",
+      en:"This book carries boxes called English for Arabic Speakers — catching mistakes an Arabic speaker makes specifically, from translating literally. Its own example: saying after tomorrow for بعد غد, a phrase English doesn't use; the correct form is the day after tomorrow. These boxes are the most useful part of the book for you, because they address your errors rather than a hypothetical learner's."
     },
+    before:{ items:[{ar:"نطق الحروف والأرقام", en:"Pronouncing letters and numbers"}, {ar:"مفردات الحياة اليومية", en:"Everyday vocabulary"}, {ar:"الاستماع لجملة قصيرة وفهمها", en:"Listening to and understanding a short sentence"}], note:{ar:"أصعب ما في مهارة الاستماع ليس المفردات بل السرعة: المتحدث الأصلي يصل الكلمات ببعضها فتسمعها كلمة واحدة. لا تقس نفسك بعدد الكلمات التي تعرفها، بل بعدد المرات التي تعيد فيها المقطع — واجعل الإعادة عادة لا اعترافًا بالعجز.", en:"The hardest part of listening isn't vocabulary but speed: a native speaker links words until they sound like one. Don't measure yourself by the words you know but by how many times you replay a clip — and make replaying a habit rather than an admission of failure."} },
     resources:[
       { title:{ar:"تعلم الإنجليزية — المستوى الثاني (يوتيوب، ٤٠ فيديو، عربي)", en:"Learn English — Level 2 (YouTube, 40 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLWXso7v6nBWtKbyc1W7x-ZBDG10K1AdS1", reason:{ar:"سلسلة عربية كاملة ومجانية، مصممة كاستكمال مباشر لمن أنهى المستوى الأول — شرح منظم كأنك في معهد فعلي", en:"A complete, free Arabic series designed as a direct continuation for those who finished Level 1 — organized like an actual institute course"} }
     ]
@@ -8315,7 +8362,7 @@ function renderDevPlans(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="devBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="devBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.devTitle}</div>
         <span style="width:40px;"></span>
       </div>
@@ -10511,7 +10558,7 @@ function renderInstallBannerHtml(){
         <span class="card-meta" style="white-space:normal;">${isAndroidPrompt ? s.installTextAndroid : s.installTextIOS}</span>
         ${isAndroidPrompt ? `<button type="button" class="btn btn-primary" id="installNowBtn" style="margin-top:var(--sp-3); padding:10px;">${ICON.download}<span>${s.installNowBtn}</span></button>` : ""}
       </span>
-      <button type="button" class="btn-icon" id="installDismiss" aria-label="Dismiss" style="width:28px; height:28px; flex-shrink:0;">${ICON.close}</button>
+      <button type="button" class="btn-icon" id="installDismiss" data-label="${lang()==="ar" ? "إخفاء" : "Dismiss"}" aria-label="Dismiss" style="width:28px; height:28px; flex-shrink:0;">${ICON.close}</button>
     </div>`;
 }
 function wireInstallBanner(afterRender){
@@ -10632,7 +10679,7 @@ function renderToday(){
           <div class="screen-header-title">${student.name ? escapeHtml(s.greetingReturning(student.name)) : (student.companion==='female' ? s.companionFemaleLabel : s.companionMaleLabel)}</div>
           <div class="screen-header-sub">${s.todayGreeting}</div>
         </div>
-        <button type="button" class="btn-icon" id="settingsBtn" aria-label="${s.settingsBtn}">${ICON.settings}</button>
+        <button type="button" class="btn-icon" id="settingsBtn" data-label="${s.settingsTitle}" aria-label="${s.settingsBtn}">${ICON.settings}</button>
       </div>
       <div class="screen-content">
         <div class="hero">
@@ -10791,7 +10838,7 @@ function renderSemester(){
         <div class="tool-row" style="margin-bottom:var(--sp-4);">
           <button type="button" class="tool-tile" id="rawNotebookBtn">${ICON.openBook}<span>${s.toolNotebook}</span></button>
           <button type="button" class="tool-tile" id="weeklyScheduleBtn">${ICON.weekGrid}<span>${s.toolSchedule}</span></button>
-          <button type="button" class="tool-tile" id="addCourseBtn">${ICON.plus}<span>${s.toolAddCourse}</span></button>
+          <button type="button" class="tool-tile" id="addCourseBtn" data-label="${s.toolAddCourse}">${ICON.plus}<span>${s.toolAddCourse}</span></button>
         </div>
         ${semesterEventsHtml}
         <div class="section-label">${s.coursesLabel}</div>
@@ -10883,9 +10930,9 @@ function renderCourseView(courseId){
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="courseBack" aria-label="Back">${chevronBack()}</button>
-        <button type="button" class="btn-icon" id="courseNotebookBtn" aria-label="${s.notebookEntryLabel}">${ICON.book}</button>
-        <button type="button" class="btn-icon" id="courseEdit" aria-label="${s.editCourseTitle}">${ICON.settings}</button>
+        <button type="button" class="btn-icon" id="courseBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="courseNotebookBtn" data-label="${lang()==="ar" ? "الدفتر" : "Notebook"}" aria-label="${s.notebookEntryLabel}">${ICON.book}</button>
+        <button type="button" class="btn-icon" id="courseEdit" data-label="${lang()==="ar" ? "تعديل" : "Edit"}" aria-label="${s.editCourseTitle}">${ICON.settings}</button>
       </div>
       <div class="screen-content">
         <div class="hero" style="margin-bottom:var(--sp-4);">
@@ -10987,7 +11034,7 @@ function renderExamPrepHub(eventId){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="prepBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="prepBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.prepHubTitle}</div>
         <span style="width:40px;"></span>
       </div>
@@ -11188,9 +11235,9 @@ function renderNotebookPage(courseId){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="pgBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="pgBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.pageTitle}</div>
-        <button type="button" class="btn-icon" id="pgSave" aria-label="${s.saveBtn}">${ICON.check}</button>
+        <button type="button" class="btn-icon" id="pgSave" data-label="${s.saveBtn}" aria-label="${s.saveBtn}">${ICON.check}</button>
       </div>
       <div class="screen-content">
         <div class="set-tabs page-modes">
@@ -11501,12 +11548,12 @@ function renderCourseTerms(courseId){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="termsBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="termsBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div>
           <div class="screen-header-title">${s.termsTitle}</div>
           <div class="screen-header-sub">${escapeHtml(course.name)}</div>
         </div>
-        <button type="button" class="btn-icon" id="termsAddTop" aria-label="${s.termsAdd}">${ICON.plus}</button>
+        <button type="button" class="btn-icon" id="termsAddTop" data-label="${s.termsAdd}" aria-label="${s.termsAdd}">${ICON.plus}</button>
       </div>
       <div class="screen-content">
         ${all.length ? `
@@ -11608,6 +11655,172 @@ function openTermSheet(courseId, existing, onDone){
   });
 }
 
+
+/* ============================================================
+   COURSE ESSAYS — the compositions an exam will ask for
+   ------------------------------------------------------------
+   Language courses set a handful of essays a term, and one of them turns up
+   in the exam. Students write them on paper, in phone notes, in chats — then
+   hunt for them the night before. Gathered per course, each with its title
+   and a word count, they become the thing that gets revised instead of
+   rewritten. Given its own place, not folded into the vocabulary notebook:
+   an essay and a term are different objects with different uses.
+   ============================================================ */
+let essaysSearch = "";
+
+function renderCourseEssays(courseId){
+  applyDir();
+  const s = t();
+  const course = dbGet("courses", courseId);
+  if(!course) return renderSemester();
+  const all = NotebookModule.essays(courseId);
+  const q = normalizeSearchText(essaysSearch);
+  const list = q.length >= 2
+    ? all.filter(x=>normalizeSearchText([x.title, x.body].join(" ")).includes(q))
+    : all;
+  const words = (txt)=>(txt||"").trim() ? (txt.trim().split(/\s+/).length) : 0;
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="essaysBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div>
+          <div class="screen-header-title">${s.essaysTitle}</div>
+          <div class="screen-header-sub">${escapeHtml(course.name)}</div>
+        </div>
+        <button type="button" class="btn-icon" id="essaysAddTop" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.essaysAdd}">${ICON.plus}</button>
+      </div>
+      <div class="screen-content">
+        ${all.length ? `
+        <input type="text" class="field" id="essaysSearchInput" placeholder="${s.essaysSearch}" value="${escapeHtml(essaysSearch)}" autocomplete="off" style="margin-bottom:var(--sp-3);">
+        <div class="section-label" style="margin-top:0;">${s.essaysCount(all.length)}</div>` : `
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-4);">${s.essaysSub}</p>`}
+
+        ${!all.length ? `
+        <div class="empty-state">
+          <div class="empty-icon">${ICON.essay}</div>
+          <p class="empty-text">${s.essaysEmpty}</p>
+        </div>` : (!list.length ? `
+        <p class="type-caption" style="color:var(--ink-muted);">${s.essaysNoMatch}</p>` : `
+        <div class="stack">
+          ${list.map(x=>`
+            <button type="button" class="card" data-essay-id="${x.id}" style="align-items:flex-start;">
+              <span class="card-icon">${ICON.essay}</span>
+              <span class="card-body">
+                <span class="card-title" dir="auto">${escapeHtml(x.title)}</span>
+                <span class="card-meta">${s.essaysWords(words(x.body))}</span>
+                ${x.body ? `<span class="card-meta" style="white-space:normal; opacity:.7;" dir="auto">${escapeHtml(x.body.trim().slice(0, 70))}${x.body.trim().length>70?"…":""}</span>` : ""}
+              </span>
+              <span class="card-chevron">${chevronFwd()}</span>
+            </button>`).join("")}
+        </div>`)}
+
+        <button type="button" class="btn btn-primary" id="essaysAdd" style="width:100%; margin-top:var(--sp-4);">${ICON.plus}<span>${s.essaysAdd}</span></button>
+      </div>
+    </section>`;
+
+  document.getElementById("essaysBack").addEventListener("click", ()=>{ essaysSearch = ""; renderCourseNotebook(courseId); });
+  const add = ()=>openEssayTitleSheet(courseId);
+  document.getElementById("essaysAdd").addEventListener("click", add);
+  document.getElementById("essaysAddTop").addEventListener("click", add);
+  const search = document.getElementById("essaysSearchInput");
+  if(search){
+    search.addEventListener("input", (e)=>{
+      essaysSearch = e.target.value;
+      const pos = e.target.selectionStart;
+      renderCourseEssays(courseId);
+      const again = document.getElementById("essaysSearchInput");
+      if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(err){} }
+    });
+  }
+  document.querySelectorAll("[data-essay-id]").forEach(btn=>{
+    btn.addEventListener("click", ()=>renderEssayEditor(courseId, btn.dataset.essayId));
+  });
+}
+
+/* The title is asked for first and alone: a student adds an essay when the
+   teacher names it, often weeks before writing a word of it. */
+function openEssayTitleSheet(courseId){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.essaysAdd}</div>
+      <div class="field-group">
+        <label class="field-label" for="esTitle">${s.essaysTopic}</label>
+        <input type="text" class="field" id="esTitle" dir="auto" autocomplete="off" placeholder="${s.essaysTopicPh}">
+        <p class="field-error" id="esTitleError">${s.nameRequired}</p>
+      </div>
+      <button type="button" class="btn btn-primary" id="esGo" style="width:100%;">${ICON.check}<span>${s.saveBtn}</span></button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  setTimeout(()=>{ const f = overlay.querySelector("#esTitle"); if(f) f.focus(); }, 320);
+  overlay.querySelector("#esGo").addEventListener("click", ()=>{
+    const title = overlay.querySelector("#esTitle").value.trim();
+    if(!title){ overlay.querySelector("#esTitleError").classList.add("show"); return; }
+    const rec = NotebookModule.addEssay(courseId, title);
+    close(()=>renderEssayEditor(courseId, rec.id));
+  });
+}
+
+/* A full screen for the writing itself: the title above, the text filling
+   everything below, a live word count, and no save button — an essay written
+   over three sittings must never be lost to a forgotten tap. */
+function renderEssayEditor(courseId, essayId){
+  applyDir();
+  const s = t();
+  const essay = NotebookModule.essays(courseId).find(x=>x.id===essayId);
+  if(!essay) return renderCourseEssays(courseId);
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="edBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div>
+          <div class="screen-header-title" style="font-size:var(--fs-subheading);" dir="auto">${escapeHtml(essay.title)}</div>
+          <div class="screen-header-sub" id="edCount">${s.essaysWords((essay.body||"").trim() ? essay.body.trim().split(/\s+/).length : 0)}</div>
+        </div>
+        <button type="button" class="btn-icon" id="edDelete" data-label="${lang()==="ar" ? "حذف" : "Delete"}" aria-label="${s.deleteBtn}" style="color:var(--attention);">${ICON.trash}</button>
+      </div>
+      <div class="screen-content" style="display:flex; flex-direction:column;">
+        <input type="text" class="field" id="edTitle" dir="auto" value="${escapeHtml(essay.title)}" style="margin-bottom:var(--sp-3); font-weight:700;">
+        <textarea class="field" id="edBody" dir="auto" placeholder="${s.essaysBodyPh}" style="flex:1; min-height:44vh; resize:none; line-height:2;">${escapeHtml(essay.body||"")}</textarea>
+        <p class="type-caption" id="edStatus" style="color:var(--ink-muted); min-height:18px; margin-top:8px; text-align:center;"></p>
+      </div>
+    </section>`;
+
+  const body = document.getElementById("edBody");
+  const title = document.getElementById("edTitle");
+  const count = document.getElementById("edCount");
+  const status = document.getElementById("edStatus");
+  let timer = null;
+  const save = ()=>{
+    NotebookModule.updateEssay(courseId, essayId, { title: title.value.trim() || essay.title, body: body.value });
+    status.textContent = s.essaysSaved;
+    setTimeout(()=>{ if(status) status.textContent = ""; }, 1400);
+  };
+  const onEdit = ()=>{
+    const n = body.value.trim() ? body.value.trim().split(/\s+/).length : 0;
+    count.textContent = s.essaysWords(n);
+    if(timer) clearTimeout(timer);
+    timer = setTimeout(save, 600);
+  };
+  body.addEventListener("input", onEdit);
+  title.addEventListener("input", onEdit);
+  document.getElementById("edBack").addEventListener("click", ()=>{ save(); renderCourseEssays(courseId); });
+  document.getElementById("edDelete").addEventListener("click", ()=>{
+    showConfirmSheet({
+      title:s.essaysDeleteTitle, text:s.essaysDeleteText, confirmLabel:s.deleteBtn, danger:true,
+      onConfirm:()=>{ NotebookModule.deleteEssay(courseId, essayId); renderCourseEssays(courseId); }
+    });
+  });
+}
+
 function renderCourseNotebook(courseId){
   applyDir();
   const s = t();
@@ -11624,7 +11837,7 @@ function renderCourseNotebook(courseId){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="notebookBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="notebookBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title" style="font-size:var(--fs-body);">${escapeHtml(course.name)}</div>
         <span style="width:40px;"></span>
       </div>
@@ -11637,6 +11850,9 @@ function renderCourseNotebook(courseId){
              of button three times in three places and had to hunt for the one
              they wanted. One strip means one place to look. -->
         <div class="toolbar" role="group" aria-label="${s.notebookToolsLabel}">
+          <button type="button" class="tool" id="notebookEssays">
+            <span class="tool-icon">${ICON.essay}</span><span>${s.essaysToolLabel}</span>
+          </button>
           <button type="button" class="tool" id="notebookTerms">
             <span class="tool-icon">${ICON.openBook}</span><span>${s.termsToolLabel}</span>
           </button>
@@ -11760,6 +11976,8 @@ function renderCourseNotebook(courseId){
     });
   });
   document.getElementById("notebookBack").addEventListener("click", ()=>{ notebookSearch=""; notebookGroupBy="all"; renderCourseView(courseId); });
+  const essaysBtn = document.getElementById("notebookEssays");
+  if(essaysBtn) essaysBtn.addEventListener("click", ()=>{ essaysSearch = ""; renderCourseEssays(courseId); });
   const termsBtn = document.getElementById("notebookTerms");
   if(termsBtn) termsBtn.addEventListener("click", ()=>{ termsSearch = ""; renderCourseTerms(courseId); });
   const newPageBtn = document.getElementById("notebookNewPage");
@@ -11927,9 +12145,9 @@ function renderRawNotebook(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="rawBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="rawBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.rawNotebookTitle}</div>
-        <button type="button" class="btn-icon" id="rawAddBtn" aria-label="${s.notebookAddNoteBtn}">${ICON.plus}</button>
+        <button type="button" class="btn-icon" id="rawAddBtn" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.notebookAddNoteBtn}">${ICON.plus}</button>
       </div>
       <div class="screen-content">
         <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.rawNotebookSub}</p>
@@ -12018,8 +12236,8 @@ function openRawNoteSheet(existingNote, onDone){
         <canvas id="rawCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
         <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
           ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
-          <button type="button" class="btn-icon" id="rawTextTool" aria-label="${s.noteTextToolLabel}" style="color:var(--ink-muted);">${ICON.textTool}</button>
-          <button type="button" class="btn-icon" id="rawCanvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
+          <button type="button" class="btn-icon" id="rawTextTool" data-label="${lang()==="ar" ? "كتابة" : "Type"}" aria-label="${s.noteTextToolLabel}" style="color:var(--ink-muted);">${ICON.textTool}</button>
+          <button type="button" class="btn-icon" id="rawCanvasClear" data-label="${lang()==="ar" ? "مسح" : "Clear"}" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
         </div>
       </div>
       <p class="type-caption" id="rawTextToolHint" style="color:var(--accent); display:none; margin-top:-8px; margin-bottom:var(--sp-3);">${s.noteTextToolHint}</p>
@@ -12153,8 +12371,8 @@ function openNoteSheet(courseId, existingNote, onDone){
         <canvas id="noteCanvas" style="flex:1; min-width:0; border-radius:var(--r-md); touch-action:none; display:block;"></canvas>
         <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:40px; flex-shrink:0; padding-top:6px;">
           ${PEN_COLORS.map((c,i)=>`<button type="button" class="pen-swatch" data-pen="${c}" style="width:26px; height:26px; border-radius:50%; background:${c}; border:2px solid ${i===0?'var(--accent)':'transparent'}; flex-shrink:0;"></button>`).join("")}
-          <button type="button" class="btn-icon" id="noteTextTool" aria-label="${s.noteTextToolLabel}" style="color:var(--ink-muted);">${ICON.textTool}</button>
-          <button type="button" class="btn-icon" id="canvasClear" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
+          <button type="button" class="btn-icon" id="noteTextTool" data-label="${lang()==="ar" ? "كتابة" : "Type"}" aria-label="${s.noteTextToolLabel}" style="color:var(--ink-muted);">${ICON.textTool}</button>
+          <button type="button" class="btn-icon" id="canvasClear" data-label="${lang()==="ar" ? "مسح" : "Clear"}" aria-label="${s.noteClearCanvas}" style="margin-top:auto; color:var(--ink-muted);">${ICON.trash}</button>
         </div>
       </div>
       <p class="type-caption" id="noteTextToolHint" style="color:var(--accent); display:none; margin-top:-8px; margin-bottom:var(--sp-3);">${s.noteTextToolHint}</p>
@@ -12435,7 +12653,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-01 18:22";
+const BUILD_ID = "2026-09-02 05:07";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -12489,7 +12707,7 @@ function renderReferenceMap(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="refMapBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="refMapBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.refMapTitle}</div>
         <span style="width:40px;"></span>
       </div>
@@ -13042,6 +13260,29 @@ const NotebookModule = {
     nb.terms = this.terms(courseId).filter(x=>x.id!==termId);
     dbSave();
   },
+  /* Essays sit beside notes and terms in the same notebook record: exported
+     with the backup, searched with everything else, gone when the course is. */
+  essays(courseId){
+    const nb = this.get(courseId);
+    if(!Array.isArray(nb.essays)) nb.essays = [];
+    return nb.essays;
+  },
+  addEssay(courseId, title){
+    const list = this.essays(courseId);
+    const rec = { id:genId(), title, body:"", createdAt:Date.now(), updatedAt:Date.now() };
+    list.unshift(rec);
+    dbSave();
+    return rec;
+  },
+  updateEssay(courseId, essayId, patch){
+    const item = this.essays(courseId).find(x=>x.id===essayId);
+    if(item){ Object.assign(item, patch, { updatedAt:Date.now() }); dbSave(); }
+  },
+  deleteEssay(courseId, essayId){
+    const nb = this.get(courseId);
+    nb.essays = this.essays(courseId).filter(x=>x.id!==essayId);
+    dbSave();
+  },
   addNote(courseId, text, color, extras){
     const nb = this.get(courseId);
     nb.notes.unshift({ id:genId(), type:"text", text, color:color||"default", hardestPoint:(extras&&extras.hardestPoint)||"", keyInsight:(extras&&extras.keyInsight)||"", createdAt:Date.now() });
@@ -13534,7 +13775,7 @@ function renderSkillsArchive(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="skillsArchiveBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="skillsArchiveBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.skillsArchiveTitle}</div>
         <span style="width:40px;"></span>
       </div>
@@ -13635,9 +13876,9 @@ function renderSkillDetail(skillId){
   app.innerHTML = `
     <section class="screen no-tabbar" style="--sk:${rgb};">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="skillDetailBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="skillDetailBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${escapeHtml(catLabel || skill.title[l])}</div>
-        <button type="button" class="btn-icon" id="skillArchiveToggle" aria-label="Archive" style="${isArchived?`color:var(--accent);`:``}">${ICON.archiveBox}</button>
+        <button type="button" class="btn-icon" id="skillArchiveToggle" data-label="${lang()==="ar" ? "تأجيل" : "Archive"}" aria-label="Archive" style="${isArchived?`color:var(--accent);`:``}">${ICON.archiveBox}</button>
       </div>
       <div class="screen-content">
         <div class="skill-hero">
@@ -13724,9 +13965,9 @@ function renderGlossary(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="glossaryBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="glossaryBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.glossaryTitle}</div>
-        <button type="button" class="btn-icon" id="addTermBtn" aria-label="${s.glossaryAddBtn}">${ICON.plus}</button>
+        <button type="button" class="btn-icon" id="addTermBtn" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.glossaryAddBtn}">${ICON.plus}</button>
       </div>
       <div class="screen-content">
         <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.glossarySub}</p>
@@ -13922,7 +14163,7 @@ function renderSearch(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="searchBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="searchBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.searchEntryLabel}</div>
         <span style="width:40px;"></span>
       </div>
@@ -13978,7 +14219,7 @@ function renderReferenceGlossary(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="refGlossaryBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="refGlossaryBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.refGlossaryEntryLabel}</div>
         <span style="width:40px;"></span>
       </div>
@@ -14010,11 +14251,11 @@ function renderReferenceGlossary(){
         </div>
         ${pageCount > 1 ? `
         <div class="glossary-pager">
-          <button type="button" class="btn-icon" id="refGlossaryPrev" ${refGlossaryPage===0?"disabled":""} aria-label="Previous">${chevronBack()}</button>
+          <button type="button" class="btn-icon" id="refGlossaryPrev" data-label="${lang()==="ar" ? "السابق" : "Prev"}" ${refGlossaryPage===0?"disabled":""} aria-label="Previous">${chevronBack()}</button>
           <div class="glossary-pager-dots">
             ${Array.from({length:pageCount}, (_,p)=>`<button type="button" class="glossary-dot ${p===refGlossaryPage?'glossary-dot-active':''}" data-glossary-page="${p}" aria-label="${p+1}"></button>`).join("")}
           </div>
-          <button type="button" class="btn-icon" id="refGlossaryNext" ${refGlossaryPage===pageCount-1?"disabled":""} aria-label="Next">${chevronFwd()}</button>
+          <button type="button" class="btn-icon" id="refGlossaryNext" data-label="${lang()==="ar" ? "التالي" : "Next"}" ${refGlossaryPage===pageCount-1?"disabled":""} aria-label="Next">${chevronFwd()}</button>
         </div>
         <div class="type-caption" style="text-align:center; color:var(--ink-muted); margin-top:var(--sp-2);">${s.refGlossaryPageLabel(refGlossaryPage+1, pageCount, matches.length)}</div>` : ""}`}
       </div>
@@ -14043,7 +14284,7 @@ function renderLiveTranslate(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="translateBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="translateBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.liveTranslateEntryLabel}</div>
         <span style="width:40px;"></span>
       </div>
@@ -14336,7 +14577,7 @@ function renderWeeklyWhitening(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="whiteningBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="whiteningBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.whiteningTitle}</div>
         <span style="width:40px;"></span>
       </div>
@@ -14405,7 +14646,7 @@ function renderWeeklySchedule(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="scheduleBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="scheduleBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.weeklyScheduleEntryLabel}</div>
         <span style="width:40px;"></span>
       </div>
@@ -14727,7 +14968,7 @@ function openEventSheet(owner, existingEvent, onDone){
         <input type="date" class="field" id="evDate" value="${editing?escapeHtml(existingEvent.date):''}">
       </div>
       <div class="field-group" style="display:flex; align-items:center; gap:var(--sp-3);">
-        <button type="button" class="btn-icon" id="evEvalToggle" style="width:24px; height:24px; border-radius:6px; ${(editing&&existingEvent.isEvaluative)?'background:var(--accent); border-color:var(--accent); color:#fff;':''}">${(editing&&existingEvent.isEvaluative)?ICON.check:''}</button>
+        <button type="button" class="btn-icon" id="evEvalToggle" data-label="${lang()==="ar" ? "تقييمي" : "Graded"}" style="width:24px; height:24px; border-radius:6px; ${(editing&&existingEvent.isEvaluative)?'background:var(--accent); border-color:var(--accent); color:#fff;':''}">${(editing&&existingEvent.isEvaluative)?ICON.check:''}</button>
         <span class="type-body">${s.eventIsEvaluativeLabel}</span>
       </div>
       <button type="button" class="btn btn-primary" id="evSave" style="margin-bottom:${editing?'8px':'0'};">${ICON.check}<span>${s.saveBtn}</span></button>
@@ -14887,7 +15128,7 @@ function renderWeeklyMirror(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="mirrorBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="mirrorBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.mirrorTitle}</div>
         <span style="width:40px;"></span>
       </div>
@@ -14927,7 +15168,7 @@ function renderAbout(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="aboutBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="aboutBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.aboutEntryLabel}</div>
         <span style="width:40px;"></span>
       </div>
@@ -14970,7 +15211,7 @@ function renderSettings(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="settingsBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="settingsBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.settingsTitle}</div>
         <span style="width:40px;"></span>
       </div>
@@ -15258,7 +15499,7 @@ function renderProfileEditSettings(){
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
-        <button type="button" class="btn-icon" id="profileEditBack" aria-label="Back">${chevronBack()}</button>
+        <button type="button" class="btn-icon" id="profileEditBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.editProfileLabel}</div>
         <span style="width:40px;"></span>
       </div>
