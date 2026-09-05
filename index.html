@@ -35,6 +35,19 @@
   /* The second ambient hue: a companion to the accent, never the same colour,
      so the two fields read as depth rather than one big blur. */
   --field-2:120,160,200;
+
+  /* ---- Glass, after the Ufuq system ------------------------------------
+     The gradient runs at 158° because neither 90 nor 180 suggests a light
+     source outside the screen. Top .062 and bottom .022 — a ~40% difference,
+     which is what reads as curvature. The edge is brighter than the border on
+     purpose: light comes from the edge, depth comes from the black shadow. */
+  --glass-sheen:linear-gradient(158deg, rgba(255,255,255,.062), rgba(255,255,255,.022));
+  --glass-line:rgba(255,255,255,.085);
+  --glass-shadow:0 18px 46px rgba(0,0,0,.42);
+  --glass-edge:rgba(255,255,255,.18);
+  /* Flat surfaces carry no shadow at all — the hierarchy depends on it. */
+  --flat:rgba(255,255,255,.032);
+  --flat-line:rgba(255,255,255,.062);
   --attention:#E89478;
   --attention-rgb:232,148,120;
   --attention-soft:rgba(232,148,120,.14);
@@ -118,6 +131,12 @@ body[data-companion="female"]{
    from a soft shadow beneath a card, not from a lighter fill inside it. */
 /* Paper: warm and low-glare, for long reading indoors. */
 body[data-theme="paper"]{
+  --glass-sheen:linear-gradient(158deg, rgba(255,255,255,.76), rgba(255,253,249,.46));
+  --glass-line:rgba(60,45,30,.08);
+  --glass-shadow:0 14px 34px rgba(60,45,30,.09);
+  --glass-edge:rgba(255,255,255,.95);
+  --flat:rgba(255,255,255,.66);
+  --flat-line:rgba(60,45,30,.09);
   --field-2:196,150,110;
   --background:#F7F3EC;
   --surface:#FFFDF9;
@@ -136,6 +155,12 @@ body[data-theme="paper"]{
 }
 /* Mist: cool, near-white, the brightest of the three. */
 body[data-theme="mist"]{
+  --glass-sheen:linear-gradient(158deg, rgba(255,255,255,.74), rgba(255,255,255,.44));
+  --glass-line:rgba(20,45,55,.07);
+  --glass-shadow:0 14px 34px rgba(20,45,55,.09);
+  --glass-edge:rgba(255,255,255,.95);
+  --flat:rgba(255,255,255,.64);
+  --flat-line:rgba(20,45,55,.08);
   --field-2:120,190,190;
   --background:#EEF3F5;
   --surface:#FFFFFF;
@@ -183,6 +208,12 @@ body[data-theme="paper"]:after, body[data-theme="mist"]:after{ opacity:.10; }
 body[data-theme="paper"] .tt-cell-full, body[data-theme="mist"] .tt-cell-full{ color:#FFFFFF; }
 body[data-theme="paper"] .level-chip-active, body[data-theme="mist"] .level-chip-active{ color:#FFFFFF; }
 body[data-theme="daylight"]{
+  --glass-sheen:linear-gradient(158deg, rgba(255,255,255,.72), rgba(255,255,255,.42));
+  --glass-line:rgba(20,30,60,.07);
+  --glass-shadow:0 14px 34px rgba(20,30,60,.09);
+  --glass-edge:rgba(255,255,255,.95);
+  --flat:rgba(255,255,255,.62);
+  --flat-line:rgba(20,30,60,.08);
   --field-2:120,170,210;
   --background:#F4F6FA;
   --surface:#FFFFFF;
@@ -821,6 +852,45 @@ body[data-theme="daylight"] .card:before{
 }
 .screen-header{ align-items:flex-start; }
 .screen-header .btn-icon[data-label]{ margin-bottom:11px; }
+/* ---- One glass per screen -------------------------------------------------
+   The hero is the single lifted surface on any screen; cards below it are
+   flat. Making everything glass produces noise without hierarchy — if a
+   screen seems to need two, one of them isn't important enough. */
+.hero{
+  background:var(--glass-sheen);
+  border:1px solid var(--glass-line);
+  border-radius:22px;
+  box-shadow:var(--glass-shadow);
+  padding:var(--sp-4);
+  position:relative;
+  overflow:hidden;
+}
+/* The edge stops short of both corners. A line running corner to corner reads
+   as a border; one that fades before them reads as light landing on a
+   surface. One declaration, and it changes the whole screen. */
+.hero:before{
+  content:""; position:absolute; inset:0 14% auto; height:1px;
+  background:linear-gradient(90deg, transparent, var(--glass-edge), transparent);
+  border-radius:1px;
+}
+
+/* Cards are the flat level: no shadow, deliberately. */
+.card{
+  background:var(--flat);
+  border-color:var(--flat-line);
+  box-shadow:none;
+}
+/* The card's own hairline goes: with no shadow it was pretending to be glass. */
+.card:before{ display:none; }
+/* Pressed, a card sinks a little rather than shrinking. .988 is felt without
+   being seen; .95 reads as a toy. */
+.card:active{ transform:scale(.988); box-shadow:none; }
+.btn:active{ transform:scale(.988); }
+
+/* Numbers must not jitter as they change. */
+.stat b, .hero-title, .horizon-line, .pager-count, .level-chip-count{
+  font-variant-numeric:tabular-nums;
+}
 .tool-row{ display:flex; gap:8px; }
 .tool-tile{
   flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
@@ -1672,6 +1742,13 @@ const STR = {
     resetEntryLabel:"ابدأ من جديد",
     planChangedTitle:"تغيّرت خطتك",
     passedMarkBtn:"أنهيتُ هذه المادة",
+    levelDoneBtn:"علّمت هذا المستوى كاملًا",
+    levelUndoBtn:"ألغِ تعليم المستوى",
+    levelDoneTitle:"تعليم المستوى كاملًا؟",
+    levelDoneText:(n)=>`سيُعلَّم ${n} مقررًا في هذا المستوى كمقررات مجتازة. تظهر في خطتك ولا تُحسب ضمن المتبقي، ويمكنك التراجع في أي وقت.`,
+    levelDoneConfirm:"علّمها كلها",
+    levelDoneToast:(n)=>`عُلّم ${n} مقررًا كمجتاز`,
+    levelUndoToast:"أُلغي تعليم المستوى",
     devEntryLabel:"تصفّح كل الخطط",
     hardRefreshLabel:"تحديث إجباري",
     hardRefreshNote:"يمسح النسخة المخزّنة في المتصفح ويعيد تحميل أحدث بناء. بياناتك لا تُمسّ.",
@@ -1684,6 +1761,13 @@ const STR = {
     welcomeRestore:"لديك نسخة احتياطية؟ استعدها",
     termsTitle:"مفكرة المادة",
     essaysTitle:"التعابير",
+    searchMineLabel:"من كتابتك",
+    searchMineNote:"ملاحظاتك وتعابيرك ومفكرتك",
+    searchKindNote:"ملاحظة",
+    searchKindPage:"صفحة دفتر",
+    searchKindTerm:"مفكرة",
+    searchKindEssay:"تعبير",
+    searchKindFile:"مرفق",
     essaysToolLabel:"التعابير",
     essaysSub:"المقالات والتعابير المطلوبة منك في هذه المادة — اكتبها هنا، وراجعها قبل الاختبار من مكان واحد.",
     essaysEmpty:"لم تكتب تعبيرًا بعد. أضف عنوان أول تعبير مطلوب منك، واكتبه على مهلك.",
@@ -2212,6 +2296,13 @@ const STR = {
     resetEntryLabel:"Start over",
     planChangedTitle:"Your plan changed",
     passedMarkBtn:"I've completed this course",
+    levelDoneBtn:"I finished this whole level",
+    levelUndoBtn:"Unmark this level",
+    levelDoneTitle:"Mark the whole level?",
+    levelDoneText:(n)=>`${n} courses in this level will be marked completed. They stay in your plan but aren't counted as remaining, and you can undo this any time.`,
+    levelDoneConfirm:"Mark them all",
+    levelDoneToast:(n)=>`${n} courses marked completed`,
+    levelUndoToast:"Level unmarked",
     devEntryLabel:"Browse every plan",
     hardRefreshLabel:"Force update",
     hardRefreshNote:"Clears the browser's stored copy and reloads the newest build. Your data is untouched.",
@@ -2224,6 +2315,13 @@ const STR = {
     welcomeRestore:"Have a backup? Restore it",
     termsTitle:"Course terms",
     essaysTitle:"Essays",
+    searchMineLabel:"From your own writing",
+    searchMineNote:"Your notes, essays and terms",
+    searchKindNote:"note",
+    searchKindPage:"notebook page",
+    searchKindTerm:"term",
+    searchKindEssay:"essay",
+    searchKindFile:"attachment",
     essaysToolLabel:"Essays",
     essaysSub:"The essays and compositions this course asks of you — written here, revised before the exam from one place.",
     essaysEmpty:"No essay yet. Add the title of the first one you've been asked for, and write it at your own pace.",
@@ -2563,7 +2661,8 @@ const SAUDI_UNIVERSITIES = [
   {id:"fayha", ar:"كلية الفيحاء (الجبيل)", en:"Fayha College (Jubail)"},
   {id:"jic", ar:"كلية الجبيل الصناعية (الهيئة الملكية)", en:"Jubail Industrial College (Royal Commission)"},
   {id:"jti", ar:"معهد الجبيل التقني (الهيئة الملكية)", en:"Jubail Technical Institute (Royal Commission)"},
-  {id:"bp", ar:"بوليتكنك البحرين", en:"Bahrain Polytechnic"}
+  {id:"bp", ar:"بوليتكنك البحرين", en:"Bahrain Polytechnic"},
+  {id:"qatif", ar:"الكلية التقنية بالقطيف", en:"Qatif Technical College"}
 ];
 const SAUDI_INSTITUTES = [
   {id:"tvtc", ar:"الكليات التقنية (المؤسسة العامة للتدريب التقني والمهني)", en:"Technical College (TVTC)"},
@@ -2594,7 +2693,7 @@ const COLLEGES = [
 ];
 const COLLEGE_MAJORS = {
   eng: [["الهندسة المدنية","Civil Engineering"],["الهندسة الكهربائية","Electrical Engineering"],["الهندسة الميكانيكية","Mechanical Engineering"],["الهندسة الكيميائية","Chemical Engineering"],["هندسة الصناعات","Industrial Engineering"],["السنة التحضيرية (سنة المهارات)","Skills Year (Foundation)"],["مهارات تشغيل الرافعات","Crane and Forklift Operation"],["هندسة الحاسب","Computer Engineering"]],
-  cs: [["علوم الحاسب","Computer Science"],["تقنية المعلومات","Information Technology"],["هندسة البرمجيات","Software Engineering"],["نظم المعلومات","Information Systems"],["الذكاء الاصطناعي","Artificial Intelligence"],["الأمن السيبراني","Cybersecurity"]],
+  cs: [["علوم الحاسب","Computer Science"],["تقنية المعلومات","Information Technology"],["هندسة البرمجيات","Software Engineering"],["نظم المعلومات","Information Systems"],["الذكاء الاصطناعي","Artificial Intelligence"],["الأمن السيبراني","Cybersecurity"],["تقنية إدارة أنظمة الشبكات","Network Systems Administration"]],
   bus: [["إدارة الأعمال","Business Administration"],["التمويل","Finance"],["المحاسبة","Accounting"],["التسويق","Marketing"],["نظم المعلومات الإدارية","Management Information Systems"],["إدارة الموارد البشرية","Human Resources Management"]],
   med: [["الطب والجراحة","Medicine & Surgery"]],
   dent: [["طب الأسنان","Dentistry"]],
@@ -2961,6 +3060,13 @@ const COURSE_CATALOG = {
     l1:["CROP1101 - مقدمة في تشغيل الرافعات","CROP1102 - ممارسات الربط والرفع","CROP1103 - سلامة الرافعات","CROP1104 - تشغيل الرافعات المتنقلة 1","CROP1105 - أساسيات حسابات الرفع","BSELC 1504 - التواصل بالإنجليزية","BSPE 1502 - التربية البدنية"],
     l2:["CROP2106 - تشغيل الرافعات المتنقلة 2","CROP2107 - تشغيل الرافعات الشوكية","CROP2108 - فحص الرافعات والرافعات الشوكية","CROP2109 - الصيانة الأساسية للرافعات","BSTRW 2506 - كتابة التقارير الفنية","BSIC 1502 - الثقافة الإسلامية"],
     l3:["CROP 3110 - برنامج التدريب التعاوني (١٥ أسبوعًا)"]
+  },
+  "qatif-cs-cs-6": {
+    l1:["رياض 101 - الرياضيات","انجل 101 - لغة إنجليزية 1","حاسب 101 - مقدمة تطبيقات الحاسب","فيزي 101 - الفيزياء","حاسب 111 - تجميع الحاسب وتشغيله","شبكا 111 - مبادئ شبكات الحاسب"],
+    l2:["انجل 102 - لغة إنجليزية 2","حاسب 102 - تطبيقات الحاسب المتقدمة","عربي 101 - الكتابة الفنية","داعم 151 - نظم التشغيل 1","رياد 101 - أساسيات ريادة الأعمال","نشبك 121 - إدارة عميل الشبكة"],
+    l3:["انجل 103 - لغة إنجليزية 3","اسلم 101 - الدراسات الإسلامية","رياد 212 - ريادة أعمال الحاسب وتقنية المعلومات","داعم 221 - مهارات الدعم الفني","نشبك 231 - بيئة خادم الشبكة","داعم 252 - نظم التشغيل 2"],
+    l4:["انجل 204 - لغة إنجليزية 4","نشبك 241 - تطبيقات أنظمة الشبكة","نشبك 261 - إدارة خدمات الشبكة","نشبك 285 - موضوعات مختارة","حاسب 280 - التأهيل للشهادات الاحترافية","اسلك 201 - السلوك الوظيفي والمستقبل المهني","نشبك 295 - مشروع"],
+    l5:["نشبك 299 - التدريب التعاوني","نشبك 288 - المشروع الإنتاجي"]
   },
   "jazan-eng-eng-2": {
     l1:["ريض101 - رياضيات عامة","سلم101 - ثقافة إسلامية 1","نجل101 - لغة إنجليزية 1","همك132 - التصميم الهندسي"],
@@ -3589,6 +3695,7 @@ const COURSE_ENRICHMENT = {
       en:"An engineer writes more than he expects: technical reports, correspondence with contractors, project specifications. A report full of spelling errors weakens trust in its technical content however precise that content is."
     },
     resources:[
+      { title:{ar:"قناة الدكتور محمود راشد أنيس — النحو والصرف (يوتيوب، عربي، مجاني)", en:"Prof. Mahmoud Rashed Anis — Arabic Grammar and Morphology (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/@Prof.Dr.Anis_Arabic_Teaching", lang:"ar", verified:"2026-09-03", reason:{ar:"قناة كاملة لأستاذ النحو والصرف في قسم اللغة العربية بكلية الآداب والعلوم الإنسانية، جامعة حلب — لا دروسًا متفرقة ولا مراجعات ثانوية، بل تدريس جامعي للنحو والصرف والإعراب والميزان الصرفي. وهذا ما بحثنا عنه جولتين: مصدر عربي حرّ يدرّس مقررك بمستواه لا بمستوى المدرسة", en:"A full channel by a professor of grammar and morphology in the Arabic department at Aleppo University's Faculty of Arts and Humanities — not scattered lessons or school revision, but university-level teaching of grammar, morphology and case analysis. This is what we searched two rounds for"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling Course (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء، ومقررك في النحو والإعراب — وهما بابان مختلفان. أدرجناه لأنه أقرب ما وجدناه حرًّا وعربيًا، ولأن الإملاء والنحو يلتقيان في ضبط أواخر الكلم. بحثنا عن مساق نحو جامعي حر نثق به فلم نقبل ما وجدنا: بين مساقات لا نملك روابطها المؤكدة، وتسجيلات قديمة بصيغ لا تعمل على الأجهزة اليوم. وسنضيفه فور أن نجده", en:"Stated plainly: this is a spelling source while your course is grammar and case endings — related but distinct. We included it as the closest free Arabic source we found. We searched for a free university grammar course we could stand behind and did not accept what we found: courses whose links we could not confirm, and old recordings in formats that no longer play"} }
     ]
   },
@@ -4212,6 +4319,7 @@ const COURSE_ENRICHMENT = {
       en:"You will write in Arabic more than you expect: correspondence with contractors, reports to government bodies, meeting minutes. Sound Arabic earns trust; writing with errors makes your content read with suspicion."
     },
     resources:[
+      { title:{ar:"قناة الدكتور محمود راشد أنيس — النحو والصرف (يوتيوب، عربي، مجاني)", en:"Prof. Mahmoud Rashed Anis — Arabic Grammar and Morphology (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/@Prof.Dr.Anis_Arabic_Teaching", lang:"ar", verified:"2026-09-03", reason:{ar:"قناة كاملة لأستاذ النحو والصرف في قسم اللغة العربية بكلية الآداب والعلوم الإنسانية، جامعة حلب — لا دروسًا متفرقة ولا مراجعات ثانوية، بل تدريس جامعي للنحو والصرف والإعراب والميزان الصرفي. وهذا ما بحثنا عنه جولتين: مصدر عربي حرّ يدرّس مقررك بمستواه لا بمستوى المدرسة", en:"A full channel by a professor of grammar and morphology in the Arabic department at Aleppo University's Faculty of Arts and Humanities — not scattered lessons or school revision, but university-level teaching of grammar, morphology and case analysis. This is what we searched two rounds for"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء، ومقررك في النحو والإعراب — وهما بابان مختلفان. أدرجناه لأنه أقرب ما وجدناه حرًّا وعربيًا، ولأن الإملاء والنحو يلتقيان في ضبط أواخر الكلم. بحثنا عن مساق نحو جامعي حر نثق به فلم نقبل ما وجدنا: بين مساقات لا نملك روابطها المؤكدة، وتسجيلات قديمة بصيغ لا تعمل على الأجهزة اليوم. وسنضيفه فور أن نجده", en:"Stated plainly: this is a spelling source while your course is grammar and case endings — related but distinct. We included it as the closest free Arabic source we found. We searched for a free university grammar course we could stand behind and did not accept what we found: courses whose links we could not confirm, and old recordings in formats that no longer play"} }
     ]
   },
@@ -4226,6 +4334,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ leadsTo:[{ar:"الكتابة المهنية (AIS201)", en:"Professional Writing (AIS201)"}] },
     resources:[
+      { title:{ar:"قناة الدكتور محمود راشد أنيس — النحو والصرف (يوتيوب، عربي، مجاني)", en:"Prof. Mahmoud Rashed Anis — Arabic Grammar and Morphology (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/@Prof.Dr.Anis_Arabic_Teaching", lang:"ar", verified:"2026-09-03", reason:{ar:"قناة كاملة لأستاذ النحو والصرف في قسم اللغة العربية بكلية الآداب والعلوم الإنسانية، جامعة حلب — لا دروسًا متفرقة ولا مراجعات ثانوية، بل تدريس جامعي للنحو والصرف والإعراب والميزان الصرفي. وهذا ما بحثنا عنه جولتين: مصدر عربي حرّ يدرّس مقررك بمستواه لا بمستوى المدرسة", en:"A full channel by a professor of grammar and morphology in the Arabic department at Aleppo University's Faculty of Arts and Humanities — not scattered lessons or school revision, but university-level teaching of grammar, morphology and case analysis. This is what we searched two rounds for"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء، ومقررك في النحو والإعراب — وهما بابان مختلفان. أدرجناه لأنه أقرب ما وجدناه حرًّا وعربيًا، ولأن الإملاء والنحو يلتقيان في ضبط أواخر الكلم. بحثنا عن مساق نحو جامعي حر نثق به فلم نقبل ما وجدنا: بين مساقات لا نملك روابطها المؤكدة، وتسجيلات قديمة بصيغ لا تعمل على الأجهزة اليوم. وسنضيفه فور أن نجده", en:"Stated plainly: this is a spelling source while your course is grammar and case endings — related but distinct. We included it as the closest free Arabic source we found. We searched for a free university grammar course we could stand behind and did not accept what we found: courses whose links we could not confirm, and old recordings in formats that no longer play"} }
     ]
   },
@@ -4973,6 +5082,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ leadsTo:[{ar:"الكتابة العربية المهنية (GS 262)", en:"Arabic Professional Writing (GS 262)"}] },
     resources:[
+      { title:{ar:"قناة الدكتور محمود راشد أنيس — النحو والصرف (يوتيوب، عربي، مجاني)", en:"Prof. Mahmoud Rashed Anis — Arabic Grammar and Morphology (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/@Prof.Dr.Anis_Arabic_Teaching", lang:"ar", verified:"2026-09-03", reason:{ar:"قناة كاملة لأستاذ النحو والصرف في قسم اللغة العربية بكلية الآداب والعلوم الإنسانية، جامعة حلب — لا دروسًا متفرقة ولا مراجعات ثانوية، بل تدريس جامعي للنحو والصرف والإعراب والميزان الصرفي. وهذا ما بحثنا عنه جولتين: مصدر عربي حرّ يدرّس مقررك بمستواه لا بمستوى المدرسة", en:"A full channel by a professor of grammar and morphology in the Arabic department at Aleppo University's Faculty of Arts and Humanities — not scattered lessons or school revision, but university-level teaching of grammar, morphology and case analysis. This is what we searched two rounds for"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء، ومقررك في النحو والإعراب — وهما بابان مختلفان. أدرجناه لأنه أقرب ما وجدناه حرًّا وعربيًا، ولأن الإملاء والنحو يلتقيان في ضبط أواخر الكلم. بحثنا عن مساق نحو جامعي حر نثق به فلم نقبل ما وجدنا: بين مساقات لا نملك روابطها المؤكدة، وتسجيلات قديمة بصيغ لا تعمل على الأجهزة اليوم. وسنضيفه فور أن نجده", en:"Stated plainly: this is a spelling source while your course is grammar and case endings — related but distinct. We included it as the closest free Arabic source we found. We searched for a free university grammar course we could stand behind and did not accept what we found: courses whose links we could not confirm, and old recordings in formats that no longer play"} }
     ]
   },
@@ -5000,6 +5110,7 @@ const COURSE_ENRICHMENT = {
       en:"A programmer who cannot explain their work to non-programmers stays an implementer rather than a decision-maker. This course is what moves you from writing good code to persuading a team of an idea."
     },
     resources:[
+      { title:{ar:"فن الخطابة والإلقاء — إدراك (بالعربية، مجاني)", en:"The Art of Public Speaking — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/ps_sp-v2018_sp/", lang:"ar", verified:"2026-09-03", reason:{ar:"مساق عربي كامل لياسمين الباز، مدرّبة خطابة قدّمت أكثر من مئتين وخمسين ورشة وستمئة جلسة تدريب فردي، وتحدثت على منصة TEDx. يغطي ما يطلبه مقررك بالضبط: تنظيم الخطاب، ولغة الجسد ونبرة الصوت، ومواجهة رهبة الجمهور، والتعامل مع الأسئلة الصعبة. مجاني بالكامل والشهادة مجانية", en:"A complete Arabic course by Yasmine El Baz, a speaking coach who has delivered over two hundred and fifty workshops and six hundred one-to-one sessions, and spoken at TEDx. It covers exactly what your course asks: structuring a talk, body language and vocal tone, facing stage fright, and handling hard questions. Free, with a free certificate"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء وقواعد الكتابة، وليس في الإلقاء ولا العرض ولا إدارة النقاش — وهي صلب مقررك. أدرجناه لأن سلامة اللغة شرط في أي عرض شفهي، لا لأنه يغني عن مادة المقرر. بحثنا عن مصدر عربي حر في مهارات الإلقاء يليق بمستوى جامعي فلم نجده بعد، ونحن نبحث. خذ منه ضبط اللغة، وخذ الإلقاء من مرشد مقررك وتمارين الصف", en:"Stated plainly: this is a source on spelling and writing rules, not on delivery, presentation or managing discussion — which are your course's core. Sound language is a precondition for any spoken presentation, but this does not replace the course material. We have not yet found a free Arabic source on presentation skills at university level, and we are still looking"} }
     ]
   },
@@ -5142,6 +5253,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"الكتابة المهنية (AIS201)", en:"Professional Writing (AIS201)"}] },
     resources:[
+      { title:{ar:"فن الخطابة والإلقاء — إدراك (بالعربية، مجاني)", en:"The Art of Public Speaking — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/ps_sp-v2018_sp/", lang:"ar", verified:"2026-09-03", reason:{ar:"مساق عربي كامل لياسمين الباز، مدرّبة خطابة قدّمت أكثر من مئتين وخمسين ورشة وستمئة جلسة تدريب فردي، وتحدثت على منصة TEDx. يغطي ما يطلبه مقررك بالضبط: تنظيم الخطاب، ولغة الجسد ونبرة الصوت، ومواجهة رهبة الجمهور، والتعامل مع الأسئلة الصعبة. مجاني بالكامل والشهادة مجانية", en:"A complete Arabic course by Yasmine El Baz, a speaking coach who has delivered over two hundred and fifty workshops and six hundred one-to-one sessions, and spoken at TEDx. It covers exactly what your course asks: structuring a talk, body language and vocal tone, facing stage fright, and handling hard questions. Free, with a free certificate"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء وقواعد الكتابة، وليس في الإلقاء ولا العرض ولا إدارة النقاش — وهي صلب مقررك. أدرجناه لأن سلامة اللغة شرط في أي عرض شفهي، لا لأنه يغني عن مادة المقرر. بحثنا عن مصدر عربي حر في مهارات الإلقاء يليق بمستوى جامعي فلم نجده بعد، ونحن نبحث. خذ منه ضبط اللغة، وخذ الإلقاء من مرشد مقررك وتمارين الصف", en:"Stated plainly: this is a source on spelling and writing rules, not on delivery, presentation or managing discussion — which are your course's core. Sound language is a precondition for any spoken presentation, but this does not replace the course material. We have not yet found a free Arabic source on presentation skills at university level, and we are still looking"} }
     ]
   },
@@ -5309,28 +5421,30 @@ const COURSE_ENRICHMENT = {
   },
   "BSTD 1507": {
     explain:{
-      ar:"الرسم التقني: الخطوط والرموز الهندسية، المساقط الثلاثة، الرسم الأيزومتري، القطاعات، وقراءة المخططات الصناعية.",
-      en:"Technical drawing: lines and engineering symbols, the three views, isometric drawing, sections, and reading industrial schematics."
+      ar:"الرسم التقني: لغة المهندس المكتوبة — أنواع الخطوط ودلالة كل واحد، المساقط الثلاثة وكيف يُقرأ الجسم منها، الأيزومترك، والقطاعات وأبعادها. ثم تنفيذ ذلك كله على الأوتوكاد: أوامر الرسم والتعديل، الطبقات، الأبعاد، والطباعة بمقياس صحيح.",
+      en:"Technical drawing: the engineer's written language — line types and what each means, the three views and how an object is read from them, isometric, and sections and dimensioning. Then all of it executed in AutoCAD: draw and modify commands, layers, dimensions, and printing to a correct scale."
     },
     why:{
-      ar:"في السلامة الصناعية تقرأ المخططات أكثر مما ترسمها: مخطط أنابيب، أو مسار إخلاء، أو موقع طفاية. ومن لا يقرأ المسقط الصحيح قد يبحث عن صمّام في المكان الخطأ وقت الطوارئ.",
-      en:"In industrial safety you read drawings more than you draw them: a piping diagram, an evacuation route, an extinguisher location. Whoever can't read a projection may look for a valve in the wrong place during an emergency."
+      ar:"خطأ يقع فيه أكثر الطلاب: يبدأ بتعلّم الأوتوكاد ويظن أن المقرر برنامج. الأوتوكاد أداة، والمقرر لغة — ومن يتقن البرنامج ولا يعرف قواعد الإسقاط يرسم خطوطًا نظيفة في مخطط لا يفهمه أحد. تعلّم القواعد أولًا ولو بالورقة والقلم، ثم انقلها إلى البرنامج، وستجد البرنامج أسهل مما يبدو.",
+      en:"The commonest mistake: starting with AutoCAD and assuming the course is software. AutoCAD is a tool; the course is a language — whoever masters the program without knowing projection rules draws clean lines in a drawing nobody can read. Learn the rules first, even on paper, then move them into the software."
     },
+    before:{ items:[{ar:"استعمال المسطرة والمثلث وقراءة القياسات", en:"Using a ruler and set square, reading measurements"}, {ar:"تخيّل الجسم من ثلاث جهات", en:"Visualizing an object from three sides"}, {ar:"أساسيات استعمال الحاسب والفأرة", en:"Basic computer and mouse use"}], note:{ar:"إن وجدت صعوبة في تخيّل المساقط، أمسك أي علبة أمامك وانظر إليها من الأمام ومن الأعلى ومن الجانب وارسم ما تراه. عشر دقائق بعلبة حقيقية تعلّمك ما لا تعلّمه ساعة أمام الشاشة.", en:"If you struggle to visualize views, pick up any box in front of you, look at it from the front, top and side, and draw what you see. Ten minutes with a real box teaches what an hour at a screen doesn't."} },
     resources:[
-      { title:{ar:"كورس الرسم الهندسي باللغة العربية (يوتيوب، ١٦٧ فيديو، مجاني)", en:"Engineering Drawing in Arabic (YouTube, 167 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PLp29oFdEDi3aFmBJtQwJuJFC6WmXnou7Z", lang:"ar", verified:"2026-08-15", reason:{ar:"شرح عربي كامل من مدرّس بكلية الهندسة: يبدأ من الأدوات وأنواع الخطوط ويتدرج إلى المساقط والأيزومترك والقطاعات — بترتيب يناسب من يبدأ من الصفر", en:"A complete Arabic explanation by a faculty-of-engineering instructor: from tools and line types up to views, isometric and sections — sequenced for someone starting from zero"} }
+      { title:{ar:"كورس الرسم الهندسي باللغة العربية (يوتيوب، ١٦٧ فيديو، مجاني)", en:"Engineering Drawing in Arabic (YouTube, Free)"}, url:"https://www.youtube.com/playlist?list=PLp29oFdEDi3aFmBJtQwJuJFC6WmXnou7Z", lang:"ar", verified:"2026-08-15", reason:{ar:"شرح عربي كامل من مدرّس بكلية الهندسة: الأدوات وأنواع الخطوط، المساقط، الأيزومترك، والقطاعات — وهذه هي القواعد التي يرسم بها الأوتوكاد. من يتعلم البرنامج قبلها يرسم خطوطًا صحيحة في مخطط خاطئ", en:"A complete Arabic explanation by a faculty-of-engineering instructor: tools and line types, views, isometric and sections — the rules AutoCAD draws by. Whoever learns the software before these draws correct lines in a wrong drawing"} },
+      { title:{ar:"دورة أوتوكاد من الصفر — الرسم ثنائي وثلاثي الأبعاد (معارف، عربي، مجاني)", en:"AutoCAD from Zero — 2D and 3D Drawing (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15042/%D8%A7%D9%88%D8%AA%D9%88%D9%83%D8%A7%D8%AF-%D9%85%D9%86-%D8%A7%D9%84%D8%B5%D9%81%D8%B1-video", lang:"ar", reason:{ar:"دورة عربية مجانية تبدأ من واجهة البرنامج وأدوات الرسم والتعديل، ثم الرسم ثنائي الأبعاد للمشاريع الهندسية، ثم النمذجة ثلاثية الأبعاد. بلا رسوم والشهادة مجانية — وهي ما يحتاجه من يفتح أوتوكاد لأول مرة ولا يعرف من أين يبدأ", en:"A free Arabic course starting from the interface and the draw and modify tools, then 2D drawing for engineering projects, then 3D modelling. Free with a free certificate"} }
     ]
   },
   "BSCA 1505": {
     explain:{
-      ar:"تطبيقات الحاسب: نظام التشغيل وإدارة الملفات، معالجة النصوص، جداول البيانات، العروض التقديمية، والإنترنت وأمن المعلومات.",
-      en:"Computer applications: the operating system and file management, word processing, spreadsheets, presentations, and the internet and information security."
+      ar:"مقررك مبني على كتاب معهدك (SITWORK) في وحدات متتابعة: تقنية المعلومات والاتصالات وأنواعها، ثم العتاد وأنواع الأجهزة، ثم المعالج — سرعة الساعة بالجيجاهرتز وعدد الأنوية من الثنائي إلى الثماني، ثم تقنية الجوال ورقاقة النظام الواحد ومكوّناتها: المعالج، ومعالج الرسوم، ومعالج الإشارة الرقمية، والمودم. وأخيرًا الذاكرة العشوائية ودورها ولماذا تُمحى عند إطفاء الجهاز.",
+      en:"Your course is built on your institute's book (SITWORK) in sequential units: information and communications technology and its types, then hardware and device types, then the processor — clock speed in gigahertz and core counts from dual to octa, then mobile technology and the system-on-a-chip with its components: CPU, GPU, DSP and modem. Finally RAM, its role, and why it clears when the device is switched off."
     },
     why:{
-      ar:"سجلات السلامة وتقارير الحوادث وقوائم الفحص كلها تُدار بجداول البيانات. أتقِن الجداول تحديدًا — هي أكثر أداة ستستعملها في عملك اليومي.",
-      en:"Safety records, incident reports and checklists are all managed in spreadsheets. Master spreadsheets in particular — they are the tool you will use most in daily work."
+      ar:"انتبه إلى طريقة كتابك: كل وحدة تنتهي بأسئلة تطبيقية من السوق السعودي — يعرض عليك جهازين بسعرهما ومواصفاتهما ويسألك أيهما تختار ولماذا. وهذا هو المقصود من المقرر كله: لا أن تحفظ أن الأنوية أربعة، بل أن تقرأ إعلان جهاز فتعرف هل يستحق سعره. جرّب ذلك على جوالك وحاسبك الآن — كم نواة فيه؟ وكم رامه؟ ولماذا يبطئ حين تفتح تطبيقات كثيرة؟",
+      en:"Notice how your book works: each unit ends with applied questions from the Saudi market — two devices with their prices and specifications, and which do you choose and why. That is the point of the whole course: not memorizing that there are four cores, but reading a device advertisement and knowing whether it is worth its price. Try it on your own phone and laptop now."
     },
     resources:[
-      { title:{ar:"أساسيات ICDL — الرخصة الدولية لقيادة الحاسب (معارف، عربي، مجاني)", en:"ICDL Fundamentals (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/18744/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-ICDL-video", lang:"ar", reason:{ar:"دورة عربية مجانية تغطي ما يغطيه المقرر: نظام التشغيل وإدارة الملفات، معالجة النصوص وجداول البيانات والعروض التقديمية، والإنترنت وأمن المعلومات — بتطبيق عملي على جهاز الطالب", en:"A free Arabic course covering what this course covers: the operating system and file management, word processing, spreadsheets and presentations, and the internet and information security"} }
+      { title:{ar:"أساسيات ICDL — الرخصة الدولية لقيادة الحاسب (معارف، عربي، مجاني)", en:"ICDL Fundamentals (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/18744/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-ICDL-video", lang:"ar", reason:{ar:"دورة عربية مجانية تغطي ما يغطيه كتابك: نظام التشغيل وإدارة الملفات، معالجة النصوص وجداول البيانات والعروض، والإنترنت وأمن المعلومات — بتطبيق عملي على كل وحدة", en:"A free Arabic course covering what your book covers: the operating system and file management, word processing, spreadsheets and presentations, and internet and information security"} }
     ]
   },
   "BSIS 1508": {
@@ -5348,15 +5462,16 @@ const COURSE_ENRICHMENT = {
   },
   "BSOS 1503": {
     explain:{
-      ar:"الصحة والسلامة المهنية: الأمراض المهنية وأسبابها، حدود التعرض المسموح بها، الفحص الطبي الدوري، الإسعافات الأولية، والتشريعات المنظمة.",
-      en:"Occupational health and safety: occupational diseases and their causes, permissible exposure limits, periodic medical examination, first aid, and governing regulations."
+      ar:"مقررك مبني على كتاب معهدك نفسه (BSOS 1503) في ستة فصول: السلامة العامة — الحوادث وأسبابها، الرفع الآمن، ومعدات الوقاية الشخصية من الرأس إلى القدم، وأنظمة منع السقوط، والسلالم، وتصريح العمل. ثم سلامة الآلات وحركاتها الخطرة، ثم السلامة الكهربائية والتأريض ونظام الإغلاق والوسم، ثم السلامة الكيميائية وبطاقات بيانات السلامة والترميز، ثم السلامة من الحريق ومثلثه وأصنافه وطفاياته، وأخيرًا الإسعافات الأولية والإنعاش القلبي الرئوي والنزيف والإصابات.",
+      en:"Your course is built on your institute's own textbook (BSOS 1503) in six chapters: general safety — accidents and their causes, safe lifting, personal protective equipment head to foot, fall arrest systems, ladders and work permits. Then machine safety and dangerous motions, electrical safety with earthing and lock-out/tag-out, chemical safety with safety data sheets and labelling, fire safety with its triangle, classes and extinguishers, and finally first aid with CPR, bleeding and injuries."
     },
     why:{
-      ar:"الفرق بين السلامة والصحة المهنية أن الأولى تمنع حادثًا يقع في لحظة، والثانية تمنع مرضًا يتراكم في عشر سنوات. والثانية أخفى وأخطر — لأن ضررها لا يظهر إلا بعد فوات وقت العلاج.",
-      en:"The difference between safety and occupational health is that the first prevents an accident in an instant, the second a disease accumulating over ten years. The second is more hidden and more dangerous — its harm shows only after treatment's window has passed."
+      ar:"لاحظ ترتيب الكتاب: يبدأ بحقوق العامل الأساسية قبل أي معدة أو إجراء — وهذه ليست مقدمة تُتجاوز، بل رسالة الكتاب كلها. وفصل الإسعافات الأولية في آخره ليس ملحقًا: هو الفصل الوحيد الذي قد تستعمله خارج العمل، في بيتك أو على الطريق. احفظ خطوات الإنعاش القلبي الرئوي كما تحفظ رقم هاتفك — لأنك إن احتجتها فلن يكون معك وقت للمراجعة.",
+      en:"Notice the book's order: it begins with the worker's basic rights before any equipment or procedure — not an introduction to skip past but the book's whole message. And the first aid chapter at the end isn't an appendix: it is the one chapter you may use outside work, at home or on the road. Learn the CPR steps as you know your own phone number — if you ever need them there will be no time to revise."
     },
+    before:{ items:[{ar:"قراءة الرموز التحذيرية وألوانها", en:"Reading warning symbols and their colours"}, {ar:"أساسيات الكهرباء: التيار والجهد", en:"Electricity basics: current and voltage"}, {ar:"مصطلحات السلامة بالإنجليزية", en:"Safety terminology in English"}], note:{ar:"الكتاب بالإنجليزية ومصطلحاته هي لغة المهنة عالميًا: PPE، MSDS، LOTO، CPR. لا تترجمها إلى العربية في ذهنك — احفظها كما هي، لأنك ستقرؤها على اللوحات والبطاقات في أي موقع تعمل فيه.", en:"The book is in English and its terms are the profession's language worldwide: PPE, MSDS, LOTO, CPR. Don't translate them in your head — learn them as they are, because you will read them on signs and labels on any site you work."} },
     resources:[
-      { title:{ar:"Industrial Safety Engineering — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Industrial Safety Engineering — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/110105094", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"مقرر جامعي كامل للأستاذ جاريسوار مايتي: مفاهيم سلامة المنظومات، تحديد المخاطر وتقييمها، التحقيق في الحوادث، تدقيق السلامة والتدريب، والأنظمة وإنفاذها. تنبيه: مستواه جامعي أعلى من مقررك التمهيدي — خذ منه المفاهيم الكبرى ودع التفاصيل الرياضية لمرحلة لاحقة", en:"A full university course by Prof. Jhareswar Maiti: systems safety concepts, hazard identification and assessment, accident investigation, safety audit and training, regulations and enforcement. Note: its level is above your introductory course — take the big concepts and leave the mathematical detail for later"} }
+      { title:{ar:"Industrial Safety Engineering — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Industrial Safety Engineering — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/110105094", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر جامعي أعلى من مستوى كتابك التحضيري. أدرجناه لأن أبوابه — تحديد الخطر، وتقييم المخاطر، والتحقيق في الحوادث — هي نفس أبواب كتابك بعمق أكبر. خذ منه المفاهيم، وخذ التفاصيل والإجراءات من كتاب معهدك", en:"Stated plainly: a university course above your preparatory textbook. Its sections — hazard identification, risk assessment, accident investigation — are your book's own sections in greater depth"} }
     ]
   },
   "BSPS 2505": {
@@ -5824,6 +5939,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ leadsTo:[{ar:"مهارات الاتصال العربية (IAS 221)", en:"Arabic Communication Skills (IAS 221)"}] },
     resources:[
+      { title:{ar:"قناة الدكتور محمود راشد أنيس — النحو والصرف (يوتيوب، عربي، مجاني)", en:"Prof. Mahmoud Rashed Anis — Arabic Grammar and Morphology (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/@Prof.Dr.Anis_Arabic_Teaching", lang:"ar", verified:"2026-09-03", reason:{ar:"قناة كاملة لأستاذ النحو والصرف في قسم اللغة العربية بكلية الآداب والعلوم الإنسانية، جامعة حلب — لا دروسًا متفرقة ولا مراجعات ثانوية، بل تدريس جامعي للنحو والصرف والإعراب والميزان الصرفي. وهذا ما بحثنا عنه جولتين: مصدر عربي حرّ يدرّس مقررك بمستواه لا بمستوى المدرسة", en:"A full channel by a professor of grammar and morphology in the Arabic department at Aleppo University's Faculty of Arts and Humanities — not scattered lessons or school revision, but university-level teaching of grammar, morphology and case analysis. This is what we searched two rounds for"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء، ومقررك في النحو والإعراب — وهما بابان مختلفان. أدرجناه لأنه أقرب ما وجدناه حرًّا وعربيًا، ولأن الإملاء والنحو يلتقيان في ضبط أواخر الكلم. بحثنا عن مساق نحو جامعي حر نثق به فلم نقبل ما وجدنا: بين مساقات لا نملك روابطها المؤكدة، وتسجيلات قديمة بصيغ لا تعمل على الأجهزة اليوم. وسنضيفه فور أن نجده", en:"Stated plainly: this is a spelling source while your course is grammar and case endings — related but distinct. We included it as the closest free Arabic source we found. We searched for a free university grammar course we could stand behind and did not accept what we found: courses whose links we could not confirm, and old recordings in formats that no longer play"} }
     ]
   },
@@ -5838,6 +5954,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"أساسيات اللغة العربية (IAS 111)", en:"Arabic Language Foundation (IAS 111)"}] },
     resources:[
+      { title:{ar:"فن الخطابة والإلقاء — إدراك (بالعربية، مجاني)", en:"The Art of Public Speaking — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/ps_sp-v2018_sp/", lang:"ar", verified:"2026-09-03", reason:{ar:"مساق عربي كامل لياسمين الباز، مدرّبة خطابة قدّمت أكثر من مئتين وخمسين ورشة وستمئة جلسة تدريب فردي، وتحدثت على منصة TEDx. يغطي ما يطلبه مقررك بالضبط: تنظيم الخطاب، ولغة الجسد ونبرة الصوت، ومواجهة رهبة الجمهور، والتعامل مع الأسئلة الصعبة. مجاني بالكامل والشهادة مجانية", en:"A complete Arabic course by Yasmine El Baz, a speaking coach who has delivered over two hundred and fifty workshops and six hundred one-to-one sessions, and spoken at TEDx. It covers exactly what your course asks: structuring a talk, body language and vocal tone, facing stage fright, and handling hard questions. Free, with a free certificate"} },
       { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: هذا مصدر في الإملاء وقواعد الكتابة، وليس في الإلقاء ولا العرض ولا إدارة النقاش — وهي صلب مقررك. أدرجناه لأن سلامة اللغة شرط في أي عرض شفهي، لا لأنه يغني عن مادة المقرر. بحثنا عن مصدر عربي حر في مهارات الإلقاء يليق بمستوى جامعي فلم نجده بعد، ونحن نبحث. خذ منه ضبط اللغة، وخذ الإلقاء من مرشد مقررك وتمارين الصف", en:"Stated plainly: this is a source on spelling and writing rules, not on delivery, presentation or managing discussion — which are your course's core. Sound language is a precondition for any spoken presentation, but this does not replace the course material. We have not yet found a free Arabic source on presentation skills at university level, and we are still looking"} }
     ]
   },
@@ -6929,6 +7046,357 @@ const COURSE_ENRICHMENT = {
     },
     resources:[
       { title:{ar:"مساقات الأدب والنقد — منصة إدراك (بالعربية، مجاني)", en:"Literature and Criticism Courses — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/", lang:"ar", partial:true, reason:{ar:"تنبيه على مستوى التحقق: هذه صفحة مساقات إدراك العامة لا مساقًا بعينه — بحثنا عن مصدر عربي حر يخص الأنماط الأدبية (الرواية والقصة والشعر والمسرح وخصائص كل نمط) فلم نجد مساقًا مطابقًا نثق به. أدرجنا بوابة إدراك لأنها أقرب منصة عربية موثوقة قد تُضيف مساقًا في الأدب، وننصحك بمراجعة قائمة مساقاتها. وأخبرنا عبر زر اقتراح المرجع إن وجدت أفضل — هذا المقرر هو آخر ما لم نُغلقه", en:"A verification note: this is Edraak's general course listing rather than a specific course — we searched for a free Arabic source on literary genres (the novel, short story, poetry and drama and the characteristics of each) and found no matching course we could trust. We list Edraak's portal as the nearest trustworthy Arabic platform likely to add one. Tell us through the suggest-a-reference button if you find better"} }
+    ]
+  },
+  "شبكا 111": {
+    explain:{
+      ar:"مبادئ شبكات الحاسب: نموذج الطبقات، عناوين IP والشبكات الفرعية، الأجهزة — المبدّل والموجّه ونقطة الوصول، وسائط النقل، وبناء شبكة صغيرة وفحصها.",
+      en:"Computer network principles: the layered model, IP addressing and subnetting, devices — switch, router and access point, transmission media, and building and testing a small network."
+    },
+    why:{
+      ar:"هذا أول مقرر في تخصصك وأهمها على الإطلاق: كل ما بعده — الخادم والخدمات والأمن — يفترض أنك تعرف كيف تنتقل الحزمة من جهاز إلى آخر. ومن يتجاوز التقسيم الفرعي بالحفظ يجد نفسه عاجزًا في كل معمل بعده.",
+      en:"This is the first course in your field and by far the most important: everything after it — servers, services, security — assumes you know how a packet moves between machines. Whoever memorizes subnetting instead of understanding it is stranded in every lab that follows."
+    },
+    resources:[
+      { title:{ar:"Computer Networks and Internet Protocol — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Computer Networks and Internet Protocol — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105183", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل يمشي على طبقات الشبكة طبقةً طبقة من الفيزيائية إلى التطبيق، مع بروتوكولات الإنترنت والتوجيه والتحكم في الازدحام — وهو الأساس النظري الذي تقف عليه كل شهادة شبكات مهنية", en:"A complete course walking the network stack layer by layer, with internet protocols, routing and congestion control — the theory every professional networking certificate rests on"} }
+    ]
+  },
+  "نشبك 121": {
+    explain:{
+      ar:"إدارة عميل الشبكة: تثبيت نظام التشغيل وإعداده، ربط الجهاز بالنطاق، الحسابات والصلاحيات، السياسات المحلية، واستكشاف أعطال الاتصال.",
+      en:"Network client administration: installing and configuring the operating system, joining a domain, accounts and permissions, local policies, and troubleshooting connectivity."
+    },
+    why:{
+      ar:"الجهاز الذي بين يدي الموظف هو أول ما يُشتكى منه وآخر ما يُصلَح. ومن يتقن إدارة العميل يحلّ ثمانين بالمئة من بلاغات الدعم قبل أن تصل للخادم أصلًا.",
+      en:"The machine on an employee's desk is the first thing complained about and the last thing fixed. Whoever masters client administration resolves eighty percent of support tickets before they ever reach the server."
+    },
+    resources:[
+      { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ تشيستر ريبيرو: إدارة العمليات والذاكرة، الجدولة، أنظمة الملفات، والتزامن — بأمثلة عملية على لينكس، وهو ما تديره فعلًا على الخادم", en:"A course by Prof. Chester Rebeiro: process and memory management, scheduling, file systems and synchronization — with practical Linux examples, which is what you actually administer on a server"} }
+    ]
+  },
+  "نشبك 231": {
+    explain:{
+      ar:"بيئة خادم الشبكة: تثبيت الخادم وإعداده، خدمة الدليل والنطاق، إدارة المستخدمين والمجموعات، الأذونات والمشاركات، والنسخ الاحتياطي.",
+      en:"Network server environment: installing and configuring a server, directory and domain services, users and groups, permissions and shares, and backup."
+    },
+    why:{
+      ar:"الفرق بين فنّي ومدير شبكة هو هذا المقرر: الأول يصلح جهازًا، والثاني يبني البيئة التي تعمل فيها كل الأجهزة. وخطأ واحد في الأذونات هنا يفتح ما لا يجوز فتحه على مئة جهاز دفعة واحدة.",
+      en:"The difference between a technician and an administrator is this course: the first fixes a machine, the second builds the environment all the machines run in. One permissions mistake here opens what shouldn't be open on a hundred machines at once."
+    },
+    resources:[
+      { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ تشيستر ريبيرو: إدارة العمليات والذاكرة، الجدولة، أنظمة الملفات، والتزامن — بأمثلة عملية على لينكس، وهو ما تديره فعلًا على الخادم", en:"A course by Prof. Chester Rebeiro: process and memory management, scheduling, file systems and synchronization — with practical Linux examples, which is what you actually administer on a server"} }
+    ]
+  },
+  "نشبك 241": {
+    explain:{
+      ar:"تطبيقات أنظمة الشبكة: خدمات الشبكة العملية — الطباعة والملفات والويب والبريد، إعدادها وربطها، وضبط أدائها.",
+      en:"Network system applications: practical network services — print, file, web and mail — configuring, connecting and tuning them."
+    },
+    why:{
+      ar:"الخدمات هي ما يراه المستخدم من الشبكة. ولا أحد يشكرك حين تعمل، والجميع يتصل بك حين تتوقف — وهذا هو عمل مدير الشبكة بالضبط.",
+      en:"Services are what a user sees of the network. Nobody thanks you when they work and everyone calls when they stop — which is exactly the job."
+    },
+    resources:[
+      { title:{ar:"Computer Networks and Internet Protocol — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Computer Networks and Internet Protocol — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105183", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل يمشي على طبقات الشبكة طبقةً طبقة من الفيزيائية إلى التطبيق، مع بروتوكولات الإنترنت والتوجيه والتحكم في الازدحام — وهو الأساس النظري الذي تقف عليه كل شهادة شبكات مهنية", en:"A complete course walking the network stack layer by layer, with internet protocols, routing and congestion control — the theory every professional networking certificate rests on"} }
+    ]
+  },
+  "نشبك 261": {
+    explain:{
+      ar:"إدارة خدمات الشبكة: المراقبة وقياس الأداء، إدارة النطاق الترددي، الجدولة والأتمتة، سجلات النظام، وخطط الاستمرارية والتعافي.",
+      en:"Network service management: monitoring and performance measurement, bandwidth management, scheduling and automation, system logs, and continuity and recovery planning."
+    },
+    why:{
+      ar:"السجلات مملّة حتى يقع العطل، فتصير الشيء الوحيد الذي يخبرك بما حدث. ومن يقرأ سجلاته يوميًا يكتشف العطل قبل أن يشتكي منه أحد — وهذا الفرق بين إدارة وردّ فعل.",
+      en:"Logs are dull until something breaks, and then they are the only thing that tells you what happened. Whoever reads them daily finds the fault before anyone complains — the difference between managing and reacting."
+    },
+    resources:[
+      { title:{ar:"Computer Networks and Internet Protocol — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Computer Networks and Internet Protocol — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105183", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل يمشي على طبقات الشبكة طبقةً طبقة من الفيزيائية إلى التطبيق، مع بروتوكولات الإنترنت والتوجيه والتحكم في الازدحام — وهو الأساس النظري الذي تقف عليه كل شهادة شبكات مهنية", en:"A complete course walking the network stack layer by layer, with internet protocols, routing and congestion control — the theory every professional networking certificate rests on"} }
+    ]
+  },
+  "داعم 151": {
+    explain:{
+      ar:"نظم التشغيل 1: مكوّنات النظام، إدارة العمليات والذاكرة، أنظمة الملفات، سطر الأوامر، والتثبيت والصيانة الأساسية.",
+      en:"Operating systems I: system components, process and memory management, file systems, the command line, and basic installation and maintenance."
+    },
+    why:{
+      ar:"سطر الأوامر ليس ماضيًا يُتجاوز: الخوادم تُدار به، والأتمتة تُكتب فيه. ومن يتعوّده مبكرًا يعمل أسرع من زميله الذي ينتظر النوافذ.",
+      en:"The command line isn't a past to move beyond: servers are run from it and automation is written in it. Whoever gets used to it early works faster than the colleague waiting on windows."
+    },
+    resources:[
+      { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ تشيستر ريبيرو: إدارة العمليات والذاكرة، الجدولة، أنظمة الملفات، والتزامن — بأمثلة عملية على لينكس، وهو ما تديره فعلًا على الخادم", en:"A course by Prof. Chester Rebeiro: process and memory management, scheduling, file systems and synchronization — with practical Linux examples, which is what you actually administer on a server"} }
+    ]
+  },
+  "داعم 252": {
+    explain:{
+      ar:"نظم التشغيل 2: الإدارة المتقدمة، الأتمتة بالنصوص البرمجية، الأداء وضبطه، الأمن والصلاحيات، والافتراضية.",
+      en:"Operating systems II: advanced administration, scripting and automation, performance tuning, security and privileges, and virtualization."
+    },
+    why:{
+      ar:"الأتمتة هي ما يحوّلك من موظف يكرر مئة خطوة يدويًا إلى مهندس يكتبها مرة وتُنفَّذ ألف مرة. وهي أعلى مهارة عائدًا في هذا التخصص كله.",
+      en:"Automation turns you from someone repeating a hundred steps by hand into an engineer who writes them once and runs them a thousand times. It is the highest-return skill in this whole field."
+    },
+    resources:[
+      { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ تشيستر ريبيرو: إدارة العمليات والذاكرة، الجدولة، أنظمة الملفات، والتزامن — بأمثلة عملية على لينكس، وهو ما تديره فعلًا على الخادم", en:"A course by Prof. Chester Rebeiro: process and memory management, scheduling, file systems and synchronization — with practical Linux examples, which is what you actually administer on a server"} }
+    ]
+  },
+  "داعم 221": {
+    explain:{
+      ar:"مهارات الدعم الفني: منهجية تشخيص العطل، أسئلة المستخدم الصحيحة، أدوات الفحص، توثيق الحالة، والتصعيد.",
+      en:"Technical support skills: fault diagnosis method, asking the user the right questions, diagnostic tools, documenting the case, and escalation."
+    },
+    why:{
+      ar:"أصعب ما في الدعم الفني ليس العطل بل وصف المستخدم له. ومن يتعلّم أن يسأل «متى آخر مرة عمل؟» و«ما الذي تغيّر؟» يختصر نصف وقت التشخيص.",
+      en:"The hardest part of support isn't the fault but the user's description of it. Whoever learns to ask when it last worked and what changed cuts diagnosis time in half."
+    },
+    resources:[
+      { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ تشيستر ريبيرو: إدارة العمليات والذاكرة، الجدولة، أنظمة الملفات، والتزامن — بأمثلة عملية على لينكس، وهو ما تديره فعلًا على الخادم", en:"A course by Prof. Chester Rebeiro: process and memory management, scheduling, file systems and synchronization — with practical Linux examples, which is what you actually administer on a server"} }
+    ]
+  },
+  "حاسب 280": {
+    explain:{
+      ar:"التأهيل للشهادات الاحترافية: بنية الشهادات المهنية في الشبكات، نطاق كل شهادة، طريقة الاختبار، وخطة الإعداد والتدرّب عليها.",
+      en:"Preparing for professional certificates: how networking certifications are structured, each one's scope, the exam format, and a preparation and practice plan."
+    },
+    why:{
+      ar:"الشهادة المهنية في هذا المجال تُقرأ في السيرة الذاتية أسرع من الدبلوم أحيانًا. وهذا المقرر يضعك على أول الطريق إليها وأنت ما زلت طالبًا — ومن يبدأ الآن يتخرج ومعه ما يميّزه.",
+      en:"A professional certificate in this field is sometimes read on a CV faster than the diploma. This course puts you on that path while you are still a student — whoever starts now graduates with something that sets him apart."
+    },
+    resources:[
+      { title:{ar:"Cryptography and Network Security — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Cryptography and Network Security — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105162", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"التشفير والتوثيق وأمن البروتوكولات — وهو ما يفصل مدير شبكة يُشغّل الخدمة عن مدير شبكة يحميها", en:"Encryption, authentication and protocol security — what separates an administrator who runs a service from one who protects it"} }
+    ]
+  },
+  "حاسب 111": {
+    explain:{
+      ar:"تجميع الحاسب وتشغيله: مكوّنات الجهاز وتوافقها، التركيب والفك، إعداد BIOS، تثبيت النظام، وتشخيص أعطال العتاد.",
+      en:"Assembling and running a computer: components and their compatibility, assembly and disassembly, BIOS setup, installing the system, and diagnosing hardware faults."
+    },
+    why:{
+      ar:"لا تدير شبكة أجهزةً لا تعرف ما بداخلها. ومن ركّب جهازًا بيده مرة يشخّص عطله بعدها بالسماع والنظر، لا بالتخمين.",
+      en:"You don't administer a network of machines whose insides you don't know. Whoever has built one by hand diagnoses faults afterwards by sound and sight rather than guesswork."
+    },
+    resources:[
+      { title:{ar:"أساسيات ICDL — الرخصة الدولية لقيادة الحاسب (معارف، عربي، مجاني)", en:"ICDL Fundamentals (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/18744/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-ICDL-video", lang:"ar", reason:{ar:"دورة عربية مجانية: نظام التشغيل وإدارة الملفات، معالجة النصوص وجداول البيانات والعروض، والإنترنت وأمن المعلومات — بتطبيق عملي", en:"A free Arabic course: the operating system and file management, word processing, spreadsheets and presentations, and internet and information security"} }
+    ]
+  },
+  "حاسب 101": {
+    explain:{
+      ar:"مقدمة تطبيقات الحاسب: نظام التشغيل وإدارة الملفات، معالجة النصوص، جداول البيانات، العروض التقديمية، والإنترنت الآمن.",
+      en:"Introduction to computer applications: the operating system and files, word processing, spreadsheets, presentations, and safe internet use."
+    },
+    why:{
+      ar:"جداول البيانات ستلازمك في التوثيق وجرد الأجهزة وتقارير الأعطال. وإتقانها الآن يوفّر عليك ساعات في كل فصل بعده.",
+      en:"Spreadsheets will stay with you in documentation, device inventory and fault reports. Mastering them now saves hours every term after."
+    },
+    resources:[
+      { title:{ar:"أساسيات ICDL — الرخصة الدولية لقيادة الحاسب (معارف، عربي، مجاني)", en:"ICDL Fundamentals (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/18744/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-ICDL-video", lang:"ar", reason:{ar:"دورة عربية مجانية: نظام التشغيل وإدارة الملفات، معالجة النصوص وجداول البيانات والعروض، والإنترنت وأمن المعلومات — بتطبيق عملي", en:"A free Arabic course: the operating system and file management, word processing, spreadsheets and presentations, and internet and information security"} }
+    ]
+  },
+  "حاسب 102": {
+    explain:{
+      ar:"تطبيقات الحاسب المتقدمة: الدوال والمعادلات في جداول البيانات، قواعد البيانات البسيطة، الأتمتة المكتبية، وإعداد التقارير.",
+      en:"Advanced computer applications: spreadsheet functions and formulas, simple databases, office automation, and report preparation."
+    },
+    why:{
+      ar:"التقرير الذي تبنيه مرة ويتحدث نفسه شهريًا يوفّر عليك يومًا كل شهر. وهذه أول تجربة أتمتة تمرّ بها — وهي مقدمة لما ستفعله لاحقًا على الخوادم.",
+      en:"A report you build once and that updates itself monthly saves you a day a month. This is your first taste of automation — a preface to what you'll later do on servers."
+    },
+    resources:[
+      { title:{ar:"أساسيات ICDL — الرخصة الدولية لقيادة الحاسب (معارف، عربي، مجاني)", en:"ICDL Fundamentals (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/18744/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-ICDL-video", lang:"ar", reason:{ar:"دورة عربية مجانية: نظام التشغيل وإدارة الملفات، معالجة النصوص وجداول البيانات والعروض، والإنترنت وأمن المعلومات — بتطبيق عملي", en:"A free Arabic course: the operating system and file management, word processing, spreadsheets and presentations, and internet and information security"} }
+    ]
+  },
+  "رياض 101": {
+    explain:{
+      ar:"الرياضيات: العمليات والنسب، الأسس والأنظمة العددية — الثنائي والست عشري، الجبر الأساسي، وقراءة الرسوم البيانية.",
+      en:"Mathematics: operations and ratios, exponents and number systems — binary and hexadecimal, basic algebra, and reading graphs."
+    },
+    why:{
+      ar:"النظام الثنائي في هذا المقرر ليس تمرينًا: هو نفسه ما ستحسب به قناع الشبكة الفرعية في المقرر التالي. ومن يفهمه هنا لا يحفظ جداول التقسيم الفرعي لاحقًا.",
+      en:"Binary here isn't an exercise: it is exactly what you'll compute a subnet mask with in the next course. Whoever understands it here doesn't memorize subnetting tables later."
+    },
+    resources:[
+      { title:{ar:"تفاضل وتكامل 1 — Calculus 1 (يوتيوب، عربي، مجاني)", en:"Calculus 1 (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", lang:"ar", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: محاضرات تفاضل جامعية أوسع من مقررك التقني — خذ منها الدوال والنهايات وقراءة الرسوم، فهي ما يخدم حسابات الشبكات والسعات، ودع البقية", en:"Stated plainly: university calculus lectures broader than your technical course — take functions, limits and reading graphs"} }
+    ]
+  },
+  "فيزي 101": {
+    explain:{
+      ar:"الفيزياء: الكهرباء والتيار والجهد والمقاومة، المجالات المغناطيسية، الموجات، والإشارات — بأساسها المطلوب لفهم وسائط النقل.",
+      en:"Physics: electricity, current, voltage and resistance, magnetic fields, waves and signals — the basis needed for understanding transmission media."
+    },
+    why:{
+      ar:"لماذا يضعف الكيبل بعد مئة متر؟ ولماذا تتداخل الإشارة اللاسلكية؟ إجابات هذه الأسئلة في هذا المقرر، وستُسأل عنها عمليًا في أول موقع تعمل فيه.",
+      en:"Why does a cable weaken after a hundred metres? Why does a wireless signal interfere? The answers are in this course, and you'll be asked them practically on your first site."
+    },
+    resources:[
+      { title:{ar:"فيزياء عامة 101 — حل مسائل كتاب سيروي (يوتيوب، عربي، مجاني)", en:"General Physics 101 — Serway Problem Solving (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PLQewEPwm2NbzjSnrgZNVjseIGSuhQVaQ7", lang:"ar", verified:"2026-08-18", reason:{ar:"مبنية على كتاب سيروي المعتمد جامعيًا، وتركّز على حل المسائل لا الشرح النظري وحده", en:"Built on the university-standard Serway textbook, focused on solving problems rather than theory alone"} }
+    ]
+  },
+  "عربي 101": {
+    explain:{
+      ar:"الكتابة الفنية: بناء التقرير الفني، توثيق الإجراءات، لغة المراسلات المهنية، وتبسيط المعلومة التقنية لغير المتخصص.",
+      en:"Technical writing: structuring a technical report, documenting procedures, professional correspondence, and simplifying technical information for non-specialists."
+    },
+    why:{
+      ar:"الشبكة التي تبنيها ولا توثّقها تموت مع رحيلك عن العمل. والتوثيق ليس عبئًا إداريًا بل جزء من التسليم — ومن يتقنه يُترقّى قبل من يتقن الإعداد وحده.",
+      en:"A network you build and don't document dies when you leave the job. Documentation isn't administrative burden but part of delivery — whoever masters it is promoted before whoever only masters configuration."
+    },
+    resources:[
+      { title:{ar:"دورة الإملاء — قواعد الكتابة العربية (معارف، عربي، مجاني)", en:"Arabic Spelling and Writing Rules (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/16197/%D8%A7%D9%84%D8%A5%D9%85%D9%84%D8%A7%D8%A1-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: يغطي هذا المصدر الشق الإملائي من مقررك — الهمزات والترقيم والأخطاء الشائعة — ولا يغطي بناء التقرير الفني ولا لغة المراسلات. خذ منه سلامة الكتابة، وخذ بنية التقرير من مرجع مقررك", en:"Stated plainly: this covers the spelling half of your course and not the structure of a technical report or the language of correspondence"} }
+    ]
+  },
+  "رياد 101": {
+    explain:{
+      ar:"أساسيات ريادة الأعمال: الفكرة ونموذج العمل، دراسة السوق والعميل، التسعير، والتخطيط المالي المبسّط.",
+      en:"Entrepreneurship fundamentals: the idea and business model, market and customer study, pricing, and simple financial planning."
+    },
+    why:{
+      ar:"كثير من فنّيي الشبكات يعملون لحسابهم بعد التخرج: صيانة عقود، وتركيب شبكات للمحلات والمكاتب. وهذا المقرر يعلّمك أن تسعّر عملك بدل أن تخمّنه.",
+      en:"Many network technicians work for themselves after graduating: maintenance contracts, installing networks for shops and offices. This course teaches you to price your work instead of guessing it."
+    },
+    resources:[
+      { title:{ar:"من فكرة إلى شركة: مقدمة في ريادة الأعمال — إدراك (عربي، مجاني)", en:"From Idea to Company — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/entr_101-vsp_2017/", lang:"ar", verified:"2026-08-16", reason:{ar:"مساق عربي كامل: نموذج العمل، دراسة السوق، التخطيط، وبناء الفريق — وهو ما يطلبه مقررك", en:"A complete Arabic course: the business model, market study, planning and team building"} }
+    ]
+  },
+  "رياد 212": {
+    explain:{
+      ar:"ريادة أعمال الحاسب وتقنية المعلومات: نماذج الأعمال في القطاع التقني، الخدمات المتكررة، التسعير للعقود، والفرص في السوق المحلي.",
+      en:"IT entrepreneurship: business models in the technology sector, recurring services, contract pricing, and opportunities in the local market."
+    },
+    why:{
+      ar:"أثمن ما في هذا المجال هو الخدمة المتكررة: عقد صيانة شهري أفضل من عشرة تركيبات متفرقة. وهذا المقرر يعلّمك أن ترى ما بعد المهمة الواحدة.",
+      en:"The most valuable thing in this field is recurring service: one monthly maintenance contract beats ten scattered installations. This course teaches you to see past the single job."
+    },
+    resources:[
+      { title:{ar:"من فكرة إلى شركة: مقدمة في ريادة الأعمال — إدراك (عربي، مجاني)", en:"From Idea to Company — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/entr_101-vsp_2017/", lang:"ar", verified:"2026-08-16", reason:{ar:"مساق عربي كامل: نموذج العمل، دراسة السوق، التخطيط، وبناء الفريق — وهو ما يطلبه مقررك", en:"A complete Arabic course: the business model, market study, planning and team building"} }
+    ]
+  },
+  "اسلك 201": {
+    explain:{
+      ar:"السلوك الوظيفي والمستقبل المهني: أخلاقيات المهنة، العمل ضمن فريق، التواصل مع العملاء، بناء السيرة الذاتية، والمقابلة الوظيفية.",
+      en:"Professional behaviour and career: work ethics, teamwork, client communication, building a CV, and the job interview."
+    },
+    why:{
+      ar:"أنت تحمل كلمات مرور المنشأة وصلاحياتها كاملة. والأمانة في هذا الموضع ليست خُلقًا حسنًا فقط — هي شرط بقائك في المهنة.",
+      en:"You hold the organization's passwords and its full privileges. Integrity here isn't merely good character — it is the condition of remaining in the profession."
+    },
+    resources:[
+      { title:{ar:"من فكرة إلى شركة: مقدمة في ريادة الأعمال — إدراك (عربي، مجاني)", en:"From Idea to Company — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/entr_101-vsp_2017/", lang:"ar", verified:"2026-08-16", reason:{ar:"مساق عربي كامل: نموذج العمل، دراسة السوق، التخطيط، وبناء الفريق — وهو ما يطلبه مقررك", en:"A complete Arabic course: the business model, market study, planning and team building"} }
+    ]
+  },
+  "اسلم 101": {
+    explain:{
+      ar:"الدراسات الإسلامية: مصادر التشريع، أركان الإيمان، العبادات والمعاملات، وأخلاق العمل والأمانة في المهنة.",
+      en:"Islamic studies: sources of legislation, the pillars of faith, worship and dealings, and work ethics and trustworthiness."
+    },
+    why:{
+      ar:"الأمانة في تخصصك ملموسة: بيانات لا تُقرأ، وصلاحيات لا تُستعمل لغير عملها. وهذا المقرر يضع الأساس الذي تقف عليه حين لا يراك أحد.",
+      en:"Trustworthiness in your field is concrete: data not read, privileges not used outside their purpose. This course lays the ground you stand on when nobody is watching."
+    },
+    resources:[
+      { title:{ar:"مقرر الثقافة الإسلامية — المقرر الإلكتروني الكامل (جامعة القدس المفتوحة، مجاني)", en:"Islamic Culture — Full Open E-Course (Al-Quds Open University, Free)"}, url:"https://osol.qou.edu/contents/0206/index.html", lang:"ar", verified:"2026-08-15", reason:{ar:"مقرر إلكتروني مفتوح كامل: خمس وحدات بمحتوى مكتوب وفيديو، واختبار ذاتي بعد كل موضوع — بلا تسجيل ولا رسوم", en:"A complete free open e-course: five units with written and video content and a self-test after each topic"} }
+    ]
+  },
+  "انجل 101": {
+    explain:{
+      ar:"لغة إنجليزية 1: المفردات الأساسية، أزمنة الحاضر والماضي، بناء الجملة، والقراءة والاستماع لنصوص قصيرة.",
+      en:"English I: core vocabulary, present and past tenses, sentence structure, and reading and listening to short texts."
+    },
+    why:{
+      ar:"كل أمر تكتبه على الخادم بالإنجليزية، وكل رسالة خطأ ستقرأها بالإنجليزية. اللغة هنا ليست متطلبًا جانبيًا — هي أداة عملك اليومية.",
+      en:"Every command you type on a server is English, and every error message you read is English. The language here isn't a side requirement — it's your daily tool."
+    },
+    resources:[
+      { title:{ar:"Purdue OWL — General Writing: أساسيات الإنجليزية الأكاديمية (مجاني)", en:"Purdue OWL — General Writing (Free)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", verified:"2026-08-18", reason:{ar:"مرجع مفتوح بلا تسجيل من مختبر الكتابة بجامعة بيردو، وفيه قسم كامل لمن الإنجليزية لغته الثانية: بناء الجملة، الأزمنة، حروف الجر، والأخطاء الشائعة", en:"An open reference from Purdue's Writing Lab with a full section for second-language learners"} }
+    ]
+  },
+  "انجل 102": {
+    explain:{
+      ar:"لغة إنجليزية 2: توسيع المفردات، الأزمنة المركبة، الجملة المركّبة، وقراءة النصوص التقنية القصيرة.",
+      en:"English II: expanding vocabulary, compound tenses, complex sentences, and reading short technical texts."
+    },
+    why:{
+      ar:"ابدأ من الآن بقراءة صفحة توثيق تقنية واحدة أسبوعيًا بالإنجليزية. عشر دقائق أسبوعيًا تجعل الوثائق مألوفة لك قبل أن تحتاجها تحت الضغط.",
+      en:"Start now by reading one page of technical documentation a week in English. Ten minutes a week makes documentation familiar before you need it under pressure."
+    },
+    resources:[
+      { title:{ar:"Purdue OWL — General Writing: أساسيات الإنجليزية الأكاديمية (مجاني)", en:"Purdue OWL — General Writing (Free)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", verified:"2026-08-18", reason:{ar:"مرجع مفتوح بلا تسجيل من مختبر الكتابة بجامعة بيردو، وفيه قسم كامل لمن الإنجليزية لغته الثانية: بناء الجملة، الأزمنة، حروف الجر، والأخطاء الشائعة", en:"An open reference from Purdue's Writing Lab with a full section for second-language learners"} }
+    ]
+  },
+  "انجل 103": {
+    explain:{
+      ar:"لغة إنجليزية 3: القراءة التحليلية، الكتابة الوظيفية، المفردات التقنية، والاستماع للمحاضرات القصيرة.",
+      en:"English III: analytical reading, functional writing, technical vocabulary, and listening to short lectures."
+    },
+    why:{
+      ar:"المفردة التقنية تُتعلَّم من سياقها لا من القاموس: اقرأ الوثيقة الرسمية للخدمة التي تدرسها، وستلتقط عشرين مصطلحًا في سياقها الصحيح.",
+      en:"Technical vocabulary is learned from context, not a dictionary: read the official documentation of the service you're studying and you'll pick up twenty terms in their proper setting."
+    },
+    resources:[
+      { title:{ar:"Purdue OWL — General Writing: أساسيات الإنجليزية الأكاديمية (مجاني)", en:"Purdue OWL — General Writing (Free)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", verified:"2026-08-18", reason:{ar:"مرجع مفتوح بلا تسجيل من مختبر الكتابة بجامعة بيردو، وفيه قسم كامل لمن الإنجليزية لغته الثانية: بناء الجملة، الأزمنة، حروف الجر، والأخطاء الشائعة", en:"An open reference from Purdue's Writing Lab with a full section for second-language learners"} }
+    ]
+  },
+  "انجل 204": {
+    explain:{
+      ar:"لغة إنجليزية 4: الكتابة التقنية بالإنجليزية، التقارير، المراسلات المهنية، والعرض الشفهي.",
+      en:"English IV: technical writing in English, reports, professional correspondence, and oral presentation."
+    },
+    why:{
+      ar:"اختبارات الشهادات المهنية كلها بالإنجليزية، ومقابلات العمل في الشركات الكبرى كذلك. وهذا آخر مقرر لغة في خطتك — فاجعله تدريبًا على ما بعد التخرج لا مادة تُجتاز.",
+      en:"Professional certification exams are all in English, and so are interviews at large companies. This is the last language course in your plan — make it training for what comes after graduation."
+    },
+    resources:[
+      { title:{ar:"Purdue OWL — General Writing: أساسيات الإنجليزية الأكاديمية (مجاني)", en:"Purdue OWL — General Writing (Free)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", verified:"2026-08-18", reason:{ar:"مرجع مفتوح بلا تسجيل من مختبر الكتابة بجامعة بيردو، وفيه قسم كامل لمن الإنجليزية لغته الثانية: بناء الجملة، الأزمنة، حروف الجر، والأخطاء الشائعة", en:"An open reference from Purdue's Writing Lab with a full section for second-language learners"} }
+    ]
+  },
+  "نشبك 285": {
+    explain:{
+      ar:"موضوعات مختارة في الشبكات: مقرر متغيّر المحتوى يُدرّس فيه ما استجدّ في المجال — الحوسبة السحابية، أو الشبكات المعرّفة برمجيًا، أو أمن الشبكات، بحسب ما يختاره القسم لكل فصل.",
+      en:"Selected topics in networking: a course whose content changes, teaching what is current in the field — cloud computing, software-defined networking, or network security, as the department chooses each term."
+    },
+    why:{
+      ar:"هذا المقرر الوحيد في خطتك الذي يتغيّر كل عام، وهو مقصود: المجال يتحرك أسرع من الخطة. فاسأل قسمك مبكرًا عن موضوع هذا الفصل، لأنه غالبًا أقرب مقرراتك إلى ما يطلبه السوق الآن — ولأن الاستعداد له لا يبدأ من كتاب بل من متابعة.",
+      en:"This is the one course in your plan that changes each year, and deliberately so: the field moves faster than the plan. Ask your department early what this term's topic is — it is usually the closest thing in your plan to what the market wants now."
+    },
+    resources:[
+      { title:{ar:"Cryptography and Network Security — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Cryptography and Network Security — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105162", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: لا نعرف موضوع فصلك — يتغيّر بقرار القسم. أدرجنا مقررًا في التشفير وأمن الشبكات لأنه أكثر ما يتكرر في مقررات الموضوعات المختارة بهذا التخصص. اسأل قسمك أولًا، فإن كان الموضوع غيره فأخبرنا عبر زر اقتراح المرجع ونضيف ما يناسبه", en:"Stated plainly: we don't know your term's topic — it changes by department decision. We list a cryptography and network security course because it is the commonest choice for selected-topics courses in this field. Ask your department first"} }
+    ]
+  },
+  "نشبك 295": {
+    explain:{
+      ar:"المشروع: مشروع تطبيقي فردي أو ثنائي يُبنى فيه حل شبكي كامل — تحليل الاحتياج، التصميم، التنفيذ، الاختبار، والتوثيق والعرض النهائي.",
+      en:"The project: an individual or paired applied project building a complete networking solution — needs analysis, design, implementation, testing, documentation and final presentation."
+    },
+    why:{
+      ar:"مشروعك ليس اختبارًا آخر بل أول شيء تعرضه على صاحب عمل. اختر مشكلة حقيقية رأيتها في تدريبك أو في كليتك، لا فكرة من الإنترنت — فالمشروع الذي يحل مشكلة تعرفها تدافع عنه بثقة، والمنقول تتعثر في أول سؤال عنه.",
+      en:"Your project isn't another exam but the first thing you show an employer. Pick a real problem you saw in your training or on campus, not an idea from the internet — a project solving a problem you know is one you defend confidently."
+    },
+    resources:[
+      { title:{ar:"إدارة المشروعات الاحترافية PMP (معارف، ٦٨ درسًا، ٣٢ ساعة، عربي، مجاني)", en:"Professional Project Management PMP (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15345/%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9-%D8%A7%D9%84%D9%85%D8%B4%D8%A7%D8%B1%D9%8A%D8%B9-pmp-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة عامة في إدارة المشاريع لا في مشاريع الشبكات. أدرجناها لأن أكثر ما يُسقط مشاريع التخرج ليس ضعف التنفيذ بل سوء التخطيط: نطاق يتمدد، وجدول لا يُحترم، وتوثيق يُترك لآخر أسبوع. أما محتوى مشروعك التقني فمرجعه دليل قسمك ومشرفك", en:"Stated plainly: a general project management course rather than one on networking projects. What sinks graduation projects is usually not weak execution but poor planning: creeping scope, an ignored schedule, documentation left to the final week"} }
+    ]
+  },
+  "نشبك 299": {
+    explain:{
+      ar:"التدريب التعاوني: فصل كامل داخل منشأة حقيقية، تعمل فيه ضمن فريق تقني تحت إشراف، وتُقيَّم على أدائك المهني لا على اختبار.",
+      en:"Cooperative training: a full term inside a real organization, working within a technical team under supervision, assessed on professional performance rather than an exam."
+    },
+    why:{
+      ar:"هذا الفصل يقرر مسارك أكثر مما تقرره درجاتك: كثير من المتدربين يُوظَّفون في المكان نفسه. فاعمل من أول يوم كموظف لا كطالب — واسأل، ودوّن، وتطوّع للمهام التي يتجنبها غيرك، فهي التي تُذكر عنك.",
+      en:"This term shapes your path more than your grades do: many trainees are hired where they trained. Work from day one as an employee rather than a student — ask, take notes, and volunteer for the tasks others avoid, because those are what get remembered about you."
+    },
+    resources:[
+      { title:{ar:"من فكرة إلى شركة: مقدمة في ريادة الأعمال — إدراك (عربي، مجاني)", en:"From Idea to Company — Edraak (Arabic, Free)"}, url:"https://www.edraak.org/programs/course/entr_101-vsp_2017/", lang:"ar", partial:true, verified:"2026-08-16", reason:{ar:"تنبيه صريح: مساق في ريادة الأعمال لا في التدريب التعاوني — ولا يوجد مصدر خارجي لتدريب داخل منشأة. أدرجناه لأن أجزاءه عن بيئة العمل والتواصل وبناء الفريق تنفعك في أول أسبوع لديك، ولأن كثيرًا من فنّيي الشبكات يعملون لحسابهم بعدها. أما تفاصيل تدريبك فمن دليل قسمك ومشرفك", en:"Stated plainly: an entrepreneurship course rather than one on cooperative training — no external source exists for training inside a company. Its workplace, communication and team-building parts help in your first week"} }
+    ]
+  },
+  "نشبك 288": {
+    explain:{
+      ar:"المشروع الإنتاجي: مشروع ختامي يُنفَّذ ويُسلَّم كمنتج عامل قابل للاستعمال — لا نموذجًا أوليًا، مع توثيقه وتسليمه وشرح تشغيله وصيانته.",
+      en:"The production project: a final project delivered as a working, usable product — not a prototype — with its documentation, handover, and an account of how it is run and maintained."
+    },
+    why:{
+      ar:"الفرق بينه وبين المشروع السابق كلمة واحدة: إنتاجي. أي أن أحدًا سيستعمله بعدك. ولذلك يُقاس بما لا يُقاس به مشروع الصف: هل يعمل حين تغيب؟ وهل يستطيع غيرك صيانته من توثيقك وحده؟ ومن يجيب عن هذين السؤالين يكون قد تخرّج فعلًا.",
+      en:"One word separates this from the earlier project: production. Someone will use it after you. So it is measured by what a classroom project isn't: does it work when you're away, and can someone else maintain it from your documentation alone?"
+    },
+    resources:[
+      { title:{ar:"إدارة المشروعات الاحترافية PMP (معارف، ٦٨ درسًا، ٣٢ ساعة، عربي، مجاني)", en:"Professional Project Management PMP (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/15345/%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9-%D8%A7%D9%84%D9%85%D8%B4%D8%A7%D8%B1%D9%8A%D8%B9-pmp-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة في إدارة المشاريع لا في المشروع الإنتاجي بذاته. أدرجناها لأن ما يخص مشروعًا يُسلَّم للاستعمال هو ما تعلّمه هذه الدورة: التسليم، وضمان الجودة، وإدارة التغيير بعد التسليم. أما المنتج نفسه فمرجعه قسمك", en:"Stated plainly: a project management course rather than one on the production project itself. What a delivered-for-use project needs is exactly what it teaches: handover, quality assurance, and change management after delivery"} }
     ]
   },
   "ARAB 210": {
@@ -8199,6 +8667,25 @@ function isPassed(catalogString){
   const code = String(catalogString).split(" - ")[0].trim();
   return passedCodes().indexOf(code) !== -1;
 }
+/* Students arrive mid-degree far more often than at the start: a transfer, a
+   diploma holder, someone returning after a break. Asking them to tick
+   fifteen courses one at a time before the app tells them anything true is a
+   toll booth in front of the door. A level is the unit they think in — "I
+   finished the first three levels" — so it is the unit we let them mark. */
+function setLevelPassed(courses, passed){
+  const student = StudentModule.current();
+  if(!student) return 0;
+  const list = passedCodes().slice();
+  let changed = 0;
+  courses.forEach(entry=>{
+    const code = String(entry).split(" - ")[0].trim();
+    const at = list.indexOf(code);
+    if(passed && at === -1){ list.push(code); changed++; }
+    if(!passed && at !== -1){ list.splice(at, 1); changed++; }
+  });
+  if(changed) StudentModule.update({ passed: list });
+  return changed;
+}
 function togglePassed(catalogString){
   const student = StudentModule.current();
   if(!student) return false;
@@ -8460,6 +8947,45 @@ function coursesForStudentAllLevels(student, currentLevelLabel){
    one clear guide per skill, immediately useful, no gating.
    ============================================================ */
 const SKILLS = [
+  {
+    id:"english-medium-survival",
+    icon:"openBook",
+    category:{ id:"study_universal", ar:"مهارات الدراسة", en:"Study Skills" },
+    title:{ ar:"كيف تدرس مقررًا بالإنجليزية ومستواك متوسط", en:"Studying an English course when your English is mid-level" },
+    desc:{ ar:"طريقة تنجح بها هذا الفصل، لا نصيحة بتحسين لغتك", en:"A method for passing this term, not advice to improve your English" },
+    intro:{
+      ar:"مستواك في الإنجليزية لن يتغيّر خلال أسبوعين، ومقررك يبدأ الأسبوع القادم. فهذه ليست نصائح لتحسين اللغة، بل طريقة للنجاح في مقرر لغته أعلى منك — وتحسّن لغتك يأتي تبعًا لا شرطًا.",
+      en:"Your English won't change in two weeks, and your course starts next week. This isn't advice for improving the language — it's a method for passing a course whose language is above you, with the improvement arriving as a by-product."
+    },
+    tips:{
+      ar:[
+        "لا تترجم الصفحة كلها. اقرأها مرة بلا قاموس وأنت تعلم أنك لن تفهم كل شيء — ثم ضع خطًّا تحت الكلمات التي تكرّرت وحدها، فهي التي تستحق الترجمة. الكلمة التي وردت مرة واحدة تجاوزها",
+        "ترجم إلى الفهم لا إلى العربية. حين تقابل مصطلحًا جديدًا اسأل: ما الشيء الذي يشير إليه؟ — فالفهم بالصورة أبقى من الفهم بالمقابل العربي، وهو ما يُسأل عنه في الاختبار",
+        "ابدأ بالأسئلة قبل النص. اقرأ أسئلة نهاية الوحدة أولًا، ثم اقرأ النص باحثًا عن إجاباتها. يتحول النص حينها من جدار إلى بحث له هدف",
+        "الصناديق قبل النصوص. في كتب اللغة الجامعية صناديق مهارات متكررة — أدوات القراءة، أدوات الكتابة، وأخطاء الناطقين بالعربية. هذه أعلى عائد لكل دقيقة، لأنها تتكرر في كل وحدة والنصوص لا تتكرر",
+        "اقرأ بصوت مسموع عشر دقائق يوميًا من كتاب مقررك نفسه. لا تقرأ في تطبيق آخر ولا كتاب آخر — القراءة الجهرية من مادتك تبني النطق والمفردة والفهم معًا",
+        "استعمل مفكرة المادة في التطبيق: كل كلمة تكررت عليك، ضعها بمعناها ومثال من نصّك أنت — لا مثال من القاموس. الجملة التي رأيتها في كتابك تلتصق بذاكرتك أكثر",
+        "في التعبير المطلوب: اكتب مسودتك بجمل قصيرة تعرف صحتها، ثم اربطها. الجملة الطويلة التي لا تتقن تركيبها تخسر بها درجات أكثر مما تكسب"
+      ],
+      en:[
+        "Don't translate the whole page. Read it once without a dictionary knowing you won't understand everything — then underline only the words that repeated. A word that appeared once, skip it",
+        "Translate into understanding, not into Arabic. When you meet a new term ask what thing it points to — understanding by image outlasts understanding by equivalent",
+        "Start with the questions, not the text. Read the end-of-unit questions first, then read hunting for their answers. The text turns from a wall into a search with a purpose",
+        "The boxes before the readings. University language books repeat skill boxes — reading tools, writing tools, errors Arabic speakers make. These are the highest return per minute, because they repeat in every unit while the readings don't",
+        "Read aloud for ten minutes a day from your own textbook. Not another app, not another book — reading aloud from your own material builds pronunciation, vocabulary and comprehension at once",
+        "Use the course terms notebook: every word that recurs, save it with its meaning and an example from your own text — not the dictionary's. A sentence you saw in your book sticks better",
+        "For a required essay: draft in short sentences you know are correct, then join them. A long sentence you can't build loses more marks than it gains"
+      ]
+    },
+    mistake:{
+      ar:"أشيع خطأ: ترجمة كل صفحة إلى العربية ثم دراسة الترجمة. النتيجة أنك تدرس نصًّا لم يكتبه أستاذك، وتضيّع ساعات في عمل لن يُسأل عنك فيه — والاختبار سيأتي بالإنجليزية لا بترجمتك.",
+      en:"The commonest mistake: translating every page into Arabic then studying the translation. You end up studying a text your teacher didn't write, and the exam arrives in English rather than in your translation."
+    },
+    exercise:{
+      ar:"خذ صفحة واحدة من كتاب مقررك الآن. اقرأها بلا قاموس، وضع خطًّا تحت خمس كلمات فقط — الأكثر تكرارًا لا الأصعب. أضفها إلى مفكرة المادة بجملها من الكتاب نفسه. عشر دقائق، وستعرف من التجربة أن الصفحة أقلّ صعوبة مما بدت.",
+      en:"Take one page of your textbook now. Read it without a dictionary and underline five words only — the most repeated, not the hardest. Add them to the course terms notebook with their sentences from the book itself. Ten minutes, and you'll know from experience that the page was less forbidding than it looked."
+    }
+  },
 
   {
     id:"transition-mindset", icon:"journey",
@@ -12653,7 +13179,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-02 05:07";
+const BUILD_ID = "2026-09-04 23:12";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -12837,6 +13363,10 @@ function renderCourseLibrary(){
         </div>
         <div style="padding-inline:var(--sp-4);">
           <div class="section-label" style="margin-top:0;">${availableLevels.find(lv=>lv.id===libraryActiveLevel) ? availableLevels.find(lv=>lv.id===libraryActiveLevel)[l] : ''}${(()=>{ const d = currentCourses.filter(isPassed).length; return d ? ` <span style="color:var(--support); font-weight:400;">· ${s.passedCount(d)}</span>` : ""; })()}</div>
+          ${currentCourses.length ? `
+          <div style="padding:0 var(--sp-4) var(--sp-3);">
+            <button type="button" class="lib-info-btn" id="levelDoneBtn" style="${currentCourses.every(isPassed) ? 'color:var(--support); border-color:rgba(88,182,144,.35);' : ''}">${ICON.check}<span>${currentCourses.every(isPassed) ? s.levelUndoBtn : s.levelDoneBtn}</span></button>
+          </div>` : ""}
           ${(()=>{
             const totalPages = Math.max(1, Math.ceil(currentCourses.length / PAGE_SIZE));
             if(libraryPage > totalPages-1) libraryPage = 0;
@@ -12878,6 +13408,29 @@ function renderCourseLibrary(){
     openInfoSheet({
       title: s.libInfoTitle,
       paragraphs: [ s.librarySub ].concat(catalogHasEnglishSource(catalog) ? [ s.libraryEnglishNotice ] : [])
+    });
+  });
+  const levelDone = document.getElementById("levelDoneBtn");
+  if(levelDone) levelDone.addEventListener("click", ()=>{
+    const allDone = currentCourses.every(isPassed);
+    if(allDone){
+      /* Undoing needs no confirmation: it restores work to the plan rather
+         than removing it. */
+      setLevelPassed(currentCourses, false);
+      showToast(s.levelUndoToast);
+      renderCourseLibrary();
+      return;
+    }
+    const pending = currentCourses.filter(c=>!isPassed(c)).length;
+    showConfirmSheet({
+      title:s.levelDoneTitle,
+      text:s.levelDoneText(pending),
+      confirmLabel:s.levelDoneConfirm,
+      onConfirm:()=>{
+        const n = setLevelPassed(currentCourses, true);
+        showToast(s.levelDoneToast(n));
+        renderCourseLibrary();
+      }
     });
   });
   document.querySelectorAll("[data-lib-page]").forEach(btn=>{
@@ -13400,7 +13953,8 @@ const PROGRAM_ACCENT = {
   "jti-eng-eng-5":      { rgb:"206,146,90",  hex:"#CE925A" },
   "jic-bus-bus-4":      { rgb:"150,140,198", hex:"#968CC6" },
   "bp-eng-eng-3":       { rgb:"212,168,72",  hex:"#D4A848" },
-  "jti-eng-eng-6":      { rgb:"216,124,88",  hex:"#D87C58" }
+  "jti-eng-eng-6":      { rgb:"216,124,88",  hex:"#D87C58" },
+  "qatif-cs-cs-6":      { rgb:"96,178,196",  hex:"#60B2C4" }
 };
 function applyProgramAccent(student){
   const root = document.documentElement;
@@ -14072,7 +14626,7 @@ function normalizeSearchText(str){
 function collectSearchResults(query){
   const l = lang();
   const q = normalizeSearchText(query);
-  const out = { courses:[], resources:[], skills:[], terms:[] };
+  const out = { courses:[], resources:[], skills:[], terms:[], mine:[] };
   if(q.length < 2) return out;
   const hit = (...parts)=> normalizeSearchText(parts.filter(Boolean).join(" ")).includes(q);
 
@@ -14107,6 +14661,43 @@ function collectSearchResults(query){
     if(hit(term) || hit(meaning)) out.terms.push([term, meaning]);
   });
 
+  /* A student's own writing was the one thing the search couldn't reach. After
+     a term they hold forty notebook pages, a dozen essays and a page of terms
+     per course — and searching "safe lifting" returned the course while their
+     own note about it stayed buried three screens down. Their words are the
+     most valuable thing in the app precisely because they wrote them. */
+  const journey = student ? JourneyModule.forStudent(student.id) : null;
+  const semester = journey ? SemesterModule.current(journey.id) : null;
+  const courses = semester ? (CourseModule.listForSemester(semester.id) || []) : [];
+  courses.forEach(course=>{
+    const nb = DB.courseNotebooks && DB.courseNotebooks[course.id];
+    if(!nb) return;
+    (nb.notes || []).forEach(n=>{
+      const body = n.text || n.body || "";
+      const label = n.name || n.topic || "";
+      if(hit(body) || hit(label)){
+        out.mine.push({
+          courseId: course.id, courseName: course.name,
+          kind: n.type === "drawing" ? "page" : (n.type === "file" ? "file" : "note"),
+          title: label || body.trim().slice(0, 40),
+          snippet: body.trim().slice(0, 90)
+        });
+      }
+    });
+    (nb.terms || []).forEach(x=>{
+      if(hit(x.word) || hit(x.meaning) || hit(x.example)){
+        out.mine.push({ courseId:course.id, courseName:course.name, kind:"term",
+                        title:x.word, snippet:x.meaning || "" });
+      }
+    });
+    (nb.essays || []).forEach(x=>{
+      if(hit(x.title) || hit(x.body)){
+        out.mine.push({ courseId:course.id, courseName:course.name, kind:"essay",
+                        title:x.title, snippet:(x.body || "").trim().slice(0, 90) });
+      }
+    });
+  });
+
   return out;
 }
 function renderSearch(){
@@ -14114,13 +14705,27 @@ function renderSearch(){
   const s = t();
   const l = lang();
   const res = collectSearchResults(globalSearchQuery);
-  const total = res.courses.length + res.resources.length + res.skills.length + res.terms.length;
+  const total = res.courses.length + res.resources.length + res.skills.length + res.terms.length + res.mine.length;
   const typed = globalSearchQuery.trim().length >= 2;
 
   const group = (label, items)=> items.length ? `
     <div class="section-label">${label}</div>
     <div class="stack" style="margin-bottom:var(--sp-4);">${items.join("")}</div>` : "";
 
+  /* Shown before anything else: if a student's own note matches, that is
+     almost certainly what they were looking for. */
+  const kindLabel = (k)=>({ note:s.searchKindNote, page:s.searchKindPage, term:s.searchKindTerm,
+                            essay:s.searchKindEssay, file:s.searchKindFile })[k] || "";
+  const mineCards = res.mine.slice(0, 8).map(m=>`
+    <button type="button" class="card" data-search-mine="${m.courseId}" data-mine-kind="${m.kind}" style="align-items:flex-start;">
+      <span class="card-icon" style="color:var(--support); background:rgba(88,182,144,.16);">${m.kind === "essay" ? ICON.essay : (m.kind === "page" ? ICON.pen : ICON.openBook)}</span>
+      <span class="card-body">
+        <span class="card-title" dir="auto">${escapeHtml(m.title || "")}</span>
+        <span class="card-meta">${escapeHtml(m.courseName)} · ${kindLabel(m.kind)}</span>
+        ${m.snippet ? `<span class="card-meta" style="white-space:normal; opacity:.75;" dir="auto">${escapeHtml(m.snippet)}</span>` : ""}
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
+    </button>`).join("");
   const courseCards = res.courses.slice(0, 8).map(c=>`
     <button type="button" class="card" data-search-course="${escapeHtml(c.catalogString)}">
       <span class="card-icon">${ICON.openBook}</span>
@@ -14176,6 +14781,7 @@ function renderSearch(){
             <p class="empty-text">${s.searchNoResults}</p>
           </div>` : `
           <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-3);">${s.searchResultCount(total)}</p>
+          ${group(s.searchMineLabel, mineCards)}
           ${group(s.searchGroupCourses, courseCards)}
           ${group(s.searchGroupResources, resourceCards)}
           ${group(s.searchGroupSkills, skillCards)}
@@ -14183,6 +14789,17 @@ function renderSearch(){
       </div>
     </section>
   `;
+  /* Tapping a result opens the notebook of the course it belongs to — the
+     place where every kind of the student's own material lives. */
+  document.querySelectorAll("[data-search-mine]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.dataset.searchMine;
+      const kind = btn.dataset.mineKind;
+      if(kind === "term"){ termsSearch = ""; return renderCourseTerms(id); }
+      if(kind === "essay"){ essaysSearch = ""; return renderCourseEssays(id); }
+      renderCourseNotebook(id);
+    });
+  });
   document.getElementById("searchBack").addEventListener("click", ()=>{ globalSearchQuery=""; renderToday(); });
   const input = document.getElementById("searchInput");
   input.addEventListener("input", (e)=>{
