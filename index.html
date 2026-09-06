@@ -891,6 +891,27 @@ body[data-theme="daylight"] .card:before{
 .stat b, .hero-title, .horizon-line, .pager-count, .level-chip-count{
   font-variant-numeric:tabular-nums;
 }
+/* ---- Quick tools ---------------------------------------------------------
+   A small disc above the tab bar that opens the two or three tools belonging
+   to the screen you are on — the notebook and terms inside a course, the
+   timetable and mirror in the week. Deliberately small and on the opposite
+   side from the thumb's resting arc, because a floating button that covers
+   content is worse than no button: the whole point is to save a trip, not to
+   cost a tap dodging it. Hidden entirely on screens with nothing to offer. */
+.quick-fab{
+  position:fixed; bottom:calc(var(--footer-h) + 84px);
+  inset-inline-start:16px; z-index:45;
+  width:46px; height:46px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--glass-sheen);
+  border:1px solid rgba(var(--accent-rgb),.32);
+  box-shadow:var(--glass-shadow);
+  color:var(--accent);
+  transition:transform 200ms var(--ease-spring), opacity 200ms var(--ease);
+}
+.quick-fab svg{ width:20px; height:20px; }
+.quick-fab:active{ transform:scale(.9); }
+.quick-fab-hidden{ opacity:0; pointer-events:none; transform:scale(.8); }
 .tool-row{ display:flex; gap:8px; }
 .tool-tile{
   flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
@@ -1762,6 +1783,30 @@ const STR = {
     termsTitle:"مفكرة المادة",
     essaysTitle:"التعابير",
     searchMineLabel:"من كتابتك",
+    tabTools:"الأدوات",
+    quickTitle:"أدوات هذه الشاشة",
+    quickAll:"كل الأدوات",
+    toolsTitle:"أدواتك",
+    toolsSub:"كل ما يعينك في مكان واحد — وتبقى في أماكنها داخل المادة والأسبوع كما اعتدت.",
+    toolsRecent:"آخر ما فتحت",
+    toolsGroupCourse:"أدوات المادة",
+    toolsGroupWeek:"أدوات أسبوعك",
+    toolsGroupLang:"أدوات اللغة",
+    toolsGroupMine:"ملفك",
+    toolsPickCourse:"اختر مادة أولًا",
+    toolsNoCourses:"أضف مقرراتك أولًا، ثم تظهر أدوات المادة هنا.",
+    toolNotebookD:"ملاحظاتك وصفحاتك في مادة واحدة",
+    toolTermsD:"مصطلحات المادة ومعانيها",
+    toolEssaysD:"المقالات المطلوبة منك",
+    toolRawD:"ملاحظات سريعة بلا مادة",
+    toolScheduleD:"جدولك وخطة عطلتك",
+    toolMirrorD:"كيف مرّ أسبوعك، وما تريد تغييره",
+    toolWhiteningD:"بيّض ملاحظاتك قبل أن تبرد",
+    toolSearchD:"ابحث في مقرراتك وكتابتك معًا",
+    toolTranslateD:"ترجمة فورية بصوتك أو نصك",
+    toolGlossaryD:"مصطلحات تخصصك بالإنجليزية",
+    toolRefMapD:"مراجع خطتك مستوًى بمستوى",
+    toolBackupD:"احفظ نسخة أو استعدها",
     searchMineNote:"ملاحظاتك وتعابيرك ومفكرتك",
     searchKindNote:"ملاحظة",
     searchKindPage:"صفحة دفتر",
@@ -2316,6 +2361,30 @@ const STR = {
     termsTitle:"Course terms",
     essaysTitle:"Essays",
     searchMineLabel:"From your own writing",
+    tabTools:"Tools",
+    quickTitle:"Tools for this screen",
+    quickAll:"All tools",
+    toolsTitle:"Your tools",
+    toolsSub:"Everything that helps, in one place — and still where you're used to finding it.",
+    toolsRecent:"Recently opened",
+    toolsGroupCourse:"Course tools",
+    toolsGroupWeek:"Your week",
+    toolsGroupLang:"Language tools",
+    toolsGroupMine:"Your file",
+    toolsPickCourse:"Pick a course first",
+    toolsNoCourses:"Add your courses first, then course tools appear here.",
+    toolNotebookD:"Your notes and pages for one course",
+    toolTermsD:"Course terms and their meanings",
+    toolEssaysD:"The essays you've been asked for",
+    toolRawD:"Quick notes with no course",
+    toolScheduleD:"Your timetable and weekend plan",
+    toolMirrorD:"How your week went, and what to change",
+    toolWhiteningD:"Write up your notes before they cool",
+    toolSearchD:"Search your courses and your writing together",
+    toolTranslateD:"Instant translation by voice or text",
+    toolGlossaryD:"Your field's terms in English",
+    toolRefMapD:"Your plan's references level by level",
+    toolBackupD:"Save a copy or restore one",
     searchMineNote:"Your notes, essays and terms",
     searchKindNote:"note",
     searchKindPage:"notebook page",
@@ -2589,6 +2658,7 @@ const ICON = {
   paperclip:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5l-8 8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.4 3.4 0 0 1 4.8 4.8l-8.4 8.4a1.8 1.8 0 0 1-2.5-2.5l7.7-7.7"/></svg>`,
   globe:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 9.6h17.6M3.2 14.4h17.6"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>`,
   essay:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5h9L19 8v12.5H5.5z"/><path d="M14 3.5V8h4.6"/><path d="M8.4 12h7M8.4 15h7M8.4 18h4"/></svg>`,
+  tools:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 6.4a3.6 3.6 0 0 0 4.8 4.6l-8 8a2.3 2.3 0 0 1-3.3-3.3z"/><path d="M6.2 3.4l2.4 2.4-2 2-2.4-2.4a1.2 1.2 0 0 1 0-1.7l.3-.3a1.2 1.2 0 0 1 1.7 0z"/></svg>`,
   info:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.01"/></svg>`,
   weekGrid:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="4.5" x2="8" y2="19.5"/><line x1="13" y1="4.5" x2="13" y2="19.5"/><line x1="17" y1="9.5" x2="17" y2="19.5" opacity="0"/></svg>`,
   bell:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
@@ -8603,6 +8673,7 @@ function renderRecovery(){
     majorId: student.majorId || "", major: student.major || "",
     levelId: "", level: student.level || ""
   };
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-content" style="padding-top:var(--sp-6);">
@@ -8846,6 +8917,7 @@ function renderDevPlans(){
   const s = t();
   const mine = (()=>{ const keep = devPlanOverride; devPlanOverride = null; const k = catalogKeyFor(StudentModule.current()); devPlanOverride = keep; return k; })();
   const rows = allPlanEntries();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -10684,6 +10756,218 @@ function escapeHtml(str){
   return d.innerHTML;
 }
 
+
+/* ============================================================
+   TOOLS — every helper in one place
+   ------------------------------------------------------------
+   Fourteen helpers had grown across five entrances: some inside a course,
+   some in the week, three buried in Settings where nobody looks for a working
+   tool. Nothing moves — a student inside a course still finds its notebook
+   there — but there is now one door that shows them all, grouped by when they
+   are used rather than by where they happened to be built.
+   ============================================================ */
+let toolsCourseId = null;
+
+/* The three things a student returns to all week. Kept in memory rather than
+   stored: a list that survives a reset would be a record of behaviour, and we
+   promised to keep none. */
+let recentTools = [];
+function noteRecentTool(entry){
+  recentTools = [entry].concat(recentTools.filter(x=>x.key !== entry.key)).slice(0, 3);
+}
+
+/* What each screen can offer, and nothing more. A menu that always shows the
+   same eleven items is a second tools tab; one that shows only what belongs
+   here is a shortcut. */
+function quickToolsFor(context, courseId){
+  const s = t();
+  if(context === "course" && courseId) return [
+    { id:"notebook", icon:"book", label:s.toolNotebook, courseId },
+    { id:"terms", icon:"openBook", label:s.termsTitle, courseId },
+    { id:"essays", icon:"essay", label:s.essaysTitle, courseId }
+  ];
+  if(context === "semester") return [
+    { id:"schedule", icon:"weekGrid", label:s.weeklyScheduleEntryLabel },
+    { id:"raw", icon:"pen", label:s.rawNotebookTitle },
+    { id:"search", icon:"lens", label:s.searchEntryLabel }
+  ];
+  if(context === "today") return [
+    { id:"search", icon:"lens", label:s.searchEntryLabel },
+    { id:"schedule", icon:"weekGrid", label:s.weeklyScheduleEntryLabel },
+    { id:"mirror", icon:"weekGrid", label:s.mirrorEntryLabel }
+  ];
+  if(context === "library") return [
+    { id:"refmap", icon:"weekGrid", label:s.refMapEntry },
+    { id:"glossary", icon:"openBook", label:s.refGlossaryEntryLabel },
+    { id:"search", icon:"lens", label:s.searchEntryLabel }
+  ];
+  return [];
+}
+/* Called at the end of a screen's render. Removes any previous button first,
+   so navigating never leaves two behind. */
+function mountQuickTools(context, courseId){
+  const old = document.getElementById("quickFab");
+  if(old) old.remove();
+  const items = quickToolsFor(context, courseId);
+  if(!items.length) return;
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.id = "quickFab";
+  btn.className = "quick-fab";
+  btn.setAttribute("aria-label", t().quickTitle);
+  btn.innerHTML = ICON.tools;
+  document.body.appendChild(btn);
+  btn.addEventListener("click", ()=>openQuickSheet(items, courseId));
+}
+function openQuickSheet(items, courseId){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.quickTitle}</div>
+      <div class="stack">
+        ${items.map(x=>`
+          <button type="button" class="card" data-quick="${x.id}">
+            <span class="card-icon">${ICON[x.icon] || ICON.openBook}</span>
+            <span class="card-body"><span class="card-title">${escapeHtml(x.label || "")}</span></span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>`).join("")}
+      </div>
+      <button type="button" class="btn btn-secondary" id="quickAll" style="width:100%; margin-top:var(--sp-3);">${ICON.tools}<span>${s.quickAll}</span></button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelectorAll("[data-quick]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const id = b.dataset.quick;
+      const course = courseId ? dbGet("courses", courseId) : null;
+      close(()=>openTool(id, course));
+    });
+  });
+  overlay.querySelector("#quickAll").addEventListener("click", ()=>{
+    close(()=>{ activeTab = "tools"; renderTools(); });
+  });
+}
+function renderTools(){
+  applyDir();
+  const s = t();
+  const student = StudentModule.current();
+  const journey = student ? JourneyModule.forStudent(student.id) : null;
+  const semester = journey ? SemesterModule.current(journey.id) : null;
+  const courses = semester ? (CourseModule.listForSemester(semester.id) || []) : [];
+  if(toolsCourseId && !courses.find(c=>c.id===toolsCourseId)) toolsCourseId = null;
+  if(!toolsCourseId && courses.length) toolsCourseId = courses[0].id;
+  const course = courses.find(c=>c.id===toolsCourseId) || null;
+
+  const tool = (id, icon, title, desc, extra)=>`
+    <button type="button" class="card" data-tool="${id}"${extra||""}>
+      <span class="card-icon">${icon}</span>
+      <span class="card-body">
+        <span class="card-title">${title}</span>
+        <span class="card-meta" style="white-space:normal;">${desc}</span>
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
+    </button>`;
+
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
+  app.innerHTML = `
+    <section class="screen">
+      <div class="screen-header">
+        <div>
+          <div class="screen-header-title">${s.toolsTitle}</div>
+          <div class="screen-header-sub">${s.toolsSub}</div>
+        </div>
+      </div>
+      <div class="screen-content">
+        ${recentTools.length ? `
+        <div class="section-label" style="margin-top:0;">${s.toolsRecent}</div>
+        <div class="stack" style="margin-bottom:var(--sp-5);">
+          ${recentTools.map(r=>`
+            <button type="button" class="card" data-recent="${r.key}">
+              <span class="card-icon" style="color:var(--support); background:rgba(88,182,144,.16);">${ICON[r.icon] || ICON.openBook}</span>
+              <span class="card-body">
+                <span class="card-title">${escapeHtml(r.title)}</span>
+                ${r.sub ? `<span class="card-meta">${escapeHtml(r.sub)}</span>` : ""}
+              </span>
+              <span class="card-chevron">${chevronFwd()}</span>
+            </button>`).join("")}
+        </div>` : ""}
+
+        <div class="section-label" style="${recentTools.length?'':'margin-top:0;'}">${s.toolsGroupCourse}</div>
+        ${courses.length ? `
+        <div class="chips" style="margin-bottom:var(--sp-3);">
+          ${courses.map(c=>`
+            <button type="button" class="filter-chip ${c.id===toolsCourseId?'filter-chip-active':''}" data-tool-course="${c.id}">${escapeHtml(c.name.split(" - ").slice(1).join(" - ") || c.name)}</button>`).join("")}
+        </div>
+        <div class="stack" style="margin-bottom:var(--sp-5);">
+          ${tool("notebook", ICON.book, s.toolNotebook, s.toolNotebookD)}
+          ${tool("terms", ICON.openBook, s.termsTitle, s.toolTermsD)}
+          ${tool("essays", ICON.essay, s.essaysTitle, s.toolEssaysD)}
+        </div>` : `
+        <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-5);">${s.toolsNoCourses}</p>`}
+
+        <div class="section-label">${s.toolsGroupWeek}</div>
+        <div class="stack" style="margin-bottom:var(--sp-5);">
+          ${tool("schedule", ICON.weekGrid, s.weeklyScheduleEntryLabel, s.toolScheduleD)}
+          ${tool("mirror", ICON.weekGrid, s.mirrorEntryLabel, s.toolMirrorD)}
+          ${tool("raw", ICON.pen, s.rawNotebookTitle, s.toolRawD)}
+        </div>
+
+        <div class="section-label">${s.toolsGroupLang}</div>
+        <div class="stack" style="margin-bottom:var(--sp-5);">
+          ${tool("search", ICON.lens, s.searchEntryLabel, s.toolSearchD)}
+          ${tool("translate", ICON.message, s.liveTranslateEntryLabel, s.toolTranslateD)}
+          ${tool("glossary", ICON.openBook, s.refGlossaryEntryLabel, s.toolGlossaryD)}
+        </div>
+
+        <div class="section-label">${s.toolsGroupMine}</div>
+        <div class="stack">
+          ${tool("refmap", ICON.weekGrid, s.refMapEntry, s.toolRefMapD)}
+          ${tool("backup", ICON.download, s.backupTitle, s.toolBackupD)}
+        </div>
+      </div>
+      ${renderTabBar("tools")}
+    </section>`;
+
+  wireTabBar();
+  document.querySelectorAll("[data-tool-course]").forEach(chip=>{
+    chip.addEventListener("click", ()=>{ toolsCourseId = chip.dataset.toolCourse; renderTools(); });
+  });
+  document.querySelectorAll("[data-recent]").forEach(btn=>{
+    btn.addEventListener("click", ()=>openTool(btn.dataset.recent, course));
+  });
+  document.querySelectorAll("[data-tool]").forEach(btn=>{
+    btn.addEventListener("click", ()=>openTool(btn.dataset.tool, course));
+  });
+}
+
+function openTool(id, course){
+  const s = t();
+  const named = (title, sub, icon)=>noteRecentTool({ key:id + (course?(":"+course.id):""), title, sub, icon });
+  const withCourse = (fn, title, icon)=>{
+    if(!course) return;
+    named(title, course.name, icon);
+    fn(course.id);
+  };
+  switch(id){
+    case "notebook":  return withCourse(renderCourseNotebook, s.toolNotebook, "book");
+    case "terms":     return withCourse((cid)=>{ termsSearch = ""; renderCourseTerms(cid); }, s.termsTitle, "openBook");
+    case "essays":    return withCourse((cid)=>{ essaysSearch = ""; renderCourseEssays(cid); }, s.essaysTitle, "essay");
+    case "schedule":  named(s.weeklyScheduleEntryLabel, "", "weekGrid"); return renderWeeklySchedule();
+    case "mirror":    named(s.mirrorEntryLabel, "", "weekGrid"); return renderWeeklyMirror();
+    case "raw":       named(s.rawNotebookTitle, "", "pen"); return renderRawNotebook();
+    case "search":    named(s.searchEntryLabel, "", "lens"); return renderSearch();
+    case "translate": named(s.liveTranslateEntryLabel, "", "message"); return renderLiveTranslate();
+    case "glossary":  named(s.refGlossaryEntryLabel, "", "openBook"); return renderReferenceGlossary();
+    case "refmap":    named(s.refMapEntry, "", "weekGrid"); return renderReferenceMap();
+    case "backup":    settingsTab = "account"; return renderSettings();
+  }
+}
+
 function renderTabBar(active){
   const s = t();
   return `
@@ -10694,6 +10978,7 @@ function renderTabBar(active){
       <button type="button" class="tab-item ${active==='skills'?'active':''}" data-tab="skills"><span class="tab-item-icon">${ICON.spark}</span><span class="tab-label">${s.tabSkills}</span></button>
       <button type="button" class="tab-item ${active==='journey'?'active':''}" data-tab="journey"><span class="tab-item-icon">${ICON.journey}</span><span class="tab-label">${s.tabJourney}</span></button>
       <button type="button" class="tab-item ${active==='library'?'active':''}" data-tab="library"><span class="tab-item-icon">${ICON.openBook}</span><span class="tab-label">${s.tabLibrary}</span></button>
+      <button type="button" class="tab-item ${active==='tools'?'active':''}" data-tab="tools"><span class="tab-item-icon">${ICON.tools}</span><span class="tab-label">${s.tabTools}</span></button>
     </div>`;
 }
 function positionTabIndicator(){
@@ -10720,6 +11005,7 @@ function wireTabBar(){
       else if(tab==="skills") renderSkillsHub();
       else if(tab==="journey") renderJourney();
       else if(tab==="library") renderCourseLibrary();
+      else if(tab==="tools") renderTools();
     });
   });
 }
@@ -10953,6 +11239,7 @@ function showFlagshipMoment(message, onDone){
 function renderWelcome(){
   applyDir();
   const s = t();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar pace-reflective" style="justify-content:center;">
       <div class="screen-content" style="display:flex; flex-direction:column; justify-content:center; flex:1; text-align:center; padding-top:var(--sp-7);">
@@ -11002,6 +11289,7 @@ function renderOnboarding(){
   const s = t();
   const obDraft = { name:"", companion:"", universityId:"", university:"", collegeId:"", college:"", majorId:"", major:"", levelId:"", level:"" };
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header" style="display:block; padding-top:var(--sp-6)">
@@ -11255,6 +11543,7 @@ function renderToday(){
     </section>
   `;
   wireTabBar();
+  mountQuickTools("today");
   const knowsBtn = document.getElementById("knowsCard");
   if(knowsBtn) knowsBtn.addEventListener("click", ()=>{ const k = whatWeKnow(); if(k && k.go) k.go(); });
   /* Remembering when they were last here is what makes a welcome back
@@ -11375,6 +11664,7 @@ function renderSemester(){
     </section>
   `;
   wireTabBar();
+  mountQuickTools("semester");
   const addBtn = document.getElementById("addCourseBtn");
   if(addBtn) addBtn.addEventListener("click", ()=>{ openCourseSheet(semester.id, null, renderSemester); });
   const weeklyBtn = document.getElementById("weeklyScheduleBtn");
@@ -11524,6 +11814,7 @@ function renderCourseView(courseId){
       </div>
     </section>
   `;
+  mountQuickTools("course", courseId);
   document.getElementById("courseBack").addEventListener("click", ()=>{ renderSemester(); });
   const suggestBtn = document.getElementById("suggestResourceBtn");
   if(suggestBtn) suggestBtn.addEventListener("click", ()=>{
@@ -11557,6 +11848,7 @@ function renderExamPrepHub(eventId){
   const enrichment = enrichmentForCourse(course.name);
   const daysLabel = days===0 ? s.todayLabel : days===1 ? s.tomorrowLabel : s.inDaysLabel(days);
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -11758,6 +12050,7 @@ function renderNotebookPage(courseId){
   if(!pageColor) pageColor = PAGE_PALETTE[0];
   pageStrokes = [];
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -12071,6 +12364,7 @@ function renderCourseTerms(courseId){
     ? all.filter(x=>normalizeSearchText([x.word, x.meaning, x.example].join(" ")).includes(q))
     : all;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -12206,6 +12500,7 @@ function renderCourseEssays(courseId){
     : all;
   const words = (txt)=>(txt||"").trim() ? (txt.trim().split(/\s+/).length) : 0;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -12303,6 +12598,7 @@ function renderEssayEditor(courseId, essayId){
   const essay = NotebookModule.essays(courseId).find(x=>x.id===essayId);
   if(!essay) return renderCourseEssays(courseId);
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -12360,6 +12656,7 @@ function renderCourseNotebook(courseId){
   const visibleNotes = notebookMatches(nb.notes);
   const searching = normalizeSearchText(notebookSearch).length >= 2;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -12668,6 +12965,7 @@ function renderRawNotebook(){
   const courses = semester ? CourseModule.listForSemester(semester.id) : [];
   const notes = RawNotebookModule.list();
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -13179,7 +13477,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-04 23:12";
+const BUILD_ID = "2026-09-06 09:04";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -13230,6 +13528,7 @@ function renderReferenceMap(){
 
   const line = (label, value)=>`<div class="type-caption" style="color:var(--ink-muted); margin-top:4px; line-height:1.6;"><strong style="color:var(--ink);">${label}:</strong> ${value}</div>`;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -13398,6 +13697,7 @@ function renderCourseLibrary(){
     </section>
   `;
   wireTabBar();
+  mountQuickTools("library");
   const refMapBtn = document.getElementById("openRefMap");
   if(refMapBtn) refMapBtn.addEventListener("click", ()=>{ renderReferenceMap(); });
   const libInfo = document.getElementById("libInfoBtn");
@@ -13527,6 +13827,7 @@ function renderJourney(){
         }).join("")}
       </div>`;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
@@ -14218,6 +14519,7 @@ function renderSkillsHub(){
   const currentGroup = categoryMap[skillsHubCategory] || {items:[]};
   const archivedCount = Object.keys(DB.archivedSkills || {}).length;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
@@ -14326,6 +14628,7 @@ function renderSkillsArchive(){
   const archivedIds = Object.keys(DB.archivedSkills || {});
   const archivedSkillObjs = archivedIds.map(id=> SKILLS.find(sk=>sk.id===id)).filter(Boolean);
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -14427,6 +14730,7 @@ function renderSkillDetail(skillId){
       ${forward?chevronFwd():""}
     </button>` : "";
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar" style="--sk:${rgb};">
       <div class="screen-header">
@@ -14516,6 +14820,7 @@ function renderGlossary(){
         </button>`;
       }).join("")}</div>`;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -14765,6 +15070,7 @@ function renderSearch(){
       </span>
     </div>`);
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -14833,6 +15139,7 @@ function renderReferenceGlossary(){
   if(refGlossaryPage < 0) refGlossaryPage = 0;
   const entries = matches.slice(refGlossaryPage * REF_GLOSSARY_PER_PAGE, (refGlossaryPage + 1) * REF_GLOSSARY_PER_PAGE);
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -14898,6 +15205,7 @@ function renderLiveTranslate(){
   applyDir();
   const s = t();
   let direction = "en-ar";
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15191,6 +15499,7 @@ function renderWeeklyWhitening(){
   const whitenedCount = coursesWithSessions.filter(c=>isWhitened(c.id)).length;
   const untransferredRaw = rawNotesThisWeek.filter(n=>!n.transferredToCourseId).length;
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15260,6 +15569,7 @@ function renderWeeklySchedule(){
     scheduleDay = days.find(d=>d.id===today) ? today : days[0].id;
   }
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15666,6 +15976,7 @@ function renderReflection(semesterId){
   const s = t();
   const semester = dbGet("semesters", semesterId);
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar pace-reflective">
       <div class="screen-content" style="padding-top:var(--sp-7);">
@@ -15742,6 +16053,7 @@ function renderWeeklyMirror(){
   const terms = WeeklyMirrorModule.termsThisWeek();
   const reviews = WeeklyMirrorModule.reviewsThisWeek();
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15782,6 +16094,7 @@ function renderWeeklyMirror(){
 function renderAbout(){
   applyDir();
   const s = t();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15825,6 +16138,7 @@ function renderSettings(){
   const l = lang();
   const student = StudentModule.current();
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15885,14 +16199,6 @@ function renderSettings(){
           <span class="card-chevron">${chevronFwd()}</span>
         </button>
         <div class="stack">
-          <button type="button" class="card" id="mirrorBtn">
-            <span class="card-icon">${ICON.weekGrid}</span>
-            <span class="card-body">
-              <span class="card-title">${s.mirrorEntryLabel}</span>
-              <span class="card-meta">${s.mirrorShort}</span>
-            </span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>
           <div class="card" style="cursor:default; flex-direction:column; align-items:stretch; gap:var(--sp-3);">
             <span style="display:flex; align-items:center; gap:var(--sp-3);">
               <span class="card-icon" style="color:var(--support); background:rgba(88,182,144,.16);">${ICON.download}</span>
@@ -16113,6 +16419,7 @@ function renderProfileEditSettings(){
     majorId:student.majorId||"", major:student.major, levelId:"", level:student.level
   };
 
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
