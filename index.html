@@ -912,6 +912,59 @@ body[data-theme="daylight"] .card:before{
 .quick-fab svg{ width:20px; height:20px; }
 .quick-fab:active{ transform:scale(.9); }
 .quick-fab-hidden{ opacity:0; pointer-events:none; transform:scale(.8); }
+/* Settings as a grid of squares rather than a column of rows: the whole tab
+   is seen at once, and choosing becomes recognition instead of reading. Each
+   tile carries its icon, its name, and its current value — so a student knows
+   what a setting is set to without opening it. */
+/* Eight tools in one undifferentiated strip made the student read all eight
+   to find one. Grouped by what they do — write something, attach something,
+   track something — the eye goes to the group first and the tool second. */
+/* One hard idea per block, the first already open. A student meeting a course
+   for the first time needs one thing explained, not a wall of five — and the
+   closed ones are a promise that the rest is here when they get there. */
+.hard-part{
+  background:var(--surface); border:1px solid var(--flat-line);
+  border-radius:var(--r-sm); padding:var(--sp-3);
+}
+.hard-part > summary{
+  display:flex; align-items:center; gap:9px; cursor:pointer;
+  font-size:var(--fs-caption); font-weight:700; list-style:none;
+}
+.hard-part > summary::-webkit-details-marker{ display:none; }
+.hard-part-num{
+  width:22px; height:22px; border-radius:7px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--accent-rgb),.16); color:var(--accent);
+  font-family:var(--font-ar); font-weight:800; font-size:12px;
+}
+.tool-group{ margin-bottom:var(--sp-3); }
+.tool-group-label{
+  font-size:10.5px; font-weight:700; color:var(--ink-muted);
+  letter-spacing:.04em; margin-bottom:5px; padding-inline-start:2px;
+}
+.set-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:9px; }
+.set-tile{
+  display:flex; flex-direction:column; align-items:flex-start; gap:6px;
+  padding:14px; border-radius:var(--r-md); text-align:start;
+  background:var(--flat); border:1px solid var(--flat-line);
+  transition:transform 180ms var(--ease-spring);
+}
+.set-tile:active{ transform:scale(.97); }
+.set-tile-icon{
+  width:32px; height:32px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--accent-rgb),.13); color:var(--accent);
+}
+.set-tile-icon svg{ width:16px; height:16px; }
+.set-tile-name{ font-size:var(--fs-caption); font-weight:700; }
+.set-tile-value{ font-size:11px; color:var(--ink-muted); }
+.set-tile-on{ border-color:rgba(var(--accent-rgb),.35); background:rgba(var(--accent-rgb),.08); }
+
+/* A plain bar for how full something is. Not a chart: a student wants to know
+   whether they are near the edge, not the exact percentage. */
+.bar{ height:10px; border-radius:99px; background:var(--flat); overflow:hidden; }
+.bar > i{ display:block; height:100%; border-radius:99px; background:var(--accent); }
+.bar-warn > i{ background:var(--attention); }
 .tool-row{ display:flex; gap:8px; }
 .tool-tile{
   flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
@@ -1785,6 +1838,43 @@ const STR = {
     searchMineLabel:"من كتابتك",
     tabTools:"الأدوات",
     quickTitle:"أدوات هذه الشاشة",
+    aboutWhatTitle:"ما هذا التطبيق",
+    storageTitle:"المساحة",
+    nbToolsWrite:"اكتب",
+    hardPartsLabel:"أصعب ما فيه — مُبسَّطًا",
+    hardPartWhy:"لماذا يتعثّر فيه الطلاب",
+    nbToolsAttach:"أرفق",
+    nbToolsTrack:"تابِع",
+    toolsTabCourse:"مادة",
+    toolsTabWeek:"أسبوعك",
+    toolsTabLang:"اللغة",
+    toolsTabMine:"ملفك",
+    storageEntry:"مساحة جهازك",
+    storageEntryD:"كم استهلك دفترك وكم بقي",
+    storageUsed:"المستعمل",
+    storageFree:"المتاح",
+    storageOf:(a,b)=>`${a} من ${b}`,
+    storageUnknown:"متصفحك لا يفصح عن المساحة — لكن كل شيء محفوظ في جهازك كالمعتاد.",
+    storageBreakdown:"ما الذي يشغلها",
+    storageNotes:"ملاحظات ودفاتر",
+    storagePages:"صفحات مرسومة",
+    storageFiles:"ملفات وصور وصوت",
+    storageTerms:"مفكرة وتعابير",
+    storagePlansData:"الخطط والمراجع",
+    storageHint:"الصور والتسجيلات الصوتية هي الأثقل. إن ضاقت المساحة، احفظ نسخة احتياطية ثم احذف المرفقات القديمة من الدفتر — النص لا يكاد يشغل شيئًا.",
+    storageWarn:"مساحتك تقترب من الامتلاء. احفظ نسخة احتياطية الآن.",
+    aboutWhatBody:"رفيق للطالب الجامعي: خطتك الدراسية كاملة كما هي في جامعتك، ولكل مقرر فيها شرحٌ ومرجع فتحناه بأنفسنا قبل أن نضعه، ودفتر يبقى معك بعد التخرج.",
+    aboutNumbers:"بالأرقام",
+    aboutPlans:"خطة دراسية",
+    aboutCourses:"مقرر مشروح",
+    aboutRefs:"مرجع",
+    aboutRefsVerified:"منها متحقَّق بتاريخ",
+    aboutSkills:"مهارة تعلّم",
+    aboutSourcesTitle:"من أين المراجع",
+    aboutSourcesBody:"من منصات تعليمية مفتوحة ومجانية: NPTEL من معاهد التقنية الهندية، وOpenStax من جامعة رايس، وMIT OpenCourseWare، وإدراك ومعارف بالعربية، وPurdue OWL. لا نضع مرجعًا خلف اشتراك، وإن كان المصدر جزئيًا أو بالإنجليزية قلنا ذلك تحته.",
+    aboutPrivacyTitle:"بياناتك",
+    aboutPrivacyBody:"كل ما تكتبه يبقى في جهازك: لا حساب، ولا خادم، ولا إعلانات، ولا جمع بيانات. ولذلك احفظ نسخة احتياطية من إعداداتك — فما في جهازك وحده يضيع بضياعه.",
+    aboutRights:"جميع الحقوق محفوظة — أداة أكاديمية لأغراض تعليمية",
     quickAll:"كل الأدوات",
     toolsTitle:"أدواتك",
     toolsSub:"كل ما يعينك في مكان واحد — وتبقى في أماكنها داخل المادة والأسبوع كما اعتدت.",
@@ -2363,6 +2453,43 @@ const STR = {
     searchMineLabel:"From your own writing",
     tabTools:"Tools",
     quickTitle:"Tools for this screen",
+    aboutWhatTitle:"What this app is",
+    storageTitle:"Storage",
+    nbToolsWrite:"Write",
+    hardPartsLabel:"Its hardest parts, made plain",
+    hardPartWhy:"Why students stumble here",
+    nbToolsAttach:"Attach",
+    nbToolsTrack:"Track",
+    toolsTabCourse:"Course",
+    toolsTabWeek:"Week",
+    toolsTabLang:"Language",
+    toolsTabMine:"Yours",
+    storageEntry:"Device storage",
+    storageEntryD:"How much your notebook uses, and what's left",
+    storageUsed:"Used",
+    storageFree:"Available",
+    storageOf:(a,b)=>`${a} of ${b}`,
+    storageUnknown:"Your browser doesn't report storage — but everything is saved on your device as usual.",
+    storageBreakdown:"What's using it",
+    storageNotes:"Notes and notebooks",
+    storagePages:"Drawn pages",
+    storageFiles:"Files, images and audio",
+    storageTerms:"Terms and essays",
+    storagePlansData:"Plans and references",
+    storageHint:"Images and voice recordings are the heaviest. If space runs short, save a backup then delete old attachments from the notebook — text takes almost nothing.",
+    storageWarn:"Your storage is nearly full. Save a backup now.",
+    aboutWhatBody:"A companion for a university student: your full study plan exactly as your university has it, an explanation and a reference for every course in it — opened and read before it was added — and a notebook that stays with you after graduation.",
+    aboutNumbers:"By the numbers",
+    aboutPlans:"study plans",
+    aboutCourses:"courses explained",
+    aboutRefs:"references",
+    aboutRefsVerified:"of them dated as checked",
+    aboutSkills:"learning skills",
+    aboutSourcesTitle:"Where the references come from",
+    aboutSourcesBody:"From open, free educational platforms: NPTEL from the Indian Institutes of Technology, OpenStax from Rice University, MIT OpenCourseWare, Edraak and M3aarf in Arabic, and Purdue OWL. We never place a reference behind a subscription, and when a source is partial or in English we say so beneath it.",
+    aboutPrivacyTitle:"Your data",
+    aboutPrivacyBody:"Everything you write stays on your device: no account, no server, no ads, no data collection. Which is why you should keep a backup from Settings — what lives only on your device is lost with it.",
+    aboutRights:"All rights reserved — an academic tool for educational purposes",
     quickAll:"All tools",
     toolsTitle:"Your tools",
     toolsSub:"Everything that helps, in one place — and still where you're used to finding it.",
@@ -4318,6 +4445,10 @@ const COURSE_ENRICHMENT = {
       en:"Phase equilibrium is what makes distillation, absorption and extraction possible at all. This course isn't theory but the ground every separation unit you later design stands on — which is why the plan makes it a prerequisite for separation processes."
     },
     connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}, {ar:"المعادلات التفاضلية (MATH202)", en:"Differential Equations (MATH202)"}], leadsTo:[{ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operation (CHE302)"}, {ar:"عمليات انتقال المادة (CHE303)", en:"Mass Transfer Operation (CHE303)"}, {ar:"عمليات الفصل (CHE304)", en:"Separation Processes (CHE304)"}] },
+    hard:[
+      { title:{ar:"النظام والحدود: ما الذي تحسبه بالضبط؟", en:"System and boundary: what exactly are you accounting for?"}, plain:{ar:"قبل أي مسألة ديناميكا، حدّد ثلاثة أشياء: أين حدود نظامك؟ وهل يعبرها مادة (نظام مفتوح) أم لا (مغلق)؟ وهل يعبرها حرارة أو شغل؟ اختلاف الجواب يغيّر المعادلة كلها. وأكثر أخطاء الديناميكا ليست في الرياضيات بل في نظام لم يُحدَّد.", en:"Before any thermodynamics problem, settle three things: where is your system's boundary, does matter cross it (open) or not (closed), and do heat or work cross it? The answer changes the whole equation. Most thermodynamics errors are not mathematical but an undefined system."}, trap:{ar:"الطالب يبدأ بالمعادلة قبل تحديد النظام، فيستعمل صيغة النظام المغلق على نظام يجري فيه تيار.", en:"Students reach for the equation before defining the system, applying a closed-system form to a flowing one."} },
+      { title:{ar:"الحرارة المحسوسة والكامنة: الفرق في الميزان الحراري", en:"Sensible and latent heat: the difference that decides the balance"}, plain:{ar:"الحرارة المحسوسة ترفع درجة الحرارة ولا تغيّر الطور — وتُحسب بـ m·cp·ΔT. والكامنة تغيّر الطور ولا ترفع الحرارة — الماء عند مئة درجة يغلي ويبقى عند مئة حتى يتبخّر كله. فإن مرّت مسألتك بتغيّر طور، فحسابها جزآن لا جزء واحد، والخلط بينهما يعطيك رقمًا بعيدًا جدًا لا قريبًا.", en:"Sensible heat raises temperature without changing phase — m·cp·ΔT. Latent heat changes phase without raising temperature: water at a hundred degrees boils and stays at a hundred until it has all vaporized. If your problem crosses a phase change, its calculation is two parts, not one."}, trap:{ar:"الطالب يحسب m·cp·ΔT عبر تغيّر الطور فيحصل على رقم بعيد جدًا عن الصحيح.", en:"Students apply m·cp·ΔT straight through a phase change and land far from the right answer."} }
+    ],
     resources:[
       { title:{ar:"Chemical Engineering Thermodynamics — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Engineering Thermodynamics — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101004", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للدكتور سانديب روي من معهد التقنية الهندي ببومباي، وله كتاب إلكتروني مرافق نشرته NPTEL. يغطي القانونين الأول والثاني، الخواص الديناميكية للموائع الحقيقية، واتزان الأطوار — وهو محور المقرر. بالإنجليزية لعدم وجود مقابل عربي حر بهذا العمق، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Dr. Sandip Roy of IIT Bombay, with a companion e-book published by NPTEL. It covers the first and second laws, the thermodynamic properties of real fluids, and phase equilibria — the core of this course. In English for want of a free Arabic equivalent at this depth"} }
     ]
@@ -4667,6 +4798,11 @@ const COURSE_ENRICHMENT = {
       ar:"هذا أهم مقرر في سنتك الأولى بلا منازع، لأن كل مقرر برمجي بعده يفترض أنك أتقنته. ومن يمرّ عليه بالحفظ بدل الكتابة بيده سيدفع الثمن في هياكل البيانات.",
       en:"This is by far the most important course in your first year, because every programming course after it assumes you mastered it. Whoever passes by memorizing rather than writing code pays for it in data structures."
     },
+    hard:[
+      { title:{ar:"المتغيّر ليس صندوقًا، بل عنوانًا", en:"A variable isn't a box, it's an address"}, plain:{ar:"الشائع أن تتخيّل المتغيّر صندوقًا تضع فيه قيمة. والأدق أنه اسم لموضع في الذاكرة. ولهذا حين تكتب b = a فأنت تنسخ ما في موضع a إلى موضع b — لا تربط الاثنين. غيّر a بعدها فلن يتغيّر b، لأنهما موضعان مختلفان منذ البداية.", en:"The common picture is a box holding a value. More precisely it is a name for a place in memory. So b = a copies what is in a's place into b's — it does not link them. Change a afterwards and b stays as it was."}, trap:{ar:"الطالب يظن أن الإسناد يربط المتغيّرين، فيتفاجأ أن تغيير أحدهما لم يؤثر في الآخر. تخيّلها نسخًا لا وصلًا.", en:"Students assume assignment links the two, then are surprised the other didn't change. Picture copying, not connecting."} },
+      { title:{ar:"الحلقة تُقرأ بثلاثة أسئلة", en:"A loop is read with three questions"}, plain:{ar:"أي حلقة مهما بدت معقّدة تُفهم بثلاثة أسئلة: من أين تبدأ؟ ومتى تتوقف؟ وكيف تتقدّم في كل دورة؟ اكتب الأسئلة الثلاثة على الورق بجوار الحلقة قبل أن تحاول فهم ما بداخلها، وستجد أن نصف الغموض كان في الإطار لا في المحتوى.", en:"Any loop, however tangled it looks, is understood with three questions: where does it start, when does it stop, and how does it advance each pass? Write the three beside the loop before trying to read its body."}, trap:{ar:"الطالب يبدأ بقراءة جسم الحلقة فيضيع. ابدأ بالإطار: البداية والشرط والخطوة.", en:"Students start by reading the loop's body and get lost. Start with the frame: start, condition, step."} },
+      { title:{ar:"تتبّع الشيفرة بالورقة أسرع من تشغيلها", en:"Tracing on paper beats running it"}, plain:{ar:"حين لا تعمل شيفرتك، لا تغيّر أسطرًا عشوائيًا وتعيد التشغيل. ارسم جدولًا بأعمدة بعدد متغيّراتك، ونفّذ الشيفرة بيدك سطرًا سطرًا واكتب قيمة كل متغيّر بعد كل سطر. ستجد موضع الخطأ في دقائق — والأهم أنك ستفهم لماذا أخطأ.", en:"When your code doesn't work, don't change lines at random and re-run. Draw a table with a column per variable and execute the code by hand, line by line, writing each value. You'll find the fault in minutes — and understand why."}, trap:{ar:"التجريب العشوائي قد يُصلح العطل بلا فهم، فيتكرر في الاختبار حيث لا حاسوب معك.", en:"Random trial may fix the fault without understanding, and it returns in the exam where there is no computer."} }
+    ],
     resources:[
       { title:{ar:"مواد مقرر البرمجة C++‎ — تمارين واختبارات بحلولها (مجاني)", en:"C++ Programming Materials — Exercises and Solved Exams (Free)"}, url:"https://mbabubaker.wordpress.com/cpp/", lang:"en", partial:true, verified:"2026-08-15", reason:{ar:"اختبارات قصيرة بحلولها، نصفي محلول، مراجعة نهائية محلولة، وأمثلة أكواد مشروحة. تنبيه: بالإنجليزية وللتمرين لا للشرح", en:"Quizzes with solutions, a solved midterm and final review, and annotated code. Note: in English, and for practice rather than explanation"} }
     ]
@@ -4680,6 +4816,11 @@ const COURSE_ENRICHMENT = {
       ar:"هنا تنتقل من كتابة شيفرة تعمل إلى كتابة شيفرة تُقرأ وتُصان. والفرق بينهما هو ما يفصل بين طالب ينجح ومبرمج يُوظَّف.",
       en:"Here you move from writing code that works to writing code that can be read and maintained. That difference separates a student who passes from a programmer who gets hired."
     },
+    hard:[
+      { title:{ar:"المتغيّر ليس صندوقًا، بل عنوانًا", en:"A variable isn't a box, it's an address"}, plain:{ar:"الشائع أن تتخيّل المتغيّر صندوقًا تضع فيه قيمة. والأدق أنه اسم لموضع في الذاكرة. ولهذا حين تكتب b = a فأنت تنسخ ما في موضع a إلى موضع b — لا تربط الاثنين. غيّر a بعدها فلن يتغيّر b، لأنهما موضعان مختلفان منذ البداية.", en:"The common picture is a box holding a value. More precisely it is a name for a place in memory. So b = a copies what is in a's place into b's — it does not link them. Change a afterwards and b stays as it was."}, trap:{ar:"الطالب يظن أن الإسناد يربط المتغيّرين، فيتفاجأ أن تغيير أحدهما لم يؤثر في الآخر. تخيّلها نسخًا لا وصلًا.", en:"Students assume assignment links the two, then are surprised the other didn't change. Picture copying, not connecting."} },
+      { title:{ar:"الحلقة تُقرأ بثلاثة أسئلة", en:"A loop is read with three questions"}, plain:{ar:"أي حلقة مهما بدت معقّدة تُفهم بثلاثة أسئلة: من أين تبدأ؟ ومتى تتوقف؟ وكيف تتقدّم في كل دورة؟ اكتب الأسئلة الثلاثة على الورق بجوار الحلقة قبل أن تحاول فهم ما بداخلها، وستجد أن نصف الغموض كان في الإطار لا في المحتوى.", en:"Any loop, however tangled it looks, is understood with three questions: where does it start, when does it stop, and how does it advance each pass? Write the three beside the loop before trying to read its body."}, trap:{ar:"الطالب يبدأ بقراءة جسم الحلقة فيضيع. ابدأ بالإطار: البداية والشرط والخطوة.", en:"Students start by reading the loop's body and get lost. Start with the frame: start, condition, step."} },
+      { title:{ar:"تتبّع الشيفرة بالورقة أسرع من تشغيلها", en:"Tracing on paper beats running it"}, plain:{ar:"حين لا تعمل شيفرتك، لا تغيّر أسطرًا عشوائيًا وتعيد التشغيل. ارسم جدولًا بأعمدة بعدد متغيّراتك، ونفّذ الشيفرة بيدك سطرًا سطرًا واكتب قيمة كل متغيّر بعد كل سطر. ستجد موضع الخطأ في دقائق — والأهم أنك ستفهم لماذا أخطأ.", en:"When your code doesn't work, don't change lines at random and re-run. Draw a table with a column per variable and execute the code by hand, line by line, writing each value. You'll find the fault in minutes — and understand why."}, trap:{ar:"التجريب العشوائي قد يُصلح العطل بلا فهم، فيتكرر في الاختبار حيث لا حاسوب معك.", en:"Random trial may fix the fault without understanding, and it returns in the exam where there is no computer."} }
+    ],
     resources:[
       { title:{ar:"مواد مقرر البرمجة C++‎ — تمارين واختبارات بحلولها (مجاني)", en:"C++ Programming Materials — Exercises and Solved Exams (Free)"}, url:"https://mbabubaker.wordpress.com/cpp/", lang:"en", partial:true, verified:"2026-08-15", reason:{ar:"اختبارات قصيرة بحلولها، نصفي محلول، مراجعة نهائية محلولة، وأمثلة أكواد مشروحة. تنبيه: بالإنجليزية وللتمرين لا للشرح", en:"Quizzes with solutions, a solved midterm and final review, and annotated code. Note: in English, and for practice rather than explanation"} }
     ]
@@ -4787,6 +4928,10 @@ const COURSE_ENRICHMENT = {
       en:"A chemical plant doesn't run by a human hand but by control loops working day and night. Whoever understands how those loops are tuned stops a drift before it becomes an incident — the sharpest mark of a process engineer on site."
     },
     connections:{ requires:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}], leadsTo:[{ar:"تصميم العمليات واقتصادياتها (CHE403)", en:"Process Design and Economics (CHE403)"}] },
+    hard:[
+      { title:{ar:"لماذا نحوّل إلى مجال لابلاس", en:"Why we transform into the Laplace domain"}, plain:{ar:"لأن معادلة تفاضلية في مجال الزمن تصير معادلة جبرية عادية في مجال لابلاس. والجبر أسهل من التفاضل بمراحل. فنحوّل المسألة، ونحلّها بالجمع والقسمة، ثم نعود بها إلى الزمن. ليس تعقيدًا مضافًا بل طريق مختصر — كمن يضرب بالأس بدل أن يضرب مرات متتالية.", en:"Because a differential equation in the time domain becomes ordinary algebra in the Laplace domain, and algebra is far easier than calculus. So we transform the problem, solve it by adding and dividing, then transform back. It isn't added complexity but a shortcut."}, trap:{ar:"الطالب يحفظ جدول التحويلات بلا فهم سببه، فيراه عبئًا لا اختصارًا.", en:"Students memorize the transform table without its purpose and see a burden rather than a shortcut."} },
+      { title:{ar:"المتحكم PID: ثلاثة تسأل ثلاثة أسئلة", en:"PID: three terms asking three questions"}, plain:{ar:"الحد التناسبي يسأل: كم يبعد الوضع الحالي عن المطلوب الآن؟ والتكاملي يسأل: كم تراكم الخطأ منذ البداية؟ والتفاضلي يسأل: بأي سرعة يتغيّر الخطأ الآن؟ فالأول يستجيب للحاضر، والثاني للماضي، والثالث يتوقّع المستقبل. وضبط المتحكم هو موازنة بين هذه الأسئلة الثلاثة.", en:"The proportional term asks: how far is the current state from the target right now? The integral asks: how much error has accumulated since the start? The derivative asks: how fast is the error changing? The first answers to the present, the second to the past, the third anticipates the future."}, trap:{ar:"الطالب يحفظ الحدود الثلاثة بلا معناها الزمني، فلا يعرف أيها يزيد حين يتذبذب النظام.", en:"Students memorize the three terms without their sense of time, then can't tell which to raise when the system oscillates."} }
+    ],
     resources:[
       { title:{ar:"Chemical Process Control — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Process Control — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101142", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوجيت جوجوار من معهد التقنية الهندي ببومباي، يبدأ بالتحليل الديناميكي لسلوك المنظومات الكيميائية ثم ينتقل إلى التحكم فيها فالمتحكمات المتقدمة — وهو ترتيب هذا المقرر نفسه. مبني على مراجع المقرر المعروفة (Bequette وLuyben وStephanopoulos). بالإنجليزية لعدم وجود مقابل عربي حر، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Sujit Jogwar of IIT Bombay, beginning with the dynamic analysis of chemical systems, then moving to controlling them and on to advanced controllers — this course's own sequence. Built on the standard references (Bequette, Luyben, Stephanopoulos)"} }
     ]
@@ -4913,6 +5058,11 @@ const COURSE_ENRICHMENT = {
       en:"This course is the real divide in your major: after it your code is judged by its efficiency, not merely by whether it runs. It is a prerequisite for five courses in your plan — algorithms, databases, operating systems, software engineering and programming languages."
     },
     connections:{ leadsTo:[{ar:"تصميم وتحليل الخوارزميات (CS 351)", en:"Design and Analysis of Algorithms (CS 351)"}] },
+    hard:[
+      { title:{ar:"لماذا نحسب التعقيد بدل قياس الوقت", en:"Why we count complexity instead of timing"}, plain:{ar:"لأن الوقت يختلف بين جهاز وآخر، والتعقيد لا يختلف. حين نقول إن خوارزمية O(n²) فنحن نقول: إن ضاعفت البيانات، تضاعف العمل أربع مرات — على أي جهاز، اليوم وبعد عشر سنين. فالتعقيد يصف الخوارزمية نفسها لا الحاسوب الذي شغّلها.", en:"Because time differs between machines and complexity doesn't. Saying an algorithm is O(n²) says: double the data and the work quadruples — on any machine, today and in ten years. Complexity describes the algorithm, not the computer."}, trap:{ar:"الطالب يحفظ الرموز بلا معناها. اسأل دائمًا: لو ضاعفتُ المدخلات، كم يتضاعف العمل؟", en:"Students memorize the notation without its meaning. Always ask: if I double the input, how much more work?"} },
+      { title:{ar:"متى تختار كل بنية بيانات", en:"When to choose each data structure"}, plain:{ar:"القاعدة العملية: هل تحتاج الوصول السريع بموضع معروف؟ مصفوفة. هل تكثر الإضافة والحذف في الوسط؟ قائمة مترابطة. هل تحتاج البحث السريع بمفتاح؟ جدول تجزئة. هل تحتاج ترتيبًا دائمًا مع بحث؟ شجرة. اختر بحسب أكثر عملية ستكررها، لا بحسب أيها أجمل.", en:"The practical rule: need fast access by known position? Array. Frequent insertion and deletion in the middle? Linked list. Fast lookup by key? Hash table. Order maintained with search? Tree. Choose by the operation you'll repeat most."}, trap:{ar:"الطالب يختار البنية التي فهمها آخر مرة. اسأل عن أكثر عملية تكرارًا في مسألتك.", en:"Students pick the structure they understood most recently. Ask which operation your problem repeats most."} },
+      { title:{ar:"الاستدعاء الذاتي: ثق بالدالة", en:"Recursion: trust the function"}, plain:{ar:"أصعب ما في الاستدعاء الذاتي أن تحاول تتبّعه في ذهنك إلى الأعماق كلها — ولن تستطيع. الطريقة الصحيحة: افترض أن الدالة تعمل صحيحًا للحالة الأصغر، ثم اسأل نفسك سؤالين فقط: ما أبسط حالة أعرف جوابها بلا استدعاء؟ وكيف أبني الجواب الأكبر من الأصغر؟ إن أجبت عنهما فالدالة صحيحة.", en:"The hardest thing about recursion is trying to trace it all the way down in your head — you can't. The right way: assume the function works for the smaller case, then ask only two questions: what is the simplest case whose answer I know without recursing, and how do I build the bigger answer from the smaller?"}, trap:{ar:"محاولة تتبّع كل مستوى ذهنيًا تُرهق وتُوهم بالفشل. ثق بالخطوة الأصغر واختبر الحالة القاعدية.", en:"Trying to trace every level mentally exhausts you and feels like failure. Trust the smaller step and check the base case."} }
+    ],
     resources:[
       { title:{ar:"Programming, Data Structures and Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Programming, Data Structures and Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106145", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ مادهافان موكوند من معهد التقنية الهندي بمدراس، يبني هياكل البيانات من الأساس — القوائم والمكدّسات والطوابير والأشجار وجداول التجزئة — مع تحليل الكفاءة لكل بنية. بالإنجليزية والأمثلة ببايثون، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Madhavan Mukund of IIT Madras, building data structures from the ground up — lists, stacks, queues, trees and hash tables — with an efficiency analysis for each. In English with Python examples"} }
     ]
@@ -4927,6 +5077,11 @@ const COURSE_ENRICHMENT = {
       en:"This is the course you are asked about in technical interviews at every major company without exception. It is also what tells you that your solution which works on a hundred items will collapse on a million — before you discover it in production."
     },
     connections:{ requires:[{ar:"هياكل البيانات (CS 241)", en:"Data Structures (CS 241)"}] },
+    hard:[
+      { title:{ar:"لماذا نحسب التعقيد بدل قياس الوقت", en:"Why we count complexity instead of timing"}, plain:{ar:"لأن الوقت يختلف بين جهاز وآخر، والتعقيد لا يختلف. حين نقول إن خوارزمية O(n²) فنحن نقول: إن ضاعفت البيانات، تضاعف العمل أربع مرات — على أي جهاز، اليوم وبعد عشر سنين. فالتعقيد يصف الخوارزمية نفسها لا الحاسوب الذي شغّلها.", en:"Because time differs between machines and complexity doesn't. Saying an algorithm is O(n²) says: double the data and the work quadruples — on any machine, today and in ten years. Complexity describes the algorithm, not the computer."}, trap:{ar:"الطالب يحفظ الرموز بلا معناها. اسأل دائمًا: لو ضاعفتُ المدخلات، كم يتضاعف العمل؟", en:"Students memorize the notation without its meaning. Always ask: if I double the input, how much more work?"} },
+      { title:{ar:"متى تختار كل بنية بيانات", en:"When to choose each data structure"}, plain:{ar:"القاعدة العملية: هل تحتاج الوصول السريع بموضع معروف؟ مصفوفة. هل تكثر الإضافة والحذف في الوسط؟ قائمة مترابطة. هل تحتاج البحث السريع بمفتاح؟ جدول تجزئة. هل تحتاج ترتيبًا دائمًا مع بحث؟ شجرة. اختر بحسب أكثر عملية ستكررها، لا بحسب أيها أجمل.", en:"The practical rule: need fast access by known position? Array. Frequent insertion and deletion in the middle? Linked list. Fast lookup by key? Hash table. Order maintained with search? Tree. Choose by the operation you'll repeat most."}, trap:{ar:"الطالب يختار البنية التي فهمها آخر مرة. اسأل عن أكثر عملية تكرارًا في مسألتك.", en:"Students pick the structure they understood most recently. Ask which operation your problem repeats most."} },
+      { title:{ar:"الاستدعاء الذاتي: ثق بالدالة", en:"Recursion: trust the function"}, plain:{ar:"أصعب ما في الاستدعاء الذاتي أن تحاول تتبّعه في ذهنك إلى الأعماق كلها — ولن تستطيع. الطريقة الصحيحة: افترض أن الدالة تعمل صحيحًا للحالة الأصغر، ثم اسأل نفسك سؤالين فقط: ما أبسط حالة أعرف جوابها بلا استدعاء؟ وكيف أبني الجواب الأكبر من الأصغر؟ إن أجبت عنهما فالدالة صحيحة.", en:"The hardest thing about recursion is trying to trace it all the way down in your head — you can't. The right way: assume the function works for the smaller case, then ask only two questions: what is the simplest case whose answer I know without recursing, and how do I build the bigger answer from the smaller?"}, trap:{ar:"محاولة تتبّع كل مستوى ذهنيًا تُرهق وتُوهم بالفشل. ثق بالخطوة الأصغر واختبر الحالة القاعدية.", en:"Trying to trace every level mentally exhausts you and feels like failure. Trust the smaller step and check the base case."} }
+    ],
     resources:[
       { title:{ar:"Design and Analysis of Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Design and Analysis of Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106131", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ مادهافان موكوند يغطي أساليب تصميم الخوارزميات — فرّق تسد، البرمجة الديناميكية، الأساليب الجشعة — وتحليل التعقيد الزمني والمكاني لكل منها. بالإنجليزية، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Madhavan Mukund covering algorithm design techniques — divide and conquer, dynamic programming, greedy methods — and the time and space complexity analysis of each"} }
     ]
@@ -4954,6 +5109,11 @@ const COURSE_ENRICHMENT = {
       ar:"أهم مقرر في تخصصك على الإطلاق. ما قبله برمجة تعمل، وما بعده هندسة تُقاس. ومن يجتازه بالحفظ سيجد نفسه عاجزًا في أول مقابلة توظيف حقيقية.",
       en:"The single most important course in your major. Before it, programming that works; after it, engineering that is measured. Whoever passes it by memorizing finds themselves helpless in their first real job interview."
     },
+    hard:[
+      { title:{ar:"لماذا نحسب التعقيد بدل قياس الوقت", en:"Why we count complexity instead of timing"}, plain:{ar:"لأن الوقت يختلف بين جهاز وآخر، والتعقيد لا يختلف. حين نقول إن خوارزمية O(n²) فنحن نقول: إن ضاعفت البيانات، تضاعف العمل أربع مرات — على أي جهاز، اليوم وبعد عشر سنين. فالتعقيد يصف الخوارزمية نفسها لا الحاسوب الذي شغّلها.", en:"Because time differs between machines and complexity doesn't. Saying an algorithm is O(n²) says: double the data and the work quadruples — on any machine, today and in ten years. Complexity describes the algorithm, not the computer."}, trap:{ar:"الطالب يحفظ الرموز بلا معناها. اسأل دائمًا: لو ضاعفتُ المدخلات، كم يتضاعف العمل؟", en:"Students memorize the notation without its meaning. Always ask: if I double the input, how much more work?"} },
+      { title:{ar:"متى تختار كل بنية بيانات", en:"When to choose each data structure"}, plain:{ar:"القاعدة العملية: هل تحتاج الوصول السريع بموضع معروف؟ مصفوفة. هل تكثر الإضافة والحذف في الوسط؟ قائمة مترابطة. هل تحتاج البحث السريع بمفتاح؟ جدول تجزئة. هل تحتاج ترتيبًا دائمًا مع بحث؟ شجرة. اختر بحسب أكثر عملية ستكررها، لا بحسب أيها أجمل.", en:"The practical rule: need fast access by known position? Array. Frequent insertion and deletion in the middle? Linked list. Fast lookup by key? Hash table. Order maintained with search? Tree. Choose by the operation you'll repeat most."}, trap:{ar:"الطالب يختار البنية التي فهمها آخر مرة. اسأل عن أكثر عملية تكرارًا في مسألتك.", en:"Students pick the structure they understood most recently. Ask which operation your problem repeats most."} },
+      { title:{ar:"الاستدعاء الذاتي: ثق بالدالة", en:"Recursion: trust the function"}, plain:{ar:"أصعب ما في الاستدعاء الذاتي أن تحاول تتبّعه في ذهنك إلى الأعماق كلها — ولن تستطيع. الطريقة الصحيحة: افترض أن الدالة تعمل صحيحًا للحالة الأصغر، ثم اسأل نفسك سؤالين فقط: ما أبسط حالة أعرف جوابها بلا استدعاء؟ وكيف أبني الجواب الأكبر من الأصغر؟ إن أجبت عنهما فالدالة صحيحة.", en:"The hardest thing about recursion is trying to trace it all the way down in your head — you can't. The right way: assume the function works for the smaller case, then ask only two questions: what is the simplest case whose answer I know without recursing, and how do I build the bigger answer from the smaller?"}, trap:{ar:"محاولة تتبّع كل مستوى ذهنيًا تُرهق وتُوهم بالفشل. ثق بالخطوة الأصغر واختبر الحالة القاعدية.", en:"Trying to trace every level mentally exhausts you and feels like failure. Trust the smaller step and check the base case."} }
+    ],
     resources:[
       { title:{ar:"Programming, Data Structures and Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Programming, Data Structures and Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106145", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ مادهافان موكوند من معهد التقنية الهندي بمدراس، يبني هياكل البيانات من الأساس — القوائم والمكدّسات والطوابير والأشجار وجداول التجزئة — مع تحليل الكفاءة لكل بنية. بالإنجليزية والأمثلة ببايثون، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Madhavan Mukund of IIT Madras, building data structures from the ground up — lists, stacks, queues, trees and hash tables — with an efficiency analysis for each. In English with Python examples"} },
       { title:{ar:"Design and Analysis of Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Design and Analysis of Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106131", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ مادهافان موكوند يغطي أساليب تصميم الخوارزميات — فرّق تسد، البرمجة الديناميكية، الأساليب الجشعة — وتحليل التعقيد الزمني والمكاني لكل منها. بالإنجليزية، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Madhavan Mukund covering algorithm design techniques — divide and conquer, dynamic programming, greedy methods — and the time and space complexity analysis of each"} }
@@ -5040,6 +5200,11 @@ const COURSE_ENRICHMENT = {
       ar:"كل ما تعلّمته من برمجة يجري فوق نظام تشغيل. وهذا المقرر يريك ما تحت قدميك: كيف تتقاسم البرامج معالجًا واحدًا، وكيف تُعطى ذاكرةً أكبر مما في الجهاز فعلًا.",
       en:"Everything you learned about programming runs on top of an operating system. This course shows you what is beneath your feet: how programs share a single processor, and how they are given more memory than the machine actually has."
     },
+    hard:[
+      { title:{ar:"لماذا نحسب التعقيد بدل قياس الوقت", en:"Why we count complexity instead of timing"}, plain:{ar:"لأن الوقت يختلف بين جهاز وآخر، والتعقيد لا يختلف. حين نقول إن خوارزمية O(n²) فنحن نقول: إن ضاعفت البيانات، تضاعف العمل أربع مرات — على أي جهاز، اليوم وبعد عشر سنين. فالتعقيد يصف الخوارزمية نفسها لا الحاسوب الذي شغّلها.", en:"Because time differs between machines and complexity doesn't. Saying an algorithm is O(n²) says: double the data and the work quadruples — on any machine, today and in ten years. Complexity describes the algorithm, not the computer."}, trap:{ar:"الطالب يحفظ الرموز بلا معناها. اسأل دائمًا: لو ضاعفتُ المدخلات، كم يتضاعف العمل؟", en:"Students memorize the notation without its meaning. Always ask: if I double the input, how much more work?"} },
+      { title:{ar:"متى تختار كل بنية بيانات", en:"When to choose each data structure"}, plain:{ar:"القاعدة العملية: هل تحتاج الوصول السريع بموضع معروف؟ مصفوفة. هل تكثر الإضافة والحذف في الوسط؟ قائمة مترابطة. هل تحتاج البحث السريع بمفتاح؟ جدول تجزئة. هل تحتاج ترتيبًا دائمًا مع بحث؟ شجرة. اختر بحسب أكثر عملية ستكررها، لا بحسب أيها أجمل.", en:"The practical rule: need fast access by known position? Array. Frequent insertion and deletion in the middle? Linked list. Fast lookup by key? Hash table. Order maintained with search? Tree. Choose by the operation you'll repeat most."}, trap:{ar:"الطالب يختار البنية التي فهمها آخر مرة. اسأل عن أكثر عملية تكرارًا في مسألتك.", en:"Students pick the structure they understood most recently. Ask which operation your problem repeats most."} },
+      { title:{ar:"الاستدعاء الذاتي: ثق بالدالة", en:"Recursion: trust the function"}, plain:{ar:"أصعب ما في الاستدعاء الذاتي أن تحاول تتبّعه في ذهنك إلى الأعماق كلها — ولن تستطيع. الطريقة الصحيحة: افترض أن الدالة تعمل صحيحًا للحالة الأصغر، ثم اسأل نفسك سؤالين فقط: ما أبسط حالة أعرف جوابها بلا استدعاء؟ وكيف أبني الجواب الأكبر من الأصغر؟ إن أجبت عنهما فالدالة صحيحة.", en:"The hardest thing about recursion is trying to trace it all the way down in your head — you can't. The right way: assume the function works for the smaller case, then ask only two questions: what is the simplest case whose answer I know without recursing, and how do I build the bigger answer from the smaller?"}, trap:{ar:"محاولة تتبّع كل مستوى ذهنيًا تُرهق وتُوهم بالفشل. ثق بالخطوة الأصغر واختبر الحالة القاعدية.", en:"Trying to trace every level mentally exhausts you and feels like failure. Trust the smaller step and check the base case."} }
+    ],
     resources:[
       { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ تشيستر ريبيرو من معهد التقنية الهندي بمدراس، يغطي العمليات وجدولتها، التزامن وأقفال التزامن، الجمود، إدارة الذاكرة والذاكرة الافتراضية، ونظام الملفات. بالإنجليزية، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Chester Rebeiro of IIT Madras covering processes and scheduling, concurrency and locks, deadlock, memory management and virtual memory, and the file system"} }
     ]
@@ -5222,6 +5387,10 @@ const COURSE_ENRICHMENT = {
       en:"The heat exchanger is the most repeated piece of equipment in any chemical plant — heating and cooling before nearly every step. Whoever sizes it well saves the facility energy daily; whoever gets it wrong pays the difference for the unit's whole life."
     },
     connections:{ requires:[{ar:"مبادئ الهندسة الكيميائية (CHE201)", en:"Principles of Chemical Engineering (CHE201)"}, {ar:"الديناميكا الحرارية — متزامن (CHE301)", en:"CHE Thermodynamics — concurrent (CHE301)"}], leadsTo:[{ar:"هندسة التفاعلات الكيميائية (CHE305)", en:"Chemical Reaction Engineering (CHE305)"}] },
+    hard:[
+      { title:{ar:"ثلاث طرق للانتقال، وثلاثة أسئلة", en:"Three modes, three questions"}, plain:{ar:"التوصيل: حرارة تنتقل خلال مادة ساكنة — اسأل عن الموصلية والسُّمك. الحمل: حرارة يحملها مائع متحرك — اسأل عن سرعة المائع ونوع سريانه. الإشعاع: حرارة تنتقل بلا وسط — اسأل عن درجة الحرارة المطلقة، فأثرها بالقوة الرابعة لا الأولى. حدّد الطريقة السائدة في مسألتك أولًا، فكل واحدة لها معادلتها.", en:"Conduction: heat through a stationary material — ask about conductivity and thickness. Convection: heat carried by moving fluid — ask about its speed and flow regime. Radiation: heat with no medium — ask about absolute temperature, whose effect is to the fourth power. Identify the dominant mode first."}, trap:{ar:"الطالب يخلط الحمل بالتوصيل لأن كليهما يحدث عند سطح. الفرق: هل المائع يتحرك؟", en:"Students confuse convection with conduction because both happen at a surface. The difference: is the fluid moving?"} },
+      { title:{ar:"الأرقام اللابعدية: لماذا نستعملها", en:"Dimensionless numbers: why we use them"}, plain:{ar:"عدد براندتل يقارن سرعة انتشار الزخم بسرعة انتشار الحرارة في المائع. وعدد نسلت يقارن انتقال الحرارة بالحمل مقابل التوصيل وحده. ولماذا نصنع أرقامًا بلا وحدات؟ لأنها تسمح بنقل نتيجة تجربة على أنبوب صغير في المعمل إلى أنبوب صناعي كبير — وهذا هو أساس تصميم المبادلات الحرارية كلها.", en:"The Prandtl number compares how fast momentum spreads in a fluid against how fast heat does. The Nusselt number compares convective heat transfer against conduction alone. Why make numbers without units? Because they let a result measured on a small laboratory tube transfer to a large industrial one."}, trap:{ar:"الطالب يحفظ الصيغ بلا معناها، فلا يعرف أي علاقة يستعمل حين تتغيّر ظروف المسألة.", en:"Students memorize the correlations without their meaning and can't choose one when conditions change."} }
+    ],
     resources:[
       { title:{ar:"Heat Transfer — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Heat Transfer — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105140", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوناندو داسغوبتا من معهد التقنية الهندي بخاراغبور — عميد البحث الممول سابقًا وزميل الأكاديمية الوطنية للهندسة، وله أكثر من ١٤٠ بحثًا محكّمًا. يبدأ بالمفاهيم والمعادلات الحاكمة ثم يتدرج إلى تصميم وحدات التبادل الحراري الصناعية فعلًا. مجاني بالتسجيل والتعلّم", en:"A complete course by Prof. Sunando DasGupta of IIT Kharagpur — formerly Dean of Sponsored Research, a Fellow of the National Academy of Engineering with over 140 peer-reviewed papers. It begins with concepts and governing equations and builds up to designing actual industrial heat transfer units. Free to enrol and learn from"} }
     ]
@@ -5236,6 +5405,11 @@ const COURSE_ENRICHMENT = {
       en:"A chemical plant is a network of pipes before anything else: every material moves between units by flow. Whoever understands friction losses picks the right pump; whoever doesn't buys one that either wastes power or doesn't suffice."
     },
     connections:{ leadsTo:[{ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operations (CHE302)"}] },
+    hard:[
+      { title:{ar:"رقم رينولدز: هل السريان صفائحي أم مضطرب؟", en:"Reynolds number: is the flow laminar or turbulent?"}, plain:{ar:"رقم رينولدز نسبة بين قوى العطالة (التي تدفع المائع للأمام) وقوى اللزوجة (التي تكبحه). فإن غلبت اللزوجة سار المائع في طبقات منتظمة — صفائحي. وإن غلبت العطالة تكسّرت الطبقات — مضطرب. وليس الأمر تصنيفًا نظريًا: كل معادلة تختارها بعدها، من فاقد الاحتكاك إلى انتقال الحرارة، تختلف بين الحالتين.", en:"The Reynolds number is the ratio of inertial forces pushing the fluid along to viscous forces holding it back. When viscosity wins, the fluid moves in orderly layers — laminar. When inertia wins, the layers break up — turbulent. Every equation you pick afterwards differs between the two."}, trap:{ar:"الطالب يحسب رينولدز ثم ينسى نتيجته ويستعمل معادلة الحالة الأخرى.", en:"Students compute Reynolds then forget the answer and use the other regime's equation."} },
+      { title:{ar:"معادلة برنولي: ثلاث طاقات تتبادل", en:"Bernoulli: three energies trading places"}, plain:{ar:"معادلة برنولي ليست صيغة تُحفظ بل جملة واحدة: طاقة المائع تنتقل بين ثلاثة أشكال — ضغط، وسرعة، وارتفاع — ومجموعها ثابت إن لم يكن هناك فقد. فحين تضيق الأنبوبة ترتفع السرعة، ومن أين تأتي؟ من الضغط، فينخفض. وهذا وحده يفسّر أغلب ما ستراه في المضخات والفوهات.", en:"Bernoulli isn't a formula to memorize but one sentence: a fluid's energy moves between three forms — pressure, velocity and elevation — and their sum is constant if nothing is lost. Narrow the pipe and velocity rises; where does it come from? From pressure, which drops."}, trap:{ar:"الطالب يطبّقها حيث يوجد فقد كبير أو مضخة، وهي لا تصلح هناك بلا حدود إضافية.", en:"Students apply it where there is significant loss or a pump, where it doesn't hold without extra terms."} },
+      { title:{ar:"التكهّف: عدوّ المضخات", en:"Cavitation: the pump's enemy"}, plain:{ar:"إن انخفض ضغط السائل عند مدخل المضخة تحت ضغط بخاره، غلى السائل في درجة حرارته العادية وتكوّنت فقاعات. ثم تنهار الفقاعات حين يرتفع الضغط ثانية، فتضرب سطح الريشة ضربات مجهرية متكررة تنخره. ولهذا تُصمَّم المضخات بحد أدنى للضغط عند المدخل — لا لأداء أفضل بل لبقاء المضخة نفسها.", en:"If the liquid's pressure at the pump inlet falls below its vapour pressure, it boils at ordinary temperature and bubbles form. They then collapse as pressure recovers, hammering the impeller surface and eating into it. Hence the minimum inlet pressure — not for performance but for the pump's survival."}, trap:{ar:"الطالب يظنه مشكلة أداء، وهو مشكلة تلف: المضخة تُستهلك من الداخل بلا إنذار.", en:"Students treat it as a performance issue; it is a damage issue — the pump is consumed from inside without warning."} }
+    ],
     resources:[
       { title:{ar:"Fluid Mechanics — NPTEL، معهد التقنية الهندي كانبور (مجاني)", en:"Fluid Mechanics — NPTEL, IIT Kanpur (Free)"}, url:"https://nptel.ac.in/courses/103104044", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل في ميكانيكا الموائع من معهد التقنية الهندي بكانبور، مقدَّم من قسم الهندسة الكيميائية نفسه — أي أن أمثلته وتطبيقاته من عالم الأنابيب والمضخات والمفاعلات لا من الطيران والسيارات. بالإنجليزية، وزر اقرأها بالعربية يعرّب الصفحة", en:"A complete fluid mechanics course from IIT Kanpur, delivered by the chemical engineering department itself — so its examples come from the world of pipes, pumps and reactors rather than aeronautics and cars"} }
     ]
@@ -5265,6 +5439,12 @@ const COURSE_ENRICHMENT = {
       en:"This is the course that teaches you to think like a chemical engineer: you draw a boundary around part of the plant and ask what enters and what leaves. Every specialized course after it — thermodynamics, heat and mass transfer, reactors — assumes you mastered that skill."
     },
     connections:{ requires:[{ar:"فيزياء عامة 2 (PHYS102)", en:"General Physics II (PHYS102)"}, {ar:"كيمياء عامة 2 (CHEM102)", en:"General Chemistry II (CHEM102)"}], leadsTo:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (CHE301)", en:"CHE Thermodynamics (CHE301)"}, {ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operation (CHE302)"}, {ar:"عمليات انتقال المادة (CHE303)", en:"Mass Transfer Operation (CHE303)"}] },
+    hard:[
+      { title:{ar:"تحويل الوحدات: اضرب في واحد", en:"Unit conversion: multiply by one"}, plain:{ar:"كل تحويل وحدة هو ضربٌ في الرقم واحد مكتوبًا بشكل آخر. فـ«١ ساعة = ٦٠ دقيقة» تعني أن (٦٠ دقيقة ÷ ١ ساعة) تساوي واحدًا. فاضرب بها متى شئت، ورتّبها بحيث تُختصر الوحدة التي تريد التخلص منها. اكتب الوحدات في كل خطوة كما تكتب الأرقام — إن اختُصرت وبقيت الوحدة المطلوبة فحسابك صحيح قبل أن تحسب.", en:"Every unit conversion is multiplying by the number one written differently. one hour equals sixty minutes means (60 min ÷ 1 hr) equals one. Multiply by it whenever you like, arranged so the unit you want gone cancels. Write the units at every step as you write the numbers."}, trap:{ar:"الطالب يحفظ معاملات التحويل بدل أن يبني الكسر، فيخطئ في اتجاه القسمة. اكتب الوحدات وتابع اختصارها.", en:"Students memorize conversion factors instead of building the fraction, then divide the wrong way. Write the units and watch them cancel."} },
+      { title:{ar:"ميزان المادة: ارسم الحدود أولًا", en:"Material balance: draw the boundary first"}, plain:{ar:"قبل أي معادلة، ارسم خطًّا حول الجزء الذي تحسبه وسمِّه. كل ما يعبر الخط داخلًا دخْل، وكل ما يعبره خارجًا خرْج. ثم: الداخل + المتولّد − الخارج − المستهلك = التراكم. وإن لم يكن هناك تفاعل فالمتولّد والمستهلك صفر، فتصير: الداخل = الخارج. أكثر الأخطاء ليست في المعادلة بل في حدود لم تُرسم.", en:"Before any equation, draw a line around the part you are accounting for and name it. Everything crossing in is input, everything crossing out is output. Then: in + generated − out − consumed = accumulation. With no reaction, generated and consumed are zero, so in = out."}, trap:{ar:"الطالب يبدأ بالأرقام قبل رسم الحدود، فيخلط بين تيار داخل النظام وتيار خارجه.", en:"Students start with numbers before drawing the boundary, then confuse a stream inside the system with one outside it."} },
+      { title:{ar:"درجات الحرية: هل المسألة قابلة للحل أصلًا؟", en:"Degrees of freedom: is the problem solvable at all?"}, plain:{ar:"قبل أن تحلّ، عُدّ: كم مجهولًا عندك؟ وكم معادلة مستقلة تستطيع كتابتها؟ الفرق بينهما هو درجات الحرية. إن كان صفرًا فالمسألة محلولة تمامًا. إن كان موجبًا فينقصك معطى ولن تصل مهما حاولت. وإن كان سالبًا ففي معطياتك تناقض. عشر ثوانٍ من العدّ توفّر ساعة من المحاولة في مسألة لا حلّ لها.", en:"Before solving, count: how many unknowns, and how many independent equations can you write? The difference is the degrees of freedom. Zero means fully determined. Positive means you are missing data and will never get there. Negative means your data contradicts itself."}, trap:{ar:"الطالب يبدأ الحل مباشرة فيدور ساعة في مسألة ناقصة المعطيات. عُدّ أولًا.", en:"Students start solving immediately and circle for an hour on an underspecified problem. Count first."} },
+      { title:{ar:"التدوير والتجاوز: ثلاثة موازين لا واحد", en:"Recycle and bypass: three balances, not one"}, plain:{ar:"حين يظهر خط تدوير في المخطط، لا تحاول كتابة ميزان واحد للمنظومة كلها. اكتب ثلاثة: ميزانًا على المنظومة الكاملة (يتجاهل التدوير لأنه داخلي)، وميزانًا على نقطة الخلط، وميزانًا على الوحدة نفسها. الميزان الشامل غالبًا أبسطها وأسرعها، وابدأ به دائمًا.", en:"When a recycle line appears, don't try one balance for the whole thing. Write three: one on the overall system (which ignores the recycle because it is internal), one on the mixing point, and one on the unit itself. The overall balance is usually the simplest — start there."}, trap:{ar:"الطالب يكتب ميزانًا واحدًا فيدخل التدوير في الحساب مرتين. التدوير داخلي في الميزان الشامل ولا يُحسب.", en:"Students write one balance and count the recycle twice. In the overall balance the recycle is internal and doesn't appear."} }
+    ],
     resources:[
       { title:{ar:"Material and Energy Balances — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Material and Energy Balances — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106076", lang:"en", reason:{ar:"مقرر أساسي للأستاذين شانكار نارسيمهان وتانماي باساك من معهد التقنية الهندي بمدراس، يغطي بالضبط ما يغطيه هذا المقرر: الوحدات والأبعاد، الحسابات الكيميائية القياسية، موازين المادة مع التدوير والتجاوز والتنقية، الاحتراق، سلوك الغاز المثالي، وموازين الطاقة وحرارة التفاعل والتكوين، وتحليل درجات الحرية. تنبيه على مستوى التحقق: تأكدنا من المقرر وأستاذيه من مصادر متعددة، وصفحة NPTEL منعت الفحص الآلي وقت الإضافة", en:"A foundational course by Professors Shankar Narasimhan and Tanmay Basak of IIT Madras covering exactly what this course covers: units and dimensions, stoichiometric calculations, material balances with recycle, bypass and purge, combustion, ideal gas behaviour, energy balances with heats of reaction and formation, and degree-of-freedom analysis. A note on verification: the course and its instructors were confirmed from several sources; the NPTEL page refused automated checking at the time of adding"} }
     ]
@@ -5280,6 +5460,10 @@ const COURSE_ENRICHMENT = {
       en:"The reactor is the heart of a chemical plant — where matter actually transforms, everything around it either preparing for it or separating its products. Which is why your plan makes it a prerequisite for process design, control and your capstone alike."
     },
     connections:{ requires:[{ar:"عمليات انتقال الحرارة (CHE302)", en:"Heat Transfer Operation (CHE302)"}, {ar:"عمليات انتقال المادة (CHE303)", en:"Mass Transfer Operation (CHE303)"}], leadsTo:[{ar:"ديناميكا العمليات والتحكم (CHE402)", en:"Process Dynamics and Control (CHE402)"}] },
+    hard:[
+      { title:{ar:"المفاعلات الثلاثة: ثلاث فلسفات", en:"The three reactors: three philosophies"}, plain:{ar:"المفاعل الدفعي: تملؤه، وتتركه يتفاعل، وتفرغه — التركيز يتغيّر مع الزمن لا مع المكان. مفاعل الخلط المستمر: يدخل ويخرج باستمرار، والخليط متجانس، فالتركيز في كل مكان مساوٍ للتركيز في المخرج. المفاعل الأنبوبي: يسير الخليط في أنبوب ويتفاعل وهو يمشي — فالتركيز يتغيّر مع المكان لا مع الزمن. اعرف أيها أمامك، فالمعادلة تتبع النوع.", en:"The batch reactor: fill, let it react, empty — concentration changes with time, not place. The continuous stirred tank: constant in and out, perfectly mixed, so concentration everywhere equals concentration at the exit. The plug flow reactor: the mixture travels down a tube reacting as it goes — concentration changes with place, not time."}, trap:{ar:"الطالب يستعمل معادلة الدفعي على المستمر لأن كليهما «خزّان». الفرق: هل يدخل ويخرج باستمرار؟", en:"Students use the batch equation on a CSTR because both are tanks. The difference: is there continuous flow in and out?"} },
+      { title:{ar:"ترتيب التفاعل يُقاس ولا يُشتق", en:"Reaction order is measured, not derived"}, plain:{ar:"ترتيب التفاعل ليس معاملات المعادلة الموزونة — إلا في التفاعلات الأولية وحدها. الترتيب يُستخرج من بيانات تجريبية: تقيس التركيز مع الزمن ثم ترى أي رسم بياني يعطي خطًّا مستقيمًا، فيدلك على الترتيب. من يقرأ الترتيب من المعادلة الموزونة يخطئ في أغلب التفاعلات الحقيقية.", en:"Reaction order is not the stoichiometric coefficients — except for elementary reactions alone. Order comes from experimental data: measure concentration against time and see which plot gives a straight line. Reading order off the balanced equation is wrong for most real reactions."}, trap:{ar:"الطالب يقرأ الترتيب من المعادلة الموزونة مباشرة، وهي عادة أشيع خطأ في المقرر كله.", en:"Students read the order straight off the balanced equation — the commonest error in the whole course."} }
+    ],
     resources:[
       { title:{ar:"Chemical Reaction Engineering 1 (Homogeneous Reactors) — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Chemical Reaction Engineering 1 — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106116", lang:"en", reason:{ar:"مقرر كامل للأستاذ ك. كريشنايا من معهد التقنية الهندي بمدراس في ست وأربعين محاضرة، يغطي حركية التفاعلات، تفسير بيانات المفاعل الدفعي، تصميم المفاعلات المثالية (الدفعي والخلط التام والدفق المكبسي)، والمفاعلات غير الأيزوثيرمية والأديباتية. تنبيه على مستوى التحقق: تأكدنا من وجود المقرر واسم أستاذه وجامعته من مصادر متعددة، لكن صفحة NPTEL منعت الفحص الآلي وقت الإضافة — فإن لم يفتح الرابط أخبرنا عبر زر اقتراح المرجع", en:"A complete course by Prof. K. Krishnaiah of IIT Madras in forty-six lectures covering reaction kinetics, interpreting batch reactor data, designing ideal reactors (batch, mixed flow, plug flow), and non-isothermal and adiabatic reactors. A note on verification: we confirmed the course, its instructor and institution from several sources, but the NPTEL page refused automated checking at the time of adding — if the link does not open, tell us through the suggest-a-reference button"} }
     ]
@@ -6385,6 +6569,12 @@ const COURSE_ENRICHMENT = {
       en:"This is the first truly specialized course in your programme, and it teaches you to think like a chemical engineer: draw a boundary around part of the plant and ask what enters and what leaves. Every course after it assumes you mastered it."
     },
     connections:{ leadsTo:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (EN8701)", en:"Chemical Engineering Thermodynamics (EN8701)"}] },
+    hard:[
+      { title:{ar:"تحويل الوحدات: اضرب في واحد", en:"Unit conversion: multiply by one"}, plain:{ar:"كل تحويل وحدة هو ضربٌ في الرقم واحد مكتوبًا بشكل آخر. فـ«١ ساعة = ٦٠ دقيقة» تعني أن (٦٠ دقيقة ÷ ١ ساعة) تساوي واحدًا. فاضرب بها متى شئت، ورتّبها بحيث تُختصر الوحدة التي تريد التخلص منها. اكتب الوحدات في كل خطوة كما تكتب الأرقام — إن اختُصرت وبقيت الوحدة المطلوبة فحسابك صحيح قبل أن تحسب.", en:"Every unit conversion is multiplying by the number one written differently. one hour equals sixty minutes means (60 min ÷ 1 hr) equals one. Multiply by it whenever you like, arranged so the unit you want gone cancels. Write the units at every step as you write the numbers."}, trap:{ar:"الطالب يحفظ معاملات التحويل بدل أن يبني الكسر، فيخطئ في اتجاه القسمة. اكتب الوحدات وتابع اختصارها.", en:"Students memorize conversion factors instead of building the fraction, then divide the wrong way. Write the units and watch them cancel."} },
+      { title:{ar:"ميزان المادة: ارسم الحدود أولًا", en:"Material balance: draw the boundary first"}, plain:{ar:"قبل أي معادلة، ارسم خطًّا حول الجزء الذي تحسبه وسمِّه. كل ما يعبر الخط داخلًا دخْل، وكل ما يعبره خارجًا خرْج. ثم: الداخل + المتولّد − الخارج − المستهلك = التراكم. وإن لم يكن هناك تفاعل فالمتولّد والمستهلك صفر، فتصير: الداخل = الخارج. أكثر الأخطاء ليست في المعادلة بل في حدود لم تُرسم.", en:"Before any equation, draw a line around the part you are accounting for and name it. Everything crossing in is input, everything crossing out is output. Then: in + generated − out − consumed = accumulation. With no reaction, generated and consumed are zero, so in = out."}, trap:{ar:"الطالب يبدأ بالأرقام قبل رسم الحدود، فيخلط بين تيار داخل النظام وتيار خارجه.", en:"Students start with numbers before drawing the boundary, then confuse a stream inside the system with one outside it."} },
+      { title:{ar:"درجات الحرية: هل المسألة قابلة للحل أصلًا؟", en:"Degrees of freedom: is the problem solvable at all?"}, plain:{ar:"قبل أن تحلّ، عُدّ: كم مجهولًا عندك؟ وكم معادلة مستقلة تستطيع كتابتها؟ الفرق بينهما هو درجات الحرية. إن كان صفرًا فالمسألة محلولة تمامًا. إن كان موجبًا فينقصك معطى ولن تصل مهما حاولت. وإن كان سالبًا ففي معطياتك تناقض. عشر ثوانٍ من العدّ توفّر ساعة من المحاولة في مسألة لا حلّ لها.", en:"Before solving, count: how many unknowns, and how many independent equations can you write? The difference is the degrees of freedom. Zero means fully determined. Positive means you are missing data and will never get there. Negative means your data contradicts itself."}, trap:{ar:"الطالب يبدأ الحل مباشرة فيدور ساعة في مسألة ناقصة المعطيات. عُدّ أولًا.", en:"Students start solving immediately and circle for an hour on an underspecified problem. Count first."} },
+      { title:{ar:"التدوير والتجاوز: ثلاثة موازين لا واحد", en:"Recycle and bypass: three balances, not one"}, plain:{ar:"حين يظهر خط تدوير في المخطط، لا تحاول كتابة ميزان واحد للمنظومة كلها. اكتب ثلاثة: ميزانًا على المنظومة الكاملة (يتجاهل التدوير لأنه داخلي)، وميزانًا على نقطة الخلط، وميزانًا على الوحدة نفسها. الميزان الشامل غالبًا أبسطها وأسرعها، وابدأ به دائمًا.", en:"When a recycle line appears, don't try one balance for the whole thing. Write three: one on the overall system (which ignores the recycle because it is internal), one on the mixing point, and one on the unit itself. The overall balance is usually the simplest — start there."}, trap:{ar:"الطالب يكتب ميزانًا واحدًا فيدخل التدوير في الحساب مرتين. التدوير داخلي في الميزان الشامل ولا يُحسب.", en:"Students write one balance and count the recycle twice. In the overall balance the recycle is internal and doesn't appear."} }
+    ],
     resources:[
       { title:{ar:"Material and Energy Balances — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Material and Energy Balances — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106076", lang:"en", reason:{ar:"مقرر أساسي للأستاذين شانكار نارسيمهان وتانماي باساك: الوحدات والأبعاد، الحسابات الكيميائية، موازين المادة مع التدوير والتجاوز والتنقية، الاحتراق، وموازين الطاقة وحرارة التفاعل، وتحليل درجات الحرية. تنبيه على مستوى التحقق: صفحة NPTEL منعت الفحص الآلي، وتأكدنا من المقرر وأستاذيه من مصادر متعددة", en:"A foundational course by Professors Shankar Narasimhan and Tanmay Basak: units and dimensions, stoichiometry, material balances with recycle, bypass and purge, combustion, energy balances and heats of reaction, and degree-of-freedom analysis. Verification note: the NPTEL page refused automated checking; the course and instructors were confirmed from several sources"} }
     ]
@@ -6398,6 +6588,11 @@ const COURSE_ENRICHMENT = {
       ar:"المصنع الكيميائي شبكة أنابيب قبل كل شيء. ومن يفهم فواقد الاحتكاك يختار المضخة الصحيحة، ومن لا يفهمها يشتري مضخة تستهلك أضعافًا أو لا تكفي أصلًا.",
       en:"A chemical plant is a network of pipes before anything else. Whoever understands friction losses picks the right pump; whoever doesn't buys one that either wastes power or doesn't suffice."
     },
+    hard:[
+      { title:{ar:"رقم رينولدز: هل السريان صفائحي أم مضطرب؟", en:"Reynolds number: is the flow laminar or turbulent?"}, plain:{ar:"رقم رينولدز نسبة بين قوى العطالة (التي تدفع المائع للأمام) وقوى اللزوجة (التي تكبحه). فإن غلبت اللزوجة سار المائع في طبقات منتظمة — صفائحي. وإن غلبت العطالة تكسّرت الطبقات — مضطرب. وليس الأمر تصنيفًا نظريًا: كل معادلة تختارها بعدها، من فاقد الاحتكاك إلى انتقال الحرارة، تختلف بين الحالتين.", en:"The Reynolds number is the ratio of inertial forces pushing the fluid along to viscous forces holding it back. When viscosity wins, the fluid moves in orderly layers — laminar. When inertia wins, the layers break up — turbulent. Every equation you pick afterwards differs between the two."}, trap:{ar:"الطالب يحسب رينولدز ثم ينسى نتيجته ويستعمل معادلة الحالة الأخرى.", en:"Students compute Reynolds then forget the answer and use the other regime's equation."} },
+      { title:{ar:"معادلة برنولي: ثلاث طاقات تتبادل", en:"Bernoulli: three energies trading places"}, plain:{ar:"معادلة برنولي ليست صيغة تُحفظ بل جملة واحدة: طاقة المائع تنتقل بين ثلاثة أشكال — ضغط، وسرعة، وارتفاع — ومجموعها ثابت إن لم يكن هناك فقد. فحين تضيق الأنبوبة ترتفع السرعة، ومن أين تأتي؟ من الضغط، فينخفض. وهذا وحده يفسّر أغلب ما ستراه في المضخات والفوهات.", en:"Bernoulli isn't a formula to memorize but one sentence: a fluid's energy moves between three forms — pressure, velocity and elevation — and their sum is constant if nothing is lost. Narrow the pipe and velocity rises; where does it come from? From pressure, which drops."}, trap:{ar:"الطالب يطبّقها حيث يوجد فقد كبير أو مضخة، وهي لا تصلح هناك بلا حدود إضافية.", en:"Students apply it where there is significant loss or a pump, where it doesn't hold without extra terms."} },
+      { title:{ar:"التكهّف: عدوّ المضخات", en:"Cavitation: the pump's enemy"}, plain:{ar:"إن انخفض ضغط السائل عند مدخل المضخة تحت ضغط بخاره، غلى السائل في درجة حرارته العادية وتكوّنت فقاعات. ثم تنهار الفقاعات حين يرتفع الضغط ثانية، فتضرب سطح الريشة ضربات مجهرية متكررة تنخره. ولهذا تُصمَّم المضخات بحد أدنى للضغط عند المدخل — لا لأداء أفضل بل لبقاء المضخة نفسها.", en:"If the liquid's pressure at the pump inlet falls below its vapour pressure, it boils at ordinary temperature and bubbles form. They then collapse as pressure recovers, hammering the impeller surface and eating into it. Hence the minimum inlet pressure — not for performance but for the pump's survival."}, trap:{ar:"الطالب يظنه مشكلة أداء، وهو مشكلة تلف: المضخة تُستهلك من الداخل بلا إنذار.", en:"Students treat it as a performance issue; it is a damage issue — the pump is consumed from inside without warning."} }
+    ],
     resources:[
       { title:{ar:"Fluid Mechanics — NPTEL، معهد التقنية الهندي كانبور (مجاني)", en:"Fluid Mechanics — NPTEL, IIT Kanpur (Free)"}, url:"https://nptel.ac.in/courses/103104044", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل مقدَّم من قسم الهندسة الكيميائية نفسه — فأمثلته من عالم الأنابيب والمضخات والمفاعلات لا من الطيران والسيارات", en:"A complete course delivered by the chemical engineering department itself — its examples come from pipes, pumps and reactors rather than aeronautics"} }
     ]
@@ -6439,6 +6634,10 @@ const COURSE_ENRICHMENT = {
       ar:"لا يمكن التحكم فيما لا يُقاس، ولا يُوثق بقياس من جهاز غير معاير. ومن يفهم كيف يعمل المجسّ يعرف متى يكذب — وهذه أول مهارة يُسأل عنها مهندس العمليات في الموقع.",
       en:"You cannot control what you don't measure, and no measurement from an uncalibrated instrument is trustworthy. Whoever understands how a sensor works knows when it lies — the first skill a process engineer is asked for on site."
     },
+    hard:[
+      { title:{ar:"لماذا نحوّل إلى مجال لابلاس", en:"Why we transform into the Laplace domain"}, plain:{ar:"لأن معادلة تفاضلية في مجال الزمن تصير معادلة جبرية عادية في مجال لابلاس. والجبر أسهل من التفاضل بمراحل. فنحوّل المسألة، ونحلّها بالجمع والقسمة، ثم نعود بها إلى الزمن. ليس تعقيدًا مضافًا بل طريق مختصر — كمن يضرب بالأس بدل أن يضرب مرات متتالية.", en:"Because a differential equation in the time domain becomes ordinary algebra in the Laplace domain, and algebra is far easier than calculus. So we transform the problem, solve it by adding and dividing, then transform back. It isn't added complexity but a shortcut."}, trap:{ar:"الطالب يحفظ جدول التحويلات بلا فهم سببه، فيراه عبئًا لا اختصارًا.", en:"Students memorize the transform table without its purpose and see a burden rather than a shortcut."} },
+      { title:{ar:"المتحكم PID: ثلاثة تسأل ثلاثة أسئلة", en:"PID: three terms asking three questions"}, plain:{ar:"الحد التناسبي يسأل: كم يبعد الوضع الحالي عن المطلوب الآن؟ والتكاملي يسأل: كم تراكم الخطأ منذ البداية؟ والتفاضلي يسأل: بأي سرعة يتغيّر الخطأ الآن؟ فالأول يستجيب للحاضر، والثاني للماضي، والثالث يتوقّع المستقبل. وضبط المتحكم هو موازنة بين هذه الأسئلة الثلاثة.", en:"The proportional term asks: how far is the current state from the target right now? The integral asks: how much error has accumulated since the start? The derivative asks: how fast is the error changing? The first answers to the present, the second to the past, the third anticipates the future."}, trap:{ar:"الطالب يحفظ الحدود الثلاثة بلا معناها الزمني، فلا يعرف أيها يزيد حين يتذبذب النظام.", en:"Students memorize the three terms without their sense of time, then can't tell which to raise when the system oscillates."} }
+    ],
     resources:[
       { title:{ar:"Chemical Process Control — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Process Control — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101142", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في التحكم في العمليات لا في الأجهزة والقياس. أدرجناه لأن حلقات التحكم والمتحكمات هي النصف الثاني من مقررك، وهي مشروحة فيه بعمق. أما مبادئ القياس والمعايرة وأنواع المجسّات فتبقى من مرجع مقررك ومعمله", en:"Stated plainly: a process control course rather than one on instrumentation and measurement. Control loops and controllers are the second half of your course and are covered in depth here"} }
     ]
@@ -6466,6 +6665,10 @@ const COURSE_ENRICHMENT = {
       en:"This course paves the way for chemical engineering thermodynamics in term five. The difference is that this handles pure substances and cycles, while that moves to mixtures and phase equilibria — the basis of every separation unit."
     },
     connections:{ leadsTo:[{ar:"الديناميكا الحرارية للهندسة الكيميائية (EN8701)", en:"Chemical Engineering Thermodynamics (EN8701)"}] },
+    hard:[
+      { title:{ar:"النظام والحدود: ما الذي تحسبه بالضبط؟", en:"System and boundary: what exactly are you accounting for?"}, plain:{ar:"قبل أي مسألة ديناميكا، حدّد ثلاثة أشياء: أين حدود نظامك؟ وهل يعبرها مادة (نظام مفتوح) أم لا (مغلق)؟ وهل يعبرها حرارة أو شغل؟ اختلاف الجواب يغيّر المعادلة كلها. وأكثر أخطاء الديناميكا ليست في الرياضيات بل في نظام لم يُحدَّد.", en:"Before any thermodynamics problem, settle three things: where is your system's boundary, does matter cross it (open) or not (closed), and do heat or work cross it? The answer changes the whole equation. Most thermodynamics errors are not mathematical but an undefined system."}, trap:{ar:"الطالب يبدأ بالمعادلة قبل تحديد النظام، فيستعمل صيغة النظام المغلق على نظام يجري فيه تيار.", en:"Students reach for the equation before defining the system, applying a closed-system form to a flowing one."} },
+      { title:{ar:"الحرارة المحسوسة والكامنة: الفرق في الميزان الحراري", en:"Sensible and latent heat: the difference that decides the balance"}, plain:{ar:"الحرارة المحسوسة ترفع درجة الحرارة ولا تغيّر الطور — وتُحسب بـ m·cp·ΔT. والكامنة تغيّر الطور ولا ترفع الحرارة — الماء عند مئة درجة يغلي ويبقى عند مئة حتى يتبخّر كله. فإن مرّت مسألتك بتغيّر طور، فحسابها جزآن لا جزء واحد، والخلط بينهما يعطيك رقمًا بعيدًا جدًا لا قريبًا.", en:"Sensible heat raises temperature without changing phase — m·cp·ΔT. Latent heat changes phase without raising temperature: water at a hundred degrees boils and stays at a hundred until it has all vaporized. If your problem crosses a phase change, its calculation is two parts, not one."}, trap:{ar:"الطالب يحسب m·cp·ΔT عبر تغيّر الطور فيحصل على رقم بعيد جدًا عن الصحيح.", en:"Students apply m·cp·ΔT straight through a phase change and land far from the right answer."} }
+    ],
     resources:[
       { title:{ar:"Chemical Engineering Thermodynamics — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Engineering Thermodynamics — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101004", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في الديناميكا الحرارية للهندسة الكيميائية، وهو أعمق من مقررك التمهيدي هنا. خذ منه فصوله الأولى — القانونين الأول والثاني والخواص الديناميكية — ودع اتزان الأطوار والخلائط لمقرر EN8701", en:"Stated plainly: a chemical engineering thermodynamics course, deeper than your introductory one here. Take its opening chapters — the two laws and thermodynamic properties — and leave phase equilibria and mixtures to EN8701"} }
     ]
@@ -6479,6 +6682,10 @@ const COURSE_ENRICHMENT = {
       ar:"المبادل الحراري أكثر معدة تتكرر في أي مصنع كيميائي. ومن يحسن حسابه يوفّر على المنشأة طاقةً كل يوم، ومن يخطئ فيه يدفع الفرق طوال عمر الوحدة.",
       en:"The heat exchanger is the most repeated equipment in any chemical plant. Whoever sizes it well saves energy daily; whoever errs pays the difference for the unit's life."
     },
+    hard:[
+      { title:{ar:"ثلاث طرق للانتقال، وثلاثة أسئلة", en:"Three modes, three questions"}, plain:{ar:"التوصيل: حرارة تنتقل خلال مادة ساكنة — اسأل عن الموصلية والسُّمك. الحمل: حرارة يحملها مائع متحرك — اسأل عن سرعة المائع ونوع سريانه. الإشعاع: حرارة تنتقل بلا وسط — اسأل عن درجة الحرارة المطلقة، فأثرها بالقوة الرابعة لا الأولى. حدّد الطريقة السائدة في مسألتك أولًا، فكل واحدة لها معادلتها.", en:"Conduction: heat through a stationary material — ask about conductivity and thickness. Convection: heat carried by moving fluid — ask about its speed and flow regime. Radiation: heat with no medium — ask about absolute temperature, whose effect is to the fourth power. Identify the dominant mode first."}, trap:{ar:"الطالب يخلط الحمل بالتوصيل لأن كليهما يحدث عند سطح. الفرق: هل المائع يتحرك؟", en:"Students confuse convection with conduction because both happen at a surface. The difference: is the fluid moving?"} },
+      { title:{ar:"الأرقام اللابعدية: لماذا نستعملها", en:"Dimensionless numbers: why we use them"}, plain:{ar:"عدد براندتل يقارن سرعة انتشار الزخم بسرعة انتشار الحرارة في المائع. وعدد نسلت يقارن انتقال الحرارة بالحمل مقابل التوصيل وحده. ولماذا نصنع أرقامًا بلا وحدات؟ لأنها تسمح بنقل نتيجة تجربة على أنبوب صغير في المعمل إلى أنبوب صناعي كبير — وهذا هو أساس تصميم المبادلات الحرارية كلها.", en:"The Prandtl number compares how fast momentum spreads in a fluid against how fast heat does. The Nusselt number compares convective heat transfer against conduction alone. Why make numbers without units? Because they let a result measured on a small laboratory tube transfer to a large industrial one."}, trap:{ar:"الطالب يحفظ الصيغ بلا معناها، فلا يعرف أي علاقة يستعمل حين تتغيّر ظروف المسألة.", en:"Students memorize the correlations without their meaning and can't choose one when conditions change."} }
+    ],
     resources:[
       { title:{ar:"Heat Transfer — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Heat Transfer — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105140", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوناندو داسغوبتا، زميل الأكاديمية الوطنية للهندسة وله أكثر من ١٤٠ بحثًا محكّمًا. يبدأ بالمعادلات الحاكمة ويتدرج إلى تصميم وحدات التبادل الحراري الصناعية", en:"A complete course by Prof. Sunando DasGupta, a Fellow of the National Academy of Engineering with over 140 papers. It begins with governing equations and builds to designing industrial heat exchange units"} }
     ]
@@ -6492,6 +6699,10 @@ const COURSE_ENRICHMENT = {
       ar:"المفاعل هو قلب المصنع — الموضع الذي تتحول فيه المادة فعلًا، وكل ما حوله تجهيز له أو فصل لنواتجه.",
       en:"The reactor is the heart of the plant — where matter actually transforms, everything around it either preparing for it or separating its products."
     },
+    hard:[
+      { title:{ar:"المفاعلات الثلاثة: ثلاث فلسفات", en:"The three reactors: three philosophies"}, plain:{ar:"المفاعل الدفعي: تملؤه، وتتركه يتفاعل، وتفرغه — التركيز يتغيّر مع الزمن لا مع المكان. مفاعل الخلط المستمر: يدخل ويخرج باستمرار، والخليط متجانس، فالتركيز في كل مكان مساوٍ للتركيز في المخرج. المفاعل الأنبوبي: يسير الخليط في أنبوب ويتفاعل وهو يمشي — فالتركيز يتغيّر مع المكان لا مع الزمن. اعرف أيها أمامك، فالمعادلة تتبع النوع.", en:"The batch reactor: fill, let it react, empty — concentration changes with time, not place. The continuous stirred tank: constant in and out, perfectly mixed, so concentration everywhere equals concentration at the exit. The plug flow reactor: the mixture travels down a tube reacting as it goes — concentration changes with place, not time."}, trap:{ar:"الطالب يستعمل معادلة الدفعي على المستمر لأن كليهما «خزّان». الفرق: هل يدخل ويخرج باستمرار؟", en:"Students use the batch equation on a CSTR because both are tanks. The difference: is there continuous flow in and out?"} },
+      { title:{ar:"ترتيب التفاعل يُقاس ولا يُشتق", en:"Reaction order is measured, not derived"}, plain:{ar:"ترتيب التفاعل ليس معاملات المعادلة الموزونة — إلا في التفاعلات الأولية وحدها. الترتيب يُستخرج من بيانات تجريبية: تقيس التركيز مع الزمن ثم ترى أي رسم بياني يعطي خطًّا مستقيمًا، فيدلك على الترتيب. من يقرأ الترتيب من المعادلة الموزونة يخطئ في أغلب التفاعلات الحقيقية.", en:"Reaction order is not the stoichiometric coefficients — except for elementary reactions alone. Order comes from experimental data: measure concentration against time and see which plot gives a straight line. Reading order off the balanced equation is wrong for most real reactions."}, trap:{ar:"الطالب يقرأ الترتيب من المعادلة الموزونة مباشرة، وهي عادة أشيع خطأ في المقرر كله.", en:"Students read the order straight off the balanced equation — the commonest error in the whole course."} }
+    ],
     resources:[
       { title:{ar:"Chemical Reaction Engineering 1 — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Chemical Reaction Engineering 1 — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106116", lang:"en", reason:{ar:"مقرر كامل للأستاذ ك. كريشنايا في ست وأربعين محاضرة: حركية التفاعلات، تفسير بيانات المفاعل الدفعي، تصميم المفاعلات المثالية، والمفاعلات غير الأيزوثيرمية. تنبيه على مستوى التحقق: صفحة NPTEL منعت الفحص الآلي وقت الإضافة", en:"A complete course by Prof. K. Krishnaiah in forty-six lectures: reaction kinetics, interpreting batch reactor data, ideal reactor design, and non-isothermal reactors. Verification note: the NPTEL page refused automated checking"} }
     ]
@@ -6506,6 +6717,10 @@ const COURSE_ENRICHMENT = {
       en:"Phase equilibrium is what makes distillation, absorption and extraction possible at all — this course is the ground every separation unit you design stands on."
     },
     connections:{ requires:[{ar:"الديناميكا الحرارية (EN7919)", en:"Thermodynamics (EN7919)"}] },
+    hard:[
+      { title:{ar:"النظام والحدود: ما الذي تحسبه بالضبط؟", en:"System and boundary: what exactly are you accounting for?"}, plain:{ar:"قبل أي مسألة ديناميكا، حدّد ثلاثة أشياء: أين حدود نظامك؟ وهل يعبرها مادة (نظام مفتوح) أم لا (مغلق)؟ وهل يعبرها حرارة أو شغل؟ اختلاف الجواب يغيّر المعادلة كلها. وأكثر أخطاء الديناميكا ليست في الرياضيات بل في نظام لم يُحدَّد.", en:"Before any thermodynamics problem, settle three things: where is your system's boundary, does matter cross it (open) or not (closed), and do heat or work cross it? The answer changes the whole equation. Most thermodynamics errors are not mathematical but an undefined system."}, trap:{ar:"الطالب يبدأ بالمعادلة قبل تحديد النظام، فيستعمل صيغة النظام المغلق على نظام يجري فيه تيار.", en:"Students reach for the equation before defining the system, applying a closed-system form to a flowing one."} },
+      { title:{ar:"الحرارة المحسوسة والكامنة: الفرق في الميزان الحراري", en:"Sensible and latent heat: the difference that decides the balance"}, plain:{ar:"الحرارة المحسوسة ترفع درجة الحرارة ولا تغيّر الطور — وتُحسب بـ m·cp·ΔT. والكامنة تغيّر الطور ولا ترفع الحرارة — الماء عند مئة درجة يغلي ويبقى عند مئة حتى يتبخّر كله. فإن مرّت مسألتك بتغيّر طور، فحسابها جزآن لا جزء واحد، والخلط بينهما يعطيك رقمًا بعيدًا جدًا لا قريبًا.", en:"Sensible heat raises temperature without changing phase — m·cp·ΔT. Latent heat changes phase without raising temperature: water at a hundred degrees boils and stays at a hundred until it has all vaporized. If your problem crosses a phase change, its calculation is two parts, not one."}, trap:{ar:"الطالب يحسب m·cp·ΔT عبر تغيّر الطور فيحصل على رقم بعيد جدًا عن الصحيح.", en:"Students apply m·cp·ΔT straight through a phase change and land far from the right answer."} }
+    ],
     resources:[
       { title:{ar:"Chemical Engineering Thermodynamics — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Engineering Thermodynamics — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101004", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للدكتور سانديب روي وله كتاب إلكتروني مرافق نشرته NPTEL: القانونان الأول والثاني، الخواص الديناميكية للموائع الحقيقية، واتزان الأطوار", en:"A complete course by Dr. Sandip Roy with a companion e-book published by NPTEL: the first and second laws, thermodynamic properties of real fluids, and phase equilibria"} }
     ]
@@ -7885,6 +8100,10 @@ const COURSE_ENRICHMENT = {
       ar:"كل خوارزمية، كل قاعدة بيانات، وكل شبكة حاسوبية مبنية فعليًا على مفاهيم هذي المادة (المنطق والرسوم البيانية تحديدًا) — أساس صامت خلف كل مادة حاسب قادمة تقريبًا.",
       en:"Every algorithm, every database, and every computer network is actually built on this course's concepts (logic and graphs specifically) — a silent foundation behind almost every upcoming CS course."
     },
+    hard:[
+      { title:{ar:"لماذا يدرس طالب الحاسب رياضيات متقطعة", en:"Why a computing student studies discrete mathematics"}, plain:{ar:"لأن الحاسوب لا يعرف المتصل: لا يعرف نصف بت ولا ثلث حلقة. كل ما فيه منفصل ومعدود — والرياضيات المتقطعة هي رياضيات المعدود. المنطق الذي تدرسه هنا هو نفسه شروط الـ if، والمجموعات هي نفسها قواعد البيانات، والرسوم البيانية هي نفسها الشبكات.", en:"Because a computer knows nothing continuous: no half a bit, no third of a loop. Everything in it is separate and countable — and discrete mathematics is the mathematics of the countable. The logic here is the same as an if condition; sets are databases; graphs are networks."}, trap:{ar:"الطالب يراها مادة مجرّدة بلا صلة بالبرمجة، فيحفظها ثم ينساها — ثم يقابلها في الخوارزميات ولا يعرفها.", en:"Students see it as abstract and unrelated to programming, memorize it, forget it — then meet it again in algorithms unrecognized."} },
+      { title:{ar:"الاستقراء الرياضي: أثبت الأولى ثم الخطوة", en:"Induction: prove the first, then the step"}, plain:{ar:"الاستقراء يشبه الدومينو تمامًا: تُثبت أن أول قطعة تسقط، ثم تُثبت أن أي قطعة تسقط تُسقط التي بعدها. فتسقط السلسلة كلها بلا أن تجرّب كل قطعة. وهذا هو كل الاستقراء: حالة أساس، وخطوة تنتقل من n إلى n+1.", en:"Induction is exactly dominoes: prove the first tile falls, then prove any falling tile knocks over the next. The whole line falls without testing each tile. That is all induction is: a base case and a step from n to n+1."}, trap:{ar:"الطالب يحفظ صيغة البرهان بلا فهم الفكرة، فيعجز حين تتغيّر صياغة السؤال.", en:"Students memorize the proof's shape without the idea, then fail when the question is phrased differently."} }
+    ],
     resources:[
       { title:{ar:"الرياضيات المتقطعة CS201 (يوتيوب، ٢٠ محاضرة، مجاني)", en:"Discrete Mathematics CS201 (YouTube, 20 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLtqeb2-_b-2BkG8-inm5ho_W7fZTZHrVt", reason:{ar:"سلسلة عربية كاملة، موجّهة تحديدًا لطلاب علوم الحاسب (لا الرياضيات النظرية العامة)، تغطي المنطق والمجموعات والرسوم البيانية", en:"A complete Arabic series aimed specifically at CS students (not general theoretical math), covering logic, sets, and graphs"} }
     ]
@@ -7994,6 +8213,11 @@ const COURSE_ENRICHMENT = {
       en:"Every later programming course in the major (all the way to the graduation project) is built on top of this course's fundamentals specifically — the most important time investment in your first year."
     },
     connections:{ requires:[{ar:"مقدمة في الحاسب (COMP 111)", en:"Intro to Computers (COMP 111)"}], leadsTo:[{ar:"البرمجة 2 (COMP 213)", en:"Programming 2 (COMP 213)"}] },
+    hard:[
+      { title:{ar:"المتغيّر ليس صندوقًا، بل عنوانًا", en:"A variable isn't a box, it's an address"}, plain:{ar:"الشائع أن تتخيّل المتغيّر صندوقًا تضع فيه قيمة. والأدق أنه اسم لموضع في الذاكرة. ولهذا حين تكتب b = a فأنت تنسخ ما في موضع a إلى موضع b — لا تربط الاثنين. غيّر a بعدها فلن يتغيّر b، لأنهما موضعان مختلفان منذ البداية.", en:"The common picture is a box holding a value. More precisely it is a name for a place in memory. So b = a copies what is in a's place into b's — it does not link them. Change a afterwards and b stays as it was."}, trap:{ar:"الطالب يظن أن الإسناد يربط المتغيّرين، فيتفاجأ أن تغيير أحدهما لم يؤثر في الآخر. تخيّلها نسخًا لا وصلًا.", en:"Students assume assignment links the two, then are surprised the other didn't change. Picture copying, not connecting."} },
+      { title:{ar:"الحلقة تُقرأ بثلاثة أسئلة", en:"A loop is read with three questions"}, plain:{ar:"أي حلقة مهما بدت معقّدة تُفهم بثلاثة أسئلة: من أين تبدأ؟ ومتى تتوقف؟ وكيف تتقدّم في كل دورة؟ اكتب الأسئلة الثلاثة على الورق بجوار الحلقة قبل أن تحاول فهم ما بداخلها، وستجد أن نصف الغموض كان في الإطار لا في المحتوى.", en:"Any loop, however tangled it looks, is understood with three questions: where does it start, when does it stop, and how does it advance each pass? Write the three beside the loop before trying to read its body."}, trap:{ar:"الطالب يبدأ بقراءة جسم الحلقة فيضيع. ابدأ بالإطار: البداية والشرط والخطوة.", en:"Students start by reading the loop's body and get lost. Start with the frame: start, condition, step."} },
+      { title:{ar:"تتبّع الشيفرة بالورقة أسرع من تشغيلها", en:"Tracing on paper beats running it"}, plain:{ar:"حين لا تعمل شيفرتك، لا تغيّر أسطرًا عشوائيًا وتعيد التشغيل. ارسم جدولًا بأعمدة بعدد متغيّراتك، ونفّذ الشيفرة بيدك سطرًا سطرًا واكتب قيمة كل متغيّر بعد كل سطر. ستجد موضع الخطأ في دقائق — والأهم أنك ستفهم لماذا أخطأ.", en:"When your code doesn't work, don't change lines at random and re-run. Draw a table with a column per variable and execute the code by hand, line by line, writing each value. You'll find the fault in minutes — and understand why."}, trap:{ar:"التجريب العشوائي قد يُصلح العطل بلا فهم، فيتكرر في الاختبار حيث لا حاسوب معك.", en:"Random trial may fix the fault without understanding, and it returns in the exam where there is no computer."} }
+    ],
     resources:[
       { title:{ar:"دورة C++ الرسمية من Google (عربي)", en:"Google's Official C++ Course (Arabic)"}, url:"https://developers.google.com/edu/c++?hl=ar", reason:{ar:"مصدر رسمي من Google، لا قناة غير موثوقة، ويغطي أساسيات البرمجة بالترتيب من الصفر", en:"An official Google resource, not an unverified channel, covering programming fundamentals from scratch in order"} }
     ]
@@ -10767,6 +10991,10 @@ function escapeHtml(str){
    are used rather than by where they happened to be built.
    ============================================================ */
 let toolsCourseId = null;
+/* Which group of tools is showing. Four short tabs rather than four sections
+   stacked: the screen exists to shorten a journey, and one that has to be
+   scrolled has already failed at that. */
+let toolsTab = "course";
 
 /* The three things a student returns to all week. Kept in memory rather than
    stored: a list that survives a reset would be a record of behaviour, and we
@@ -10852,6 +11080,85 @@ function openQuickSheet(items, courseId){
     close(()=>{ activeTab = "tools"; renderTools(); });
   });
 }
+/* What the app is using of the device, and of what. The browser reports one
+   total; the breakdown is measured from our own records, so the two are
+   labelled separately rather than pretending to be one exact figure. */
+function humanSize(bytes){
+  if(!bytes && bytes !== 0) return "—";
+  const l = lang();
+  const units = l === "ar" ? ["بايت","كيلوبايت","ميجابايت","جيجابايت"] : ["B","KB","MB","GB"];
+  let n = bytes, i = 0;
+  while(n >= 1024 && i < units.length - 1){ n /= 1024; i++; }
+  const num = (n < 10 && i > 0) ? n.toFixed(1) : Math.round(n);
+  return `${Number(num).toLocaleString(l === "ar" ? "ar-EG" : "en")} ${units[i]}`;
+}
+function storageBreakdown(){
+  const out = { notes:0, pages:0, files:0, terms:0, plans:0 };
+  const size = (v)=>v ? JSON.stringify(v).length : 0;
+  Object.values(DB.courseNotebooks || {}).forEach(nb=>{
+    (nb.notes || []).forEach(n=>{
+      if(n.type === "drawing") out.pages += size(n);
+      else if(n.type === "file") out.files += size(n);
+      else out.notes += size(n);
+    });
+    out.terms += size(nb.terms) + size(nb.essays);
+  });
+  out.notes += size(DB.rawNotes);
+  /* The plans and references ship inside the app file itself, so they cost the
+     student nothing extra — shown only so the numbers add up honestly. */
+  out.plans = JSON.stringify(COURSE_CATALOG).length + JSON.stringify(COURSE_ENRICHMENT).length;
+  return out;
+}
+async function renderStorage(){
+  applyDir();
+  const s = t();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
+  let quota = null, usage = null;
+  try{
+    if(navigator.storage && navigator.storage.estimate){
+      const est = await navigator.storage.estimate();
+      quota = est.quota; usage = est.usage;
+    }
+  }catch(e){}
+  const b = storageBreakdown();
+  const pct = (quota && usage) ? Math.min(100, Math.round(usage / quota * 100)) : null;
+  const tight = pct !== null && pct >= 80;
+  const row = (label, bytes, tone)=>`
+    <div style="display:flex; align-items:center; gap:10px; padding:9px 0;">
+      <span style="width:8px; height:8px; border-radius:50%; background:${tone}; flex-shrink:0;"></span>
+      <span class="type-caption" style="flex:1;">${label}</span>
+      <span class="type-caption" style="color:var(--ink-muted);" dir="ltr">${humanSize(bytes)}</span>
+    </div>`;
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="storageBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.storageTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        ${pct === null ? `
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.8;">${s.storageUnknown}</p>` : `
+        <div class="hero" style="margin-bottom:var(--sp-4);">
+          <div class="hero-eyebrow">${s.storageUsed}</div>
+          <div class="hero-title" dir="ltr">${s.storageOf(humanSize(usage), humanSize(quota))}</div>
+          <div class="bar ${tight?'bar-warn':''}" style="margin-top:var(--sp-3);"><i style="width:${Math.max(pct,2)}%"></i></div>
+        </div>
+        ${tight ? `<p class="type-caption" style="color:var(--attention); margin-bottom:var(--sp-4);">${s.storageWarn}</p>` : ""}`}
+
+        <div class="section-label">${s.storageBreakdown}</div>
+        <div class="card" style="cursor:default; flex-direction:column; align-items:stretch;">
+          ${row(s.storageFiles, b.files, "var(--attention)")}
+          ${row(s.storagePages, b.pages, "var(--accent)")}
+          ${row(s.storageNotes, b.notes, "var(--support)")}
+          ${row(s.storageTerms, b.terms, "var(--ink-muted)")}
+        </div>
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-top:var(--sp-4);">${s.storageHint}</p>
+      </div>
+    </section>`;
+  document.getElementById("storageBack").addEventListener("click", ()=>{ settingsTab = "app"; renderSettings(); });
+}
 function renderTools(){
   applyDir();
   const s = t();
@@ -10883,7 +11190,11 @@ function renderTools(){
         </div>
       </div>
       <div class="screen-content">
-        ${recentTools.length ? `
+        <div class="set-tabs">
+          ${[["course",s.toolsTabCourse],["week",s.toolsTabWeek],["lang",s.toolsTabLang],["mine",s.toolsTabMine]].map(([id,label])=>`
+            <button type="button" class="set-tab ${toolsTab===id?'set-tab-active':''}" data-tools-tab="${id}">${label}</button>`).join("")}
+        </div>
+        ${(recentTools.length && toolsTab==="course") ? `
         <div class="section-label" style="margin-top:0;">${s.toolsRecent}</div>
         <div class="stack" style="margin-bottom:var(--sp-5);">
           ${recentTools.map(r=>`
@@ -10897,6 +11208,7 @@ function renderTools(){
             </button>`).join("")}
         </div>` : ""}
 
+        ${toolsTab==="course" ? `
         <div class="section-label" style="${recentTools.length?'':'margin-top:0;'}">${s.toolsGroupCourse}</div>
         ${courses.length ? `
         <div class="chips" style="margin-bottom:var(--sp-3);">
@@ -10910,30 +11222,43 @@ function renderTools(){
         </div>` : `
         <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-5);">${s.toolsNoCourses}</p>`}
 
-        <div class="section-label">${s.toolsGroupWeek}</div>
+        ` : ""}
+        ${toolsTab==="week" ? `
+        <div class="section-label" style="margin-top:0;">${s.toolsGroupWeek}</div>
         <div class="stack" style="margin-bottom:var(--sp-5);">
           ${tool("schedule", ICON.weekGrid, s.weeklyScheduleEntryLabel, s.toolScheduleD)}
           ${tool("mirror", ICON.weekGrid, s.mirrorEntryLabel, s.toolMirrorD)}
           ${tool("raw", ICON.pen, s.rawNotebookTitle, s.toolRawD)}
         </div>
 
-        <div class="section-label">${s.toolsGroupLang}</div>
+        ` : ""}
+        ${toolsTab==="lang" ? `
+        <div class="section-label" style="margin-top:0;">${s.toolsGroupLang}</div>
         <div class="stack" style="margin-bottom:var(--sp-5);">
           ${tool("search", ICON.lens, s.searchEntryLabel, s.toolSearchD)}
           ${tool("translate", ICON.message, s.liveTranslateEntryLabel, s.toolTranslateD)}
           ${tool("glossary", ICON.openBook, s.refGlossaryEntryLabel, s.toolGlossaryD)}
         </div>
 
-        <div class="section-label">${s.toolsGroupMine}</div>
+        ` : ""}
+        ${toolsTab==="mine" ? `
+        <div class="section-label" style="margin-top:0;">${s.toolsGroupMine}</div>
         <div class="stack">
           ${tool("refmap", ICON.weekGrid, s.refMapEntry, s.toolRefMapD)}
           ${tool("backup", ICON.download, s.backupTitle, s.toolBackupD)}
-        </div>
+        </div>` : ""}
       </div>
       ${renderTabBar("tools")}
     </section>`;
 
   wireTabBar();
+  document.querySelectorAll("[data-tools-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.toolsTab === toolsTab) return;
+      toolsTab = btn.dataset.toolsTab;
+      renderTools();
+    });
+  });
   document.querySelectorAll("[data-tool-course]").forEach(chip=>{
     chip.addEventListener("click", ()=>{ toolsCourseId = chip.dataset.toolCourse; renderTools(); });
   });
@@ -11768,6 +12093,22 @@ function renderCourseView(courseId){
               ${enrichment.before.items.map(it=>`<li class="type-caption" style="color:var(--ink); margin-bottom:4px; line-height:1.6;">${escapeHtml(it[lang()])}</li>`).join("")}
             </ul>
             <p class="type-caption" style="color:var(--ink-muted); margin:0; line-height:1.6;">${escapeHtml(enrichment.before.note[lang()])}</p>
+          </div>` : ""}
+          ${enrichment.hard && enrichment.hard.length ? `
+          <div class="callout-label" style="margin-top:var(--sp-4);">${s.hardPartsLabel}</div>
+          <div class="stack" style="margin-top:8px;">
+            ${enrichment.hard.map((h, i)=>`
+              <details class="hard-part"${i===0?" open":""}>
+                <summary>
+                  <span class="hard-part-num">${(i+1).toLocaleString(lang()==="ar"?"ar-EG":"en")}</span>
+                  <span>${escapeHtml(h.title[lang()])}</span>
+                </summary>
+                <p class="type-body" style="line-height:1.85; margin:8px 0 0;">${escapeHtml(h.plain[lang()])}</p>
+                ${h.trap ? `
+                <p class="type-caption" style="color:var(--attention); line-height:1.7; margin:8px 0 0;">
+                  <strong>${s.hardPartWhy}:</strong> ${escapeHtml(h.trap[lang()])}
+                </p>` : ""}
+              </details>`).join("")}
           </div>` : ""}
           ${enrichment.topics && enrichment.topics.length ? `
           <div class="callout-label" style="margin-top:var(--sp-4);">${s.topicsMapLabel}</div>
@@ -12672,7 +13013,9 @@ function renderCourseNotebook(courseId){
              sit scattered under each section, so the student met the same kind
              of button three times in three places and had to hunt for the one
              they wanted. One strip means one place to look. -->
-        <div class="toolbar" role="group" aria-label="${s.notebookToolsLabel}">
+        <div class="tool-group">
+          <div class="tool-group-label">${s.nbToolsWrite}</div>
+          <div class="toolbar" role="group" aria-label="${s.notebookToolsLabel}">
           <button type="button" class="tool" id="notebookEssays">
             <span class="tool-icon">${ICON.essay}</span><span>${s.essaysToolLabel}</span>
           </button>
@@ -12685,21 +13028,32 @@ function renderCourseNotebook(courseId){
           <button type="button" class="tool" id="notebookAddNote">
             <span class="tool-icon">${ICON.pencil}</span><span>${s.toolNote}</span>
           </button>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tool-group-label">${s.nbToolsAttach}</div>
+          <div class="toolbar" role="group">
           <button type="button" class="tool" id="notebookAddImage">
             <span class="tool-icon">${ICON.image}</span><span>${s.toolImage}</span>
           </button>
           <button type="button" class="tool" id="notebookAddFile">
             <span class="tool-icon">${ICON.download}</span><span>${s.toolFile}</span>
           </button>
+          </div>
+        </div>
+        <div class="tool-group">
+          <div class="tool-group-label">${s.nbToolsTrack}</div>
+          <div class="toolbar" role="group">
           <button type="button" class="tool" id="notebookAddCheck">
             <span class="tool-icon">${ICON.lens}</span><span>${s.toolCheck}</span>
           </button>
           <button type="button" class="tool" id="notebookAddExam">
             <span class="tool-icon">${ICON.event}</span><span>${s.toolExam}</span>
           </button>
-          <input type="file" id="notebookImageInput" accept="image/*" style="display:none;">
-          <input type="file" id="notebookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" style="display:none;">
+          </div>
         </div>
+        <input type="file" id="notebookImageInput" accept="image/*" style="display:none;">
+        <input type="file" id="notebookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" style="display:none;">
 
         <div class="section-label">${s.notebookNotesLabel} <span style="color:var(--ink-muted); font-weight:400;">· ${s.notebookPagesCount(nb.notes.length)}</span></div>
         ${nb.notes.length ? `
@@ -13477,7 +13831,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-06 09:04";
+const BUILD_ID = "2026-09-06 11:16";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -16102,10 +16456,43 @@ function renderAbout(){
         <div class="screen-header-title">${s.aboutEntryLabel}</div>
         <span style="width:40px;"></span>
       </div>
-      <div class="screen-content" style="display:flex; flex-direction:column; justify-content:center; flex:1; text-align:center; padding-top:var(--sp-5);">
-        <img src="${LOGO_DATA_URI}" alt="StudyMate" style="width:140px; height:auto; margin:0 auto var(--sp-5); display:block;">
-        <div class="type-display" style="margin-bottom:var(--sp-4);">${s.welcomeTitle}</div>
-        <p class="type-body" style="color:var(--ink-muted); line-height:1.7; max-width:320px; margin:0 auto;">${s.welcomeBody}</p>
+      <div class="screen-content">
+        <img src="${LOGO_DATA_URI}" alt="StudyMate" style="width:120px; height:auto; margin:0 auto var(--sp-4); display:block;">
+        ${(()=>{
+          /* Counted from the data itself rather than typed in, so the page can
+             never claim a number the app no longer has. */
+          const plans = Object.keys(COURSE_CATALOG).length;
+          const enriched = Object.keys(COURSE_ENRICHMENT).length;
+          let refs = 0, dated = 0;
+          Object.keys(COURSE_ENRICHMENT).forEach(k=>(COURSE_ENRICHMENT[k].resources||[]).forEach(r=>{ refs++; if(r.verified) dated++; }));
+          const stat = (n, label)=>`
+            <div class="card" style="cursor:default; flex-direction:column; align-items:center; gap:2px; padding:var(--sp-3) 6px; text-align:center;">
+              <span style="font-family:var(--font-ar); font-size:26px; font-weight:800; color:var(--accent); line-height:1;">${n.toLocaleString(lang()==="ar"?"ar-EG":"en")}</span>
+              <span class="type-caption" style="color:var(--ink-muted); line-height:1.35;">${label}</span>
+            </div>`;
+          return `
+          <div class="section-label" style="margin-top:0;">${s.aboutNumbers}</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:var(--sp-5);">
+            ${stat(plans, s.aboutPlans)}
+            ${stat(enriched, s.aboutCourses)}
+            ${stat(refs, s.aboutRefs)}
+            ${stat(SKILLS.length, s.aboutSkills)}
+          </div>
+          <p class="type-caption" style="color:var(--ink-muted); text-align:center; margin:-12px 0 var(--sp-5);">${dated.toLocaleString(lang()==="ar"?"ar-EG":"en")} ${s.aboutRefsVerified}</p>`;
+        })()}
+
+        <div class="section-label">${s.aboutWhatTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.8; margin-bottom:var(--sp-5);">${s.aboutWhatBody}</p>
+
+        <div class="section-label">${s.aboutSourcesTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.8; margin-bottom:var(--sp-5);">${s.aboutSourcesBody}</p>
+
+        <div class="section-label">${s.aboutPrivacyTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.8; margin-bottom:var(--sp-4);">${s.aboutPrivacyBody}</p>
+
+        <p class="type-caption" style="color:var(--ink-muted); text-align:center; line-height:1.7;">
+          © 2026 عرفات الراجحي — Arafat AlRajhi<br>${s.aboutRights}<br><span dir="ltr">${BUILD_ID}</span>
+        </p>
       </div>
       <div class="screen-action">
         <button type="button" class="btn btn-primary" id="aboutShareBtn">${ICON.share}<span>${s.aboutShareBtn}</span></button>
@@ -16152,19 +16539,27 @@ function renderSettings(){
             <button type="button" class="set-tab ${settingsTab===id?'set-tab-active':''}" data-set-tab="${id}">${label}</button>`).join("")}
         </div>
         ${settingsTab==="display" ? `
-        <div class="field-group">
-          <span class="field-label">${s.languageLabel}</span>
-          <div style="display:flex; gap:8px;">
-            <button type="button" class="btn ${student.lang==='ar'?'btn-primary':'btn-secondary'}" id="langAr" style="flex:1;">${ICON.globe}<span>العربية</span></button>
-            <button type="button" class="btn ${student.lang==='en'?'btn-primary':'btn-secondary'}" id="langEn" style="flex:1;">${ICON.globe}<span>English</span></button>
-          </div>
-        </div>
-        <div class="field-group">
-          <span class="field-label">${s.companionSectionLabel}</span>
-          <div style="display:flex; gap:8px;">
-            <button type="button" class="btn ${student.companion==='male'?'btn-primary':'btn-secondary'}" id="companionMale" style="flex:1;">${ICON.personM}<span>${s.companionMaleLabel}</span></button>
-            <button type="button" class="btn ${student.companion==='female'?'btn-primary':'btn-secondary'}" id="companionFemale" style="flex:1;">${ICON.personF}<span>${s.companionFemaleLabel}</span></button>
-          </div>
+        <div class="set-grid" style="margin-bottom:var(--sp-4);">
+          <button type="button" class="set-tile ${student.lang==='ar'?'set-tile-on':''}" id="langAr">
+            <span class="set-tile-icon">${ICON.globe}</span>
+            <span class="set-tile-name">${s.languageLabel}</span>
+            <span class="set-tile-value">العربية</span>
+          </button>
+          <button type="button" class="set-tile ${student.lang==='en'?'set-tile-on':''}" id="langEn">
+            <span class="set-tile-icon">${ICON.globe}</span>
+            <span class="set-tile-name">${s.languageLabel}</span>
+            <span class="set-tile-value">English</span>
+          </button>
+          <button type="button" class="set-tile ${student.companion==='male'?'set-tile-on':''}" id="companionMale">
+            <span class="set-tile-icon">${ICON.personM}</span>
+            <span class="set-tile-name">${s.companionSectionLabel}</span>
+            <span class="set-tile-value">${s.companionMaleLabel}</span>
+          </button>
+          <button type="button" class="set-tile ${student.companion==='female'?'set-tile-on':''}" id="companionFemale">
+            <span class="set-tile-icon">${ICON.personF}</span>
+            <span class="set-tile-name">${s.companionSectionLabel}</span>
+            <span class="set-tile-value">${s.companionFemaleLabel}</span>
+          </button>
         </div>
         <div class="field-group">
           <span class="field-label">${s.textSizeLabel}</span>
@@ -16259,6 +16654,14 @@ function renderSettings(){
               <span class="card-meta" dir="ltr" style="text-align:start;">${BUILD_ID}</span>
             </span>
           </div>
+          <button type="button" class="card" id="storageBtn">
+            <span class="card-icon">${ICON.download}</span>
+            <span class="card-body">
+              <span class="card-title">${s.storageEntry}</span>
+              <span class="card-meta">${s.storageEntryD}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
           <button type="button" class="card" id="aboutBtn">
             <span class="card-icon">${ICON.info}</span>
             <span class="card-body">
@@ -16326,6 +16729,8 @@ function renderSettings(){
     if(navigator.share){ navigator.share({ text }).catch(()=>{}); return; }
     window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
   });
+  const storageBtn = document.getElementById("storageBtn");
+  if(storageBtn) storageBtn.addEventListener("click", ()=>{ renderStorage(); });
   const aboutBtn = document.getElementById("aboutBtn");
   if(aboutBtn) aboutBtn.addEventListener("click", ()=>{ renderAbout(); });
   const setInstall = document.getElementById("settingsInstallBtn");
