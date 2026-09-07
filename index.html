@@ -2027,6 +2027,9 @@ const STR = {
     readyTitle:"خطتك جاهزة",
     libProgressDone:(a,b)=>`${a} من ${b} مقررًا خلفك`,
     carryAdd:"أضفه إلى فصلي الحالي",
+    semTabCourses:"مقرراتي",
+    semTabEvents:"أحداث الفصل",
+    semTabTerm:"الفصل",
     carryAlready:"موجود في فصلك الآن",
     carryDone:(name)=>`أُضيف ${name} إلى فصلك`,
     carryNote:"مقرر من مستوى سابق تحمله معك — يظهر في فصلك ولا يُحسب مجتازًا حتى تعلّمه بنفسك.",
@@ -2065,6 +2068,8 @@ const STR = {
     emptyWriteNote:"اكتب أول ملاحظة",
     weekAskD:"سؤال واحد، ويعرف التطبيق بعده أين أنت من فصلك — فيقترح ما يناسب المرحلة لا ما يناسب المبتدئ.",
     weekAskPh:"رقم الأسبوع",
+    weekChange:"تغيير الأسبوع",
+    weekBad:"اكتب رقمًا بين 1 و 20.",
     weekAskSave:"احفظ",
     weekLabel:(n)=>`الأسبوع ${n}`,
     weekStillTitle:"هل ما زلت في هذا الأسبوع؟",
@@ -2749,6 +2754,9 @@ const STR = {
     readyTitle:"Your plan is ready",
     libProgressDone:(a,b)=>`${a} of ${b} courses behind you`,
     carryAdd:"Add it to my current term",
+    semTabCourses:"My courses",
+    semTabEvents:"Term events",
+    semTabTerm:"The term",
     carryAlready:"already in your term",
     carryDone:(name)=>`${name} added to your term`,
     carryNote:"A course from an earlier level carried forward — it appears in your term and isn't counted as passed until you mark it yourself.",
@@ -2787,6 +2795,8 @@ const STR = {
     emptyWriteNote:"Write your first note",
     weekAskD:"One question, and the app knows where you are in the term — so it suggests what suits the stage rather than what suits a beginner.",
     weekAskPh:"Week number",
+    weekChange:"Change the week",
+    weekBad:"Enter a number between 1 and 20.",
     weekAskSave:"Save",
     weekLabel:(n)=>`Week ${n}`,
     weekStillTitle:"Are you still in this week?",
@@ -3501,9 +3511,9 @@ function showPlanReady(onDone){
   }
 
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  requestAnimationFrame(()=>overlay.classList.add("show"));
   const close = ()=>{
-    overlay.classList.remove("sheet-open");
+    overlay.classList.remove("show");
     setTimeout(()=>{ overlay.remove(); if(onDone) onDone(); }, 280);
   };
   overlay.querySelector("#readyGo").addEventListener("click", close);
@@ -3639,12 +3649,15 @@ function phaseHtml(){
       </button>`;
   }
   const phase = termPhase(week);
+  /* Tappable, because a student who answered once may repeat a term, take a
+     break, or simply have counted wrong — and a number they cannot correct is
+     worse than one never asked for. */
   return `
-    <div class="phase">
-      <span class="phase-week">${s.weekLabel(week.toLocaleString(lang()==="ar"?"ar-EG":"en"))}</span>
+    <button type="button" class="phase" id="phaseCard" style="text-align:start; width:100%;">
+      <span class="phase-week">${s.weekLabel(week.toLocaleString(lang()==="ar"?"ar-EG":"en"))} · ${s.weekChange}</span>
       <span class="phase-title">${phase.title}</span>
       <span class="phase-text">${phase.text}</span>
-    </div>`;
+    </button>`;
 }
 /* Asked once. A student who takes a term off would otherwise be told they are
    in week nineteen of a term that ended. */
@@ -3657,17 +3670,25 @@ function openWeekSheet(onDone){
       <div class="sheet-handle"></div>
       <div class="sheet-title">${s.weekAskTitle}</div>
       <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-bottom:var(--sp-3);">${s.weekAskD}</p>
-      <input type="number" class="field" id="wkNum" inputmode="numeric" min="1" max="20" placeholder="${s.weekAskPh}" style="margin-bottom:var(--sp-3);">
+      <input type="number" class="field" id="wkNum" inputmode="numeric" min="1" max="20" placeholder="${s.weekAskPh}" value="${(StudentModule.current() && StudentModule.current().weekNo) || ""}" style="margin-bottom:8px;">
+      <p class="type-caption" id="wkErr" style="color:var(--attention); min-height:16px; margin:0 0 var(--sp-2);"></p>
       <button type="button" class="btn btn-primary" id="wkGo" style="width:100%;">${ICON.check}<span>${s.weekAskSave}</span></button>
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 240); };
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 240); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   const go = ()=>{
     const v = parseInt(overlay.querySelector("#wkNum").value, 10);
-    if(!v || v < 1 || v > 20) return;
+    const err = overlay.querySelector("#wkErr");
+    /* An empty or out-of-range field used to do nothing at all, which reads as
+       a broken button rather than a rejected value. */
+    if(!v || v < 1 || v > 20){
+      if(err) err.textContent = s.weekBad;
+      return;
+    }
     StudentModule.update({ weekNo: v, weekSetAt: Date.now() });
+    pulse("saved");
     close(onDone);
   };
   overlay.querySelector("#wkGo").addEventListener("click", go);
@@ -9519,8 +9540,8 @@ function openDevLock(onUnlocked){
       <button type="button" class="btn btn-primary" style="width:100%;" id="devPassGo">${ICON.check}<span>${s.devUnlock}</span></button>
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = ()=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>overlay.remove(), 260); };
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = ()=>{ overlay.classList.remove("show"); setTimeout(()=>overlay.remove(), 260); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   const tryIt = ()=>{
     if(overlay.querySelector("#devPass").value === DEV_PASSCODE){ devUnlocked = true; close(); onUnlocked(); return; }
@@ -11761,8 +11782,8 @@ function openQuickSheet(items, courseId){
       <button type="button" class="btn btn-secondary" id="quickAll" style="width:100%; margin-top:var(--sp-3);">${ICON.tools}<span>${s.quickAll}</span></button>
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   overlay.querySelectorAll("[data-quick]").forEach(b=>{
     b.addEventListener("click", ()=>{
@@ -11985,8 +12006,8 @@ function openQuickMarkSheet(onDone){
       <button type="button" class="btn btn-primary" id="qmGo" style="width:100%;">${ICON.check}<span>${s.lectureMarkSave}</span></button>
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 220); };
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 220); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   const go = ()=>{
     const v = overlay.querySelector("#qmWord").value.trim();
@@ -12867,6 +12888,8 @@ function renderToday(){
   }
   const weekAskBtn = document.getElementById("weekAskBtn");
   if(weekAskBtn) weekAskBtn.addEventListener("click", ()=>openWeekSheet(()=>renderToday()));
+  const phaseCard = document.getElementById("phaseCard");
+  if(phaseCard) phaseCard.addEventListener("click", ()=>openWeekSheet(()=>renderToday()));
   const lectureBtn = document.getElementById("lectureBtn");
   if(lectureBtn) lectureBtn.addEventListener("click", ()=>{
     const now = courseInSessionNow();
@@ -12920,6 +12943,11 @@ function renderToday(){
 /* ============================================================
    STAGE 7: SEMESTER — scannable course list, one progress indicator
    ============================================================ */
+/* The semester screen stacked four unrelated things — the journey card, three
+   tools, the term's events and the course list — so the courses, which are the
+   reason the screen exists, began below the fold. Three tabs, each short
+   enough to read without scrolling. */
+let semesterTab = "courses";
 function renderSemester(){
   applyDir();
   const s = t();
@@ -12987,6 +13015,18 @@ function renderSemester(){
         </div>` : ""}
       </div>
       <div class="screen-content">
+        <div class="set-tabs">
+          ${[["courses",s.semTabCourses],["events",s.semTabEvents],["term",s.semTabTerm]].map(([id,label])=>`
+            <button type="button" class="set-tab ${semesterTab===id?'set-tab-active':''}" data-sem-tab="${id}">${label}</button>`).join("")}
+        </div>
+
+        ${semesterTab==="courses" ? `
+        ${bodyHtml}` : ""}
+
+        ${semesterTab==="events" ? `
+        ${semesterEventsHtml}` : ""}
+
+        ${semesterTab==="term" ? `
         <button type="button" class="card" id="journeyEntryBtn" style="margin-bottom:var(--sp-4);">
           <span class="card-icon">${ICON.journey}</span>
           <span class="card-body">
@@ -13000,16 +13040,21 @@ function renderSemester(){
           <button type="button" class="tool-tile" id="weeklyScheduleBtn">${ICON.weekGrid}<span>${s.toolSchedule}</span></button>
           <button type="button" class="tool-tile" id="addCourseBtn" data-label="${s.toolAddCourse}">${ICON.plus}<span>${s.toolAddCourse}</span></button>
         </div>
-        ${semesterEventsHtml}
-        <div class="section-label">${s.coursesLabel}</div>
-        ${bodyHtml}
-        ${semester ? `<button type="button" class="btn btn-secondary" id="endSemesterBtn" style="margin-top:var(--sp-5);">${ICON.check}<span>${s.endSemesterAction}</span></button>` : ""}
+        ${semester ? `<button type="button" class="btn btn-secondary" id="endSemesterBtn" style="margin-top:var(--sp-5);">${ICON.check}<span>${s.endSemesterAction}</span></button>` : ""}` : ""}
       </div>
       ${renderTabBar("semester")}
     </section>
   `;
   wireTabBar();
   afterRender();
+  document.querySelectorAll("[data-sem-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.semTab === semesterTab) return;
+      semesterTab = btn.dataset.semTab;
+      markScreenMotion("tab");
+      renderSemester();
+    });
+  });
   mountQuickTools("semester");
   const addBtn = document.getElementById("addCourseBtn");
   if(addBtn) addBtn.addEventListener("click", ()=>{ openCourseSheet(semester.id, null, renderSemester); });
@@ -13902,8 +13947,8 @@ function openTermSheet(courseId, existing, onDone){
       ${editing ? `<button type="button" class="btn btn-secondary" id="tmDelete" style="width:100%; margin-top:8px; color:var(--attention);">${ICON.trash}<span>${s.confirmDelete}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   setTimeout(()=>{ const f = overlay.querySelector("#tmWord"); if(f) f.focus(); }, 320);
 
@@ -14029,8 +14074,8 @@ function openEssayTitleSheet(courseId){
       <button type="button" class="btn btn-primary" id="esGo" style="width:100%;">${ICON.check}<span>${s.saveBtn}</span></button>
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   setTimeout(()=>{ const f = overlay.querySelector("#esTitle"); if(f) f.focus(); }, 320);
   overlay.querySelector("#esGo").addEventListener("click", ()=>{
@@ -14942,7 +14987,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-07 09:49";
+const BUILD_ID = "2026-09-07 11:08";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -15071,9 +15116,9 @@ function openInfoSheet({ title, paragraphs }){
       <button type="button" class="btn btn-secondary" style="width:100%;" data-info-close>${t().closeLabel || "إغلاق"}</button>
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  requestAnimationFrame(()=>overlay.classList.add("show"));
   const close = ()=>{
-    overlay.classList.remove("sheet-open");
+    overlay.classList.remove("show");
     setTimeout(()=>overlay.remove(), 260);
   };
   overlay.querySelector("[data-info-close]").addEventListener("click", close);
@@ -17280,8 +17325,8 @@ function openListSheetOfCourses(courses, onDone){
       </div>
     </div>`;
   document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
-  const close = ()=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>overlay.remove(), 260); };
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = ()=>{ overlay.classList.remove("show"); setTimeout(()=>overlay.remove(), 260); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   overlay.querySelectorAll("[data-color-course]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ close(); openCourseColorSheet(btn.dataset.colorCourse, onDone); });
