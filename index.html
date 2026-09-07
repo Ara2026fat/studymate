@@ -933,6 +933,72 @@ body[data-theme="daylight"] .card:before{
 /* The action belongs inside the empty state, not somewhere else on the screen.
    An empty screen is a question; this is its answer. */
 .empty-state .btn{ margin-top:var(--sp-4); min-width:200px; }
+/* The moment card: what this hour asks of the student, and one way to answer
+   it. Distinct from the phase card above it — that one describes the term, this
+   one describes the next twenty minutes. It disappears entirely when the hour
+   asks nothing, because a card that always has something to say is a card
+   nobody reads. */
+/* The first screen after registering. A student who has just answered four
+   questions deserves to see what those answers bought before being handed an
+   interface — otherwise the app's whole value stays invisible behind a menu.
+   Shown once, and never again. */
+.ready{ text-align:center; }
+.ready-nums{ display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:var(--sp-4) 0; }
+.ready-num{
+  padding:var(--sp-3) 6px; border-radius:var(--r-md);
+  background:var(--flat); border:1px solid var(--flat-line);
+}
+.ready-num b{
+  display:block; font-family:var(--font-ar); font-size:25px; font-weight:800;
+  color:var(--accent); line-height:1.1; font-variant-numeric:tabular-nums;
+}
+.ready-num span{ font-size:11px; color:var(--ink-muted); line-height:1.35; }
+@keyframes ready-rise{ from{ opacity:0; transform:translateY(12px); } }
+.ready-num{ animation:ready-rise 480ms var(--ease) backwards; }
+.ready-num:nth-child(2){ animation-delay:90ms; }
+.ready-num:nth-child(3){ animation-delay:180ms; }
+.ready-num:nth-child(4){ animation-delay:270ms; }
+@media (prefers-reduced-motion:reduce){ .ready-num{ animation:none; } }
+/* ---- Screen motion -------------------------------------------------------
+   Kept to 220ms: long enough to be read as movement, short enough that a
+   student tapping quickly never waits for it. Direction follows the writing
+   direction, so in Arabic "deeper" comes from the left as the finger expects. */
+@keyframes screen-in{
+  from{ opacity:0; transform:translateX(var(--screen-from, 16px)); }
+  to{ opacity:1; transform:none; }
+}
+.screen{ animation:screen-in 220ms var(--ease) both; }
+[dir="rtl"] .screen{ --screen-from:-16px; }
+.screen-back{ --screen-from:16px; }
+[dir="rtl"] .screen-back{ --screen-from:-16px; }
+/* Tab changes are lateral, not deeper: they fade rather than slide, so the
+   five tabs feel like one place seen from different sides. */
+.screen-tab{ animation:tab-in 180ms var(--ease) both; }
+@keyframes tab-in{ from{ opacity:0; transform:translateY(6px); } }
+@media (prefers-reduced-motion:reduce){
+  .screen, .screen-tab{ animation:none; }
+}
+.moment{
+  display:flex; flex-direction:column; gap:6px;
+  padding:var(--sp-4); border-radius:var(--r-md); margin-bottom:var(--sp-4);
+  background:var(--glass-sheen);
+  border:1px solid rgba(var(--accent-rgb),.26);
+  box-shadow:var(--glass-shadow);
+  position:relative; overflow:hidden;
+}
+.moment:before{
+  content:""; position:absolute; inset:0 14% auto; height:1px;
+  background:linear-gradient(90deg, transparent, var(--glass-edge), transparent);
+}
+.moment-when{ font-size:11px; font-weight:700; color:var(--accent); letter-spacing:.04em; }
+.moment-text{ font-size:var(--fs-subheading); font-weight:700; line-height:1.45; }
+.moment-sub{ font-size:var(--fs-caption); color:var(--ink-muted); line-height:1.7; }
+.moment-go{
+  align-self:flex-start; margin-top:6px;
+  padding:8px 15px; border-radius:999px;
+  background:rgba(var(--accent-rgb),.16); border:1px solid rgba(var(--accent-rgb),.34);
+  color:var(--accent); font-family:inherit; font-size:12.5px; font-weight:700;
+}
 .phase{
   display:flex; flex-direction:column; gap:5px;
   padding:var(--sp-4); border-radius:var(--r-md); margin-bottom:var(--sp-4);
@@ -1031,6 +1097,73 @@ body[data-theme="daylight"] .card:before{
 }
 .pager-btn:disabled{ opacity:.35; }
 .pager-count{ font-size:12.5px; color:var(--ink-muted); font-weight:600; }
+/* ---- The library as a degree, not a list ---------------------------------
+   This is the screen the whole app exists for: the student's entire degree,
+   every course in it explained and referenced. It was rendering as a row of
+   numbered chips over a list of names — which says nothing about where the
+   student stands in the years ahead of them.
+
+   The levels now read as a path: the ones behind filled, the one they are in
+   ringed and named, the ones ahead outlined and waiting. And a single line
+   above it all saying how much of the degree is already behind them. */
+/* A course a student is repeating, or taking early, is not an error in their
+   plan — it is the normal shape of a degree. Marked so they can see at a
+   glance which of this term's courses belong to another level. */
+.carry-tag{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:2px 8px; border-radius:999px; margin-inline-start:6px;
+  background:rgba(var(--attention-rgb),.13); color:var(--attention);
+  font-size:9.5px; font-weight:700; white-space:nowrap;
+}
+.lib-progress{
+  padding:0 var(--sp-4) var(--sp-3);
+}
+.lib-progress-line{
+  display:flex; align-items:baseline; gap:8px; margin-bottom:8px;
+}
+.lib-progress-done{ font-size:var(--fs-subheading); font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; }
+.lib-progress-left{ font-size:var(--fs-caption); color:var(--ink-muted); }
+.lib-bar{ height:8px; border-radius:99px; background:var(--flat); overflow:hidden; }
+.lib-bar > i{
+  display:block; height:100%; border-radius:99px;
+  background:linear-gradient(90deg, rgba(var(--accent-rgb),.55), rgb(var(--accent-rgb)));
+  transition:width 600ms var(--ease);
+}
+
+.lib-path{
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:8px;
+  padding:2px var(--sp-4) var(--sp-4);
+}
+.lib-step{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:11px 4px 9px; border-radius:14px;
+  background:var(--flat); border:1px solid var(--flat-line);
+  transition:transform 180ms var(--ease-spring);
+}
+.lib-step:active{ transform:scale(.95); }
+.lib-step-num{
+  width:26px; height:26px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-ar); font-weight:800; font-size:12.5px;
+  background:var(--surface); color:var(--ink-muted);
+  border:1px solid var(--flat-line);
+}
+.lib-step-count{ font-size:9.5px; color:var(--ink-muted); font-variant-numeric:tabular-nums; }
+.lib-step-tag{ font-size:8.5px; font-weight:700; letter-spacing:.02em; }
+
+/* Behind them: filled, quiet, finished. */
+.lib-step-done .lib-step-num{ background:rgba(var(--accent-rgb),.18); color:var(--accent); border-color:transparent; }
+.lib-step-done .lib-step-tag{ color:var(--accent); }
+/* Where they are: the only ringed step on the screen. */
+.lib-step-here{
+  background:rgba(var(--accent-rgb),.10);
+  border-color:rgba(var(--accent-rgb),.42);
+  box-shadow:0 0 0 3px rgba(var(--accent-rgb),.10);
+}
+.lib-step-here .lib-step-num{ background:rgb(var(--accent-rgb)); color:#fff; border-color:transparent; }
+.lib-step-here .lib-step-tag{ color:var(--accent); }
+/* Ahead: outlined, waiting, deliberately lighter. */
+.lib-step-ahead{ opacity:.72; }
 .lib-head{
   display:flex; align-items:center; gap:8px;
   padding:0 var(--sp-4) var(--sp-3);
@@ -1890,6 +2023,41 @@ const STR = {
     planFactoryEntry:"تخصصك غير موجود؟ أرسل خطتك",
     lectureEntry:"أنا في المحاضرة",
     weekAskTitle:"في أي أسبوع أنت الآن؟",
+    momentNow:"الآن",
+    readyTitle:"خطتك جاهزة",
+    libProgressDone:(a,b)=>`${a} من ${b} مقررًا خلفك`,
+    carryAdd:"أضفه إلى فصلي الحالي",
+    carryAlready:"موجود في فصلك الآن",
+    carryDone:(name)=>`أُضيف ${name} إلى فصلك`,
+    carryNote:"مقرر من مستوى سابق تحمله معك — يظهر في فصلك ولا يُحسب مجتازًا حتى تعلّمه بنفسك.",
+    carriedTag:(n)=>`محمول من المستوى ${n}`,
+    carryAheadTag:(n)=>`مقدَّم من المستوى ${n}`,
+    libProgressLeft:(n)=>n===0 ? "وصلت إلى آخر خطتك" : (n===1 ? "بقي مقرر واحد" : (n===2 ? "بقي مقرران" : (n<11 ? `بقي ${n} مقررات` : `بقي ${n} مقررًا`))),
+    libLevelHere:"أنت هنا",
+    libLevelDone:"مكتمل",
+    libLevelAhead:"أمامك",
+    readySub:(major)=>`${major} — بُنيت قبل أن تصل`,
+    readyCourses:"مقررًا في خطتك",
+    readyRefs:"مرجعًا متحقَّقًا",
+    readyExplained:"مقررًا مشروحًا",
+    readyTermCourses:"مقررًا في فصلك الآن",
+    readyLine:"لم نطلب منك أن تبني شيئًا — كل هذا كان في انتظارك.",
+    readyGo:"ابدأ",
+    readyNoPlanTitle:"سجّلناك",
+    readyNoPlanText:"خطتك غير موجودة عندنا بعد — لكن الدفتر والجدول والمهارات كلها جاهزة لك من الآن. وإن أرسلت خطتك بنيناها لك.",
+    momentSoon:(name, mins)=>`محاضرة ${name} بعد ${mins} دقيقة`,
+    momentIn:(name)=>`أنت في محاضرة ${name}`,
+    momentJustEnded:(name)=>`انتهت محاضرة ${name} قبل قليل`,
+    momentJustEndedGo:"بيّضها قبل أن تبرد",
+    momentOpenLecture:"افتح وضع المحاضرة",
+    momentEvening:"مساء اليوم",
+    momentEveningText:(name)=>`سجّلت اليوم في ${name} ما لم تفهمه. عشر دقائق الآن أرخص من ساعة قبل الاختبار.`,
+    momentEveningGo:"راجعها الآن",
+    momentNight:"قبل النوم",
+    momentNightText:(n)=>`لديك ${n} محاضرات غدًا. نظرة سريعة على جدولك الآن توفّر ارتباك الصباح.`,
+    momentNightGo:"افتح جدول غد",
+    momentFree:"يومك خالٍ من المحاضرات",
+    momentFreeText:"وهذا أفضل وقت للمراجعة: افتح مادة واحدة وأغلق فيها ما لم تفهمه.",
     emptyAddCourse:"أضف أول مقرر",
     emptyBuildSchedule:"أضف مقرراتك أولًا",
     emptyOpenLibrary:"افتح خطتك",
@@ -2577,6 +2745,41 @@ const STR = {
     planFactoryEntry:"Your programme missing? Send us your plan",
     lectureEntry:"I'm in a lecture",
     weekAskTitle:"Which week are you in?",
+    momentNow:"Right now",
+    readyTitle:"Your plan is ready",
+    libProgressDone:(a,b)=>`${a} of ${b} courses behind you`,
+    carryAdd:"Add it to my current term",
+    carryAlready:"already in your term",
+    carryDone:(name)=>`${name} added to your term`,
+    carryNote:"A course from an earlier level carried forward — it appears in your term and isn't counted as passed until you mark it yourself.",
+    carriedTag:(n)=>`carried from level ${n}`,
+    carryAheadTag:(n)=>`taken early from level ${n}`,
+    libProgressLeft:(n)=>n===0 ? "You've reached the end of your plan" : (n===1 ? "one course left" : `${n} courses left`),
+    libLevelHere:"you're here",
+    libLevelDone:"done",
+    libLevelAhead:"ahead",
+    readySub:(major)=>`${major} — built before you arrived`,
+    readyCourses:"courses in your plan",
+    readyRefs:"checked references",
+    readyExplained:"courses explained",
+    readyTermCourses:"courses in your term now",
+    readyLine:"We didn't ask you to build any of this — it was waiting for you.",
+    readyGo:"Begin",
+    readyNoPlanTitle:"You're registered",
+    readyNoPlanText:"Your programme isn't with us yet — but the notebook, timetable and skills are ready for you now. And if you send us your plan, we'll build it.",
+    momentSoon:(name, mins)=>`${name} starts in ${mins} minutes`,
+    momentIn:(name)=>`You're in ${name}`,
+    momentJustEnded:(name)=>`${name} just ended`,
+    momentJustEndedGo:"Write it up before it cools",
+    momentOpenLecture:"Open lecture mode",
+    momentEvening:"This evening",
+    momentEveningText:(name)=>`You marked something you didn't follow in ${name} today. Ten minutes now is cheaper than an hour before the exam.`,
+    momentEveningGo:"Review it now",
+    momentNight:"Before bed",
+    momentNightText:(n)=>`You have ${n} classes tomorrow. A quick look at your timetable now saves the morning's confusion.`,
+    momentNightGo:"Open tomorrow's timetable",
+    momentFree:"No classes today",
+    momentFreeText:"Which makes it the best time to revise: open one course and close what you didn't follow in it.",
     emptyAddCourse:"Add your first course",
     emptyBuildSchedule:"Add your courses first",
     emptyOpenLibrary:"Open your plan",
@@ -3244,6 +3447,182 @@ function termPhase(week){
   if(week <= 12) return { id:"review", title:s.phaseReviewTitle, text:s.phaseReviewText };
   if(week <= 15) return { id:"exam",   title:s.phaseExamTitle,   text:s.phaseExamText };
   return { id:"end", title:s.phaseEndTitle, text:s.phaseEndText };
+}
+/* What this hour asks. The term phase says where the student is in the
+   fourteen weeks; this says what the next twenty minutes are for — and the two
+   are different questions. Checked in order of urgency, and silent when the
+   hour genuinely asks nothing, so that its appearance always means something.
+
+   Nothing here is a notification: it is a sentence on a screen the student
+   chose to open. */
+/* Counted from the student's own plan, not from the app's totals: "426
+   references" impresses nobody, but "46 courses in your plan, each with a
+   checked reference" is about them. */
+function showPlanReady(onDone){
+  const s = t();
+  const student = StudentModule.current();
+  const catalog = student ? COURSE_CATALOG[catalogKeyFor(student)] : null;
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+
+  if(!catalog){
+    overlay.innerHTML = `
+      <div class="sheet ready">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">${s.readyNoPlanTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.8;">${s.readyNoPlanText}</p>
+        <button type="button" class="btn btn-primary" id="readyGo" style="width:100%; margin-top:var(--sp-4);">${ICON.check}<span>${s.readyGo}</span></button>
+      </div>`;
+  } else {
+    const all = Object.values(catalog).reduce((a, l)=>a.concat(l), []);
+    const keys = Object.keys(COURSE_ENRICHMENT);
+    let explained = 0, refs = 0;
+    all.forEach(c=>{
+      const k = keys.find(x=>c.trim().startsWith(x));
+      if(k){ explained++; refs += (COURSE_ENRICHMENT[k].resources || []).length; }
+    });
+    const levelId = levelIdForLabel(student.level);
+    const termCount = (levelId && catalog[levelId]) ? catalog[levelId].length : 0;
+    const n = (v)=>v.toLocaleString(lang()==="ar" ? "ar-EG" : "en");
+    overlay.innerHTML = `
+      <div class="sheet ready">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">${s.readyTitle}</div>
+        <p class="type-caption" style="color:var(--ink-muted); margin-bottom:0;">${escapeHtml(s.readySub(student.major || ""))}</p>
+        <div class="ready-nums">
+          <div class="ready-num"><b>${n(all.length)}</b><span>${s.readyCourses}</span></div>
+          <div class="ready-num"><b>${n(explained)}</b><span>${s.readyExplained}</span></div>
+          <div class="ready-num"><b>${n(refs)}</b><span>${s.readyRefs}</span></div>
+          <div class="ready-num"><b>${n(termCount)}</b><span>${s.readyTermCourses}</span></div>
+        </div>
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.8;">${s.readyLine}</p>
+        <button type="button" class="btn btn-primary" id="readyGo" style="width:100%; margin-top:var(--sp-4);">${ICON.check}<span>${s.readyGo}</span></button>
+      </div>`;
+  }
+
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = ()=>{
+    overlay.classList.remove("sheet-open");
+    setTimeout(()=>{ overlay.remove(); if(onDone) onDone(); }, 280);
+  };
+  overlay.querySelector("#readyGo").addEventListener("click", close);
+}
+/* A short pulse, only where something was genuinely completed. Silent on
+   ordinary taps: a phone that buzzes at everything is a phone the student
+   turns off. */
+function pulse(kind){
+  if(!navigator.vibrate) return;
+  try{
+    if(kind === "done") navigator.vibrate([12, 40, 18]);
+    else if(kind === "saved") navigator.vibrate(14);
+    else navigator.vibrate(8);
+  }catch(e){}
+}
+/* Marks the next render as a lateral move rather than a descent, so switching
+   tabs doesn't look like opening something. */
+let nextScreenMotion = null;
+function markScreenMotion(kind){ nextScreenMotion = kind; }
+function applyScreenMotion(){
+  const el = app.querySelector(".screen");
+  if(!el) return;
+  if(nextScreenMotion === "tab") el.classList.add("screen-tab");
+  else if(nextScreenMotion === "back") el.classList.add("screen-back");
+  nextScreenMotion = null;
+}
+function momentNow(){
+  const student = StudentModule.current();
+  if(!student) return null;
+  const s = t();
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return null;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return null;
+  const courses = CourseModule.listForSemester(semester.id) || [];
+  if(!courses.length) return null;
+
+  const now = new Date();
+  const day = now.getDay();
+  const mins = now.getHours()*60 + now.getMinutes();
+  const hour = now.getHours();
+  const toMin = (hhmm)=>{ const m = /^(\d{1,2}):(\d{2})/.exec(hhmm||""); return m ? (+m[1])*60 + (+m[2]) : null; };
+  const sessions = WeeklyScheduleModule.listForSemester(semester.id) || [];
+  const named = (id)=>{ const c = dbGet("courses", id); return c ? c.name : ""; };
+
+  const today = sessions.filter(x=>x.dayOfWeek === day)
+    .map(x=>({ x, a:toMin(x.startTime), b:toMin(x.endTime) }))
+    .filter(x=>x.a !== null)
+    .sort((p,q)=>p.a - q.a);
+
+  /* 1. A class about to start — the most useful thing we can say. */
+  const soon = today.find(x=>x.a - mins > 0 && x.a - mins <= 30);
+  if(soon) return {
+    when: s.momentNow,
+    text: s.momentSoon(named(soon.x.courseId), soon.a - mins),
+    go: { label:s.momentOpenLecture, run:()=>{ lectureCourseId = null; lectureText = ""; lectureMarks = []; renderLecture(soon.x.courseId); } }
+  };
+
+  /* 2. A class in progress. */
+  const inNow = today.find(x=>mins >= x.a && mins <= ((x.b === null ? x.a + 60 : x.b)));
+  if(inNow) return {
+    when: s.momentNow,
+    text: s.momentIn(named(inNow.x.courseId)),
+    go: { label:s.momentOpenLecture, run:()=>{ lectureCourseId = null; lectureText = ""; lectureMarks = []; renderLecture(inNow.x.courseId); } }
+  };
+
+  /* 3. A class that ended within the last ninety minutes — the window in which
+        writing up is still cheap. */
+  const justEnded = today.filter(x=>{
+    const end = (x.b === null ? x.a + 60 : x.b);
+    return mins - end > 0 && mins - end <= 90;
+  }).pop();
+  if(justEnded) return {
+    when: s.momentNow,
+    text: s.momentJustEnded(named(justEnded.x.courseId)),
+    go: { label:s.momentJustEndedGo, run:()=>renderCourseNotebook(justEnded.x.courseId) }
+  };
+
+  /* 4. Evening, and something was marked unclear today. */
+  if(hour >= 17 && hour < 22){
+    const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+    const stuck = courses.find(c=>{
+      const nb = DB.courseNotebooks && DB.courseNotebooks[c.id];
+      return nb && (nb.checks || []).some(ch=>ch.understood === false && ch.createdAt >= todayStart.getTime());
+    });
+    if(stuck) return {
+      when: s.momentEvening,
+      text: s.momentEveningText(stuck.name),
+      go: { label:s.momentEveningGo, run:()=>renderCourseNotebook(stuck.id) }
+    };
+  }
+
+  /* 5. Late, with classes tomorrow. */
+  if(hour >= 21 || hour < 3){
+    const tomorrow = (day + 1) % 7;
+    const n = sessions.filter(x=>x.dayOfWeek === tomorrow).length;
+    if(n) return {
+      when: s.momentNight,
+      text: s.momentNightText(n.toLocaleString(lang()==="ar"?"ar-EG":"en")),
+      go: { label:s.momentNightGo, run:()=>{ scheduleDay = tomorrow; scheduleTab = "week"; renderWeeklySchedule(); } }
+    };
+  }
+
+  /* 6. A weekday with no classes at all. Said once, in daylight hours only. */
+  if(!today.length && sessions.length && hour >= 9 && hour < 21) return {
+    when: s.momentFree, text: s.momentFreeText, go: null
+  };
+
+  return null;
+}
+function momentHtml(){
+  const m = momentNow();
+  if(!m) return "";
+  return `
+    <div class="moment">
+      <span class="moment-when">${m.when}</span>
+      <span class="moment-text">${escapeHtml(m.text)}</span>
+      ${m.go ? `<button type="button" class="moment-go" id="momentGo">${escapeHtml(m.go.label)}</button>` : ""}
+    </div>`;
 }
 function phaseHtml(){
   const s = t();
@@ -9231,6 +9610,46 @@ function passedCodes(){
   const student = StudentModule.current();
   return (student && Array.isArray(student.passed)) ? student.passed : [];
 }
+/* Which level of the plan a course belongs to, and whether it is already in
+   the student's term. A student repeating one course from level three while
+   sitting level four is ordinary; the app simply has to be able to say so. */
+function levelOfCourse(catalogString){
+  const student = StudentModule.current();
+  if(!student) return null;
+  const catalog = COURSE_CATALOG[catalogKeyFor(student)];
+  if(!catalog) return null;
+  const code = String(catalogString).split(" - ")[0].trim();
+  const ids = Object.keys(catalog);
+  for(let i = 0; i < ids.length; i++){
+    if(catalog[ids[i]].some(c=>String(c).split(" - ")[0].trim() === code)) return i + 1;
+  }
+  return null;
+}
+function courseInTerm(catalogString){
+  const student = StudentModule.current();
+  if(!student) return null;
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return null;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return null;
+  const code = String(catalogString).split(" - ")[0].trim();
+  return (CourseModule.listForSemester(semester.id) || [])
+    .find(c=>String(c.name).split(" - ")[0].trim() === code) || null;
+}
+/* Adds a plan course to the term as it is written in the plan, so everything
+   keyed on the course code — its explanation, its references, its notebook —
+   attaches to it exactly as to any other course. */
+function carryCourseIntoTerm(catalogString){
+  const student = StudentModule.current();
+  if(!student) return false;
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return false;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return false;
+  if(courseInTerm(catalogString)) return false;
+  CourseModule.create(semester.id, { name: catalogString, professor: "" });
+  return true;
+}
 function isPassed(catalogString){
   const code = String(catalogString).split(" - ")[0].trim();
   return passedCodes().indexOf(code) !== -1;
@@ -11244,6 +11663,9 @@ function applyDir(){
   applyProgramAccent(student);
   applyThemeChrome();
 }
+/* Called at the end of a render rather than inside applyDir, because applyDir
+   runs before the markup exists. */
+function afterRender(){ applyScreenMotion(); }
 function chevronBack(){ return lang()==="ar" ? ICON.chevronBackRtl : ICON.chevronBack; }
 function chevronFwd(){ return lang()==="ar" ? ICON.chevronFwdRtl : ICON.chevronFwd; }
 function escapeHtml(str){
@@ -11542,6 +11964,7 @@ function renderLecture(courseId){
         lectureMarks.forEach(word=>NotebookModule.addCheck(course.id, word, false, null));
         const cid = course.id;
         lectureCourseId = null; lectureText = ""; lectureMarks = [];
+        pulse("done");
         showToast(s.lectureSaved);
         renderCourseNotebook(cid);
       }
@@ -11799,6 +12222,7 @@ function renderTools(){
     </section>`;
 
   wireTabBar();
+  afterRender();
   document.querySelectorAll("[data-tools-tab]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       if(btn.dataset.toolsTab === toolsTab) return;
@@ -11870,7 +12294,8 @@ function wireTabBar(){
     btn.addEventListener("click", ()=>{
       const tab = btn.dataset.tab;
       if(tab === activeTab) return;
-      if(navigator.vibrate) navigator.vibrate(8);
+      pulse("tap");
+      markScreenMotion("tab");
       activeTab = tab;
       if(tab==="today") renderToday();
       else if(tab==="semester") renderSemester();
@@ -12218,9 +12643,13 @@ function renderOnboarding(){
     fillSemesterFromPlan(firstSemester && firstSemester.id, obDraft.level || LEVELS[0][lang()]);
 
     activeTab = "today";
-    const flagMsg = flagshipMessage(student);
-    if(flagMsg) showFlagshipMoment(flagMsg, ()=>renderToday());
-    else renderToday();
+    /* The plan first, then whatever the flagship moment had to say. Seeing what
+       was built for them is the thing that makes the rest worth reading. */
+    renderToday();
+    setTimeout(()=>showPlanReady(()=>{
+      const flagMsg = flagshipMessage(student);
+      if(flagMsg) showFlagshipMoment(flagMsg, ()=>renderToday());
+    }), 260);
   });
 }
 
@@ -12373,6 +12802,7 @@ function renderToday(){
           <div class="hero-sub">${escapeHtml(student.major)}${student.university? ' · '+escapeHtml(student.university):''}</div>
           <div class="type-caption">${s.coursesCount(courses.length)}</div>
         </div>
+        ${momentHtml()}
         ${phaseHtml()}
         ${(()=>{
           /* Offered first when a class is in session, because at that moment it
@@ -12429,6 +12859,12 @@ function renderToday(){
     </section>
   `;
   wireTabBar();
+  afterRender();
+  const momentGo = document.getElementById("momentGo");
+  if(momentGo){
+    const m = momentNow();
+    if(m && m.go) momentGo.addEventListener("click", m.go.run);
+  }
   const weekAskBtn = document.getElementById("weekAskBtn");
   if(weekAskBtn) weekAskBtn.addEventListener("click", ()=>openWeekSheet(()=>renderToday()));
   const lectureBtn = document.getElementById("lectureBtn");
@@ -12521,13 +12957,18 @@ function renderSemester(){
         <button type="button" class="btn btn-secondary" data-empty="library" style="margin-top:8px; min-width:200px;">${ICON.openBook}<span>${s.emptyOpenLibrary}</span></button>
       </div>`
     : `<div class="stack">${courses.map(c=>{
+        /* A course belonging to a level other than the one the student is in:
+           carried from behind, or taken early from ahead. */
+        const cLevel = levelOfCourse(c.name);
+        const myLevel = (()=>{ const id = levelIdForLabel(student && student.level); const ids = Object.keys(COURSE_CATALOG[catalogKeyFor(student)] || {}); const at = ids.indexOf(id); return at > -1 ? at + 1 : null; })();
+        const offset = (cLevel && myLevel && cLevel !== myLevel) ? cLevel : null;
         const evs = AcademicEventModule.listForCourse(c.id);
         const nextEv = evs.filter(e=>e.date && !isEventPast(e)).sort((a,b)=>a.date.localeCompare(b.date))[0];
         return `
         <button type="button" class="card" data-course-id="${c.id}">
           <span class="card-icon">${ICON.book}</span>
           <span class="card-body">
-            <span class="card-title">${escapeHtml(c.name)}</span>
+            <span class="card-title">${escapeHtml(c.name)}${offset ? `<span class="carry-tag">${offset < myLevel ? s.carriedTag(offset.toLocaleString(lang()==="ar"?"ar-EG":"en")) : s.carryAheadTag(offset.toLocaleString(lang()==="ar"?"ar-EG":"en"))}</span>` : ""}</span>
             ${nextEv ? `<span class="card-meta">${escapeHtml(nextEv.title)}</span>` : ""}
           </span>
           <span class="card-chevron">${chevronFwd()}</span>
@@ -12568,6 +13009,7 @@ function renderSemester(){
     </section>
   `;
   wireTabBar();
+  afterRender();
   mountQuickTools("semester");
   const addBtn = document.getElementById("addCourseBtn");
   if(addBtn) addBtn.addEventListener("click", ()=>{ openCourseSheet(semester.id, null, renderSemester); });
@@ -14500,7 +14942,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-07 07:41";
+const BUILD_ID = "2026-09-07 09:49";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -14680,17 +15122,44 @@ function renderCourseLibrary(){
           <div class="empty-title">${s.libraryNoCatalogTitle}</div>
           <p class="empty-text">${s.libraryNoCatalogText}</p>
         </div>` : `
-        <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; padding:2px var(--sp-4) var(--sp-4);">
-          ${availableLevels.map(lv=>{
-            const courses = catalog[lv.id];
-            const enrichedCount = courses.filter(c=>Object.keys(COURSE_ENRICHMENT).find(k=>c.trim().startsWith(k))).length;
-            const isActive = lv.id===libraryActiveLevel;
-            return `
-            <button type="button" class="level-chip ${isActive?'level-chip-active':''}" data-library-level="${lv.id}">
-              <span class="level-chip-num">${lv.id.replace('l','')}</span>
-              <span class="level-chip-count">${enrichedCount}/${courses.length}</span>
-            </button>`;
-          }).join("")}
+        ${(()=>{
+          /* One line for the whole degree: what is behind, what remains. Counted
+             against courses the student marked completed, so it is their own
+             progress and not an average. */
+          const all = availableLevels.reduce((a, lv)=>a.concat(catalog[lv.id]), []);
+          const done = all.filter(isPassed).length;
+          const pct = all.length ? Math.round(done / all.length * 100) : 0;
+          return `
+          <div class="lib-progress">
+            <div class="lib-progress-line">
+              <span class="lib-progress-done">${s.libProgressDone(done.toLocaleString(lang()==="ar"?"ar-EG":"en"), all.length.toLocaleString(lang()==="ar"?"ar-EG":"en"))}</span>
+              <span class="lib-progress-left">${s.libProgressLeft(all.length - done)}</span>
+            </div>
+            <div class="lib-bar"><i style="width:${Math.max(pct, 1)}%"></i></div>
+          </div>`;
+        })()}
+        <div class="lib-path">
+          ${(()=>{
+            const hereId = levelIdForLabel(StudentModule.current() && StudentModule.current().level);
+            const hereAt = availableLevels.findIndex(lv=>lv.id === hereId);
+            return availableLevels.map((lv, i)=>{
+              const courses = catalog[lv.id];
+              const donein = courses.filter(isPassed).length;
+              const isActive = lv.id === libraryActiveLevel;
+              /* A level counts as behind when the student has passed all of it,
+                 or when it sits before the level they told us they are in. */
+              const behind = (donein === courses.length && courses.length) || (hereAt > -1 && i < hereAt);
+              const here = hereAt > -1 ? (i === hereAt) : isActive;
+              const cls = behind ? "lib-step-done" : (here ? "lib-step-here" : "lib-step-ahead");
+              const tag = behind ? s.libLevelDone : (here ? s.libLevelHere : s.libLevelAhead);
+              return `
+              <button type="button" class="lib-step ${cls}" data-library-level="${lv.id}" style="${isActive?'border-color:rgba(var(--accent-rgb),.5);':''}">
+                <span class="lib-step-num">${behind ? ICON.check : (i+1).toLocaleString(lang()==="ar"?"ar-EG":"en")}</span>
+                <span class="lib-step-count">${donein.toLocaleString(lang()==="ar"?"ar-EG":"en")}/${courses.length.toLocaleString(lang()==="ar"?"ar-EG":"en")}</span>
+                <span class="lib-step-tag">${tag}</span>
+              </button>`;
+            }).join("");
+          })()}
         </div>
         <div style="padding-inline:var(--sp-4);">
           <div class="section-label" style="margin-top:0;">${availableLevels.find(lv=>lv.id===libraryActiveLevel) ? availableLevels.find(lv=>lv.id===libraryActiveLevel)[l] : ''}${(()=>{ const d = currentCourses.filter(isPassed).length; return d ? ` <span style="color:var(--support); font-weight:400;">· ${s.passedCount(d)}</span>` : ""; })()}</div>
@@ -14729,6 +15198,7 @@ function renderCourseLibrary(){
     </section>
   `;
   wireTabBar();
+  afterRender();
   mountQuickTools("library");
   const refMapBtn = document.getElementById("openRefMap");
   if(refMapBtn) refMapBtn.addEventListener("click", ()=>{ renderReferenceMap(); });
@@ -14762,6 +15232,7 @@ function renderCourseLibrary(){
       confirmLabel:s.levelDoneConfirm,
       onConfirm:()=>{
         const n = setLevelPassed(currentCourses, true);
+        pulse("done");
         showToast(s.levelDoneToast(n));
         renderCourseLibrary();
       }
@@ -14800,6 +15271,10 @@ function openLibraryCoursePreview(catalogString){
       <div class="sheet-handle"></div>
       <div class="sheet-title">${escapeHtml(name)}</div>
       <button type="button" class="btn btn-secondary" id="passedToggle" style="width:100%; margin-bottom:var(--sp-3); ${isPassed(catalogString) ? 'color:var(--support); border-color:rgba(88,182,144,.4);' : ''}">${ICON.check}<span>${isPassed(catalogString) ? s.passedUnmarkBtn : s.passedMarkBtn}</span></button>
+      ${(!isPassed(catalogString) && !courseInTerm(catalogString)) ? `
+      <button type="button" class="btn btn-secondary" id="carryBtn" style="width:100%; margin-bottom:var(--sp-3);">${ICON.plus}<span>${s.carryAdd}</span></button>
+      <p class="type-caption" style="color:var(--ink-muted); margin:-6px 0 var(--sp-3); line-height:1.6;">${s.carryNote}</p>` : ""}
+      ${courseInTerm(catalogString) ? `<p class="type-caption" style="color:var(--support); margin:-6px 0 var(--sp-3);">${ICON.check} ${s.carryAlready}</p>` : ""}
       ${isPassed(catalogString) ? `<p class="type-caption" style="color:var(--ink-muted); margin:-6px 0 var(--sp-3); line-height:1.6;">${s.passedNote}</p>` : ""}
       ${enrichment ? `
         <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[l])}</p>
@@ -14821,6 +15296,15 @@ function openLibraryCoursePreview(catalogString){
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ overlay.classList.add("show"); }); });
   function close(){ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); }, 300); }
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  const carryBtn = overlay.querySelector("#carryBtn");
+  if(carryBtn) carryBtn.addEventListener("click", ()=>{
+    if(carryCourseIntoTerm(catalogString)){
+      pulse("saved");
+      showToast(t().carryDone(String(catalogString).split(" - ").slice(1).join(" - ") || catalogString));
+    }
+    close();
+    renderCourseLibrary();
+  });
   const passedBtn = overlay.querySelector("#passedToggle");
   if(passedBtn) passedBtn.addEventListener("click", ()=>{
     togglePassed(catalogString);
@@ -14875,6 +15359,7 @@ function renderJourney(){
     </section>
   `;
   wireTabBar();
+  afterRender();
   document.querySelectorAll("[data-semester-id]").forEach(card=>{
     card.addEventListener("click", ()=>{
       const sem = dbGet("semesters", card.dataset.semesterId);
@@ -15617,6 +16102,7 @@ function renderSkillsHub(){
     </section>
   `;
   wireTabBar();
+  afterRender();
   document.querySelectorAll("[data-hub-skill]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ skillDetailActiveSection = "tips"; renderSkillDetail(btn.dataset.hubSkill); });
   });
@@ -17434,6 +17920,7 @@ function renderSettings(){
   const expBtn = document.getElementById("backupExportBtn");
   if(expBtn) expBtn.addEventListener("click", ()=>{
     const name = exportBackup();
+    pulse("saved");
     const st = document.getElementById("backupStatus");
     if(st){ st.style.color = "var(--support)"; st.textContent = s.backupDone(name); }
   });
