@@ -922,6 +922,48 @@ body[data-theme="daylight"] .card:before{
 /* One hard idea per block, the first already open. A student meeting a course
    for the first time needs one thing explained, not a wall of five — and the
    closed ones are a promise that the rest is here when they get there. */
+/* Lecture mode is the one screen built for divided attention: the lecturer is
+   still talking. So it holds one large writing surface and three large
+   targets, nothing else — no navigation, no tab bar, nothing that costs a
+   glance the student can't spare. */
+/* The term's phase, stated once at the top of Today. Not a progress bar and
+   not a score: a sentence about where the student is and what that stage
+   asks of them. It changes four times a term, which is often enough to feel
+   alive and rare enough that nobody learns to ignore it. */
+/* The action belongs inside the empty state, not somewhere else on the screen.
+   An empty screen is a question; this is its answer. */
+.empty-state .btn{ margin-top:var(--sp-4); min-width:200px; }
+.phase{
+  display:flex; flex-direction:column; gap:5px;
+  padding:var(--sp-4); border-radius:var(--r-md); margin-bottom:var(--sp-4);
+  background:linear-gradient(150deg, rgba(var(--accent-rgb),.11), transparent 70%);
+  border:1px solid rgba(var(--accent-rgb),.20);
+}
+.phase-week{ font-size:11px; font-weight:700; color:var(--accent); letter-spacing:.04em; }
+.phase-title{ font-size:var(--fs-subheading); font-weight:800; }
+.phase-text{ font-size:var(--fs-caption); color:var(--ink-muted); line-height:1.75; }
+.lec-sheet{
+  flex:1; width:100%; min-height:46vh; resize:none;
+  background:var(--surface); border:1px solid var(--flat-line);
+  border-radius:var(--r-md); padding:var(--sp-4);
+  color:var(--ink); font-family:inherit; font-size:16px; line-height:1.9;
+}
+.lec-actions{ display:flex; gap:8px; margin-top:var(--sp-3); }
+.lec-btn{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:13px 6px; border-radius:var(--r-md);
+  background:var(--flat); border:1px solid var(--flat-line);
+  color:var(--ink); font-family:inherit; font-size:11.5px; font-weight:700;
+}
+.lec-btn svg{ width:19px; height:19px; }
+.lec-btn:active{ transform:scale(.96); }
+.lec-btn-mark{ background:rgba(var(--attention-rgb),.14); border-color:rgba(var(--attention-rgb),.34); color:var(--attention); }
+.lec-count{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 11px; border-radius:999px;
+  background:rgba(var(--attention-rgb),.14); color:var(--attention);
+  font-size:11.5px; font-weight:700;
+}
 .hard-part{
   background:var(--surface); border:1px solid var(--flat-line);
   border-radius:var(--r-sm); padding:var(--sp-3);
@@ -1842,10 +1884,82 @@ const STR = {
     storageTitle:"المساحة",
     nbToolsWrite:"اكتب",
     hardPartsLabel:"أصعب ما فيه — مُبسَّطًا",
+    journeyEntry:"مسار رحلتك",
+    journeyEntryD:"فصولك السابقة وما أنجزته فيها",
+    cvTabLearn:"افهم",
+    planFactoryEntry:"تخصصك غير موجود؟ أرسل خطتك",
+    lectureEntry:"أنا في المحاضرة",
+    weekAskTitle:"في أي أسبوع أنت الآن؟",
+    emptyAddCourse:"أضف أول مقرر",
+    emptyBuildSchedule:"أضف مقرراتك أولًا",
+    emptyOpenLibrary:"افتح خطتك",
+    emptyAddTerm:"أضف أول تعبير",
+    emptyWriteNote:"اكتب أول ملاحظة",
+    weekAskD:"سؤال واحد، ويعرف التطبيق بعده أين أنت من فصلك — فيقترح ما يناسب المرحلة لا ما يناسب المبتدئ.",
+    weekAskPh:"رقم الأسبوع",
+    weekAskSave:"احفظ",
+    weekLabel:(n)=>`الأسبوع ${n}`,
+    weekStillTitle:"هل ما زلت في هذا الأسبوع؟",
+    weekStillYes:"نعم، حدّثه",
+    phaseStartTitle:"أول الفصل",
+    phaseStartText:"رتّب موادك وافتح خطتك مرة واحدة الآن. الأسبوعان الأولان أرخص وقت لبناء نظامك — وبعدهما تبدأ المادة تتراكم.",
+    phaseWriteTitle:"وقت التدوين",
+    phaseWriteText:"المادة تتراكم الآن أسرع مما تتصور. اكتب في المحاضرة، وبيّض في مسائها — فما يُبيَّض في يومه يُراجَع في ساعة، وما يُترك يُدرَس من الصفر.",
+    phaseReviewTitle:"وقت المراجعة",
+    phaseReviewText:"نصف الفصل مضى. افتح «ما لم تفهمه» في كل مادة وأغلق ما استطعت منه الآن — قبل أن تجتمع عليك مع المراجعة النهائية.",
+    phaseExamTitle:"وقت الاستعداد",
+    phaseExamText:"الأسابيع الأخيرة. رتّب اختباراتك بتواريخها، وابدأ بأبعدها فهمًا لا بأقربها موعدًا — فالمادة التي لم تفهمها تحتاج وقتًا لا مراجعة.",
+    phaseEndTitle:"آخر الفصل",
+    phaseEndText:"احفظ نسخة احتياطية الآن، واكتب في مرآة الأسبوع ما تريد تغييره في فصلك القادم — الملاحظة التي تُكتب اليوم أصدق من التي تُستعاد بعد شهرين.",
+    lectureEntryD:"شاشة واحدة: تكتب، وتصوّر السبورة، وتعلّم ما لم تفهمه",
+    lectureTitle:"وضع المحاضرة",
+    lecturePick:"أي مادة؟",
+    lectureWritePh:"اكتب ما يقوله الدكتور… يُحفظ وأنت تكتب.",
+    lectureConfused:"لم أفهم",
+    lectureBoard:"صوّر السبورة",
+    lectureEnd:"أنهيت المحاضرة",
+    lectureMarked:(n)=>n===1 ? "نقطة واحدة لم تفهمها" : (n===2 ? "نقطتان لم تفهمهما" : `${n} نقاط لم تفهمها`),
+    lectureMarkPh:"ما الذي لم تفهمه؟ كلمة واحدة تكفي",
+    lectureMarkSave:"علّمها",
+    lectureSaved:"حُفظت محاضرتك في دفتر المادة",
+    lectureEndTitle:"انتهت المحاضرة",
+    lectureEndText:(n)=>n ? `سنحفظ ملاحظاتك، ونضع ${n} في «ما لم تفهمه» لتراجعها قبل الاختبار.` : "سنحفظ ملاحظاتك في دفتر المادة.",
+    lectureEndGo:"احفظ وأنهِ",
+    lectureWhiten:"بيّضها الآن",
+    lectureWhitenD:"أعد كتابتها بكلماتك قبل أن تبرد — عشر دقائق الآن توفّر ساعة قبل الاختبار.",
+    planFactoryEntryD:"نبنيها ونرسلها لك — وتصير متاحة لزملائك",
+    planFactoryTitle:"أرسل خطتك",
+    planFactoryIntro:"املأ ما تعرفه، وأرفق صور خطتك من بوابة جامعتك. كلما كانت الصور أوضح، وصلت خطتك أسرع.",
+    pfUni:"الجامعة أو الكلية أو المعهد",
+    pfUniPh:"مثال: الكلية التقنية بالخرج",
+    pfMajor:"التخصص كما هو مكتوب في خطتك",
+    pfMajorPh:"مثال: تقنية أنظمة التبريد والتكييف",
+    pfLevels:"عدد المستويات في الخطة",
+    pfLevelsPh:"مثال: 8",
+    pfNote:"ملاحظة (اختياري)",
+    pfNotePh:"مثال: خطتي محدّثة 2026، وفيها مسار تدريب تعاوني",
+    pfHow:"كيف تصوّر خطتك",
+    pfHow1:"ادخل بوابة جامعتك من المتصفح لا من التطبيق",
+    pfHow2:"افتح صفحة الخطة الدراسية أو السجل الأكاديمي",
+    pfHow3:"صوّر كل مستوى بصورة واضحة تُقرأ فيها الرموز والأسماء",
+    pfHow4:"أرسل الرسالة، ثم أرفق الصور في المحادثة نفسها",
+    pfSend:"أرسل الطلب",
+    pfMissing:"اكتب اسم مؤسستك وتخصصك على الأقل.",
+    pfSent:"أرسلنا نصّ طلبك — أرفق الصور في المحادثة.",
+    pfPromise:"ما نعد به: نراجع كل خطة تصلنا، ونبنيها بنفس الدقة التي بُنيت بها الخطط الموجودة — لكل مقرر شرحه ومرجعه المتحقَّق منه. وحين تجهز نرسلها لك، وتصير متاحة لكل من يدرس تخصصك.",
+    cvTabWrite:"اكتب",
+    cvTabKeep:"احفظ",
+    cvTabPrep:"استعد",
+    cvWriteD:"ملاحظاتك وصفحاتك في هذه المادة",
+    cvKeepTerms:"مفكرة المصطلحات",
+    cvKeepEssays:"التعابير المطلوبة",
+    cvPrepEmpty:"لا اختبار قادم في هذه المادة. أضف موعدًا حين يُعلن، فيتحوّل هذا التبويب إلى خطة استعداد.",
+    cvOpenNotebook:"افتح الدفتر",
     hardPartWhy:"لماذا يتعثّر فيه الطلاب",
     nbToolsAttach:"أرفق",
     nbToolsTrack:"تابِع",
     toolsTabCourse:"مادة",
+    toolJourneyD:"مستوياتك، وما تبقّى حتى اللقب",
     toolsTabWeek:"أسبوعك",
     toolsTabLang:"اللغة",
     toolsTabMine:"ملفك",
@@ -2457,10 +2571,82 @@ const STR = {
     storageTitle:"Storage",
     nbToolsWrite:"Write",
     hardPartsLabel:"Its hardest parts, made plain",
+    journeyEntry:"Your journey",
+    journeyEntryD:"Your past terms and what you finished in them",
+    cvTabLearn:"Learn",
+    planFactoryEntry:"Your programme missing? Send us your plan",
+    lectureEntry:"I'm in a lecture",
+    weekAskTitle:"Which week are you in?",
+    emptyAddCourse:"Add your first course",
+    emptyBuildSchedule:"Add your courses first",
+    emptyOpenLibrary:"Open your plan",
+    emptyAddTerm:"Add your first term",
+    emptyWriteNote:"Write your first note",
+    weekAskD:"One question, and the app knows where you are in the term — so it suggests what suits the stage rather than what suits a beginner.",
+    weekAskPh:"Week number",
+    weekAskSave:"Save",
+    weekLabel:(n)=>`Week ${n}`,
+    weekStillTitle:"Are you still in this week?",
+    weekStillYes:"Yes, update it",
+    phaseStartTitle:"Start of term",
+    phaseStartText:"Set up your courses and open your plan once now. The first two weeks are the cheapest time to build your system — after them the material starts piling up.",
+    phaseWriteTitle:"Time to write",
+    phaseWriteText:"Material is accumulating faster than it seems. Write in the lecture and write it up that evening — what is written up the same day is revised in an hour; what is left is learned from scratch.",
+    phaseReviewTitle:"Time to review",
+    phaseReviewText:"Half the term has gone. Open what you didn't follow in each course and close what you can now — before it gathers on top of your final revision.",
+    phaseExamTitle:"Time to prepare",
+    phaseExamText:"The final weeks. Order your exams by date, and start with the one you understand least rather than the one that comes first — a subject you never followed needs time, not revision.",
+    phaseEndTitle:"End of term",
+    phaseEndText:"Save a backup now, and write in the weekly mirror what you want to change next term — a note written today is truer than one recalled in two months.",
+    lectureEntryD:"One screen: write, photograph the board, and mark what you didn't follow",
+    lectureTitle:"Lecture mode",
+    lecturePick:"Which course?",
+    lectureWritePh:"Write what the lecturer says… it saves as you type.",
+    lectureConfused:"Didn't follow",
+    lectureBoard:"Photograph the board",
+    lectureEnd:"End the lecture",
+    lectureMarked:(n)=>n===1 ? "one point you didn't follow" : `${n} points you didn't follow`,
+    lectureMarkPh:"What didn't you follow? One word is enough",
+    lectureMarkSave:"Mark it",
+    lectureSaved:"Your lecture is saved in the course notebook",
+    lectureEndTitle:"Lecture ended",
+    lectureEndText:(n)=>n ? `We'll save your notes and put ${n} into "what you didn't follow" for revision before the exam.` : "We'll save your notes in the course notebook.",
+    lectureEndGo:"Save and finish",
+    lectureWhiten:"Write them up now",
+    lectureWhitenD:"Rewrite them in your own words before they cool — ten minutes now saves an hour before the exam.",
+    planFactoryEntryD:"We'll build it and send it back — and it becomes available to your classmates",
+    planFactoryTitle:"Send your plan",
+    planFactoryIntro:"Fill in what you know and attach photos of your plan from your university portal. The clearer the photos, the sooner your plan arrives.",
+    pfUni:"University, college or institute",
+    pfUniPh:"e.g. Kharj Technical College",
+    pfMajor:"Programme, exactly as written in your plan",
+    pfMajorPh:"e.g. Refrigeration and Air Conditioning Technology",
+    pfLevels:"How many levels the plan has",
+    pfLevelsPh:"e.g. 8",
+    pfNote:"Note (optional)",
+    pfNotePh:"e.g. my plan is the 2026 edition and includes a co-op track",
+    pfHow:"How to photograph your plan",
+    pfHow1:"Open your university portal in a browser, not in this app",
+    pfHow2:"Find the study plan or academic record page",
+    pfHow3:"Photograph each level clearly enough to read the codes and names",
+    pfHow4:"Send the message, then attach the photos in the same chat",
+    pfSend:"Send the request",
+    pfMissing:"Please write at least your institution and programme.",
+    pfSent:"We've sent your request text — attach the photos in the chat.",
+    pfPromise:"What we promise: we review every plan that reaches us and build it with the same care as the ones already here — an explanation and a checked reference for every course. When it's ready we send it to you, and it becomes available to everyone studying your programme.",
+    cvTabWrite:"Write",
+    cvTabKeep:"Keep",
+    cvTabPrep:"Prepare",
+    cvWriteD:"Your notes and pages for this course",
+    cvKeepTerms:"Terms notebook",
+    cvKeepEssays:"Required essays",
+    cvPrepEmpty:"No exam scheduled for this course. Add a date when it's announced and this tab becomes a preparation plan.",
+    cvOpenNotebook:"Open the notebook",
     hardPartWhy:"Why students stumble here",
     nbToolsAttach:"Attach",
     nbToolsTrack:"Track",
     toolsTabCourse:"Course",
+    toolJourneyD:"Your levels, and what's left to the title",
     toolsTabWeek:"Week",
     toolsTabLang:"Language",
     toolsTabMine:"Yours",
@@ -3035,6 +3221,79 @@ function horizonHtml(){
       <span class="horizon-line">${s.horizonCourses(courses)} · ${s.horizonLevels(levelsLeft)}</span>
       <span class="horizon-note">${s.horizonNote}</span>
     </div>`;
+}
+/* A term has seasons, and a student in week eleven needs different words from
+   one in week one. The app used to look identical in both. Rather than guess
+   from a start date the student never gave us, we ask once — one number — and
+   count from there. Anyone who joins in week five says five, and is met where
+   they are instead of being treated as a newcomer.
+
+   Stored as the week plus the day it was told to us, so the count advances by
+   itself afterwards. */
+function currentTermWeek(){
+  const student = StudentModule.current();
+  if(!student || !student.weekNo || !student.weekSetAt) return null;
+  const days = Math.floor((Date.now() - student.weekSetAt) / 86400000);
+  return Math.max(1, Math.min(20, student.weekNo + Math.floor(days / 7)));
+}
+function termPhase(week){
+  const s = t();
+  if(week === null) return null;
+  if(week <= 2)  return { id:"start",  title:s.phaseStartTitle,  text:s.phaseStartText };
+  if(week <= 8)  return { id:"write",  title:s.phaseWriteTitle,  text:s.phaseWriteText };
+  if(week <= 12) return { id:"review", title:s.phaseReviewTitle, text:s.phaseReviewText };
+  if(week <= 15) return { id:"exam",   title:s.phaseExamTitle,   text:s.phaseExamText };
+  return { id:"end", title:s.phaseEndTitle, text:s.phaseEndText };
+}
+function phaseHtml(){
+  const s = t();
+  const week = currentTermWeek();
+  if(week === null){
+    return `
+      <button type="button" class="card" id="weekAskBtn" style="margin-bottom:var(--sp-4);">
+        <span class="card-icon">${ICON.event}</span>
+        <span class="card-body">
+          <span class="card-title">${s.weekAskTitle}</span>
+          <span class="card-meta" style="white-space:normal;">${s.weekAskD}</span>
+        </span>
+        <span class="card-chevron">${chevronFwd()}</span>
+      </button>`;
+  }
+  const phase = termPhase(week);
+  return `
+    <div class="phase">
+      <span class="phase-week">${s.weekLabel(week.toLocaleString(lang()==="ar"?"ar-EG":"en"))}</span>
+      <span class="phase-title">${phase.title}</span>
+      <span class="phase-text">${phase.text}</span>
+    </div>`;
+}
+/* Asked once. A student who takes a term off would otherwise be told they are
+   in week nineteen of a term that ended. */
+function openWeekSheet(onDone){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.weekAskTitle}</div>
+      <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-bottom:var(--sp-3);">${s.weekAskD}</p>
+      <input type="number" class="field" id="wkNum" inputmode="numeric" min="1" max="20" placeholder="${s.weekAskPh}" style="margin-bottom:var(--sp-3);">
+      <button type="button" class="btn btn-primary" id="wkGo" style="width:100%;">${ICON.check}<span>${s.weekAskSave}</span></button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 240); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  const go = ()=>{
+    const v = parseInt(overlay.querySelector("#wkNum").value, 10);
+    if(!v || v < 1 || v > 20) return;
+    StudentModule.update({ weekNo: v, weekSetAt: Date.now() });
+    close(onDone);
+  };
+  overlay.querySelector("#wkGo").addEventListener("click", go);
+  overlay.querySelector("#wkNum").addEventListener("keydown", (e)=>{ if(e.key === "Enter") go(); });
+  setTimeout(()=>{ const f = overlay.querySelector("#wkNum"); if(f) f.focus(); }, 260);
 }
 function knowsHtml(){
   const gap = gapGreeting();
@@ -4450,6 +4709,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الحرارة المحسوسة والكامنة: الفرق في الميزان الحراري", en:"Sensible and latent heat: the difference that decides the balance"}, plain:{ar:"الحرارة المحسوسة ترفع درجة الحرارة ولا تغيّر الطور — وتُحسب بـ m·cp·ΔT. والكامنة تغيّر الطور ولا ترفع الحرارة — الماء عند مئة درجة يغلي ويبقى عند مئة حتى يتبخّر كله. فإن مرّت مسألتك بتغيّر طور، فحسابها جزآن لا جزء واحد، والخلط بينهما يعطيك رقمًا بعيدًا جدًا لا قريبًا.", en:"Sensible heat raises temperature without changing phase — m·cp·ΔT. Latent heat changes phase without raising temperature: water at a hundred degrees boils and stays at a hundred until it has all vaporized. If your problem crosses a phase change, its calculation is two parts, not one."}, trap:{ar:"الطالب يحسب m·cp·ΔT عبر تغيّر الطور فيحصل على رقم بعيد جدًا عن الصحيح.", en:"Students apply m·cp·ΔT straight through a phase change and land far from the right answer."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE203 فيه يخص مقررك: أنظمة الديناميكا الحرارية، وقانون الغاز المثالي، وتغيّر الطور، وقانون دالتون، والحرارة المحسوسة والكامنة، وحرارة التفاعل، والقانونان الأول والثاني. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE203 section is yours: thermodynamic systems, the ideal gas law, phase change, Dalton's law, sensible and latent heat, heat of reaction, and the first and second laws. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Chemical Engineering Thermodynamics — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Engineering Thermodynamics — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101004", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للدكتور سانديب روي من معهد التقنية الهندي ببومباي، وله كتاب إلكتروني مرافق نشرته NPTEL. يغطي القانونين الأول والثاني، الخواص الديناميكية للموائع الحقيقية، واتزان الأطوار — وهو محور المقرر. بالإنجليزية لعدم وجود مقابل عربي حر بهذا العمق، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Dr. Sandip Roy of IIT Bombay, with a companion e-book published by NPTEL. It covers the first and second laws, the thermodynamic properties of real fluids, and phase equilibria — the core of this course. In English for want of a free Arabic equivalent at this depth"} }
     ]
   },
@@ -4933,6 +5193,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"المتحكم PID: ثلاثة تسأل ثلاثة أسئلة", en:"PID: three terms asking three questions"}, plain:{ar:"الحد التناسبي يسأل: كم يبعد الوضع الحالي عن المطلوب الآن؟ والتكاملي يسأل: كم تراكم الخطأ منذ البداية؟ والتفاضلي يسأل: بأي سرعة يتغيّر الخطأ الآن؟ فالأول يستجيب للحاضر، والثاني للماضي، والثالث يتوقّع المستقبل. وضبط المتحكم هو موازنة بين هذه الأسئلة الثلاثة.", en:"The proportional term asks: how far is the current state from the target right now? The integral asks: how much error has accumulated since the start? The derivative asks: how fast is the error changing? The first answers to the present, the second to the past, the third anticipates the future."}, trap:{ar:"الطالب يحفظ الحدود الثلاثة بلا معناها الزمني، فلا يعرف أيها يزيد حين يتذبذب النظام.", en:"Students memorize the three terms without their sense of time, then can't tell which to raise when the system oscillates."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE307 فيه يخص مقررك: مصطلحات التحكم، وتحويل لابلاس، واستجابة النظام، والأقطاب والأصفار، والتحكم PID. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE307 section is yours: control terminology, the Laplace transform, system response, poles and zeros, and PID control. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Chemical Process Control — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Process Control — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101142", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوجيت جوجوار من معهد التقنية الهندي ببومباي، يبدأ بالتحليل الديناميكي لسلوك المنظومات الكيميائية ثم ينتقل إلى التحكم فيها فالمتحكمات المتقدمة — وهو ترتيب هذا المقرر نفسه. مبني على مراجع المقرر المعروفة (Bequette وLuyben وStephanopoulos). بالإنجليزية لعدم وجود مقابل عربي حر، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Sujit Jogwar of IIT Bombay, beginning with the dynamic analysis of chemical systems, then moving to controlling them and on to advanced controllers — this course's own sequence. Built on the standard references (Bequette, Luyben, Stephanopoulos)"} }
     ]
   },
@@ -4947,6 +5208,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"ديناميكا العمليات والتحكم (CHE402)", en:"Process Dynamics and Control (CHE402)"}] },
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وفيه أقسام تخصّ مقررك: تصميم العمليات وأنواع المخططات وتتبّع الخطوط، إضافةً إلى إرشادات مشروع التخرج. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and it has sections for your course: process design, diagram types and line tracing, plus senior project design guidelines. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Process Design Decisions and Project Economics — NPTEL، معهد التقنية الهندي جواهاتي (مجاني)", en:"Process Design Decisions and Project Economics — NPTEL, IIT Guwahati (Free)"}, url:"https://archive.nptel.ac.in/courses/103/103/103103039/", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر يجمع شقّي هذا المقرر معًا: قرارات تصميم العملية واقتصاديات المشروع — وهو ما يصعب إيجاده مجتمعًا في مصدر واحد. محفوظ على أرشيف NPTEL الرسمي، وهو أثبت من نطاقهم الحديث كما تبيّن لنا", en:"A course joining both halves of this one: process design decisions and project economics — hard to find combined in a single source. Held on NPTEL's official archive, which has proved steadier than their newer domain"} }
     ]
   },
@@ -5392,6 +5654,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الأرقام اللابعدية: لماذا نستعملها", en:"Dimensionless numbers: why we use them"}, plain:{ar:"عدد براندتل يقارن سرعة انتشار الزخم بسرعة انتشار الحرارة في المائع. وعدد نسلت يقارن انتقال الحرارة بالحمل مقابل التوصيل وحده. ولماذا نصنع أرقامًا بلا وحدات؟ لأنها تسمح بنقل نتيجة تجربة على أنبوب صغير في المعمل إلى أنبوب صناعي كبير — وهذا هو أساس تصميم المبادلات الحرارية كلها.", en:"The Prandtl number compares how fast momentum spreads in a fluid against how fast heat does. The Nusselt number compares convective heat transfer against conduction alone. Why make numbers without units? Because they let a result measured on a small laboratory tube transfer to a large industrial one."}, trap:{ar:"الطالب يحفظ الصيغ بلا معناها، فلا يعرف أي علاقة يستعمل حين تتغيّر ظروف المسألة.", en:"Students memorize the correlations without their meaning and can't choose one when conditions change."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE300 فيه يخص مقررك: طرق انتقال الحرارة الثلاث، وعددا براندتل ونسلت، وأنواع المبادلات الحرارية. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE300 section is yours: the three modes of heat transfer, the Prandtl and Nusselt numbers, and types of heat exchanger. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Heat Transfer — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Heat Transfer — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105140", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوناندو داسغوبتا من معهد التقنية الهندي بخاراغبور — عميد البحث الممول سابقًا وزميل الأكاديمية الوطنية للهندسة، وله أكثر من ١٤٠ بحثًا محكّمًا. يبدأ بالمفاهيم والمعادلات الحاكمة ثم يتدرج إلى تصميم وحدات التبادل الحراري الصناعية فعلًا. مجاني بالتسجيل والتعلّم", en:"A complete course by Prof. Sunando DasGupta of IIT Kharagpur — formerly Dean of Sponsored Research, a Fellow of the National Academy of Engineering with over 140 peer-reviewed papers. It begins with concepts and governing equations and builds up to designing actual industrial heat transfer units. Free to enrol and learn from"} }
     ]
   },
@@ -5411,6 +5674,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"التكهّف: عدوّ المضخات", en:"Cavitation: the pump's enemy"}, plain:{ar:"إن انخفض ضغط السائل عند مدخل المضخة تحت ضغط بخاره، غلى السائل في درجة حرارته العادية وتكوّنت فقاعات. ثم تنهار الفقاعات حين يرتفع الضغط ثانية، فتضرب سطح الريشة ضربات مجهرية متكررة تنخره. ولهذا تُصمَّم المضخات بحد أدنى للضغط عند المدخل — لا لأداء أفضل بل لبقاء المضخة نفسها.", en:"If the liquid's pressure at the pump inlet falls below its vapour pressure, it boils at ordinary temperature and bubbles form. They then collapse as pressure recovers, hammering the impeller surface and eating into it. Hence the minimum inlet pressure — not for performance but for the pump's survival."}, trap:{ar:"الطالب يظنه مشكلة أداء، وهو مشكلة تلف: المضخة تُستهلك من الداخل بلا إنذار.", en:"Students treat it as a performance issue; it is a damage issue — the pump is consumed from inside without warning."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE204 فيه يخص مقررك: أنواع الموائع وخصائصها، والصفائحي مقابل المضطرب، والتكهّف، والضغط، ومعادلة برنولي. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE204 section is yours: fluid types and their characteristics, laminar against turbulent, cavitation, pressure, and Bernoulli's equation. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Fluid Mechanics — NPTEL، معهد التقنية الهندي كانبور (مجاني)", en:"Fluid Mechanics — NPTEL, IIT Kanpur (Free)"}, url:"https://nptel.ac.in/courses/103104044", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل في ميكانيكا الموائع من معهد التقنية الهندي بكانبور، مقدَّم من قسم الهندسة الكيميائية نفسه — أي أن أمثلته وتطبيقاته من عالم الأنابيب والمضخات والمفاعلات لا من الطيران والسيارات. بالإنجليزية، وزر اقرأها بالعربية يعرّب الصفحة", en:"A complete fluid mechanics course from IIT Kanpur, delivered by the chemical engineering department itself — so its examples come from the world of pipes, pumps and reactors rather than aeronautics and cars"} }
     ]
   },
@@ -5446,6 +5710,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"التدوير والتجاوز: ثلاثة موازين لا واحد", en:"Recycle and bypass: three balances, not one"}, plain:{ar:"حين يظهر خط تدوير في المخطط، لا تحاول كتابة ميزان واحد للمنظومة كلها. اكتب ثلاثة: ميزانًا على المنظومة الكاملة (يتجاهل التدوير لأنه داخلي)، وميزانًا على نقطة الخلط، وميزانًا على الوحدة نفسها. الميزان الشامل غالبًا أبسطها وأسرعها، وابدأ به دائمًا.", en:"When a recycle line appears, don't try one balance for the whole thing. Write three: one on the overall system (which ignores the recycle because it is internal), one on the mixing point, and one on the unit itself. The overall balance is usually the simplest — start there."}, trap:{ar:"الطالب يكتب ميزانًا واحدًا فيدخل التدوير في الحساب مرتين. التدوير داخلي في الميزان الشامل ولا يُحسب.", en:"Students write one balance and count the recycle twice. In the overall balance the recycle is internal and doesn't appear."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسمه الأول يغطي مقررك بالضبط: تحويل الوحدات، وموازين المادة والحرارة، والأرقام المعنوية، والعناصر المحددة والفائضة، ودرجات الحرية، والتدوير والتجاوز. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its first section covers your course exactly: unit conversion, mass and heat balances, significant figures, limiting and excess reactants, degrees of freedom, and recycle and bypass. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Material and Energy Balances — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Material and Energy Balances — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106076", lang:"en", reason:{ar:"مقرر أساسي للأستاذين شانكار نارسيمهان وتانماي باساك من معهد التقنية الهندي بمدراس، يغطي بالضبط ما يغطيه هذا المقرر: الوحدات والأبعاد، الحسابات الكيميائية القياسية، موازين المادة مع التدوير والتجاوز والتنقية، الاحتراق، سلوك الغاز المثالي، وموازين الطاقة وحرارة التفاعل والتكوين، وتحليل درجات الحرية. تنبيه على مستوى التحقق: تأكدنا من المقرر وأستاذيه من مصادر متعددة، وصفحة NPTEL منعت الفحص الآلي وقت الإضافة", en:"A foundational course by Professors Shankar Narasimhan and Tanmay Basak of IIT Madras covering exactly what this course covers: units and dimensions, stoichiometric calculations, material balances with recycle, bypass and purge, combustion, ideal gas behaviour, energy balances with heats of reaction and formation, and degree-of-freedom analysis. A note on verification: the course and its instructors were confirmed from several sources; the NPTEL page refused automated checking at the time of adding"} }
     ]
   },
@@ -5465,6 +5730,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"ترتيب التفاعل يُقاس ولا يُشتق", en:"Reaction order is measured, not derived"}, plain:{ar:"ترتيب التفاعل ليس معاملات المعادلة الموزونة — إلا في التفاعلات الأولية وحدها. الترتيب يُستخرج من بيانات تجريبية: تقيس التركيز مع الزمن ثم ترى أي رسم بياني يعطي خطًّا مستقيمًا، فيدلك على الترتيب. من يقرأ الترتيب من المعادلة الموزونة يخطئ في أغلب التفاعلات الحقيقية.", en:"Reaction order is not the stoichiometric coefficients — except for elementary reactions alone. Order comes from experimental data: measure concentration against time and see which plot gives a straight line. Reading order off the balanced equation is wrong for most real reactions."}, trap:{ar:"الطالب يقرأ الترتيب من المعادلة الموزونة مباشرة، وهي عادة أشيع خطأ في المقرر كله.", en:"Students read the order straight off the balanced equation — the commonest error in the whole course."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE308 فيه يخص مقررك: أنواع المفاعلات، وقانون السرعة، والحركية. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE308 section is yours: reactor types, the rate law, and kinetics. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Chemical Reaction Engineering 1 (Homogeneous Reactors) — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Chemical Reaction Engineering 1 — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106116", lang:"en", reason:{ar:"مقرر كامل للأستاذ ك. كريشنايا من معهد التقنية الهندي بمدراس في ست وأربعين محاضرة، يغطي حركية التفاعلات، تفسير بيانات المفاعل الدفعي، تصميم المفاعلات المثالية (الدفعي والخلط التام والدفق المكبسي)، والمفاعلات غير الأيزوثيرمية والأديباتية. تنبيه على مستوى التحقق: تأكدنا من وجود المقرر واسم أستاذه وجامعته من مصادر متعددة، لكن صفحة NPTEL منعت الفحص الآلي وقت الإضافة — فإن لم يفتح الرابط أخبرنا عبر زر اقتراح المرجع", en:"A complete course by Prof. K. Krishnaiah of IIT Madras in forty-six lectures covering reaction kinetics, interpreting batch reactor data, designing ideal reactors (batch, mixed flow, plug flow), and non-isothermal and adiabatic reactors. A note on verification: we confirmed the course, its instructor and institution from several sources, but the NPTEL page refused automated checking at the time of adding — if the link does not open, tell us through the suggest-a-reference button"} }
     ]
   },
@@ -6576,6 +6842,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"التدوير والتجاوز: ثلاثة موازين لا واحد", en:"Recycle and bypass: three balances, not one"}, plain:{ar:"حين يظهر خط تدوير في المخطط، لا تحاول كتابة ميزان واحد للمنظومة كلها. اكتب ثلاثة: ميزانًا على المنظومة الكاملة (يتجاهل التدوير لأنه داخلي)، وميزانًا على نقطة الخلط، وميزانًا على الوحدة نفسها. الميزان الشامل غالبًا أبسطها وأسرعها، وابدأ به دائمًا.", en:"When a recycle line appears, don't try one balance for the whole thing. Write three: one on the overall system (which ignores the recycle because it is internal), one on the mixing point, and one on the unit itself. The overall balance is usually the simplest — start there."}, trap:{ar:"الطالب يكتب ميزانًا واحدًا فيدخل التدوير في الحساب مرتين. التدوير داخلي في الميزان الشامل ولا يُحسب.", en:"Students write one balance and count the recycle twice. In the overall balance the recycle is internal and doesn't appear."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسمه الأول يغطي مقررك بالضبط: تحويل الوحدات، وموازين المادة والحرارة، والعناصر المحددة والفائضة، ودرجات الحرية، والتدوير والتجاوز. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its first section covers your course exactly: unit conversion, mass and heat balances, limiting and excess reactants, degrees of freedom, and recycle and bypass. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Material and Energy Balances — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Material and Energy Balances — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106076", lang:"en", reason:{ar:"مقرر أساسي للأستاذين شانكار نارسيمهان وتانماي باساك: الوحدات والأبعاد، الحسابات الكيميائية، موازين المادة مع التدوير والتجاوز والتنقية، الاحتراق، وموازين الطاقة وحرارة التفاعل، وتحليل درجات الحرية. تنبيه على مستوى التحقق: صفحة NPTEL منعت الفحص الآلي، وتأكدنا من المقرر وأستاذيه من مصادر متعددة", en:"A foundational course by Professors Shankar Narasimhan and Tanmay Basak: units and dimensions, stoichiometry, material balances with recycle, bypass and purge, combustion, energy balances and heats of reaction, and degree-of-freedom analysis. Verification note: the NPTEL page refused automated checking; the course and instructors were confirmed from several sources"} }
     ]
   },
@@ -6594,6 +6861,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"التكهّف: عدوّ المضخات", en:"Cavitation: the pump's enemy"}, plain:{ar:"إن انخفض ضغط السائل عند مدخل المضخة تحت ضغط بخاره، غلى السائل في درجة حرارته العادية وتكوّنت فقاعات. ثم تنهار الفقاعات حين يرتفع الضغط ثانية، فتضرب سطح الريشة ضربات مجهرية متكررة تنخره. ولهذا تُصمَّم المضخات بحد أدنى للضغط عند المدخل — لا لأداء أفضل بل لبقاء المضخة نفسها.", en:"If the liquid's pressure at the pump inlet falls below its vapour pressure, it boils at ordinary temperature and bubbles form. They then collapse as pressure recovers, hammering the impeller surface and eating into it. Hence the minimum inlet pressure — not for performance but for the pump's survival."}, trap:{ar:"الطالب يظنه مشكلة أداء، وهو مشكلة تلف: المضخة تُستهلك من الداخل بلا إنذار.", en:"Students treat it as a performance issue; it is a damage issue — the pump is consumed from inside without warning."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE204 فيه يخص مقررك: أنواع الموائع، والصفائحي مقابل المضطرب، والتكهّف، ومعادلة برنولي. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE204 section is yours: fluid types, laminar against turbulent, cavitation, and Bernoulli. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Fluid Mechanics — NPTEL، معهد التقنية الهندي كانبور (مجاني)", en:"Fluid Mechanics — NPTEL, IIT Kanpur (Free)"}, url:"https://nptel.ac.in/courses/103104044", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل مقدَّم من قسم الهندسة الكيميائية نفسه — فأمثلته من عالم الأنابيب والمضخات والمفاعلات لا من الطيران والسيارات", en:"A complete course delivered by the chemical engineering department itself — its examples come from pipes, pumps and reactors rather than aeronautics"} }
     ]
   },
@@ -6639,6 +6907,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"المتحكم PID: ثلاثة تسأل ثلاثة أسئلة", en:"PID: three terms asking three questions"}, plain:{ar:"الحد التناسبي يسأل: كم يبعد الوضع الحالي عن المطلوب الآن؟ والتكاملي يسأل: كم تراكم الخطأ منذ البداية؟ والتفاضلي يسأل: بأي سرعة يتغيّر الخطأ الآن؟ فالأول يستجيب للحاضر، والثاني للماضي، والثالث يتوقّع المستقبل. وضبط المتحكم هو موازنة بين هذه الأسئلة الثلاثة.", en:"The proportional term asks: how far is the current state from the target right now? The integral asks: how much error has accumulated since the start? The derivative asks: how fast is the error changing? The first answers to the present, the second to the past, the third anticipates the future."}, trap:{ar:"الطالب يحفظ الحدود الثلاثة بلا معناها الزمني، فلا يعرف أيها يزيد حين يتذبذب النظام.", en:"Students memorize the three terms without their sense of time, then can't tell which to raise when the system oscillates."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE307 فيه يخص مقررك: مصطلحات التحكم، وتحويل لابلاس، واستجابة النظام، والتحكم PID. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE307 section is yours: control terminology, the Laplace transform, system response, and PID. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Chemical Process Control — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Process Control — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101142", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في التحكم في العمليات لا في الأجهزة والقياس. أدرجناه لأن حلقات التحكم والمتحكمات هي النصف الثاني من مقررك، وهي مشروحة فيه بعمق. أما مبادئ القياس والمعايرة وأنواع المجسّات فتبقى من مرجع مقررك ومعمله", en:"Stated plainly: a process control course rather than one on instrumentation and measurement. Control loops and controllers are the second half of your course and are covered in depth here"} }
     ]
   },
@@ -6670,6 +6939,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الحرارة المحسوسة والكامنة: الفرق في الميزان الحراري", en:"Sensible and latent heat: the difference that decides the balance"}, plain:{ar:"الحرارة المحسوسة ترفع درجة الحرارة ولا تغيّر الطور — وتُحسب بـ m·cp·ΔT. والكامنة تغيّر الطور ولا ترفع الحرارة — الماء عند مئة درجة يغلي ويبقى عند مئة حتى يتبخّر كله. فإن مرّت مسألتك بتغيّر طور، فحسابها جزآن لا جزء واحد، والخلط بينهما يعطيك رقمًا بعيدًا جدًا لا قريبًا.", en:"Sensible heat raises temperature without changing phase — m·cp·ΔT. Latent heat changes phase without raising temperature: water at a hundred degrees boils and stays at a hundred until it has all vaporized. If your problem crosses a phase change, its calculation is two parts, not one."}, trap:{ar:"الطالب يحسب m·cp·ΔT عبر تغيّر الطور فيحصل على رقم بعيد جدًا عن الصحيح.", en:"Students apply m·cp·ΔT straight through a phase change and land far from the right answer."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE203 فيه يخص مقررك: أنظمة الديناميكا، والغاز المثالي، وتغيّر الطور، والحرارة المحسوسة والكامنة، والقانونان الأول والثاني. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE203 section is yours: thermodynamic systems, ideal gases, phase change, sensible and latent heat, and the first and second laws. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Chemical Engineering Thermodynamics — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Engineering Thermodynamics — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101004", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في الديناميكا الحرارية للهندسة الكيميائية، وهو أعمق من مقررك التمهيدي هنا. خذ منه فصوله الأولى — القانونين الأول والثاني والخواص الديناميكية — ودع اتزان الأطوار والخلائط لمقرر EN8701", en:"Stated plainly: a chemical engineering thermodynamics course, deeper than your introductory one here. Take its opening chapters — the two laws and thermodynamic properties — and leave phase equilibria and mixtures to EN8701"} }
     ]
   },
@@ -6687,6 +6957,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الأرقام اللابعدية: لماذا نستعملها", en:"Dimensionless numbers: why we use them"}, plain:{ar:"عدد براندتل يقارن سرعة انتشار الزخم بسرعة انتشار الحرارة في المائع. وعدد نسلت يقارن انتقال الحرارة بالحمل مقابل التوصيل وحده. ولماذا نصنع أرقامًا بلا وحدات؟ لأنها تسمح بنقل نتيجة تجربة على أنبوب صغير في المعمل إلى أنبوب صناعي كبير — وهذا هو أساس تصميم المبادلات الحرارية كلها.", en:"The Prandtl number compares how fast momentum spreads in a fluid against how fast heat does. The Nusselt number compares convective heat transfer against conduction alone. Why make numbers without units? Because they let a result measured on a small laboratory tube transfer to a large industrial one."}, trap:{ar:"الطالب يحفظ الصيغ بلا معناها، فلا يعرف أي علاقة يستعمل حين تتغيّر ظروف المسألة.", en:"Students memorize the correlations without their meaning and can't choose one when conditions change."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE300 فيه يخص مقررك: طرق انتقال الحرارة، والأرقام اللابعدية، وأنواع المبادلات. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE300 section is yours: modes of heat transfer, the dimensionless numbers, and exchanger types. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Heat Transfer — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Heat Transfer — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105140", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ سوناندو داسغوبتا، زميل الأكاديمية الوطنية للهندسة وله أكثر من ١٤٠ بحثًا محكّمًا. يبدأ بالمعادلات الحاكمة ويتدرج إلى تصميم وحدات التبادل الحراري الصناعية", en:"A complete course by Prof. Sunando DasGupta, a Fellow of the National Academy of Engineering with over 140 papers. It begins with governing equations and builds to designing industrial heat exchange units"} }
     ]
   },
@@ -6704,6 +6975,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"ترتيب التفاعل يُقاس ولا يُشتق", en:"Reaction order is measured, not derived"}, plain:{ar:"ترتيب التفاعل ليس معاملات المعادلة الموزونة — إلا في التفاعلات الأولية وحدها. الترتيب يُستخرج من بيانات تجريبية: تقيس التركيز مع الزمن ثم ترى أي رسم بياني يعطي خطًّا مستقيمًا، فيدلك على الترتيب. من يقرأ الترتيب من المعادلة الموزونة يخطئ في أغلب التفاعلات الحقيقية.", en:"Reaction order is not the stoichiometric coefficients — except for elementary reactions alone. Order comes from experimental data: measure concentration against time and see which plot gives a straight line. Reading order off the balanced equation is wrong for most real reactions."}, trap:{ar:"الطالب يقرأ الترتيب من المعادلة الموزونة مباشرة، وهي عادة أشيع خطأ في المقرر كله.", en:"Students read the order straight off the balanced equation — the commonest error in the whole course."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE308 فيه يخص مقررك: أنواع المفاعلات، وقانون السرعة، والحركية. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE308 section is yours: reactor types, the rate law, and kinetics. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Chemical Reaction Engineering 1 — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Chemical Reaction Engineering 1 — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/103106116", lang:"en", reason:{ar:"مقرر كامل للأستاذ ك. كريشنايا في ست وأربعين محاضرة: حركية التفاعلات، تفسير بيانات المفاعل الدفعي، تصميم المفاعلات المثالية، والمفاعلات غير الأيزوثيرمية. تنبيه على مستوى التحقق: صفحة NPTEL منعت الفحص الآلي وقت الإضافة", en:"A complete course by Prof. K. Krishnaiah in forty-six lectures: reaction kinetics, interpreting batch reactor data, ideal reactor design, and non-isothermal reactors. Verification note: the NPTEL page refused automated checking"} }
     ]
   },
@@ -6722,6 +6994,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الحرارة المحسوسة والكامنة: الفرق في الميزان الحراري", en:"Sensible and latent heat: the difference that decides the balance"}, plain:{ar:"الحرارة المحسوسة ترفع درجة الحرارة ولا تغيّر الطور — وتُحسب بـ m·cp·ΔT. والكامنة تغيّر الطور ولا ترفع الحرارة — الماء عند مئة درجة يغلي ويبقى عند مئة حتى يتبخّر كله. فإن مرّت مسألتك بتغيّر طور، فحسابها جزآن لا جزء واحد، والخلط بينهما يعطيك رقمًا بعيدًا جدًا لا قريبًا.", en:"Sensible heat raises temperature without changing phase — m·cp·ΔT. Latent heat changes phase without raising temperature: water at a hundred degrees boils and stays at a hundred until it has all vaporized. If your problem crosses a phase change, its calculation is two parts, not one."}, trap:{ar:"الطالب يحسب m·cp·ΔT عبر تغيّر الطور فيحصل على رقم بعيد جدًا عن الصحيح.", en:"Students apply m·cp·ΔT straight through a phase change and land far from the right answer."} }
     ],
     resources:[
+      { title:{ar:"ملخّص أساسيات الهندسة الكيميائية — إعداد عايض الشمري (مجاني)", en:"Summary of Chemical Engineering Fundamentals — by Ayed Alshammari (Free)"}, url:"https://www.linkedin.com/posts/al-khattab-al-owidi-4a3166171_summary-of-chemical-engineering-activity-7446612743429705728-7CaD", lang:"en", partial:true, reason:{ar:"ملخّص كتبه طالب هندسة كيميائية سعودي، مرتّب برموز المقررات لا بالمواضيع — وقسم CHE203 فيه يخص مقررك: أنظمة الديناميكا، والغاز المثالي، وحرارة التفاعل، والقانونان الأول والثاني. أدرجناه لأنه أقرب ما وجدنا إلى مقررك من حيث الترتيب والمستوى، ولأن من كتبه مرّ بما تمرّ به. تنبيه على مستوى الوصول: الملف مرفق بمنشور على لينكدإن، وقد يطلب منك الموقع تسجيل الدخول لتحميله. وهو ملخّص للمراجعة لا كتاب مقرر — يُقرأ بعد المحاضرة لا بدلًا منها", en:"A summary written by a Saudi chemical engineering student, organized by course code rather than by topic — and its CHE203 section is yours: thermodynamic systems, ideal gases, heat of reaction, and the two laws. We include it as the closest thing we found to your course in both order and level, written by someone who sat where you sit. Access note: the file is attached to a LinkedIn post, which may ask you to sign in. It is a revision summary, not a textbook — read after the lecture, not instead of it"} },
       { title:{ar:"Chemical Engineering Thermodynamics — NPTEL، معهد التقنية الهندي بومباي (مجاني)", en:"Chemical Engineering Thermodynamics — NPTEL, IIT Bombay (Free)"}, url:"https://nptel.ac.in/courses/103101004", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للدكتور سانديب روي وله كتاب إلكتروني مرافق نشرته NPTEL: القانونان الأول والثاني، الخواص الديناميكية للموائع الحقيقية، واتزان الأطوار", en:"A complete course by Dr. Sandip Roy with a companion e-book published by NPTEL: the first and second laws, thermodynamic properties of real fluids, and phase equilibria"} }
     ]
   },
@@ -10594,7 +10867,7 @@ const StudentModule = {
   update(data){
     const s = this.current();
     if(!s || !data) return;
-    const allowed = ["university","universityId","college","collegeId","major","majorId","level","passed","companion","theme"];
+    const allowed = ["university","universityId","college","collegeId","major","majorId","level","passed","companion","theme","weekNo","weekSetAt"];
     const patch = {};
     allowed.forEach(k=>{ if(Object.prototype.hasOwnProperty.call(data, k)) patch[k] = data[k]; });
     if(Object.keys(patch).length) dbUpdate("students", s.id, patch);
@@ -11109,6 +11382,279 @@ function storageBreakdown(){
   out.plans = JSON.stringify(COURSE_CATALOG).length + JSON.stringify(COURSE_ENRICHMENT).length;
   return out;
 }
+/* A plan reaches us today as loose photographs in a chat, and turning those
+   into a working programme is an hour of guessing at institution names, codes
+   and level boundaries. This asks the student the four things that guessing
+   costs most — and hands over a formatted request instead of a pile of
+   images. The bottleneck it removes is the one that decides how many students
+   this can serve at all. */
+/* ============================================================
+   LECTURE MODE — the app sits in the hall
+   ------------------------------------------------------------
+   The most valuable minutes of a student's day are the ones we served worst:
+   inside the lecture, opening the app meant course, then notebook, then new
+   note — and by then the lecturer has moved on two slides. One button, one
+   screen, and a way to mark a confusion without stopping to describe it.
+
+   The marks are the point. Each one becomes an entry in "what you didn't
+   follow" for that course, so the thing captured in three seconds during a
+   lecture is waiting in the exam preparation screen weeks later.
+   ============================================================ */
+let lectureCourseId = null;
+let lectureText = "";
+let lectureMarks = [];
+
+/* The course being taught right now, read from the timetable. Guessing right
+   removes the only question this screen would otherwise have to ask. */
+function courseInSessionNow(){
+  const student = StudentModule.current();
+  if(!student) return null;
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return null;
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return null;
+  const now = new Date();
+  const day = now.getDay();
+  const mins = now.getHours()*60 + now.getMinutes();
+  const toMin = (hhmm)=>{ const m = /^(\d{1,2}):(\d{2})/.exec(hhmm||""); return m ? (+m[1])*60 + (+m[2]) : null; };
+  const sessions = WeeklyScheduleModule.listForSemester(semester.id) || [];
+  const hit = sessions.find(x=>{
+    if(x.dayOfWeek !== day) return false;
+    const a = toMin(x.startTime), b = toMin(x.endTime);
+    if(a === null) return false;
+    /* A ten-minute grace before the hour: students open this walking in. */
+    return mins >= (a - 10) && mins <= (b === null ? a + 60 : b + 5);
+  });
+  return hit ? dbGet("courses", hit.courseId) : null;
+}
+
+function renderLecture(courseId){
+  applyDir();
+  const s = t();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
+  const student = StudentModule.current();
+  const journey = student ? JourneyModule.forStudent(student.id) : null;
+  const semester = journey ? SemesterModule.current(journey.id) : null;
+  const courses = semester ? (CourseModule.listForSemester(semester.id) || []) : [];
+
+  if(courseId && courseId !== lectureCourseId){
+    lectureCourseId = courseId; lectureText = ""; lectureMarks = [];
+  }
+  const course = lectureCourseId ? dbGet("courses", lectureCourseId) : null;
+
+  if(!course){
+    /* Asked only when the timetable can't answer. */
+    app.innerHTML = `
+      <section class="screen no-tabbar">
+        <div class="screen-header">
+          <button type="button" class="btn-icon" id="lecBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+          <div class="screen-header-title">${s.lecturePick}</div>
+          <span style="width:40px;"></span>
+        </div>
+        <div class="screen-content">
+          <div class="stack">
+            ${courses.map(c=>`
+              <button type="button" class="card" data-lec-course="${c.id}">
+                <span class="card-icon">${ICON.book}</span>
+                <span class="card-body"><span class="card-title">${escapeHtml(c.name)}</span></span>
+                <span class="card-chevron">${chevronFwd()}</span>
+              </button>`).join("")}
+          </div>
+        </div>
+      </section>`;
+    document.getElementById("lecBack").addEventListener("click", ()=>{ renderToday(); });
+    document.querySelectorAll("[data-lec-course]").forEach(b=>
+      b.addEventListener("click", ()=>renderLecture(b.dataset.lecCourse)));
+    return;
+  }
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="lecBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div>
+          <div class="screen-header-title" style="font-size:var(--fs-subheading);">${escapeHtml(course.name)}</div>
+          <div class="screen-header-sub">${pageDateLine()}</div>
+        </div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content" style="display:flex; flex-direction:column;">
+        ${lectureMarks.length ? `<div style="margin-bottom:var(--sp-3);"><span class="lec-count">${ICON.close}${s.lectureMarked(lectureMarks.length)}</span></div>` : ""}
+        <textarea class="lec-sheet" id="lecSheet" dir="auto" placeholder="${s.lectureWritePh}">${escapeHtml(lectureText)}</textarea>
+        <div class="lec-actions">
+          <button type="button" class="lec-btn lec-btn-mark" id="lecMark">${ICON.close}<span>${s.lectureConfused}</span></button>
+          <button type="button" class="lec-btn" id="lecBoard">${ICON.image}<span>${s.lectureBoard}</span></button>
+          <button type="button" class="lec-btn" id="lecEnd">${ICON.check}<span>${s.lectureEnd}</span></button>
+        </div>
+        <input type="file" id="lecPhoto" accept="image/*" capture="environment" style="display:none;">
+        <p class="type-caption" id="lecStatus" style="min-height:18px; margin-top:8px; text-align:center; color:var(--ink-muted);"></p>
+      </div>
+    </section>`;
+
+  const sheet = document.getElementById("lecSheet");
+  const status = document.getElementById("lecStatus");
+  let timer = null;
+  sheet.addEventListener("input", ()=>{
+    lectureText = sheet.value;
+    /* Held in memory during the lecture and written once at the end: a save on
+       every keystroke would touch storage hundreds of times in an hour. */
+    if(timer) clearTimeout(timer);
+    timer = setTimeout(()=>{ status.textContent = t().essaysSaved; setTimeout(()=>{ if(status) status.textContent=""; }, 1200); }, 700);
+  });
+  setTimeout(()=>sheet.focus(), 120);
+
+  document.getElementById("lecBack").addEventListener("click", ()=>{ renderToday(); });
+
+  /* Marking takes one tap and one word. Asking for a full description mid
+     lecture guarantees it is never used. */
+  document.getElementById("lecMark").addEventListener("click", ()=>{
+    openQuickMarkSheet((word)=>{
+      lectureMarks.push(word);
+      renderLecture();
+    });
+  });
+
+  const photo = document.getElementById("lecPhoto");
+  document.getElementById("lecBoard").addEventListener("click", ()=>photo.click());
+  photo.addEventListener("change", ()=>{
+    const file = photo.files && photo.files[0];
+    photo.value = "";
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      NotebookModule.addImageNote(course.id, reader.result, "default");
+      status.style.color = "var(--support)";
+      status.textContent = t().lectureSaved;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("lecEnd").addEventListener("click", ()=>{
+    const marks = lectureMarks.length;
+    showConfirmSheet({
+      title: s.lectureEndTitle,
+      text: s.lectureEndText(marks ? s.lectureMarked(marks) : 0),
+      confirmLabel: s.lectureEndGo,
+      onConfirm: ()=>{
+        if(lectureText.trim()) NotebookModule.addNote(course.id, lectureText.trim(), "default");
+        /* Each confusion becomes an unresolved understanding check, so it
+           surfaces in exam preparation without the student filing it there. */
+        lectureMarks.forEach(word=>NotebookModule.addCheck(course.id, word, false, null));
+        const cid = course.id;
+        lectureCourseId = null; lectureText = ""; lectureMarks = [];
+        showToast(s.lectureSaved);
+        renderCourseNotebook(cid);
+      }
+    });
+  });
+}
+
+/* One field, one button: the whole point is that it closes in three seconds. */
+function openQuickMarkSheet(onDone){
+  const s = t();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.lectureConfused}</div>
+      <input type="text" class="field" id="qmWord" dir="auto" autocomplete="off" placeholder="${s.lectureMarkPh}" style="margin-bottom:var(--sp-3);">
+      <button type="button" class="btn btn-primary" id="qmGo" style="width:100%;">${ICON.check}<span>${s.lectureMarkSave}</span></button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
+  const close = (after)=>{ overlay.classList.remove("sheet-open"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 220); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  const go = ()=>{
+    const v = overlay.querySelector("#qmWord").value.trim();
+    if(!v) return close();
+    close(()=>onDone(v));
+  };
+  overlay.querySelector("#qmGo").addEventListener("click", go);
+  overlay.querySelector("#qmWord").addEventListener("keydown", (e)=>{ if(e.key === "Enter") go(); });
+  setTimeout(()=>{ const f = overlay.querySelector("#qmWord"); if(f) f.focus(); }, 260);
+}
+function renderPlanFactory(){
+  applyDir();
+  const s = t();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
+  const student = StudentModule.current();
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="pfBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.planFactoryTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.8; margin-bottom:var(--sp-4);">${s.planFactoryIntro}</p>
+
+        <div class="field-group">
+          <label class="field-label" for="pfUni">${s.pfUni}</label>
+          <input type="text" class="field" id="pfUni" dir="auto" autocomplete="off" placeholder="${s.pfUniPh}" value="${escapeHtml((student && student.university) || "")}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="pfMajor">${s.pfMajor}</label>
+          <input type="text" class="field" id="pfMajor" dir="auto" autocomplete="off" placeholder="${s.pfMajorPh}" value="${escapeHtml((student && student.major) || "")}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="pfLevels">${s.pfLevels}</label>
+          <input type="text" class="field" id="pfLevels" inputmode="numeric" autocomplete="off" placeholder="${s.pfLevelsPh}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="pfNote">${s.pfNote}</label>
+          <textarea class="field" id="pfNote" dir="auto" rows="2" style="resize:none;" placeholder="${s.pfNotePh}"></textarea>
+        </div>
+
+        <div class="section-label">${s.pfHow}</div>
+        <div class="card" style="cursor:default; flex-direction:column; align-items:stretch; gap:8px;">
+          ${[s.pfHow1, s.pfHow2, s.pfHow3, s.pfHow4].map((line, i)=>`
+            <span style="display:flex; gap:9px; align-items:flex-start;">
+              <span style="width:20px; height:20px; border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(var(--accent-rgb),.16); color:var(--accent); font-weight:800; font-size:11px;">${(i+1).toLocaleString(lang()==="ar"?"ar-EG":"en")}</span>
+              <span class="type-caption" style="line-height:1.65;">${line}</span>
+            </span>`).join("")}
+        </div>
+
+        <p class="type-caption" id="pfStatus" style="min-height:18px; margin-top:var(--sp-3); text-align:center;"></p>
+        <button type="button" class="btn btn-primary" id="pfSend" style="width:100%;">${ICON.share}<span>${s.pfSend}</span></button>
+
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-top:var(--sp-4);">${s.pfPromise}</p>
+      </div>
+    </section>`;
+
+  document.getElementById("pfBack").addEventListener("click", ()=>{ renderCourseLibrary(); });
+  document.getElementById("pfSend").addEventListener("click", ()=>{
+    const uni = document.getElementById("pfUni").value.trim();
+    const major = document.getElementById("pfMajor").value.trim();
+    const levels = document.getElementById("pfLevels").value.trim();
+    const note = document.getElementById("pfNote").value.trim();
+    const status = document.getElementById("pfStatus");
+    if(!uni || !major){
+      status.style.color = "var(--attention)";
+      status.textContent = s.pfMissing;
+      return;
+    }
+    /* Sent as labelled lines rather than a paragraph: what arrives can be read
+       and acted on without a reply asking for the basics again. */
+    const body = (lang() === "ar"
+      ? ["طلب إضافة خطة دراسية — استدي ميت", "",
+         "المؤسسة: " + uni,
+         "التخصص: " + major,
+         levels ? "عدد المستويات: " + levels : "",
+         note ? "ملاحظة: " + note : "",
+         "", "سأرفق صور الخطة في هذه المحادثة."]
+      : ["Study plan request — StudyMate", "",
+         "Institution: " + uni,
+         "Programme: " + major,
+         levels ? "Levels: " + levels : "",
+         note ? "Note: " + note : "",
+         "", "I'll attach photos of the plan in this chat."]
+    ).filter(Boolean).join("\n");
+    openContact(body, lang() === "ar" ? "طلب إضافة خطة" : "Study plan request");
+    status.style.color = "var(--support)";
+    status.textContent = s.pfSent;
+  });
+}
 async function renderStorage(){
   applyDir();
   const s = t();
@@ -11244,6 +11790,7 @@ function renderTools(){
         ${toolsTab==="mine" ? `
         <div class="section-label" style="margin-top:0;">${s.toolsGroupMine}</div>
         <div class="stack">
+          ${tool("journey", ICON.journey, s.tabJourney, s.toolJourneyD)}
           ${tool("refmap", ICON.weekGrid, s.refMapEntry, s.toolRefMapD)}
           ${tool("backup", ICON.download, s.backupTitle, s.toolBackupD)}
         </div>` : ""}
@@ -11288,6 +11835,7 @@ function openTool(id, course){
     case "search":    named(s.searchEntryLabel, "", "lens"); return renderSearch();
     case "translate": named(s.liveTranslateEntryLabel, "", "message"); return renderLiveTranslate();
     case "glossary":  named(s.refGlossaryEntryLabel, "", "openBook"); return renderReferenceGlossary();
+    case "journey":   named(s.tabJourney, "", "journey"); return renderJourney();
     case "refmap":    named(s.refMapEntry, "", "weekGrid"); return renderReferenceMap();
     case "backup":    settingsTab = "account"; return renderSettings();
   }
@@ -11301,7 +11849,6 @@ function renderTabBar(active){
       <button type="button" class="tab-item ${active==='today'?'active':''}" data-tab="today"><span class="tab-item-icon">${ICON.today}</span><span class="tab-label">${s.tabToday}</span></button>
       <button type="button" class="tab-item ${active==='semester'?'active':''}" data-tab="semester"><span class="tab-item-icon">${ICON.semester}</span><span class="tab-label">${s.tabSemester}</span></button>
       <button type="button" class="tab-item ${active==='skills'?'active':''}" data-tab="skills"><span class="tab-item-icon">${ICON.spark}</span><span class="tab-label">${s.tabSkills}</span></button>
-      <button type="button" class="tab-item ${active==='journey'?'active':''}" data-tab="journey"><span class="tab-item-icon">${ICON.journey}</span><span class="tab-label">${s.tabJourney}</span></button>
       <button type="button" class="tab-item ${active==='library'?'active':''}" data-tab="library"><span class="tab-item-icon">${ICON.openBook}</span><span class="tab-label">${s.tabLibrary}</span></button>
       <button type="button" class="tab-item ${active==='tools'?'active':''}" data-tab="tools"><span class="tab-item-icon">${ICON.tools}</span><span class="tab-label">${s.tabTools}</span></button>
     </div>`;
@@ -11328,7 +11875,6 @@ function wireTabBar(){
       if(tab==="today") renderToday();
       else if(tab==="semester") renderSemester();
       else if(tab==="skills") renderSkillsHub();
-      else if(tab==="journey") renderJourney();
       else if(tab==="library") renderCourseLibrary();
       else if(tab==="tools") renderTools();
     });
@@ -11827,6 +12373,21 @@ function renderToday(){
           <div class="hero-sub">${escapeHtml(student.major)}${student.university? ' · '+escapeHtml(student.university):''}</div>
           <div class="type-caption">${s.coursesCount(courses.length)}</div>
         </div>
+        ${phaseHtml()}
+        ${(()=>{
+          /* Offered first when a class is in session, because at that moment it
+             is the only thing the student wants. */
+          const now = courseInSessionNow();
+          return `
+        <button type="button" class="card" id="lectureBtn" style="margin-bottom:var(--sp-4); ${now?'border-color:rgba(var(--accent-rgb),.4);':''}">
+          <span class="card-icon" style="${now?'color:var(--accent);':''}">${ICON.pencil}</span>
+          <span class="card-body">
+            <span class="card-title">${s.lectureEntry}</span>
+            <span class="card-meta" style="white-space:normal;">${now ? escapeHtml(now.name) : s.lectureEntryD}</span>
+          </span>
+          <span class="card-chevron">${chevronFwd()}</span>
+        </button>`;
+        })()}
         ${knowsHtml()}
 
         ${renderInstallBannerHtml()}
@@ -11868,6 +12429,14 @@ function renderToday(){
     </section>
   `;
   wireTabBar();
+  const weekAskBtn = document.getElementById("weekAskBtn");
+  if(weekAskBtn) weekAskBtn.addEventListener("click", ()=>openWeekSheet(()=>renderToday()));
+  const lectureBtn = document.getElementById("lectureBtn");
+  if(lectureBtn) lectureBtn.addEventListener("click", ()=>{
+    const now = courseInSessionNow();
+    lectureCourseId = null; lectureText = ""; lectureMarks = [];
+    renderLecture(now ? now.id : null);
+  });
   mountQuickTools("today");
   const knowsBtn = document.getElementById("knowsCard");
   if(knowsBtn) knowsBtn.addEventListener("click", ()=>{ const k = whatWeKnow(); if(k && k.go) k.go(); });
@@ -11948,6 +12517,8 @@ function renderSemester(){
         <div class="empty-icon">${ICON.book}</div>
         <div class="empty-title">${s.semesterEmptyTitle}</div>
         <p class="empty-text">${s.semesterEmptyText}</p>
+        <button type="button" class="btn btn-primary" data-empty="addCourse">${ICON.plus}<span>${s.emptyAddCourse}</span></button>
+        <button type="button" class="btn btn-secondary" data-empty="library" style="margin-top:8px; min-width:200px;">${ICON.openBook}<span>${s.emptyOpenLibrary}</span></button>
       </div>`
     : `<div class="stack">${courses.map(c=>{
         const evs = AcademicEventModule.listForCourse(c.id);
@@ -11975,6 +12546,14 @@ function renderSemester(){
         </div>` : ""}
       </div>
       <div class="screen-content">
+        <button type="button" class="card" id="journeyEntryBtn" style="margin-bottom:var(--sp-4);">
+          <span class="card-icon">${ICON.journey}</span>
+          <span class="card-body">
+            <span class="card-title">${s.journeyEntry}</span>
+            <span class="card-meta">${s.journeyEntryD}</span>
+          </span>
+          <span class="card-chevron">${chevronFwd()}</span>
+        </button>
         <div class="tool-row" style="margin-bottom:var(--sp-4);">
           <button type="button" class="tool-tile" id="rawNotebookBtn">${ICON.openBook}<span>${s.toolNotebook}</span></button>
           <button type="button" class="tool-tile" id="weeklyScheduleBtn">${ICON.weekGrid}<span>${s.toolSchedule}</span></button>
@@ -11994,6 +12573,15 @@ function renderSemester(){
   if(addBtn) addBtn.addEventListener("click", ()=>{ openCourseSheet(semester.id, null, renderSemester); });
   const weeklyBtn = document.getElementById("weeklyScheduleBtn");
   if(weeklyBtn) weeklyBtn.addEventListener("click", ()=>{ renderWeeklySchedule(); });
+  document.querySelectorAll("[data-empty]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const what = btn.dataset.empty;
+      if(what === "addCourse") return openCourseSheet(semester.id, null, renderSemester);
+      if(what === "library"){ activeTab = "library"; return renderCourseLibrary(); }
+    });
+  });
+  const journeyEntryBtn = document.getElementById("journeyEntryBtn");
+  if(journeyEntryBtn) journeyEntryBtn.addEventListener("click", ()=>{ renderJourney(); });
   const rawBtn = document.getElementById("rawNotebookBtn");
   if(rawBtn) rawBtn.addEventListener("click", ()=>{ renderRawNotebook(); });
   document.querySelectorAll("[data-course-id]").forEach(card=>{
@@ -12012,7 +12600,14 @@ function renderSemester(){
    COURSE VIEW — everything specific to one course; its own
    Academic Events lead the screen (Phase 4, Section S).
    ============================================================ */
-function renderCourseView(courseId){
+/* One course, one screen. Its material used to live across five destinations —
+   the course, its notebook, its terms, its essays, its exam preparation — so a
+   student thinking about one subject spent their attention on navigation
+   instead. Four tabs hold the same things in the order a term actually uses
+   them: understand it, write about it, keep what matters, prepare for it. */
+let courseTab = "learn";
+function renderCourseView(courseId, keepTab){
+  if(!keepTab) courseTab = "learn";
   applyDir();
   const s = t();
   const course = CourseModule.get(courseId);
@@ -12081,6 +12676,59 @@ function renderCourseView(courseId){
           <div class="hero-title" style="font-size:var(--fs-heading);">${escapeHtml(course.name)}</div>
           ${course.professor ? `<div class="hero-sub" style="margin-bottom:0;">${escapeHtml(course.professor)}</div>` : ""}
         </div>
+        <div class="set-tabs">
+          ${[["learn",s.cvTabLearn],["write",s.cvTabWrite],["keep",s.cvTabKeep],["prep",s.cvTabPrep]].map(([id,label])=>`
+            <button type="button" class="set-tab ${courseTab===id?'set-tab-active':''}" data-course-tab="${id}">${label}</button>`).join("")}
+        </div>
+
+        ${courseTab==="write" ? `
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-bottom:var(--sp-3);">${s.cvWriteD}</p>
+        <div class="stack">
+          <button type="button" class="card" data-cv="notebook">
+            <span class="card-icon">${ICON.book}</span>
+            <span class="card-body"><span class="card-title">${s.cvOpenNotebook}</span></span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+          <button type="button" class="card" data-cv="page">
+            <span class="card-icon">${ICON.pen}</span>
+            <span class="card-body"><span class="card-title">${s.pageOpenBtn}</span></span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+          <button type="button" class="card" data-cv="raw">
+            <span class="card-icon">${ICON.pencil}</span>
+            <span class="card-body"><span class="card-title">${s.rawNotebookTitle}</span></span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+        </div>` : ""}
+
+        ${courseTab==="keep" ? `
+        <div class="stack">
+          <button type="button" class="card" data-cv="terms">
+            <span class="card-icon">${ICON.openBook}</span>
+            <span class="card-body">
+              <span class="card-title">${s.cvKeepTerms}</span>
+              <span class="card-meta">${s.termsCount(NotebookModule.terms(courseId).length)}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+          <button type="button" class="card" data-cv="essays">
+            <span class="card-icon">${ICON.essay}</span>
+            <span class="card-body">
+              <span class="card-title">${s.cvKeepEssays}</span>
+              <span class="card-meta">${s.essaysCount(NotebookModule.essays(courseId).length)}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>
+        </div>` : ""}
+
+        ${courseTab==="prep" ? `
+        <div class="section-label" style="margin-top:0;">${s.addEventBtn}</div>
+        ${bodyHtml}
+        ${upcomingEvaluative ? `
+        <button type="button" class="btn btn-primary" data-cv="prep" style="width:100%; margin-top:var(--sp-4);">${ICON.event}<span>${s.prepStartBtn || s.eventIsEvaluativeLabel}</span></button>` : `
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-top:var(--sp-3);">${s.cvPrepEmpty}</p>`}` : ""}
+
+        ${courseTab==="learn" ? `
         ${enrichment ? `
         <div class="callout" style="margin-bottom:var(--sp-4);">
           <div class="callout-label">${s.enrichmentAboutLabel}</div>
@@ -12146,15 +12794,32 @@ function renderCourseView(courseId){
           <div class="callout-label">${s.courseBriefLabel}</div>
           <p class="type-body">${s.courseBriefGenericText}</p>
           ${toolsListHtml}
-        </div>`}
-        <div class="section-label">${s.addEventBtn}</div>
-        ${bodyHtml}
+        </div>`}` : ""}
       </div>
+      ${courseTab==="prep" ? `
       <div class="screen-action">
         <button type="button" class="btn btn-primary" id="addEventBtn">${ICON.plus}<span>${s.addEventBtn}</span></button>
-      </div>
+      </div>` : ""}
     </section>
   `;
+  document.querySelectorAll("[data-course-tab]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.courseTab === courseTab) return;
+      courseTab = btn.dataset.courseTab;
+      renderCourseView(courseId, true);
+    });
+  });
+  document.querySelectorAll("[data-cv]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const what = btn.dataset.cv;
+      if(what === "notebook") return renderCourseNotebook(courseId);
+      if(what === "page") return renderNotebookPage(courseId);
+      if(what === "raw") return renderRawNotebook();
+      if(what === "terms"){ termsSearch = ""; return renderCourseTerms(courseId); }
+      if(what === "essays"){ essaysSearch = ""; return renderCourseEssays(courseId); }
+      if(what === "prep" && upcomingEvaluative) return renderExamPrepHub(upcomingEvaluative.id);
+    });
+  });
   mountQuickTools("course", courseId);
   document.getElementById("courseBack").addEventListener("click", ()=>{ renderSemester(); });
   const suggestBtn = document.getElementById("suggestResourceBtn");
@@ -12726,6 +13391,7 @@ function renderCourseTerms(courseId){
         <div class="empty-state">
           <div class="empty-icon">${ICON.openBook}</div>
           <p class="empty-text">${s.termsEmpty}</p>
+          <button type="button" class="btn btn-primary" data-empty="addTerm">${ICON.plus}<span>${s.emptyAddTerm}</span></button>
         </div>` : (!list.length ? `
         <p class="type-caption" style="color:var(--ink-muted);">${s.termsNoMatch}</p>` : `
         <div class="stack">
@@ -12758,6 +13424,9 @@ function renderCourseTerms(courseId){
       if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(err){} }
     });
   }
+  document.querySelectorAll("[data-empty]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ if(btn.dataset.empty === "addTerm") open(null); });
+  });
   document.querySelectorAll("[data-term-id]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       open(NotebookModule.terms(courseId).find(x=>x.id===btn.dataset.termId));
@@ -12788,7 +13457,7 @@ function openTermSheet(courseId, existing, onDone){
         <textarea class="field" id="tmExample" dir="auto" rows="2" style="resize:none;">${editing?escapeHtml(existing.example||''):''}</textarea>
       </div>
       <button type="button" class="btn btn-primary" id="tmSave" style="width:100%;">${ICON.check}<span>${s.saveBtn}</span></button>
-      ${editing ? `<button type="button" class="btn btn-secondary" id="tmDelete" style="width:100%; margin-top:8px; color:var(--attention);">${ICON.trash}<span>${s.deleteBtn}</span></button>` : ""}
+      ${editing ? `<button type="button" class="btn btn-secondary" id="tmDelete" style="width:100%; margin-top:8px; color:var(--attention);">${ICON.trash}<span>${s.confirmDelete}</span></button>` : ""}
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>overlay.classList.add("sheet-open"));
@@ -12810,7 +13479,7 @@ function openTermSheet(courseId, existing, onDone){
   const del = overlay.querySelector("#tmDelete");
   if(del) del.addEventListener("click", ()=>{
     close(()=>showConfirmSheet({
-      title:s.termsDeleteTitle, text:s.termsDeleteText, confirmLabel:s.deleteBtn, danger:true,
+      title:s.termsDeleteTitle, text:s.termsDeleteText, confirmLabel:s.confirmDelete, danger:true,
       onConfirm:()=>{ NotebookModule.deleteTerm(courseId, existing.id); onDone(); }
     }));
   });
@@ -12948,7 +13617,7 @@ function renderEssayEditor(courseId, essayId){
           <div class="screen-header-title" style="font-size:var(--fs-subheading);" dir="auto">${escapeHtml(essay.title)}</div>
           <div class="screen-header-sub" id="edCount">${s.essaysWords((essay.body||"").trim() ? essay.body.trim().split(/\s+/).length : 0)}</div>
         </div>
-        <button type="button" class="btn-icon" id="edDelete" data-label="${lang()==="ar" ? "حذف" : "Delete"}" aria-label="${s.deleteBtn}" style="color:var(--attention);">${ICON.trash}</button>
+        <button type="button" class="btn-icon" id="edDelete" data-label="${lang()==="ar" ? "حذف" : "Delete"}" aria-label="${s.confirmDelete}" style="color:var(--attention);">${ICON.trash}</button>
       </div>
       <div class="screen-content" style="display:flex; flex-direction:column;">
         <input type="text" class="field" id="edTitle" dir="auto" value="${escapeHtml(essay.title)}" style="margin-bottom:var(--sp-3); font-weight:700;">
@@ -12978,7 +13647,7 @@ function renderEssayEditor(courseId, essayId){
   document.getElementById("edBack").addEventListener("click", ()=>{ save(); renderCourseEssays(courseId); });
   document.getElementById("edDelete").addEventListener("click", ()=>{
     showConfirmSheet({
-      title:s.essaysDeleteTitle, text:s.essaysDeleteText, confirmLabel:s.deleteBtn, danger:true,
+      title:s.essaysDeleteTitle, text:s.essaysDeleteText, confirmLabel:s.confirmDelete, danger:true,
       onConfirm:()=>{ NotebookModule.deleteEssay(courseId, essayId); renderCourseEssays(courseId); }
     });
   });
@@ -13376,7 +14045,7 @@ function openTransferSheet(rawNoteId, courses, onDone){
     <div class="sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-title">${s.rawTransferTitle}</div>
-      ${courses.length===0 ? `<p class="type-body" style="color:var(--ink-muted);">${s.scheduleNoCoursesText}</p>` : `
+      ${courses.length===0 ? `<p class="type-body" style="color:var(--ink-muted);">${s.scheduleNoCoursesText}</p><button type="button" class="btn btn-primary" data-empty="semester" style="width:100%; margin-top:var(--sp-4);">${ICON.plus}<span>${s.emptyBuildSchedule}</span></button>` : `
       <div class="stack">
         ${courses.map(c=>`<button type="button" class="card" data-pick-course="${c.id}"><span class="card-body"><span class="card-title">${escapeHtml(c.name)}</span></span></button>`).join("")}
       </div>`}
@@ -13831,7 +14500,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-06 11:16";
+const BUILD_ID = "2026-09-07 07:41";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -13990,6 +14659,15 @@ function renderCourseLibrary(){
         <div class="screen-header-title">${s.libraryTitle}</div>
       </div>
       <div class="screen-content" style="padding-inline-start:0; padding-inline-end:0;">
+        ${!catalog && hasContact() ? `
+        <button type="button" class="card" id="planFactoryBtn" style="margin:0 var(--sp-4) var(--sp-4);">
+          <span class="card-icon" style="color:var(--accent);">${ICON.share}</span>
+          <span class="card-body">
+            <span class="card-title">${s.planFactoryEntry}</span>
+            <span class="card-meta" style="white-space:normal;">${s.planFactoryEntryD}</span>
+          </span>
+          <span class="card-chevron">${chevronFwd()}</span>
+        </button>` : ""}
         ${catalog ? `
         <div class="lib-head">
           <button type="button" class="lib-info-btn" id="libInfoBtn">${ICON.info}<span>${s.libInfoBtn}</span></button>
@@ -14054,6 +14732,8 @@ function renderCourseLibrary(){
   mountQuickTools("library");
   const refMapBtn = document.getElementById("openRefMap");
   if(refMapBtn) refMapBtn.addEventListener("click", ()=>{ renderReferenceMap(); });
+  const pfBtn = document.getElementById("planFactoryBtn");
+  if(pfBtn) pfBtn.addEventListener("click", ()=>{ renderPlanFactory(); });
   const libInfo = document.getElementById("libInfoBtn");
   /* The two explanations that used to sit above the list — what this screen is,
      and why some sources are in English — are still one tap away, just not in
@@ -14191,7 +14871,7 @@ function renderJourney(){
         ${horizonHtml()}
         ${bodyHtml}
       </div>
-      ${renderTabBar("journey")}
+      ${renderTabBar("tools")}
     </section>
   `;
   wireTabBar();
@@ -16027,6 +16707,9 @@ function renderWeeklySchedule(){
     </section>
   `;
   document.getElementById("scheduleBack").addEventListener("click", ()=>{ renderSemester(); });
+  document.querySelectorAll("[data-empty]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ if(btn.dataset.empty === "semester") renderSemester(); });
+  });
   document.querySelectorAll("[data-sched-tab]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       if(btn.dataset.schedTab === scheduleTab) return;
