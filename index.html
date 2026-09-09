@@ -1045,6 +1045,167 @@ body[data-theme="daylight"] .card:before{
   background:rgba(var(--accent-rgb),.16); color:var(--accent);
   font-family:var(--font-ar); font-weight:800; font-size:12px;
 }
+/* ---- Tool rail -----------------------------------------------------------
+   A column of square tools pinned to the far edge from the thumb, so it never
+   sits under the hand while writing. Each tool keeps its own colour and its
+   own glyph: an image is not a file, a note is not a term, an essay is not a
+   page — and eight identical grey squares taught the student none of that.
+
+   On a wide screen the rail stays a column; the content simply has more room
+   beside it. */
+/* ---- Reference cards -----------------------------------------------------
+   Four references used to stack as four blocks of unbroken text, so a student
+   comparing them read three hundred words to choose one. Each now shows its
+   kind as a coloured glyph — a video is not a course, a reference site is not
+   a set of exercises — with the title and one line of provenance. The reason
+   we chose it folds away, kept for whoever wants it and out of the way of
+   whoever doesn't. */
+/* ---- Formula guide -------------------------------------------------------
+   Quantities as chips the student taps, not a list to read. Chosen ones fill
+   with the accent so the current question — what do I have, what do I want —
+   is answerable at a glance. */
+/* An element as a small tile: symbol large, molar mass under it, and its state
+   carried by colour. A student reaching for a molar mass gets it without
+   opening anything. */
+/* ---- Tool tiles ----------------------------------------------------------
+   Two per row on a phone, three on a tablet, four on a laptop. The description
+   is kept but made secondary, so the tile is scanned by its icon first and
+   read only if the icon wasn't enough. */
+.tool-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:9px; }
+@media (min-width:560px){ .tool-grid{ grid-template-columns:repeat(3, 1fr); } }
+@media (min-width:820px){ .tool-grid{ grid-template-columns:repeat(4, 1fr); } }
+.tool-tileX{
+  display:flex; flex-direction:column; align-items:flex-start; gap:7px;
+  padding:var(--sp-4) var(--sp-3); border-radius:16px; text-align:start;
+  background:var(--flat); border:1px solid var(--flat-line);
+  transition:transform 170ms var(--ease-spring);
+  min-height:118px;
+}
+.tool-tileX:active{ transform:scale(.96); }
+.tool-tileX-icon{
+  width:44px; height:44px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--tt-rgb), .15);
+  border:1px solid rgba(var(--tt-rgb), .28);
+  color:rgb(var(--tt-rgb));
+}
+.tool-tileX-icon svg{ width:21px; height:21px; }
+.tool-tileX-name{ font-size:var(--fs-caption); font-weight:700; line-height:1.35; }
+.tool-tileX-desc{ font-size:10.5px; color:var(--ink-muted); line-height:1.5; }
+.el-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:7px; }
+.el{
+  padding:8px 4px; border-radius:11px; text-align:center;
+  background:rgba(var(--el-rgb), .12); border:1px solid rgba(var(--el-rgb), .28);
+  transition:transform 150ms var(--ease-spring);
+}
+.el:active{ transform:scale(.93); }
+.el-sym{ font-family:var(--font-ar); font-size:17px; font-weight:800; color:rgb(var(--el-rgb)); line-height:1.1; }
+.el-name{ font-size:9.5px; color:var(--ink-muted); margin-top:2px; }
+.el-mass{ font-size:10.5px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; }
+
+.conv-work{
+  font-family:"Courier New", ui-monospace, monospace; direction:ltr; text-align:start;
+  font-size:13px; line-height:1.9; color:var(--ink);
+  padding:var(--sp-3); border-radius:var(--r-sm);
+  background:rgba(var(--accent-rgb),.08); overflow-x:auto; white-space:nowrap;
+}
+.conv-out{ font-size:22px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; direction:ltr; text-align:start; }
+.qty-wrap{ display:flex; flex-wrap:wrap; gap:6px; }
+.qty{
+  padding:7px 12px; border-radius:999px;
+  background:var(--flat); border:1px solid var(--flat-line);
+  color:var(--ink); font-family:inherit; font-size:12px; font-weight:600;
+  transition:transform 150ms var(--ease-spring);
+}
+.qty:active{ transform:scale(.94); }
+.qty-on{ background:rgba(var(--accent-rgb),.16); border-color:rgba(var(--accent-rgb),.42); color:var(--accent); }
+.qty-want-on{ background:rgba(var(--support-rgb, 88,182,144),.18); border-color:rgba(88,182,144,.45); color:var(--support); }
+
+.law{
+  padding:var(--sp-3) var(--sp-4); border-radius:var(--r-md); margin-top:8px;
+  background:var(--flat); border:1px solid var(--flat-line);
+}
+.law-eq{
+  font-family:"Courier New", ui-monospace, monospace; direction:ltr; text-align:start;
+  font-size:16px; font-weight:700; color:var(--accent); line-height:1.5;
+  padding:8px 10px; border-radius:9px; background:rgba(var(--accent-rgb),.08);
+  overflow-x:auto; white-space:nowrap;
+}
+.law-name{ font-size:var(--fs-caption); font-weight:700; margin-bottom:6px; }
+.law-note{ font-size:var(--fs-caption); color:var(--ink-muted); line-height:1.7; margin-top:7px; }
+.law-eg{ font-size:11.5px; color:var(--ink-muted); line-height:1.7; margin-top:6px; }
+.law-eg b{ color:var(--ink); }
+.res{
+  display:block; width:100%; text-align:start;
+  margin-top:8px; padding:11px var(--sp-3);
+  border-radius:var(--r-md);
+  background:var(--flat); border:1px solid var(--flat-line);
+}
+.res-top{ display:flex; align-items:flex-start; gap:10px; }
+.res-kind{
+  width:34px; height:34px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--res-rgb), .15);
+  border:1px solid rgba(var(--res-rgb), .28);
+  color:rgb(var(--res-rgb));
+}
+.res-kind svg{ width:17px; height:17px; }
+.res-body{ flex:1; min-width:0; }
+.res-title{ font-size:var(--fs-caption); font-weight:700; line-height:1.45; color:var(--accent); }
+.res-meta{ font-size:10.5px; color:var(--ink-muted); margin-top:3px; display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
+.res-chip{
+  padding:1px 6px; border-radius:999px; font-size:9.5px; font-weight:700;
+  background:rgba(var(--res-rgb), .14); color:rgb(var(--res-rgb));
+}
+.res-chip-ok{ background:rgba(88,182,144,.16); color:var(--support); }
+.res-chip-part{ background:rgba(var(--attention-rgb),.14); color:var(--attention); }
+.res-why{ margin-top:8px; }
+.res-why > summary{
+  list-style:none; cursor:pointer;
+  font-size:10.5px; font-weight:700; color:var(--ink-muted);
+}
+.res-why > summary::-webkit-details-marker{ display:none; }
+.res-why p{ font-size:var(--fs-caption); color:var(--ink-muted); line-height:1.7; margin:6px 0 0; }
+.rail{
+  position:fixed; inset-inline-start:8px; top:50%; transform:translateY(-50%);
+  z-index:40; display:flex; flex-direction:column; gap:6px;
+  padding:7px 6px; border-radius:18px;
+  background:color-mix(in srgb, var(--surface) 88%, transparent);
+  border:1px solid var(--flat-line);
+  box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+}
+@supports not (background:color-mix(in srgb, red 50%, blue)){
+  .rail{ background:var(--surface); }
+}
+.rail-btn{
+  width:40px; height:40px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--rail-rgb), .15);
+  border:1px solid rgba(var(--rail-rgb), .30);
+  color:rgb(var(--rail-rgb));
+  transition:transform 160ms var(--ease-spring);
+  position:relative;
+}
+.rail-btn svg{ width:18px; height:18px; }
+.rail-btn:active{ transform:scale(.88); }
+/* The name appears beside the square on press-and-hold, and on any screen wide
+   enough to have room for it. */
+.rail-btn:after{
+  content:attr(data-name);
+  position:absolute; inset-inline-start:calc(100% + 7px);
+  padding:4px 9px; border-radius:8px; white-space:nowrap;
+  background:var(--surface); border:1px solid var(--flat-line);
+  color:var(--ink); font-size:11px; font-weight:700;
+  opacity:0; pointer-events:none; transition:opacity 160ms var(--ease);
+}
+.rail-btn:hover:after, .rail-btn:focus-visible:after{ opacity:1; }
+/* The rail must not sit over the content on a narrow phone. */
+.has-rail .screen-content{ padding-inline-start:62px; }
+@media (min-width:520px){
+  .rail-btn:after{ opacity:.9; }
+  .has-rail .screen-content{ padding-inline-start:130px; }
+}
 .tool-group{ margin-bottom:var(--sp-3); }
 .tool-group-label{
   font-size:10.5px; font-weight:700; color:var(--ink-muted);
@@ -1115,6 +1276,41 @@ body[data-theme="daylight"] .card:before{
   background:rgba(var(--attention-rgb),.13); color:var(--attention);
   font-size:9.5px; font-weight:700; white-space:nowrap;
 }
+/* Ten levels wrapped into two rows of large tiles and pushed the courses off
+   the screen. One row that scrolls sideways instead: the student sees where
+   they are without the list being displaced, and reaching level ten is a
+   swipe rather than a scroll past everything. */
+/* Two wrapped rows, not a sideways scroll: a horizontal strip hides levels
+   off-screen and a student cannot see their whole degree at once, which is the
+   point of the screen. Five to a row, small enough that ten levels and the
+   course list share one phone screen. */
+.lib-path{
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:6px;
+  padding:2px var(--sp-4) var(--sp-3) !important;
+}
+.lib-step{
+  padding:7px 4px 6px; border-radius:11px;
+}
+.lib-step-num{ width:22px; height:22px; font-size:11px; }
+.lib-step-count{ font-size:9px; }
+.lib-step-tag{ font-size:8px; }
+
+/* The progress line and its bar sit on one line rather than two. */
+.lib-progress{ padding:0 var(--sp-4) var(--sp-2) !important; }
+.lib-progress-line{ margin-bottom:6px !important; }
+.lib-progress-done{ font-size:var(--fs-body); }
+.lib-bar{ height:6px; }
+
+/* The reference map's own level grid, same treatment. */
+.refmap-path{
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:6px;
+  margin-bottom:var(--sp-3);
+}
+
+/* A card that only asks a question doesn't need three lines of explanation on
+   the screen a student opens ten times a day. */
+.card-compact{ padding:10px var(--sp-4); }
+.card-compact .card-meta{ display:none; }
 .lib-progress{
   padding:0 var(--sp-4) var(--sp-3);
 }
@@ -2027,6 +2223,61 @@ const STR = {
     readyTitle:"خطتك جاهزة",
     libProgressDone:(a,b)=>`${a} من ${b} مقررًا خلفك`,
     carryAdd:"أضفه إلى فصلي الحالي",
+    resWhy:"لماذا هذا المرجع؟",
+    formulaEntry:"موجّه القوانين",
+    ptEntry:"الجدول الدوري",
+    toolsForYou:"لتخصصك",
+    toolsAll:"كل الأدوات",
+    toolsOtherFields:"أدوات تخصصات أخرى",
+    toolsShowAll:"أظهر البقية",
+    toolsHideAll:"أخفِ البقية",
+    ptEntryD:"بالكتل المولية والحالة — لا بالتوزيع الإلكتروني",
+    ptTitle:"الجدول الدوري",
+    ptSub:"مرتّب حول ما تسأل عنه فعلًا: الكتلة المولية أولًا، ثم الحالة والكثافة ودرجات التحول.",
+    ptSearch:"ابحث برمز العنصر أو اسمه…",
+    ptMass:"الكتلة المولية",
+    ptState:"الحالة عند 25°م",
+    ptMelt:"الانصهار",
+    ptBoil:"الغليان",
+    ptGroup:"المجموعة",
+    ptSolid:"صلب", ptLiquid:"سائل", ptGas:"غاز",
+    ptNoMatch:"لا عنصر يطابق بحثك.",
+    ptCalcTitle:"احسب كتلة مولية",
+    ptCalcD:"اضغط العناصر بعدد ذراتها، ونجمعها لك",
+    ptCalcClear:"تفريغ",
+    ptCalcTotal:"المجموع",
+    convEntry:"محوّل الوحدات",
+    convEntryD:"يريك الكسر لا الرقم فقط",
+    convTitle:"محوّل الوحدات",
+    convSub:"لا نعطيك الناتج وحده — بل الكسر الذي أوصل إليه، لأن هذا ما يُطلب منك في الاختبار حيث لا تطبيق معك.",
+    convFrom:"من",
+    convTo:"إلى",
+    convValue:"القيمة",
+    convWork:"الخطوات",
+    convFamilyLen:"طول", convFamilyMass:"كتلة", convFamilyTime:"زمن",
+    convFamilySpeed:"سرعة", convFamilyPres:"ضغط", convFamilyEnergy:"طاقة", convFamilyTemp:"حرارة",
+    formulaEntryD:"قل ما عندك وما تريد، ونعطيك القانون",
+    formulaTitle:"موجّه القوانين",
+    formulaSub:"القوانين مرتّبة بالفصول، والمسألة لا تأتي بعنوان فصلها. اختر ما عندك وما تريده، ونعطيك ما يربطهما.",
+    formulaHave:"ما المعطى عندك؟",
+    formulaWant:"وما المطلوب؟",
+    formulaResults:(n)=>n===0 ? "لا قانون يربط هذه بهذه في مجالك — راجع اختيارك، أو غيّر المجال." : (n===1 ? "قانون واحد يربطهما" : `${n} قوانين تربطهما`),
+    formulaAnyWant:"أي شيء",
+    formulaExample:"مثال",
+    formulaNeeds:"يحتاج",
+    formulaGives:"يعطي",
+    formulaField:"المجال",
+    formulaReset:"ابدأ من جديد",
+    fieldPhysics:"فيزياء",
+    fieldChem:"كيمياء",
+    fieldMath:"رياضيات",
+    resKindVideo:"فيديو",
+    resKindCourse:"مقرر",
+    resKindSite:"موقع",
+    resKindBook:"كتاب",
+    resKindPractice:"تمارين",
+    resVerifiedShort:"متحقَّق",
+    resPartialShort:"جزئي",
     semTabCourses:"مقرراتي",
     semTabEvents:"أحداث الفصل",
     semTabTerm:"الفصل",
@@ -2754,6 +3005,61 @@ const STR = {
     readyTitle:"Your plan is ready",
     libProgressDone:(a,b)=>`${a} of ${b} courses behind you`,
     carryAdd:"Add it to my current term",
+    resWhy:"Why this reference?",
+    formulaEntry:"Formula guide",
+    ptEntry:"Periodic table",
+    toolsForYou:"For your field",
+    toolsAll:"All tools",
+    toolsOtherFields:"Tools for other fields",
+    toolsShowAll:"Show the rest",
+    toolsHideAll:"Hide the rest",
+    ptEntryD:"By molar mass and state — not electron configuration",
+    ptTitle:"Periodic table",
+    ptSub:"Organized around what you actually ask: molar mass first, then state, density and transition points.",
+    ptSearch:"Search by symbol or name…",
+    ptMass:"Molar mass",
+    ptState:"State at 25°C",
+    ptMelt:"Melting",
+    ptBoil:"Boiling",
+    ptGroup:"Group",
+    ptSolid:"solid", ptLiquid:"liquid", ptGas:"gas",
+    ptNoMatch:"No element matches your search.",
+    ptCalcTitle:"Compute a molar mass",
+    ptCalcD:"Tap elements with their atom counts and we'll sum them",
+    ptCalcClear:"Clear",
+    ptCalcTotal:"Total",
+    convEntry:"Unit converter",
+    convEntryD:"Shows you the fraction, not just the number",
+    convTitle:"Unit converter",
+    convSub:"We don't give the result alone but the fraction that produced it — because that is what an exam asks for, where you have no app.",
+    convFrom:"From",
+    convTo:"To",
+    convValue:"Value",
+    convWork:"Working",
+    convFamilyLen:"Length", convFamilyMass:"Mass", convFamilyTime:"Time",
+    convFamilySpeed:"Speed", convFamilyPres:"Pressure", convFamilyEnergy:"Energy", convFamilyTemp:"Temperature",
+    formulaEntryD:"Say what you have and what you want, and we'll give you the law",
+    formulaTitle:"Formula guide",
+    formulaSub:"Formula sheets are ordered by chapter, and a problem doesn't arrive with its chapter's name. Pick what you have and what you want, and we'll give you what links them.",
+    formulaHave:"What are you given?",
+    formulaWant:"And what do you want?",
+    formulaResults:(n)=>n===0 ? "No law links these in this field — check your choices, or change the field." : (n===1 ? "one law links them" : `${n} laws link them`),
+    formulaAnyWant:"anything",
+    formulaExample:"Example",
+    formulaNeeds:"needs",
+    formulaGives:"gives",
+    formulaField:"Field",
+    formulaReset:"Start over",
+    fieldPhysics:"Physics",
+    fieldChem:"Chemistry",
+    fieldMath:"Mathematics",
+    resKindVideo:"video",
+    resKindCourse:"course",
+    resKindSite:"site",
+    resKindBook:"book",
+    resKindPractice:"practice",
+    resVerifiedShort:"checked",
+    resPartialShort:"partial",
     semTabCourses:"My courses",
     semTabEvents:"Term events",
     semTabTerm:"The term",
@@ -3185,6 +3491,10 @@ const ICON = {
   globe:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 9.6h17.6M3.2 14.4h17.6"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>`,
   essay:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5h9L19 8v12.5H5.5z"/><path d="M14 3.5V8h4.6"/><path d="M8.4 12h7M8.4 15h7M8.4 18h4"/></svg>`,
   tools:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 6.4a3.6 3.6 0 0 0 4.8 4.6l-8 8a2.3 2.3 0 0 1-3.3-3.3z"/><path d="M6.2 3.4l2.4 2.4-2 2-2.4-2.4a1.2 1.2 0 0 1 0-1.7l.3-.3a1.2 1.2 0 0 1 1.7 0z"/></svg>`,
+  play:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6l5.4 3.4-5.4 3.4z"/></svg>`,
+  cap:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.2L21.5 9 12 13.8 2.5 9z"/><path d="M6.4 11v4.6c0 1.4 2.5 2.6 5.6 2.6s5.6-1.2 5.6-2.6V11"/></svg>`,
+  globeSite:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M3.6 9.8h16.8M3.6 14.2h16.8"/><path d="M12 3.4a14 14 0 0 1 0 17.2M12 3.4a14 14 0 0 0 0 17.2"/></svg>`,
+  target:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1"/></svg>`,
   info:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.01"/></svg>`,
   weekGrid:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="4.5" x2="8" y2="19.5"/><line x1="13" y1="4.5" x2="13" y2="19.5"/><line x1="17" y1="9.5" x2="17" y2="19.5" opacity="0"/></svg>`,
   bell:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
@@ -3639,11 +3949,10 @@ function phaseHtml(){
   const week = currentTermWeek();
   if(week === null){
     return `
-      <button type="button" class="card" id="weekAskBtn" style="margin-bottom:var(--sp-4);">
+      <button type="button" class="card card-compact" id="weekAskBtn" style="margin-bottom:var(--sp-3);">
         <span class="card-icon">${ICON.event}</span>
         <span class="card-body">
           <span class="card-title">${s.weekAskTitle}</span>
-          <span class="card-meta" style="white-space:normal;">${s.weekAskD}</span>
         </span>
         <span class="card-chevron">${chevronFwd()}</span>
       </button>`;
@@ -4987,6 +5296,7 @@ const COURSE_ENRICHMENT = {
       en:"Statics is the first course that teaches engineering thinking itself: isolate a piece of the world, draw everything acting on it, then solve. Whoever masters the free-body diagram has passed half the difficulty of every mechanics course that follows."
     },
     resources:[
+      { title:{ar:"Engineering Mechanics: Statics — NPTEL، معهد التقنية الهندي (مجاني)", en:"Engineering Mechanics: Statics — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112106286", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"مقرر كامل في الاتزان والقوى والعزوم والجمالونات والاحتكاك ومركز الكتلة — بنفس ترتيب مقررك. أدرجناه لأن الاستاتيكا تُتقن بحل عشرات المسائل لا بفهم القاعدة، وهذا المقرر مبني على المسائل", en:"A complete course in equilibrium, forces, moments, trusses, friction and centroids — in your course's order. Statics is mastered by solving dozens of problems, and this course is built on them"} },
       { title:{ar:"Engineering Mechanics — Statics and Dynamics، NPTEL معهد التقنية الهندي مدراس (مجاني)", en:"Engineering Mechanics — Statics and Dynamics, NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/112106180", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ أنوبهاب روي من معهد التقنية الهندي بمدراس، يبدأ من مخططات الجسم الحر واتزان الأجسام الجاسئة ويمتد إلى تحليل الجمالونات والكمرات والاحتكاك. بالإنجليزية لعدم وجود مقابل عربي حر تحققنا منه — وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Anubhab Roy of IIT Madras, from free-body diagrams and rigid-body equilibrium through truss and beam analysis and friction. In English for want of a verified free Arabic equivalent"} }
     ]
   },
@@ -5016,6 +5326,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"تفاضل وتكامل 1 — متزامن (MATH101)", en:"Calculus I — concurrent (MATH101)"}], leadsTo:[{ar:"فيزياء عامة 2 (PHYS102)", en:"General Physics II (PHYS102)"}] },
     resources:[
+      { title:{ar:"8.01 Classical Mechanics — MIT OpenCourseWare (مجاني)", en:"8.01 Classical Mechanics — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/8-01sc-classical-mechanics-fall-2016/", lang:"en", partial:true, verified:"2026-09-07", reason:{ar:"مقرر ميكانيكا كامل بمحاضرات وتمارين وحلولها واختبارات سابقة. تنبيه: أعمق من مقررك التأسيسي — خذ منه الحركة والقوى والشغل والطاقة والزخم، ودع ما بعدها", en:"A complete mechanics course with lectures, problem sets with solutions and past exams. Deeper than a foundational course — take motion, forces, work, energy and momentum"} },
       { title:{ar:"فيزياء عامة 101 — حل مسائل كتاب سيروي (يوتيوب، ٢٩ فيديو، عربي، مجاني)", en:"General Physics 101 — Serway Problem Solving (YouTube, 29 videos, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PLQewEPwm2NbzjSnrgZNVjseIGSuhQVaQ7", lang:"ar", verified:"2026-08-18", reason:{ar:"مبنية على كتاب سيروي المعتمد جامعيًا، وتركّز على حل المسائل لا الشرح النظري وحده — وهذا ما يُختبر فيه الطالب فعلًا", en:"Built on the university-standard Serway textbook, focused on solving problems rather than theory alone"} }
     ]
   },
@@ -5167,7 +5478,8 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"مقدمة في الخطاب الأكاديمي (ENGL101)", en:"Intro to Academic Discourse (ENGL101)"}], leadsTo:[{ar:"التواصل الأكاديمي والمهني (ENGL201)", en:"Academic & Professional Communication (ENGL201)"}] },
     resources:[
-      { title:{ar:"Purdue OWL — الكتابة المهنية والتقنية وكتابة التقارير (مجاني)", en:"Purdue OWL — Professional and Technical Writing (Free)"}, url:"https://owl.purdue.edu/owl/subject_specific_writing/professional_technical_writing", lang:"en", verified:"2026-08-18", reason:{ar:"القسم المخصص لكتابة التقارير والمذكرات والمراسلات المهنية والملخصات العلمية — وهو بالضبط ما يطلبه هذا المقرر لا الكتابة العامة. مرجع مفتوح بلا تسجيل، وزر اقرأها بالعربية يعرّب الصفحة", en:"The section devoted to reports, memoranda, professional correspondence and scientific abstracts — precisely what this course asks for rather than general writing. An open reference with no registration"} }
+      { title:{ar:"Purdue OWL — الكتابة المهنية والتقنية وكتابة التقارير (مجاني)", en:"Purdue OWL — Professional and Technical Writing (Free)"}, url:"https://owl.purdue.edu/owl/subject_specific_writing/professional_technical_writing", lang:"en", verified:"2026-08-18", reason:{ar:"القسم المخصص لكتابة التقارير والمذكرات والمراسلات المهنية والملخصات العلمية — وهو بالضبط ما يطلبه هذا المقرر لا الكتابة العامة. مرجع مفتوح بلا تسجيل، وزر اقرأها بالعربية يعرّب الصفحة", en:"The section devoted to reports, memoranda, professional correspondence and scientific abstracts — precisely what this course asks for rather than general writing. An open reference with no registration"} },
+      { title:{ar:"Purdue OWL — قواعد وكتابة إنجليزية (مجاني بلا تسجيل)", en:"Purdue OWL — English grammar and writing (Free, no sign-up)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"مرجع مفتوح من مختبر الكتابة بجامعة بيردو، وفيه قسم كامل لمن الإنجليزية لغته الثانية: الأزمنة، وحروف الجر، وبناء الجملة، والأخطاء الشائعة. استعمله حين تعلق في قاعدة أثناء الكتابة — لا كمقرر يُقرأ", en:"An open reference from Purdue's Writing Lab with a full section for second-language learners: tenses, prepositions, sentence structure and common errors"} }
     ]
   },
   "ARAB101": {
@@ -5292,6 +5604,7 @@ const COURSE_ENRICHMENT = {
       en:"A differential equation is how change gets written mathematically. An industrial engineer meets it in queue modelling, arrival and service rates, and machine control systems — the tools of the modelling and simulation courses later."
     },
     resources:[
+      { title:{ar:"Differential Equations — MIT OpenCourseWare 18.03 (مجاني)", en:"Differential Equations — MIT OpenCourseWare 18.03 (Free)"}, url:"https://ocw.mit.edu/courses/18-03sc-differential-equations-fall-2011/", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"مقرر كامل بمحاضرات وتمارين محلولة واختبارات سابقة بإجاباتها. المعادلات التفاضلية تُتعلَّم بالتكرار، والاختبارات المحلولة هنا أنفع من أي شرح إضافي", en:"A complete course with lectures, solved problem sets and past exams with answers. Differential equations are learned by repetition, and the solved exams here are worth more than further explanation"} },
       { title:{ar:"18.03 Differential Equations — معهد ماساتشوستس للتقنية (مجاني)", en:"18.03 Differential Equations — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/18-03-differential-equations-spring-2010/", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر MIT كاملًا بلا تسجيل: محاضرات مصوّرة، ملاحظات وتمارين للأستاذين ماتاك وميلر، ومجموعات تمارين واختبارات بحلولها. مقرر تصفه الجامعة بأنه متطلب سابق لأكثر من ١٤٠ مقررًا عندها — وهذا يقول لك مكانته. بالإنجليزية، والمعادلات تُقرأ بالرموز أكثر من اللغة، وزر اقرأها بالعربية يعرّب الصفحات", en:"MIT's full course with no registration: video lectures, notes and exercises by Professors Mattuck and Miller, and problem sets and exams with solutions. The university describes it as a prerequisite for over 140 of its own courses — which tells you its standing. In English, though equations are read through symbols more than language"} }
     ]
   },
@@ -5464,6 +5777,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"تتبّع الشيفرة بالورقة أسرع من تشغيلها", en:"Tracing on paper beats running it"}, plain:{ar:"حين لا تعمل شيفرتك، لا تغيّر أسطرًا عشوائيًا وتعيد التشغيل. ارسم جدولًا بأعمدة بعدد متغيّراتك، ونفّذ الشيفرة بيدك سطرًا سطرًا واكتب قيمة كل متغيّر بعد كل سطر. ستجد موضع الخطأ في دقائق — والأهم أنك ستفهم لماذا أخطأ.", en:"When your code doesn't work, don't change lines at random and re-run. Draw a table with a column per variable and execute the code by hand, line by line, writing each value. You'll find the fault in minutes — and understand why."}, trap:{ar:"التجريب العشوائي قد يُصلح العطل بلا فهم، فيتكرر في الاختبار حيث لا حاسوب معك.", en:"Random trial may fix the fault without understanding, and it returns in the exam where there is no computer."} }
     ],
     resources:[
+      { title:{ar:"Learn C++ — مرجع تعليمي كامل بالأمثلة (إنجليزي، مجاني بلا تسجيل)", en:"Learn C++ — A complete tutorial reference (English, free, no sign-up)"}, url:"https://www.learncpp.com/", lang:"en", verified:"2026-09-07", reason:{ar:"مرجع مكتوب مرتّب في فصول قصيرة، كل فصل بمثال يُنسخ ويُشغَّل. ميزته على الفيديو أنك تعود لسطر بعينه في ثانية بدل أن تبحث في محاضرة ساعة — استعمله للمراجعة السريعة قبل الاختبار، والفيديو للفهم الأول", en:"A written reference in short chapters, each with an example you can copy and run. Its advantage over video is returning to one line in a second instead of scanning an hour-long lecture"} },
       { title:{ar:"مواد مقرر البرمجة C++‎ — تمارين واختبارات بحلولها (مجاني)", en:"C++ Programming Materials — Exercises and Solved Exams (Free)"}, url:"https://mbabubaker.wordpress.com/cpp/", lang:"en", partial:true, verified:"2026-08-15", reason:{ar:"اختبارات قصيرة بحلولها، نصفي محلول، مراجعة نهائية محلولة، وأمثلة أكواد مشروحة. تنبيه: بالإنجليزية وللتمرين لا للشرح", en:"Quizzes with solutions, a solved midterm and final review, and annotated code. Note: in English, and for practice rather than explanation"} }
     ]
   },
@@ -5482,6 +5796,8 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"تتبّع الشيفرة بالورقة أسرع من تشغيلها", en:"Tracing on paper beats running it"}, plain:{ar:"حين لا تعمل شيفرتك، لا تغيّر أسطرًا عشوائيًا وتعيد التشغيل. ارسم جدولًا بأعمدة بعدد متغيّراتك، ونفّذ الشيفرة بيدك سطرًا سطرًا واكتب قيمة كل متغيّر بعد كل سطر. ستجد موضع الخطأ في دقائق — والأهم أنك ستفهم لماذا أخطأ.", en:"When your code doesn't work, don't change lines at random and re-run. Draw a table with a column per variable and execute the code by hand, line by line, writing each value. You'll find the fault in minutes — and understand why."}, trap:{ar:"التجريب العشوائي قد يُصلح العطل بلا فهم، فيتكرر في الاختبار حيث لا حاسوب معك.", en:"Random trial may fix the fault without understanding, and it returns in the exam where there is no computer."} }
     ],
     resources:[
+      { title:{ar:"Learn C++ — مرجع تعليمي كامل بالأمثلة (إنجليزي، مجاني بلا تسجيل)", en:"Learn C++ — A complete tutorial reference (English, free, no sign-up)"}, url:"https://www.learncpp.com/", lang:"en", verified:"2026-09-07", reason:{ar:"مرجع مكتوب مرتّب في فصول قصيرة، كل فصل بمثال يُنسخ ويُشغَّل. ميزته على الفيديو أنك تعود لسطر بعينه في ثانية بدل أن تبحث في محاضرة ساعة — استعمله للمراجعة السريعة قبل الاختبار، والفيديو للفهم الأول", en:"A written reference in short chapters, each with an example you can copy and run. Its advantage over video is returning to one line in a second instead of scanning an hour-long lecture"} },
+      { title:{ar:"cppreference — المرجع القياسي للغة C++ (إنجليزي، مجاني)", en:"cppreference — The standard C++ language reference (English, free)"}, url:"https://en.cppreference.com/w/", lang:"en", partial:true, reason:{ar:"تنبيه صريح: هذا مرجع لا مقرر — لا يُقرأ من أوله. أدرجناه لأنك ستحتاجه حين تنسى ترتيب معاملات دالة أو سلوك حالة حدّية، وهو ما يفعله المبرمجون المحترفون يوميًا. تعلّم البحث فيه الآن، فسيبقى معك بعد التخرج", en:"Stated plainly: a reference, not a course — not read from the beginning. You'll need it when you forget a function's parameter order or an edge case's behaviour"} },
       { title:{ar:"مواد مقرر البرمجة C++‎ — تمارين واختبارات بحلولها (مجاني)", en:"C++ Programming Materials — Exercises and Solved Exams (Free)"}, url:"https://mbabubaker.wordpress.com/cpp/", lang:"en", partial:true, verified:"2026-08-15", reason:{ar:"اختبارات قصيرة بحلولها، نصفي محلول، مراجعة نهائية محلولة، وأمثلة أكواد مشروحة. تنبيه: بالإنجليزية وللتمرين لا للشرح", en:"Quizzes with solutions, a solved midterm and final review, and annotated code. Note: in English, and for practice rather than explanation"} }
     ]
   },
@@ -6022,6 +6338,8 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ leadsTo:[{ar:"هياكل البيانات (CS 241)", en:"Data Structures (CS 241)"}] },
     resources:[
+      { title:{ar:"Learn C++ — مرجع تعليمي كامل بالأمثلة (إنجليزي، مجاني بلا تسجيل)", en:"Learn C++ — A complete tutorial reference (English, free, no sign-up)"}, url:"https://www.learncpp.com/", lang:"en", verified:"2026-09-07", reason:{ar:"مرجع مكتوب مرتّب في فصول قصيرة، كل فصل بمثال يُنسخ ويُشغَّل. ميزته على الفيديو أنك تعود لسطر بعينه في ثانية بدل أن تبحث في محاضرة ساعة — استعمله للمراجعة السريعة قبل الاختبار، والفيديو للفهم الأول", en:"A written reference in short chapters, each with an example you can copy and run. Its advantage over video is returning to one line in a second instead of scanning an hour-long lecture"} },
+      { title:{ar:"cppreference — المرجع القياسي للغة C++ (إنجليزي، مجاني)", en:"cppreference — The standard C++ language reference (English, free)"}, url:"https://en.cppreference.com/w/", lang:"en", partial:true, reason:{ar:"تنبيه صريح: هذا مرجع لا مقرر — لا يُقرأ من أوله. أدرجناه لأنك ستحتاجه حين تنسى ترتيب معاملات دالة أو سلوك حالة حدّية، وهو ما يفعله المبرمجون المحترفون يوميًا. تعلّم البحث فيه الآن، فسيبقى معك بعد التخرج", en:"Stated plainly: a reference, not a course — not read from the beginning. You'll need it when you forget a function's parameter order or an edge case's behaviour"} },
       { title:{ar:"مواد مقرر البرمجة C++‎ — تمارين واختبارات بحلولها (مجاني)", en:"C++ Programming Materials — Exercises and Solved Exams (Free)"}, url:"https://mbabubaker.wordpress.com/cpp/", lang:"en", partial:true, verified:"2026-08-15", reason:{ar:"اختبارات قصيرة بحلولها، نصفي محلول، مراجعة نهائية محلولة، وأمثلة أكواد مشروحة. تنبيه: بالإنجليزية وللتمرين لا للشرح", en:"Quizzes with solutions, a solved midterm and final review, and annotated code. Note: in English, and for practice rather than explanation"} }
     ]
   },
@@ -8016,6 +8334,7 @@ const COURSE_ENRICHMENT = {
       en:"This is the first course in your field and by far the most important: everything after it — servers, services, security — assumes you know how a packet moves between machines. Whoever memorizes subnetting instead of understanding it is stranded in every lab that follows."
     },
     resources:[
+      { title:{ar:"Cisco Networking Basics — مسار تمهيدي مجاني بشهادة", en:"Cisco Networking Basics — Free introductory path with certificate"}, url:"https://www.netacad.com/courses/networking-basics", lang:"en", partial:true, reason:{ar:"مسار عملي من سيسكو نفسها: العنونة، والتوجيه، والتبديل، وبناء شبكة صغيرة ومحاكاتها. أدرجناه لأنه يجمع ما يفصله غيره — الشرح النظري والتطبيق في محاكي واحد. يحتاج تسجيلًا مجانيًا", en:"A hands-on path from Cisco itself: addressing, routing, switching, and building and simulating a small network. It joins theory and practice in one simulator. Free registration required"} },
       { title:{ar:"Computer Networks and Internet Protocol — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Computer Networks and Internet Protocol — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105183", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل يمشي على طبقات الشبكة طبقةً طبقة من الفيزيائية إلى التطبيق، مع بروتوكولات الإنترنت والتوجيه والتحكم في الازدحام — وهو الأساس النظري الذي تقف عليه كل شهادة شبكات مهنية", en:"A complete course walking the network stack layer by layer, with internet protocols, routing and congestion control — the theory every professional networking certificate rests on"} }
     ]
   },
@@ -8029,6 +8348,7 @@ const COURSE_ENRICHMENT = {
       en:"The machine on an employee's desk is the first thing complained about and the last thing fixed. Whoever masters client administration resolves eighty percent of support tickets before they ever reach the server."
     },
     resources:[
+      { title:{ar:"Cisco Networking Basics — مسار تمهيدي مجاني بشهادة", en:"Cisco Networking Basics — Free introductory path with certificate"}, url:"https://www.netacad.com/courses/networking-basics", lang:"en", partial:true, reason:{ar:"مسار عملي من سيسكو نفسها: العنونة، والتوجيه، والتبديل، وبناء شبكة صغيرة ومحاكاتها. أدرجناه لأنه يجمع ما يفصله غيره — الشرح النظري والتطبيق في محاكي واحد. يحتاج تسجيلًا مجانيًا", en:"A hands-on path from Cisco itself: addressing, routing, switching, and building and simulating a small network. It joins theory and practice in one simulator. Free registration required"} },
       { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ تشيستر ريبيرو: إدارة العمليات والذاكرة، الجدولة، أنظمة الملفات، والتزامن — بأمثلة عملية على لينكس، وهو ما تديره فعلًا على الخادم", en:"A course by Prof. Chester Rebeiro: process and memory management, scheduling, file systems and synchronization — with practical Linux examples, which is what you actually administer on a server"} }
     ]
   },
@@ -8042,6 +8362,7 @@ const COURSE_ENRICHMENT = {
       en:"The difference between a technician and an administrator is this course: the first fixes a machine, the second builds the environment all the machines run in. One permissions mistake here opens what shouldn't be open on a hundred machines at once."
     },
     resources:[
+      { title:{ar:"Cisco Networking Basics — مسار تمهيدي مجاني بشهادة", en:"Cisco Networking Basics — Free introductory path with certificate"}, url:"https://www.netacad.com/courses/networking-basics", lang:"en", partial:true, reason:{ar:"مسار عملي من سيسكو نفسها: العنونة، والتوجيه، والتبديل، وبناء شبكة صغيرة ومحاكاتها. أدرجناه لأنه يجمع ما يفصله غيره — الشرح النظري والتطبيق في محاكي واحد. يحتاج تسجيلًا مجانيًا", en:"A hands-on path from Cisco itself: addressing, routing, switching, and building and simulating a small network. It joins theory and practice in one simulator. Free registration required"} },
       { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر للأستاذ تشيستر ريبيرو: إدارة العمليات والذاكرة، الجدولة، أنظمة الملفات، والتزامن — بأمثلة عملية على لينكس، وهو ما تديره فعلًا على الخادم", en:"A course by Prof. Chester Rebeiro: process and memory management, scheduling, file systems and synchronization — with practical Linux examples, which is what you actually administer on a server"} }
     ]
   },
@@ -8055,6 +8376,7 @@ const COURSE_ENRICHMENT = {
       en:"Services are what a user sees of the network. Nobody thanks you when they work and everyone calls when they stop — which is exactly the job."
     },
     resources:[
+      { title:{ar:"Cisco Networking Basics — مسار تمهيدي مجاني بشهادة", en:"Cisco Networking Basics — Free introductory path with certificate"}, url:"https://www.netacad.com/courses/networking-basics", lang:"en", partial:true, reason:{ar:"مسار عملي من سيسكو نفسها: العنونة، والتوجيه، والتبديل، وبناء شبكة صغيرة ومحاكاتها. أدرجناه لأنه يجمع ما يفصله غيره — الشرح النظري والتطبيق في محاكي واحد. يحتاج تسجيلًا مجانيًا", en:"A hands-on path from Cisco itself: addressing, routing, switching, and building and simulating a small network. It joins theory and practice in one simulator. Free registration required"} },
       { title:{ar:"Computer Networks and Internet Protocol — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Computer Networks and Internet Protocol — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105183", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل يمشي على طبقات الشبكة طبقةً طبقة من الفيزيائية إلى التطبيق، مع بروتوكولات الإنترنت والتوجيه والتحكم في الازدحام — وهو الأساس النظري الذي تقف عليه كل شهادة شبكات مهنية", en:"A complete course walking the network stack layer by layer, with internet protocols, routing and congestion control — the theory every professional networking certificate rests on"} }
     ]
   },
@@ -8172,6 +8494,7 @@ const COURSE_ENRICHMENT = {
       en:"Binary here isn't an exercise: it is exactly what you'll compute a subnet mask with in the next course. Whoever understands it here doesn't memorize subnetting tables later."
     },
     resources:[
+      { title:{ar:"Khan Academy — تفاضل وتكامل بالعربية (مجاني)", en:"Khan Academy — Calculus in Arabic (Free)"}, url:"https://ar.khanacademy.org/math/differential-calculus", lang:"ar", partial:true, reason:{ar:"دروس قصيرة بالعربية مع تمارين تفاعلية تصحّح نفسها فورًا — وهذا ما ينقص الفيديو: أن تعرف هل فهمت أم لا قبل الاختبار. استعملها للتمرين بعد المحاضرة", en:"Short Arabic lessons with interactive exercises that mark themselves immediately — which is what video lacks: knowing whether you understood before the exam"} },
       { title:{ar:"تفاضل وتكامل 1 — Calculus 1 (يوتيوب، عربي، مجاني)", en:"Calculus 1 (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", lang:"ar", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: محاضرات تفاضل جامعية أوسع من مقررك التقني — خذ منها الدوال والنهايات وقراءة الرسوم، فهي ما يخدم حسابات الشبكات والسعات، ودع البقية", en:"Stated plainly: university calculus lectures broader than your technical course — take functions, limits and reading graphs"} }
     ]
   },
@@ -8185,6 +8508,7 @@ const COURSE_ENRICHMENT = {
       en:"Why does a cable weaken after a hundred metres? Why does a wireless signal interfere? The answers are in this course, and you'll be asked them practically on your first site."
     },
     resources:[
+      { title:{ar:"8.01 Classical Mechanics — MIT OpenCourseWare (مجاني)", en:"8.01 Classical Mechanics — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/8-01sc-classical-mechanics-fall-2016/", lang:"en", partial:true, verified:"2026-09-07", reason:{ar:"مقرر ميكانيكا كامل بمحاضرات وتمارين وحلولها واختبارات سابقة. تنبيه: أعمق من مقررك التأسيسي — خذ منه الحركة والقوى والشغل والطاقة والزخم، ودع ما بعدها", en:"A complete mechanics course with lectures, problem sets with solutions and past exams. Deeper than a foundational course — take motion, forces, work, energy and momentum"} },
       { title:{ar:"فيزياء عامة 101 — حل مسائل كتاب سيروي (يوتيوب، عربي، مجاني)", en:"General Physics 101 — Serway Problem Solving (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/playlist?list=PLQewEPwm2NbzjSnrgZNVjseIGSuhQVaQ7", lang:"ar", verified:"2026-08-18", reason:{ar:"مبنية على كتاب سيروي المعتمد جامعيًا، وتركّز على حل المسائل لا الشرح النظري وحده", en:"Built on the university-standard Serway textbook, focused on solving problems rather than theory alone"} }
     ]
   },
@@ -8661,7 +8985,8 @@ const COURSE_ENRICHMENT = {
     },
     before:{ items:[{ar:"نطق الحروف والأرقام", en:"Pronouncing letters and numbers"}, {ar:"مفردات الحياة اليومية", en:"Everyday vocabulary"}, {ar:"الاستماع لجملة قصيرة وفهمها", en:"Listening to and understanding a short sentence"}], note:{ar:"أصعب ما في مهارة الاستماع ليس المفردات بل السرعة: المتحدث الأصلي يصل الكلمات ببعضها فتسمعها كلمة واحدة. لا تقس نفسك بعدد الكلمات التي تعرفها، بل بعدد المرات التي تعيد فيها المقطع — واجعل الإعادة عادة لا اعترافًا بالعجز.", en:"The hardest part of listening isn't vocabulary but speed: a native speaker links words until they sound like one. Don't measure yourself by the words you know but by how many times you replay a clip — and make replaying a habit rather than an admission of failure."} },
     resources:[
-      { title:{ar:"تعلم الإنجليزية — المستوى الثاني (يوتيوب، ٤٠ فيديو، عربي)", en:"Learn English — Level 2 (YouTube, 40 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLWXso7v6nBWtKbyc1W7x-ZBDG10K1AdS1", reason:{ar:"سلسلة عربية كاملة ومجانية، مصممة كاستكمال مباشر لمن أنهى المستوى الأول — شرح منظم كأنك في معهد فعلي", en:"A complete, free Arabic series designed as a direct continuation for those who finished Level 1 — organized like an actual institute course"} }
+      { title:{ar:"تعلم الإنجليزية — المستوى الثاني (يوتيوب، ٤٠ فيديو، عربي)", en:"Learn English — Level 2 (YouTube, 40 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLWXso7v6nBWtKbyc1W7x-ZBDG10K1AdS1", reason:{ar:"سلسلة عربية كاملة ومجانية، مصممة كاستكمال مباشر لمن أنهى المستوى الأول — شرح منظم كأنك في معهد فعلي", en:"A complete, free Arabic series designed as a direct continuation for those who finished Level 1 — organized like an actual institute course"} },
+      { title:{ar:"Purdue OWL — قواعد وكتابة إنجليزية (مجاني بلا تسجيل)", en:"Purdue OWL — English grammar and writing (Free, no sign-up)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"مرجع مفتوح من مختبر الكتابة بجامعة بيردو، وفيه قسم كامل لمن الإنجليزية لغته الثانية: الأزمنة، وحروف الجر، وبناء الجملة، والأخطاء الشائعة. استعمله حين تعلق في قاعدة أثناء الكتابة — لا كمقرر يُقرأ", en:"An open reference from Purdue's Writing Lab with a full section for second-language learners: tenses, prepositions, sentence structure and common errors"} }
     ]
   },
   "كيم106": {
@@ -8689,6 +9014,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"تفاضل وتكامل 1 (ريض211)", en:"Calculus 1 (ريض211)"}], leadsTo:[{ar:"المعادلات التفاضلية (ريض336)", en:"Differential Equations (ريض336)"}] },
     resources:[
+      { title:{ar:"Differential Equations — MIT OpenCourseWare 18.03 (مجاني)", en:"Differential Equations — MIT OpenCourseWare 18.03 (Free)"}, url:"https://ocw.mit.edu/courses/18-03sc-differential-equations-fall-2011/", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"مقرر كامل بمحاضرات وتمارين محلولة واختبارات سابقة بإجاباتها. المعادلات التفاضلية تُتعلَّم بالتكرار، والاختبارات المحلولة هنا أنفع من أي شرح إضافي", en:"A complete course with lectures, solved problem sets and past exams with answers. Differential equations are learned by repetition, and the solved exams here are worth more than further explanation"} },
       { title:{ar:"دورة التفاضل والتكامل 2 (إدراك، مجاني)", en:"Calculus 2 Course (Edraak, Free)"}, url:"https://www.edraak.org/programs/course-v1:AOU+CALC2+2016-T3/", reason:{ar:"من منصة إدراك الموثوقة بالتعاون مع جامعة العلوم العربية المفتوحة، يغطي بالضبط تقنيات التكامل والمتسلسلات والإحداثيات القطبية", en:"From the trusted Edraak platform in partnership with Arab Open University, covering exactly integration techniques, series, and polar coordinates"} }
     ]
   },
@@ -8758,6 +9084,7 @@ const COURSE_ENRICHMENT = {
       }
     ],
     resources:[
+      { title:{ar:"Khan Academy — تفاضل وتكامل بالعربية (مجاني)", en:"Khan Academy — Calculus in Arabic (Free)"}, url:"https://ar.khanacademy.org/math/differential-calculus", lang:"ar", partial:true, reason:{ar:"دروس قصيرة بالعربية مع تمارين تفاعلية تصحّح نفسها فورًا — وهذا ما ينقص الفيديو: أن تعرف هل فهمت أم لا قبل الاختبار. استعملها للتمرين بعد المحاضرة", en:"Short Arabic lessons with interactive exercises that mark themselves immediately — which is what video lacks: knowing whether you understood before the exam"} },
       { title:{ar:"تفاضل وتكامل 1 (يوتيوب، ٢١ محاضرة، مجاني)", en:"Calculus 1 (YouTube, 21 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PL2r675ejq5l6ckHCYvzDSpVJNFdtjh_me", lang:"ar", verified:"2026-08-15", reason:{ar:"من مبادرة \"جامعتك\" الجامعية الرسمية (جامعة الطفيلة التقنية)، سلسلة عربية كاملة ومجانية بالكامل", en:"From the official university initiative \"Your University\" (Tafila Technical University), a complete and entirely free Arabic series"} },
       { title:{ar:"Paul's Online Math Notes — ملاحظات كالكولاس شاملة (إنجليزي، مجاني بالكامل)", en:"Paul's Online Math Notes — Comprehensive Calculus Notes (English, Completely Free)"}, url:"https://tutorial.math.lamar.edu/classes/calci/calci.aspx", reason:{ar:"من أشهر وأوثق مصادر الكالكولاس عالميًا — يغطي كل موضوع بأمثلة محلولة كاملة، بصيغة مرجع مكتوب تراجعه وقت الحاجة، لا فيديو تشاهده مرة واحدة. الرموز الرياضية عالمية، فحاجز اللغة هنا محدود جدًا", en:"One of the most famous and trusted calculus resources worldwide — covers every topic with fully worked examples, as a written reference you revisit anytime, not a video you watch once. Math notation is universal, so the language barrier here is quite limited"} },
       { title:{ar:"18.01 Single Variable Calculus — تمارين واختبارات بحلولها (MIT OpenCourseWare، مجاني)", en:"18.01 Single Variable Calculus — Problem Sets and Exams with Solutions (MIT OpenCourseWare, Free)"}, url:"https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"مصدر ثانٍ للتمرين لا للشرح: مجموعات تمارين واختبارات فصلية ونهائية بحلولها الكاملة من معهد ماساتشوستس للتقنية، مجانًا بلا تسجيل. أُضيف لأن الشرح العربي متوفر عندنا والتمرين المتدرج بحلوله هو الناقص — والمسائل الرياضية تُفهم بالرموز أكثر من اللغة. ابدأ بالشرح العربي أعلاه، ثم تعال هنا لتختبر نفسك", en:"A second source for practice rather than explanation: problem sets plus midterm and final exams with full solutions from MIT, free and without registration. Added because Arabic explanation we already have, while graded practice with solutions is what's missing — and mathematics problems are read through symbols more than through language. Start with the Arabic explanation above, then come here to test yourself"} }
@@ -8778,6 +9105,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الاستقراء الرياضي: أثبت الأولى ثم الخطوة", en:"Induction: prove the first, then the step"}, plain:{ar:"الاستقراء يشبه الدومينو تمامًا: تُثبت أن أول قطعة تسقط، ثم تُثبت أن أي قطعة تسقط تُسقط التي بعدها. فتسقط السلسلة كلها بلا أن تجرّب كل قطعة. وهذا هو كل الاستقراء: حالة أساس، وخطوة تنتقل من n إلى n+1.", en:"Induction is exactly dominoes: prove the first tile falls, then prove any falling tile knocks over the next. The whole line falls without testing each tile. That is all induction is: a base case and a step from n to n+1."}, trap:{ar:"الطالب يحفظ صيغة البرهان بلا فهم الفكرة، فيعجز حين تتغيّر صياغة السؤال.", en:"Students memorize the proof's shape without the idea, then fail when the question is phrased differently."} }
     ],
     resources:[
+      { title:{ar:"Discrete Mathematics — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Discrete Mathematics — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106094", lang:"en", partial:true, verified:"2026-09-07", reason:{ar:"مقرر جامعي كامل في المنطق والمجموعات والعلاقات والاستقراء ونظرية الرسوم — بنفس ترتيب مقررك وبعمق أكبر. أدرجناه ثانيًا لأن المصدر العربي يشرح والإنجليزي يبرهن، ومقررك يطلب الاثنين", en:"A full university course in logic, sets, relations, induction and graph theory — in your course's order and with more depth. The Arabic source explains while this one proves"} },
       { title:{ar:"الرياضيات المتقطعة CS201 (يوتيوب، ٢٠ محاضرة، مجاني)", en:"Discrete Mathematics CS201 (YouTube, 20 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLtqeb2-_b-2BkG8-inm5ho_W7fZTZHrVt", reason:{ar:"سلسلة عربية كاملة، موجّهة تحديدًا لطلاب علوم الحاسب (لا الرياضيات النظرية العامة)، تغطي المنطق والمجموعات والرسوم البيانية", en:"A complete Arabic series aimed specifically at CS students (not general theoretical math), covering logic, sets, and graphs"} }
     ]
   },
@@ -8820,7 +9148,8 @@ const COURSE_ENRICHMENT = {
     before:{ items:[{ar:"الأبجدية وقراءة الكلمات الشائعة", en:"The alphabet and reading common words"}, {ar:"زمن المضارع البسيط", en:"The simple present tense"}, {ar:"كتابة جملة كاملة بفاعل وفعل", en:"Writing a complete sentence with a subject and a verb"}], note:{ar:"الكتاب لا يبدأ من الصفر تمامًا: الوحدة الأولى تفترض أنك تقرأ جملة إنجليزية بسيطة وتعرف المضارع البسيط. ومن يدخلها بأقل من ذلك سيجد نفسه يترجم كل سطر بدل أن يتعلم مهارة القراءة نفسها — فراجع الأساسيات في أول أسبوع، قبل أن تتراكم الوحدات.", en:"The book doesn't start from absolute zero: unit one assumes you can read a simple English sentence and know the simple present. Whoever enters below that ends up translating every line instead of learning the reading skill itself — so revise the basics in week one, before the units pile up."} },
     resources:[
       { title:{ar:"Duolingo — تطبيق تعلّم الإنجليزية", en:"Duolingo — English Learning App"}, url:"https://ar.duolingo.com/course/en/ar/%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A5%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%D8%A9", reason:{ar:"مجاني بالكامل، يبني المفردات والقواعد تدريجيًا بجلسات قصيرة يومية", en:"Completely free, builds vocabulary and grammar gradually through short daily sessions"} },
-      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", lang:"ar", verified:"2026-08-17", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} }
+      { title:{ar:"تعلم الإنجليزية من الصفر — المستوى الأول (يوتيوب، ٢٥ فيديو، عربي)", en:"Learn English From Scratch — Level 1 (YouTube, 25 videos, Arabic)"}, url:"https://www.youtube.com/playlist?list=PLp22-4PivYmIFAnru_L7fnMhSV5YffLTZ", lang:"ar", verified:"2026-08-17", reason:{ar:"شرح كامل بالعربي من قناة يُجمع على أنها من الأفضل عربيًا لتعليم الإنجليزية للمبتدئين", en:"A complete Arabic-narrated course from a channel widely regarded as one of the best Arabic resources for teaching English to beginners"} },
+      { title:{ar:"Purdue OWL — قواعد وكتابة إنجليزية (مجاني بلا تسجيل)", en:"Purdue OWL — English grammar and writing (Free, no sign-up)"}, url:"https://owl.purdue.edu/owl/index.html", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"مرجع مفتوح من مختبر الكتابة بجامعة بيردو، وفيه قسم كامل لمن الإنجليزية لغته الثانية: الأزمنة، وحروف الجر، وبناء الجملة، والأخطاء الشائعة. استعمله حين تعلق في قاعدة أثناء الكتابة — لا كمقرر يُقرأ", en:"An open reference from Purdue's Writing Lab with a full section for second-language learners: tenses, prepositions, sentence structure and common errors"} }
     ]
   },
   "ARB 102": {
@@ -8859,6 +9188,7 @@ const COURSE_ENRICHMENT = {
       en:"Any modern mechanical system has an electrical component or electronic control (sensors, motors, control systems) — basic circuit understanding lets you approach these systems with confidence, not fear."
     },
     resources:[
+      { title:{ar:"Basic Electrical Circuits — NPTEL، معهد التقنية الهندي (مجاني)", en:"Basic Electrical Circuits — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/108102042", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"قوانين كيرشوف وأوم، وتحليل الشبكات، والدوائر بالتيار المتردد، والاستجابة العابرة — وهو ما يبني عليه كل مقرر كهربائي بعده. تنبيه: أوسع من مقرر الأساسيات، فخذ الأبواب التي في خطتك", en:"Kirchhoff's and Ohm's laws, network analysis, AC circuits and transient response — what every later electrical course builds on. Broader than a fundamentals course, so take the chapters in your plan"} },
       { title:{ar:"أساسيات الدوائر الكهربائية خطوة بخطوة (معارف، ٣١ درسًا، تقييم ٤.٨ من ٨ تقييمات، مجاني)", en:"Electrical Circuit Fundamentals Step by Step (M3aarf, 31 lessons, 4.8 rating from 8 reviews, Free)"}, url:"https://www.m3aarf.com/certificate/16639/%D8%A7%D9%84%D8%AF%D9%88%D8%A7%D8%A6%D8%B1-%D8%A7%D9%84%D9%83%D9%87%D8%B1%D8%A8%D8%A7%D8%A6%D9%8A%D8%A9-video", reason:{ar:"٢٤٩ طالبًا وتقييمات حقيقية موثقة — يغطي بالضبط قانون أوم، التوصيل بالتوالي والتوازي، وقوانين كيرشوف بالترتيب المنطقي", en:"249 students and real documented reviews — covers exactly Ohm's law, series/parallel connections, and Kirchhoff's laws in logical order"} }
     ]
   },
@@ -8892,6 +9222,8 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"تتبّع الشيفرة بالورقة أسرع من تشغيلها", en:"Tracing on paper beats running it"}, plain:{ar:"حين لا تعمل شيفرتك، لا تغيّر أسطرًا عشوائيًا وتعيد التشغيل. ارسم جدولًا بأعمدة بعدد متغيّراتك، ونفّذ الشيفرة بيدك سطرًا سطرًا واكتب قيمة كل متغيّر بعد كل سطر. ستجد موضع الخطأ في دقائق — والأهم أنك ستفهم لماذا أخطأ.", en:"When your code doesn't work, don't change lines at random and re-run. Draw a table with a column per variable and execute the code by hand, line by line, writing each value. You'll find the fault in minutes — and understand why."}, trap:{ar:"التجريب العشوائي قد يُصلح العطل بلا فهم، فيتكرر في الاختبار حيث لا حاسوب معك.", en:"Random trial may fix the fault without understanding, and it returns in the exam where there is no computer."} }
     ],
     resources:[
+      { title:{ar:"Learn C++ — مرجع تعليمي كامل بالأمثلة (إنجليزي، مجاني بلا تسجيل)", en:"Learn C++ — A complete tutorial reference (English, free, no sign-up)"}, url:"https://www.learncpp.com/", lang:"en", verified:"2026-09-07", reason:{ar:"مرجع مكتوب مرتّب في فصول قصيرة، كل فصل بمثال يُنسخ ويُشغَّل. ميزته على الفيديو أنك تعود لسطر بعينه في ثانية بدل أن تبحث في محاضرة ساعة — استعمله للمراجعة السريعة قبل الاختبار، والفيديو للفهم الأول", en:"A written reference in short chapters, each with an example you can copy and run. Its advantage over video is returning to one line in a second instead of scanning an hour-long lecture"} },
+      { title:{ar:"cppreference — المرجع القياسي للغة C++ (إنجليزي، مجاني)", en:"cppreference — The standard C++ language reference (English, free)"}, url:"https://en.cppreference.com/w/", lang:"en", partial:true, reason:{ar:"تنبيه صريح: هذا مرجع لا مقرر — لا يُقرأ من أوله. أدرجناه لأنك ستحتاجه حين تنسى ترتيب معاملات دالة أو سلوك حالة حدّية، وهو ما يفعله المبرمجون المحترفون يوميًا. تعلّم البحث فيه الآن، فسيبقى معك بعد التخرج", en:"Stated plainly: a reference, not a course — not read from the beginning. You'll need it when you forget a function's parameter order or an edge case's behaviour"} },
       { title:{ar:"دورة C++ الرسمية من Google (عربي)", en:"Google's Official C++ Course (Arabic)"}, url:"https://developers.google.com/edu/c++?hl=ar", reason:{ar:"مصدر رسمي من Google، لا قناة غير موثوقة، ويغطي أساسيات البرمجة بالترتيب من الصفر", en:"An official Google resource, not an unverified channel, covering programming fundamentals from scratch in order"} }
     ]
   },
@@ -9212,6 +9544,7 @@ const COURSE_ENRICHMENT = {
       en:"The laws you learn here (especially the first and second laws of thermodynamics) are the foundation for every later energy and heat course, including Heat Transfer in Level 8."
     },
     resources:[
+      { title:{ar:"Basic Thermodynamics — NPTEL، معهد التقنية الهندي (مجاني)", en:"Basic Thermodynamics — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112105123", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"القانونان الأول والثاني، والدورات الحرارية، والإنتروبيا، وخواص البخار — بمسائل محلولة في كل وحدة. الديناميكا الحرارية تُفهم بالمسائل لا بالقراءة، وهذا ما يميّزه", en:"The first and second laws, thermodynamic cycles, entropy and steam properties — with worked problems in every unit"} },
       { title:{ar:"ديناميكا حرارية 1 — جامعة الملك خالد (مجاني)", en:"Thermodynamics 1 — King Khalid University (Free)"}, url:"https://www.youtube.com/channel/UC6qpCBNVtSOUDOcmZrWFBgQ", reason:{ar:"من عمادة التعلم الإلكتروني بجامعة سعودية رسمية، سلسلة كاملة لمقرر Thermodynamics 1 بعنوانه الرسمي — ابحث عنها داخل القناة", en:"From the e-learning deanship of an official Saudi university, a complete series for the Thermodynamics 1 course under its official title — search for it within the channel"} }
     ]
   },
@@ -9226,6 +9559,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ leadsTo:[{ar:"ديناميكا (همك133)", en:"Dynamics (همك133)"},{ar:"مقاومة المواد (همك263)", en:"Mechanics of Materials (همك263)"},{ar:"نظرية الماكينات (همك271)", en:"Theory of Machines (همك271)"}] },
     resources:[
+      { title:{ar:"Engineering Mechanics: Statics — NPTEL، معهد التقنية الهندي (مجاني)", en:"Engineering Mechanics: Statics — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112106286", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"مقرر كامل في الاتزان والقوى والعزوم والجمالونات والاحتكاك ومركز الكتلة — بنفس ترتيب مقررك. أدرجناه لأن الاستاتيكا تُتقن بحل عشرات المسائل لا بفهم القاعدة، وهذا المقرر مبني على المسائل", en:"A complete course in equilibrium, forces, moments, trusses, friction and centroids — in your course's order. Statics is mastered by solving dozens of problems, and this course is built on them"} },
       { title:{ar:"سلسلة شرح مادة Statics (يوتيوب، ٤١ محاضرة، مجاني)", en:"Statics Course Series (YouTube, 41 lectures, Free)"}, url:"https://www.youtube.com/playlist?list=PLVgrGgkWLpZZBAvvS0I-6JUtCZM_3b-Db", reason:{ar:"سلسلة عربية كاملة ومجانية بالكامل، معتمدة على المرجع القياسي Engineering Mechanics: Statics المستخدم في أغلب مناهج الهندسة", en:"A complete, entirely free Arabic series based on the standard Engineering Mechanics: Statics reference used in most engineering curricula"} }
     ]
   },
@@ -9254,6 +9588,7 @@ const COURSE_ENRICHMENT = {
     connections:{ requires:[{ar:"استاتيكا (همد111)", en:"Statics (همد111)"}] },
     connections:{ requires:[{ar:"استاتيكا (همد111)", en:"Statics (همد111)"}] },
     resources:[
+      { title:{ar:"Engineering Mechanics: Dynamics — NPTEL، معهد التقنية الهندي (مجاني)", en:"Engineering Mechanics: Dynamics — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112103109", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"الحركة والقوى المؤثرة عليها: علم الحركة، ونيوتن الثاني، والشغل والطاقة، والدفع والزخم، والحركة الدورانية. خذ منه المسائل المحلولة، فهي أكثر ما يفصل بين من فهم الديناميكا ومن حفظ قوانينها", en:"Motion and the forces acting on it: kinematics, Newton's second law, work and energy, impulse and momentum, and rotation. Take its worked problems — they separate understanding dynamics from memorizing its laws"} },
       { title:{ar:"دورة الديناميكا (معارف، ٣٨ محاضرة، مجاني بشهادة)", en:"Dynamics Course (M3aarf, 38 lectures, Free with Certificate)"}, url:"https://www.m3aarf.com/lesson/338268-video", reason:{ar:"سلسلة شاملة تغطي الحركة المستقيمة والمنحنية وقانون نيوتن الثاني، بشهادة إتمام مجانية", en:"A comprehensive series covering rectilinear and curvilinear motion and Newton's second law, with a free completion certificate"} }
     ]
   },
@@ -9297,6 +9632,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"المعادلات التفاضلية (ريض336)", en:"Differential Equations (ريض336)"}], leadsTo:[{ar:"تبريد وتكييف الهواء (همك422)", en:"HVAC (همك422)"}] },
     resources:[
+      { title:{ar:"Fluid Mechanics — NPTEL، معهد التقنية الهندي (مجاني)", en:"Fluid Mechanics — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112105171", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"الاستاتيكا المائعة، ومعادلات الاستمرارية والزخم، والسريان اللزج، وفقد الاحتكاك في الأنابيب — مع مسائل محلولة. أدرجناه لأن الموائع تُتقن بالحل، والقراءة وحدها لا تكفي فيها", en:"Fluid statics, continuity and momentum equations, viscous flow and pipe friction losses — with worked problems"} },
       { title:{ar:"ميكانيك الموائع (معارف، ١٠ دروس، مجاني بشهادة)", en:"Fluid Mechanics (M3aarf, 10 lessons, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/22144/%D9%85%D9%8A%D9%83%D8%A7%D9%86%D9%8A%D9%83-%D8%A7%D9%84%D9%85%D9%88%D8%A7%D8%A6%D8%B9-Fluid-mechanics-video", reason:{ar:"يغطي بالضبط خصائص الموائع، الاستاتيكا، قانون برنولي، والأجسام الطافية — بنفس ترتيب أغلب مقررات ميكانيكا الموائع الجامعية", en:"Covers exactly fluid properties, statics, Bernoulli's law, and buoyancy — in the same order as most university fluid mechanics courses"} }
     ]
   },
@@ -9339,6 +9675,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"الديناميكا الحرارية 1 (همك211)", en:"Thermodynamics 1 (همك211)"}] },
     resources:[
+      { title:{ar:"Basic Thermodynamics — NPTEL، معهد التقنية الهندي (مجاني)", en:"Basic Thermodynamics — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112105123", lang:"en", partial:true, verified:"2026-09-08", reason:{ar:"القانونان الأول والثاني، والدورات الحرارية، والإنتروبيا، وخواص البخار — بمسائل محلولة في كل وحدة. الديناميكا الحرارية تُفهم بالمسائل لا بالقراءة، وهذا ما يميّزه", en:"The first and second laws, thermodynamic cycles, entropy and steam properties — with worked problems in every unit"} },
       { title:{ar:"شرح أساسيات ديناميكا حرارية 2 (يوتيوب، ٧ فيديو، مجاني)", en:"Thermodynamics 2 Basics (YouTube, 7 videos, Free)"}, url:"https://www.youtube.com/playlist?list=PLsGufry5cP1El89SymoU64yhzWAHLiidL", reason:{ar:"سلسلة عربية مجانية مركّزة تحديدًا على دورات القدرة والتبريد، أهم موضوعات المقرر", en:"A focused, free Arabic series covering exactly power and refrigeration cycles, the course's key topics"} }
     ]
   },
@@ -9416,6 +9753,551 @@ function arabicVersionLink(r, L){
   if(!u) return "";
   const label = L === "ar" ? "اقرأها بالعربية ↗" : "Read it in Arabic ↗";
   return `<span class="translate-chip" data-translate-url="${u}">${label}</span>`;
+}
+/* What kind of thing a reference is, read from its address. A student choosing
+   between four sources wants to know which is a video and which is a written
+   reference before reading a word about any of them. */
+/* ============================================================
+   FORMULA GUIDE — from what you have to what you want
+   ------------------------------------------------------------
+   A formula sheet is ordered by chapter; an exam question isn't. Students who
+   know every law still stall because they cannot see which one connects the
+   numbers in front of them to the number being asked for. So the laws are
+   indexed by their inputs and their output, and the student is asked the two
+   questions an examiner is really testing: what do you have, and what do you
+   want?
+
+   Everything here is fixed knowledge — no network, no lookups — so it works in
+   a lab or an exam hall with no signal.
+   ============================================================ */
+const QTY = {
+  m:{ar:"الكتلة", en:"mass", sym:"m"},
+  v:{ar:"السرعة", en:"velocity", sym:"v"},
+  v0:{ar:"السرعة الابتدائية", en:"initial velocity", sym:"v₀"},
+  a:{ar:"التسارع", en:"acceleration", sym:"a"},
+  t:{ar:"الزمن", en:"time", sym:"t"},
+  d:{ar:"المسافة", en:"distance", sym:"d"},
+  F:{ar:"القوة", en:"force", sym:"F"},
+  W:{ar:"الشغل", en:"work", sym:"W"},
+  KE:{ar:"طاقة الحركة", en:"kinetic energy", sym:"KE"},
+  PE:{ar:"طاقة الوضع", en:"potential energy", sym:"PE"},
+  P:{ar:"القدرة", en:"power", sym:"P"},
+  p:{ar:"الزخم", en:"momentum", sym:"p"},
+  h:{ar:"الارتفاع", en:"height", sym:"h"},
+  g:{ar:"عجلة الجاذبية", en:"gravity", sym:"g"},
+  I:{ar:"التيار", en:"current", sym:"I"},
+  V:{ar:"الجهد", en:"voltage", sym:"V"},
+  R:{ar:"المقاومة", en:"resistance", sym:"R"},
+  n:{ar:"عدد المولات", en:"moles", sym:"n"},
+  M:{ar:"الكتلة المولية", en:"molar mass", sym:"M"},
+  mass:{ar:"كتلة المادة", en:"substance mass", sym:"m"},
+  C:{ar:"التركيز", en:"concentration", sym:"C"},
+  Vol:{ar:"الحجم", en:"volume", sym:"V"},
+  Pr:{ar:"الضغط", en:"pressure", sym:"P"},
+  T:{ar:"درجة الحرارة", en:"temperature", sym:"T"},
+  Q:{ar:"كمية الحرارة", en:"heat", sym:"Q"},
+  cp:{ar:"الحرارة النوعية", en:"specific heat", sym:"c"},
+  dT:{ar:"فرق الحرارة", en:"temperature change", sym:"ΔT"},
+  r:{ar:"نصف القطر", en:"radius", sym:"r"},
+  A:{ar:"المساحة", en:"area", sym:"A"},
+  circ:{ar:"المحيط", en:"perimeter", sym:"p"}
+};
+const LAWS = [
+  // ---- motion
+  { f:"phys", eq:"v = v₀ + a·t", needs:["v0","a","t"], gives:["v"],
+    ar:"السرعة بعد زمن", en:"Velocity after time",
+    noteAr:"يُستعمل حين يكون التسارع ثابتًا. إن كان الجسم يبدأ من السكون فـ v₀ = 0 وتختصر المعادلة إلى v = a·t.",
+    noteEn:"For constant acceleration. From rest, v₀ = 0 and it reduces to v = a·t.",
+    egAr:"سيارة من السكون بتسارع 3 م/ث² لمدة 4 ث → v = 0 + 3×4 = 12 م/ث" },
+  { f:"phys", eq:"d = v₀·t + ½·a·t²", needs:["v0","a","t"], gives:["d"],
+    ar:"المسافة بتسارع ثابت", en:"Distance under constant acceleration",
+    noteAr:"أكثر أخطاء الطلاب هنا نسيان النصف، أو نسيان تربيع الزمن. اكتب المعادلة كاملة قبل التعويض.",
+    noteEn:"The commonest errors are forgetting the half or not squaring the time.",
+    egAr:"من السكون بتسارع 2 م/ث² لمدة 5 ث → d = 0 + ½×2×25 = 25 م" },
+  { f:"phys", eq:"v² = v₀² + 2·a·d", needs:["v0","a","d"], gives:["v"],
+    ar:"السرعة بدلالة المسافة", en:"Velocity from distance",
+    noteAr:"استعمله حين لا يُعطى الزمن ولا يُطلب — وهذا هو مفتاح اختياره.",
+    noteEn:"Use it when time is neither given nor asked for — that is the key to choosing it.",
+    egAr:"من السكون بتسارع 4 م/ث² لمسافة 8 م → v² = 0 + 2×4×8 = 64، فـ v = 8 م/ث" },
+  { f:"phys", eq:"F = m·a", needs:["m","a"], gives:["F"],
+    ar:"قانون نيوتن الثاني", en:"Newton's second law",
+    noteAr:"F هنا هي القوة المحصّلة لا أي قوة. اجمع القوى بالإشارات أولًا، ثم عوّض.",
+    noteEn:"F is the net force, not any single force. Sum the forces with their signs first.",
+    egAr:"كتلة 10 كجم بتسارع 2 م/ث² → F = 20 نيوتن" },
+  { f:"phys", eq:"W = F·d", needs:["F","d"], gives:["W"],
+    ar:"الشغل", en:"Work",
+    noteAr:"الشغل صفر إن كانت القوة عمودية على الحركة — كحمل حقيبة والمشي بها أفقيًا.",
+    noteEn:"Work is zero when the force is perpendicular to the motion — like carrying a bag while walking.",
+    egAr:"قوة 20 نيوتن لمسافة 3 م → W = 60 جول" },
+  { f:"phys", eq:"KE = ½·m·v²", needs:["m","v"], gives:["KE"],
+    ar:"طاقة الحركة", en:"Kinetic energy",
+    noteAr:"لاحظ التربيع: مضاعفة السرعة تُربّع الطاقة أربع مرات — ولهذا تتضاعف خطورة الحادث بسرعة أعلى.",
+    noteEn:"Note the square: doubling speed quadruples the energy.",
+    egAr:"كتلة 2 كجم بسرعة 3 م/ث → KE = ½×2×9 = 9 جول" },
+  { f:"phys", eq:"PE = m·g·h", needs:["m","h"], gives:["PE"],
+    ar:"طاقة الوضع", en:"Potential energy",
+    noteAr:"g = 9.8 م/ث². والارتفاع يُقاس من المستوى الذي تختاره مرجعًا — فحدّده أولًا.",
+    noteEn:"g = 9.8 m/s². Height is measured from the reference level you choose.",
+    egAr:"كتلة 5 كجم على ارتفاع 2 م → PE = 5×9.8×2 = 98 جول" },
+  { f:"phys", eq:"p = m·v", needs:["m","v"], gives:["p"],
+    ar:"الزخم", en:"Momentum",
+    noteAr:"الزخم متجه: له اتجاه. وفي مسائل التصادم اجمعه بالإشارات، فالزخم الكلي محفوظ.",
+    noteEn:"Momentum is a vector. In collisions sum it with signs — total momentum is conserved.",
+    egAr:"كتلة 3 كجم بسرعة 4 م/ث → p = 12 كجم·م/ث" },
+  { f:"phys", eq:"P = W / t", needs:["W","t"], gives:["P"],
+    ar:"القدرة", en:"Power",
+    noteAr:"القدرة معدل بذل الشغل. نفس الشغل في زمن أقل يعني قدرة أكبر.",
+    noteEn:"Power is the rate of doing work: the same work in less time means more power.",
+    egAr:"شغل 100 جول في 5 ث → P = 20 واط" },
+  { f:"phys", eq:"V = I·R", needs:["I","R"], gives:["V"],
+    ar:"قانون أوم", en:"Ohm's law",
+    noteAr:"يربط الثلاثة معًا: اعرف أيّهما لديك واحسب الثالث. وهو أساس كل تحليل للدوائر.",
+    noteEn:"Links all three: know two and find the third. The basis of all circuit analysis.",
+    egAr:"تيار 2 أمبير في مقاومة 5 أوم → V = 10 فولت" },
+  { f:"phys", eq:"Q = m·c·ΔT", needs:["m","cp","dT"], gives:["Q"],
+    ar:"الحرارة المحسوسة", en:"Sensible heat",
+    noteAr:"تنبيه: لا تستعمله عبر تغيّر الطور — الماء عند الغليان يأخذ حرارة بلا أن ترتفع حرارته.",
+    noteEn:"Don't use it across a phase change — boiling water absorbs heat without rising in temperature.",
+    egAr:"1 كجم ماء (c=4186) ترتفع 10 درجات → Q = 41860 جول" },
+  // ---- chemistry
+  { f:"chem", eq:"n = m / M", needs:["mass","M"], gives:["n"],
+    ar:"عدد المولات", en:"Number of moles",
+    noteAr:"أول خطوة في أغلب مسائل الكيمياء. الكتلة المولية تُقرأ من الجدول الدوري بجمع كتل الذرات.",
+    noteEn:"The first step in most chemistry problems. Molar mass is read off the periodic table.",
+    egAr:"36 جم ماء (M=18) → n = 2 مول" },
+  { f:"chem", eq:"C = n / V", needs:["n","Vol"], gives:["C"],
+    ar:"التركيز المولاري", en:"Molarity",
+    noteAr:"الحجم باللتر لا بالمليلتر — وهذا أشيع خطأ في المعايرة كلها.",
+    noteEn:"Volume in litres, not millilitres — the commonest error in the whole of titration.",
+    egAr:"0.5 مول في 2 لتر → C = 0.25 مولاري" },
+  { f:"chem", eq:"P·V = n·R·T", needs:["n","T","Vol"], gives:["Pr"],
+    ar:"قانون الغاز المثالي", en:"Ideal gas law",
+    noteAr:"T بالكلفن دائمًا: أضف 273 إلى المئوية. و R = 8.314 حين يكون الضغط بالباسكال.",
+    noteEn:"T is always in kelvin: add 273 to celsius. R = 8.314 with pressure in pascals.",
+    egAr:"1 مول عند 273 ك في 22.4 لتر → P ≈ 101.3 كيلوباسكال" },
+  // ---- mathematics
+  { f:"math", eq:"A = π·r²", needs:["r"], gives:["A"],
+    ar:"مساحة الدائرة", en:"Area of a circle",
+    noteAr:"إن أُعطي القطر فاقسمه على اثنين أولًا — وهذا أكثر ما يُنسى في المسائل التطبيقية.",
+    noteEn:"If given the diameter, halve it first — the most forgotten step in applied problems.",
+    egAr:"نصف قطر 3 → A = π×9 ≈ 28.3" },
+  { f:"math", eq:"p = 2·π·r", needs:["r"], gives:["circ"],
+    ar:"محيط الدائرة", en:"Circumference",
+    noteAr:"المحيط بالقطر الأول والمساحة بالقطر مربّعًا — فرقٌ يفسّر لماذا تكبر المساحة أسرع.",
+    noteEn:"Perimeter grows with r, area with r² — which is why area grows faster.",
+    egAr:"نصف قطر 3 → p = 2π×3 ≈ 18.8" }
+];
+
+let fgHave = [];
+let fgWant = null;
+let fgField = "phys";
+
+function fgMatches(){
+  return LAWS.filter(L=>{
+    if(L.f !== fgField) return false;
+    if(fgWant && L.gives.indexOf(fgWant) === -1) return false;
+    if(!fgHave.length) return !!fgWant;
+    /* A law is offered when the student holds every quantity it needs — and
+       gravity is assumed known rather than demanded of them. */
+    return L.needs.every(q=>fgHave.indexOf(q) !== -1 || q === "g");
+  });
+}
+/* ============================================================
+   PERIODIC TABLE — an engineer's questions, not a chemist's
+   ------------------------------------------------------------
+   Public periodic tables lead with electron configuration and atomic radius. A
+   chemical engineering student in the middle of a mass balance is asking three
+   things: what is its molar mass, what state is it in at operating
+   temperature, and where does it change. So those come first, and the molar
+   mass is one tap away rather than one screen away.
+   ============================================================ */
+const ELEMENTS = [
+  ["H","هيدروجين","Hydrogen",1.008,"gas",-259,-253],
+  ["He","هيليوم","Helium",4.003,"gas",-272,-269],
+  ["Li","ليثيوم","Lithium",6.94,"solid",181,1342],
+  ["Be","بريليوم","Beryllium",9.012,"solid",1287,2470],
+  ["B","بورون","Boron",10.81,"solid",2076,3927],
+  ["C","كربون","Carbon",12.011,"solid",3550,4027],
+  ["N","نيتروجين","Nitrogen",14.007,"gas",-210,-196],
+  ["O","أكسجين","Oxygen",15.999,"gas",-218,-183],
+  ["F","فلور","Fluorine",18.998,"gas",-220,-188],
+  ["Ne","نيون","Neon",20.180,"gas",-249,-246],
+  ["Na","صوديوم","Sodium",22.990,"solid",98,883],
+  ["Mg","مغنيسيوم","Magnesium",24.305,"solid",650,1090],
+  ["Al","ألومنيوم","Aluminium",26.982,"solid",660,2470],
+  ["Si","سيليكون","Silicon",28.085,"solid",1414,3265],
+  ["P","فوسفور","Phosphorus",30.974,"solid",44,281],
+  ["S","كبريت","Sulfur",32.06,"solid",115,445],
+  ["Cl","كلور","Chlorine",35.45,"gas",-102,-34],
+  ["Ar","أرجون","Argon",39.948,"gas",-189,-186],
+  ["K","بوتاسيوم","Potassium",39.098,"solid",64,759],
+  ["Ca","كالسيوم","Calcium",40.078,"solid",842,1484],
+  ["Ti","تيتانيوم","Titanium",47.867,"solid",1668,3287],
+  ["Cr","كروم","Chromium",51.996,"solid",1907,2671],
+  ["Mn","منغنيز","Manganese",54.938,"solid",1246,2061],
+  ["Fe","حديد","Iron",55.845,"solid",1538,2861],
+  ["Ni","نيكل","Nickel",58.693,"solid",1455,2913],
+  ["Cu","نحاس","Copper",63.546,"solid",1085,2562],
+  ["Zn","زنك","Zinc",65.38,"solid",420,907],
+  ["Br","بروم","Bromine",79.904,"liquid",-7,59],
+  ["Ag","فضة","Silver",107.868,"solid",962,2162],
+  ["Sn","قصدير","Tin",118.710,"solid",232,2602],
+  ["I","يود","Iodine",126.904,"solid",114,184],
+  ["Pt","بلاتين","Platinum",195.084,"solid",1768,3825],
+  ["Au","ذهب","Gold",196.967,"solid",1064,2856],
+  ["Hg","زئبق","Mercury",200.592,"liquid",-39,357],
+  ["Pb","رصاص","Lead",207.2,"solid",327,1749]
+];
+const EL_RGB = { solid:"120,140,175", liquid:"70,150,215", gas:"90,180,150" };
+
+let ptSearch = "";
+let ptPicked = [];
+
+/* Which scientific tools a student's field actually uses. A translation
+   student meeting a periodic table concludes the app wasn't built for them;
+   an engineering student meeting eight tools they'll never open learns to
+   skim past the group entirely. The plan already tells us the field — so it
+   decides what is shown first, and the rest stays one tap away rather than
+   deleted. */
+function fieldOfStudy(){
+  const student = StudentModule.current();
+  if(!student) return "other";
+  const key = catalogKeyFor(student) || "";
+  const major = String(student.major || "");
+  /* The plan key decides first — it is exact. Only when a student's programme
+     isn't one we carry do we fall back to reading their major's wording, and
+     there the order matters: "نظم المعلومات الإدارية" contains the word for
+     information but is an administration degree, while "تقنية إدارة أنظمة
+     الشبكات" contains the word for administration but is a computing one. */
+  if(/-bus-/.test(key)) return "business";
+  if(/-cs-/.test(key)) return "computing";
+  if(/شبكات|حاسب|برمج|سيبراني/.test(major)) return "computing";
+  if(/إدار|أعمال|محاسب|تسويق/.test(major)) return "business";
+  if(/eng-3/.test(key) || /كيميائ/.test(major)) return "chemical";
+  if(/eng-/.test(key) || /هندس|ميكانيك|صناع|رافعات|تحضيري|سلامة صناعية/.test(major)) return "engineering";
+  if(/ams-/.test(key) || /صحة|سلامة/.test(major)) return "health";
+  if(/arts-/.test(key) || /ترجم|لغة|أدب/.test(major)) return "language";
+  return "other";
+}
+/* Every field gets the language tools; the sciences add what they compute
+   with. Nothing is hidden from anyone — only ordered. */
+const FIELD_TOOLS = {
+  computing:   ["formula", "converter"],
+  chemical:    ["periodic", "formula", "converter"],
+  engineering: ["formula", "converter", "periodic"],
+  health:      ["periodic", "converter", "formula"],
+  language:    [],
+  business:    ["converter"],
+  other:       ["formula", "converter", "periodic"]
+};
+function sciToolsForField(){
+  return FIELD_TOOLS[fieldOfStudy()] || FIELD_TOOLS.other;
+}
+function renderPeriodic(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
+  const q = normalizeSearchText(ptSearch);
+  const list = q.length >= 1
+    ? ELEMENTS.filter(e=>normalizeSearchText(e[0] + " " + e[1] + " " + e[2]).includes(q))
+    : ELEMENTS;
+  const total = ptPicked.reduce((a,x)=>a + x.mass * x.count, 0);
+  const stateName = (k)=>({solid:s.ptSolid, liquid:s.ptLiquid, gas:s.ptGas})[k];
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="ptBack" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.ptTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-3);">${s.ptSub}</p>
+        <input type="text" class="field" id="ptQ" dir="auto" autocomplete="off" placeholder="${s.ptSearch}" value="${escapeHtml(ptSearch)}" style="margin-bottom:var(--sp-3);">
+
+        ${ptPicked.length ? `
+        <div class="law" style="margin-bottom:var(--sp-3);">
+          <div class="law-name">${s.ptCalcTotal}</div>
+          <div class="law-eq">${ptPicked.map(x=>`${x.sym}${x.count>1?"·"+x.count:""}`).join(" + ")} = ${total.toFixed(3)} g/mol</div>
+          <button type="button" class="btn btn-secondary" id="ptClear" style="width:100%; margin-top:8px; padding:9px; font-size:var(--fs-caption);">${ICON.undo}<span>${s.ptCalcClear}</span></button>
+        </div>` : `
+        <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-3);">${s.ptCalcD}</p>`}
+
+        ${list.length ? `
+        <div class="el-grid">
+          ${list.map(e=>`
+            <button type="button" class="el" data-el="${e[0]}" style="--el-rgb:${EL_RGB[e[4]] || EL_RGB.solid};">
+              <div class="el-sym">${e[0]}</div>
+              <div class="el-name">${escapeHtml(l==="ar" ? e[1] : e[2])}</div>
+              <div class="el-mass">${e[3]}</div>
+            </button>`).join("")}
+        </div>` : `<p class="type-caption" style="color:var(--ink-muted);">${s.ptNoMatch}</p>`}
+      </div>
+    </section>`;
+
+  document.getElementById("ptBack").addEventListener("click", ()=>{ activeTab = "tools"; renderTools(); });
+  const qEl = document.getElementById("ptQ");
+  qEl.addEventListener("input", (e)=>{
+    ptSearch = e.target.value;
+    const pos = e.target.selectionStart;
+    renderPeriodic();
+    const again = document.getElementById("ptQ");
+    if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(err){} }
+  });
+  const clr = document.getElementById("ptClear");
+  if(clr) clr.addEventListener("click", ()=>{ ptPicked = []; renderPeriodic(); });
+  document.querySelectorAll("[data-el]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const e = ELEMENTS.find(x=>x[0] === b.dataset.el);
+      openElementSheet(e);
+    });
+  });
+}
+
+function openElementSheet(e){
+  const s = t();
+  const l = lang();
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  const stateName = ({solid:s.ptSolid, liquid:s.ptLiquid, gas:s.ptGas})[e[4]];
+  const row = (label, val)=>`
+    <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--flat-line);">
+      <span class="type-caption" style="color:var(--ink-muted);">${label}</span>
+      <span class="type-caption" style="font-weight:700;" dir="ltr">${val}</span>
+    </div>`;
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${e[0]} · ${escapeHtml(l==="ar" ? e[1] : e[2])}</div>
+      ${row(s.ptMass, e[3] + " g/mol")}
+      ${row(s.ptState, stateName)}
+      ${row(s.ptMelt, e[5] + " °C")}
+      ${row(s.ptBoil, e[6] + " °C")}
+      <div class="field-group" style="margin-top:var(--sp-3);">
+        <label class="field-label" for="elCount">${s.ptCalcTitle}</label>
+        <input type="number" class="field" id="elCount" inputmode="numeric" min="1" value="1">
+      </div>
+      <button type="button" class="btn btn-primary" id="elAdd" style="width:100%;">${ICON.plus}<span>${s.ptCalcTitle}</span></button>
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 240); };
+  overlay.addEventListener("click", (ev)=>{ if(ev.target===overlay) close(); });
+  overlay.querySelector("#elAdd").addEventListener("click", ()=>{
+    const n = Math.max(1, parseInt(overlay.querySelector("#elCount").value, 10) || 1);
+    ptPicked.push({ sym:e[0], mass:e[3], count:n });
+    close(()=>renderPeriodic());
+  });
+}
+
+/* ============================================================
+   UNIT CONVERTER — that shows its working
+   ------------------------------------------------------------
+   Every converter gives a number. This gives the fraction, because the exam
+   asks for the fraction and there is no app in the exam hall. A student who
+   sees the cancellation twenty times starts doing it in their head.
+   ============================================================ */
+const CONV = {
+  len:   { ar:"طول", base:"m", units:{ mm:0.001, cm:0.01, m:1, km:1000, in:0.0254, ft:0.3048, mile:1609.34 } },
+  mass:  { ar:"كتلة", base:"kg", units:{ mg:1e-6, g:0.001, kg:1, ton:1000, lb:0.453592 } },
+  time:  { ar:"زمن", base:"s", units:{ s:1, min:60, hr:3600, day:86400 } },
+  speed: { ar:"سرعة", base:"m/s", units:{ "m/s":1, "km/h":0.277778, "mph":0.44704, "ft/s":0.3048 } },
+  pres:  { ar:"ضغط", base:"Pa", units:{ Pa:1, kPa:1000, bar:100000, atm:101325, psi:6894.76 } },
+  energy:{ ar:"طاقة", base:"J", units:{ J:1, kJ:1000, cal:4.184, kcal:4184, kWh:3.6e6 } }
+};
+let convFam = "len";
+let convFrom = "km/h";
+let convTo = "m/s";
+let convVal = "50";
+
+function renderConverter(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
+  const fam = CONV[convFam];
+  const names = Object.keys(fam.units);
+  if(names.indexOf(convFrom) === -1) convFrom = names[0];
+  if(names.indexOf(convTo) === -1) convTo = names[1] || names[0];
+  const v = parseFloat(convVal);
+  const ok = !isNaN(v);
+  const factorFrom = fam.units[convFrom];
+  const factorTo = fam.units[convTo];
+  const out = ok ? (v * factorFrom / factorTo) : null;
+  const fmt = (x)=>{
+    if(x === null) return "—";
+    const a = Math.abs(x);
+    if(a !== 0 && (a < 0.001 || a >= 1e6)) return x.toExponential(4);
+    return String(Math.round(x * 10000) / 10000);
+  };
+  /* The fraction, written as it would be on paper: the unit being removed sits
+     under the line, the unit being kept sits over it. */
+  const working = ok
+    ? `${v} ${convFrom} × ( ${fmt(factorFrom)} ${fam.base} / 1 ${convFrom} ) × ( 1 ${convTo} / ${fmt(factorTo)} ${fam.base} )\n= ${fmt(out)} ${convTo}`
+    : "";
+
+  const famLabel = { len:s.convFamilyLen, mass:s.convFamilyMass, time:s.convFamilyTime,
+                     speed:s.convFamilySpeed, pres:s.convFamilyPres, energy:s.convFamilyEnergy };
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="cvBack" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.convTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-3);">${s.convSub}</p>
+
+        <div class="qty-wrap" style="margin-bottom:var(--sp-4);">
+          ${Object.keys(CONV).map(k=>`
+            <button type="button" class="qty ${convFam===k?'qty-on':''}" data-cv-fam="${k}">${famLabel[k]}</button>`).join("")}
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="cvVal">${s.convValue}</label>
+          <input type="text" class="field" id="cvVal" inputmode="decimal" dir="ltr" value="${escapeHtml(convVal)}">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <div class="field-group" style="flex:1;">
+            <label class="field-label" for="cvFrom">${s.convFrom}</label>
+            <select class="field" id="cvFrom" dir="ltr">
+              ${names.map(u=>`<option value="${u}" ${u===convFrom?'selected':''}>${u}</option>`).join("")}
+            </select>
+          </div>
+          <div class="field-group" style="flex:1;">
+            <label class="field-label" for="cvTo">${s.convTo}</label>
+            <select class="field" id="cvTo" dir="ltr">
+              ${names.map(u=>`<option value="${u}" ${u===convTo?'selected':''}>${u}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="conv-out" style="margin-bottom:var(--sp-3);">${fmt(out)} ${escapeHtml(convTo)}</div>
+        <div class="section-label" style="margin-top:0;">${s.convWork}</div>
+        <div class="conv-work">${escapeHtml(working)}</div>
+      </div>
+    </section>`;
+
+  document.getElementById("cvBack").addEventListener("click", ()=>{ activeTab = "tools"; renderTools(); });
+  document.querySelectorAll("[data-cv-fam]").forEach(b=>b.addEventListener("click", ()=>{
+    if(b.dataset.cvFam === convFam) return;
+    convFam = b.dataset.cvFam;
+    const ns = Object.keys(CONV[convFam].units);
+    convFrom = ns[0]; convTo = ns[1] || ns[0];
+    renderConverter();
+  }));
+  const val = document.getElementById("cvVal");
+  val.addEventListener("input", (e)=>{
+    convVal = e.target.value;
+    const pos = e.target.selectionStart;
+    renderConverter();
+    const again = document.getElementById("cvVal");
+    if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(err){} }
+  });
+  document.getElementById("cvFrom").addEventListener("change", (e)=>{ convFrom = e.target.value; renderConverter(); });
+  document.getElementById("cvTo").addEventListener("change", (e)=>{ convTo = e.target.value; renderConverter(); });
+}
+function renderFormulaGuide(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
+  const fieldLaws = LAWS.filter(L=>L.f === fgField);
+  const inputs = [...new Set(fieldLaws.reduce((a,L)=>a.concat(L.needs), []))].filter(q=>q !== "g");
+  const outputs = [...new Set(fieldLaws.reduce((a,L)=>a.concat(L.gives), []))];
+  const found = fgMatches();
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="fgBack" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.formulaTitle}</div>
+        <button type="button" class="btn-icon" id="fgReset" data-label="${l==="ar" ? "تفريغ" : "Clear"}" aria-label="${s.formulaReset}">${ICON.undo}</button>
+      </div>
+      <div class="screen-content">
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-3);">${s.formulaSub}</p>
+
+        <div class="set-tabs">
+          ${[["phys",s.fieldPhysics],["chem",s.fieldChem],["math",s.fieldMath]].map(([id,label])=>`
+            <button type="button" class="set-tab ${fgField===id?'set-tab-active':''}" data-fg-field="${id}">${label}</button>`).join("")}
+        </div>
+
+        <div class="section-label" style="margin-top:0;">${s.formulaHave}</div>
+        <div class="qty-wrap" style="margin-bottom:var(--sp-4);">
+          ${inputs.map(q=>`
+            <button type="button" class="qty ${fgHave.indexOf(q)!==-1?'qty-on':''}" data-fg-have="${q}">${escapeHtml(QTY[q][l])}</button>`).join("")}
+        </div>
+
+        <div class="section-label">${s.formulaWant}</div>
+        <div class="qty-wrap" style="margin-bottom:var(--sp-4);">
+          <button type="button" class="qty ${fgWant===null?'qty-want-on':''}" data-fg-want="">${s.formulaAnyWant}</button>
+          ${outputs.map(q=>`
+            <button type="button" class="qty ${fgWant===q?'qty-want-on':''}" data-fg-want="${q}">${escapeHtml(QTY[q][l])}</button>`).join("")}
+        </div>
+
+        <div class="section-label">${s.formulaResults(found.length)}</div>
+        ${found.map(L=>`
+          <div class="law">
+            <div class="law-name">${escapeHtml(l==="ar" ? L.ar : L.en)}</div>
+            <div class="law-eq">${escapeHtml(L.eq)}</div>
+            <div class="law-note">${escapeHtml(l==="ar" ? L.noteAr : L.noteEn)}</div>
+            ${L.egAr && l==="ar" ? `<div class="law-eg"><b>${s.formulaExample}:</b> ${escapeHtml(L.egAr)}</div>` : ""}
+          </div>`).join("")}
+      </div>
+    </section>`;
+
+  document.getElementById("fgBack").addEventListener("click", ()=>{ activeTab = "tools"; renderTools(); });
+  document.getElementById("fgReset").addEventListener("click", ()=>{ fgHave = []; fgWant = null; renderFormulaGuide(); });
+  document.querySelectorAll("[data-fg-field]").forEach(b=>b.addEventListener("click", ()=>{
+    if(b.dataset.fgField === fgField) return;
+    fgField = b.dataset.fgField; fgHave = []; fgWant = null; renderFormulaGuide();
+  }));
+  document.querySelectorAll("[data-fg-have]").forEach(b=>b.addEventListener("click", ()=>{
+    const q = b.dataset.fgHave;
+    const at = fgHave.indexOf(q);
+    if(at === -1) fgHave.push(q); else fgHave.splice(at, 1);
+    renderFormulaGuide();
+  }));
+  document.querySelectorAll("[data-fg-want]").forEach(b=>b.addEventListener("click", ()=>{
+    fgWant = b.dataset.fgWant || null;
+    renderFormulaGuide();
+  }));
+}
+function resourceKind(r){
+  const s = t();
+  const u = String(r.url || "");
+  if(/youtube\.com|youtu\.be/.test(u))        return { id:"video",    icon:"play",      rgb:"215,95,90",  label:s.resKindVideo };
+  if(/khanacademy|duolingo|m3aarf\.com/.test(u)) return { id:"practice", icon:"target",  rgb:"150,120,210", label:s.resKindPractice };
+  if(/nptel|ocw\.mit|edraak|coursera|qou\.edu/.test(u)) return { id:"course", icon:"cap", rgb:"70,140,215", label:s.resKindCourse };
+  if(/openstax|\.pdf|linkedin/.test(u))       return { id:"book",     icon:"openBook",  rgb:"215,160,70", label:s.resKindBook };
+  return { id:"site", icon:"globeSite", rgb:"70,170,165", label:s.resKindSite };
+}
+function resourceCardHtml(r, l){
+  const s = t();
+  const k = resourceKind(r);
+  const src = (()=>{ try{ return new URL(r.url).hostname.replace(/^www\./, ""); }catch(e){ return ""; } })();
+  return `
+    <div class="res" style="--res-rgb:${k.rgb};">
+      <a href="${r.url}" target="_blank" rel="noopener" class="res-top" style="color:inherit;">
+        <span class="res-kind">${ICON[k.icon] || ICON.openBook}</span>
+        <span class="res-body">
+          <span class="res-title">${escapeHtml(r.title[l])} ↗</span>
+          <span class="res-meta">
+            <span class="res-chip">${k.label}</span>
+            ${r.verified ? `<span class="res-chip res-chip-ok">${s.resVerifiedShort} ${r.verified}</span>` : ""}
+            ${r.partial ? `<span class="res-chip res-chip-part">${s.resPartialShort}</span>` : ""}
+            ${src ? `<span dir="ltr">${escapeHtml(src)}</span>` : ""}
+          </span>
+        </span>
+      </a>
+      <details class="res-why">
+        <summary>${s.resWhy}</summary>
+        <p>${escapeHtml(r.reason[l])}</p>
+        ${arabicVersionLink(r, l)}
+      </details>
+    </div>`;
 }
 function resourceBadge(r, L){
   const parts = [];
@@ -11711,6 +12593,9 @@ let toolsCourseId = null;
    stacked: the screen exists to shorten a journey, and one that has to be
    scrolled has already failed at that. */
 let toolsTab = "course";
+/* Tools outside a student's field are collapsed, not removed: a translation
+   student can still open a converter, they simply aren't shown one first. */
+let toolsShowRest = false;
 
 /* The three things a student returns to all week. Kept in memory rather than
    stored: a list that survives a reset would be a record of behaviour, and we
@@ -12160,14 +13045,20 @@ function renderTools(){
   if(!toolsCourseId && courses.length) toolsCourseId = courses[0].id;
   const course = courses.find(c=>c.id===toolsCourseId) || null;
 
+  /* A colour per tool, so the grid is navigated by memory of position and hue
+     rather than by reading four labels every time. */
+  const TOOL_RGB = {
+    notebook:"70,140,215", terms:"70,170,165", essays:"150,120,210",
+    schedule:"90,175,120", mirror:"200,110,160", raw:"130,145,170",
+    search:"220,160,70", translate:"70,150,215", glossary:"70,170,165",
+    formula:"210,100,85", periodic:"120,140,175", converter:"150,120,210",
+    refmap:"90,175,120", backup:"130,145,170", journey:"210,160,80"
+  };
   const tool = (id, icon, title, desc, extra)=>`
-    <button type="button" class="card" data-tool="${id}"${extra||""}>
-      <span class="card-icon">${icon}</span>
-      <span class="card-body">
-        <span class="card-title">${title}</span>
-        <span class="card-meta" style="white-space:normal;">${desc}</span>
-      </span>
-      <span class="card-chevron">${chevronFwd()}</span>
+    <button type="button" class="tool-tileX" data-tool="${id}" style="--tt-rgb:${TOOL_RGB[id] || "120,140,175"};"${extra||""}>
+      <span class="tool-tileX-icon">${icon}</span>
+      <span class="tool-tileX-name">${title}</span>
+      <span class="tool-tileX-desc">${desc}</span>
     </button>`;
 
   const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
@@ -12205,7 +13096,7 @@ function renderTools(){
           ${courses.map(c=>`
             <button type="button" class="filter-chip ${c.id===toolsCourseId?'filter-chip-active':''}" data-tool-course="${c.id}">${escapeHtml(c.name.split(" - ").slice(1).join(" - ") || c.name)}</button>`).join("")}
         </div>
-        <div class="stack" style="margin-bottom:var(--sp-5);">
+        <div class="tool-grid" style="margin-bottom:var(--sp-5);">
           ${tool("notebook", ICON.book, s.toolNotebook, s.toolNotebookD)}
           ${tool("terms", ICON.openBook, s.termsTitle, s.toolTermsD)}
           ${tool("essays", ICON.essay, s.essaysTitle, s.toolEssaysD)}
@@ -12215,7 +13106,7 @@ function renderTools(){
         ` : ""}
         ${toolsTab==="week" ? `
         <div class="section-label" style="margin-top:0;">${s.toolsGroupWeek}</div>
-        <div class="stack" style="margin-bottom:var(--sp-5);">
+        <div class="tool-grid" style="margin-bottom:var(--sp-5);">
           ${tool("schedule", ICON.weekGrid, s.weeklyScheduleEntryLabel, s.toolScheduleD)}
           ${tool("mirror", ICON.weekGrid, s.mirrorEntryLabel, s.toolMirrorD)}
           ${tool("raw", ICON.pen, s.rawNotebookTitle, s.toolRawD)}
@@ -12224,16 +13115,30 @@ function renderTools(){
         ` : ""}
         ${toolsTab==="lang" ? `
         <div class="section-label" style="margin-top:0;">${s.toolsGroupLang}</div>
-        <div class="stack" style="margin-bottom:var(--sp-5);">
+        <div class="tool-grid" style="margin-bottom:var(--sp-5);">
           ${tool("search", ICON.lens, s.searchEntryLabel, s.toolSearchD)}
           ${tool("translate", ICON.message, s.liveTranslateEntryLabel, s.toolTranslateD)}
           ${tool("glossary", ICON.openBook, s.refGlossaryEntryLabel, s.toolGlossaryD)}
+          ${(()=>{
+            const meta = {
+              formula:   { icon:ICON.target, name:s.formulaEntry, desc:s.formulaEntryD },
+              periodic:  { icon:ICON.cap,    name:s.ptEntry,      desc:s.ptEntryD },
+              converter: { icon:ICON.undo,   name:s.convEntry,    desc:s.convEntryD }
+            };
+            const mine = sciToolsForField();
+            const rest = Object.keys(meta).filter(k=>mine.indexOf(k) === -1);
+            return `
+              ${mine.map(k=>tool(k, meta[k].icon, meta[k].name, meta[k].desc)).join("")}
+              ${rest.length ? `
+                <button type="button" class="lib-info-btn" id="toolsMoreBtn" style="margin-top:var(--sp-2);">${ICON.plus}<span>${toolsShowRest ? s.toolsHideAll : s.toolsShowAll}</span></button>
+                ${toolsShowRest ? rest.map(k=>tool(k, meta[k].icon, meta[k].name, meta[k].desc)).join("") : ""}` : ""}`;
+          })()}
         </div>
 
         ` : ""}
         ${toolsTab==="mine" ? `
         <div class="section-label" style="margin-top:0;">${s.toolsGroupMine}</div>
-        <div class="stack">
+        <div class="tool-grid">
           ${tool("journey", ICON.journey, s.tabJourney, s.toolJourneyD)}
           ${tool("refmap", ICON.weekGrid, s.refMapEntry, s.toolRefMapD)}
           ${tool("backup", ICON.download, s.backupTitle, s.toolBackupD)}
@@ -12244,6 +13149,8 @@ function renderTools(){
 
   wireTabBar();
   afterRender();
+  const toolsMoreBtn = document.getElementById("toolsMoreBtn");
+  if(toolsMoreBtn) toolsMoreBtn.addEventListener("click", ()=>{ toolsShowRest = !toolsShowRest; renderTools(); });
   document.querySelectorAll("[data-tools-tab]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       if(btn.dataset.toolsTab === toolsTab) return;
@@ -12281,6 +13188,9 @@ function openTool(id, course){
     case "translate": named(s.liveTranslateEntryLabel, "", "message"); return renderLiveTranslate();
     case "glossary":  named(s.refGlossaryEntryLabel, "", "openBook"); return renderReferenceGlossary();
     case "journey":   named(s.tabJourney, "", "journey"); return renderJourney();
+    case "formula":   named(s.formulaEntry, "", "target"); return renderFormulaGuide();
+    case "periodic":  named(s.ptEntry, "", "cap"); return renderPeriodic();
+    case "converter": named(s.convEntry, "", "undo"); return renderConverter();
     case "refmap":    named(s.refMapEntry, "", "weekGrid"); return renderReferenceMap();
     case "backup":    settingsTab = "account"; return renderSettings();
   }
@@ -12830,11 +13740,11 @@ function renderToday(){
              is the only thing the student wants. */
           const now = courseInSessionNow();
           return `
-        <button type="button" class="card" id="lectureBtn" style="margin-bottom:var(--sp-4); ${now?'border-color:rgba(var(--accent-rgb),.4);':''}">
+        <button type="button" class="card ${now?'':'card-compact'}" id="lectureBtn" style="margin-bottom:var(--sp-3); ${now?'border-color:rgba(var(--accent-rgb),.4);':''}">
           <span class="card-icon" style="${now?'color:var(--accent);':''}">${ICON.pencil}</span>
           <span class="card-body">
             <span class="card-title">${s.lectureEntry}</span>
-            <span class="card-meta" style="white-space:normal;">${now ? escapeHtml(now.name) : s.lectureEntryD}</span>
+            ${now ? `<span class="card-meta">${escapeHtml(now.name)}</span>` : ""}
           </span>
           <span class="card-chevron">${chevronFwd()}</span>
         </button>`;
@@ -13267,14 +14177,7 @@ function renderCourseView(courseId, keepTab){
           ` : ""}
           ${enrichment.resources.length ? `
           <div class="callout-label" style="margin-top:var(--sp-4);">${s.enrichmentResourcesLabel}</div>
-          ${enrichment.resources.map(r=>`
-            <a href="${r.url}" target="_blank" rel="noopener" style="display:block; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--surface); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.07);">
-              <div class="type-body" style="font-weight:700; color:var(--accent);">${escapeHtml(r.title[lang()])} ↗</div>
-              <div class="type-caption" style="color:var(--ink-muted); opacity:.7; margin-top:2px;">${resourceBadge(r, lang())}</div>
-              <div class="type-caption" style="color:var(--ink-muted); margin-top:2px;">${escapeHtml(r.reason[lang()])}</div>
-              ${arabicVersionLink(r, lang())}
-            </a>
-          `).join("")}
+          ${enrichment.resources.map(r=>resourceCardHtml(r, lang())).join("")}
           ${hasContact() ? `<button type="button" class="btn btn-secondary" id="suggestResourceBtn" style="width:100%; margin-top:var(--sp-3); font-size:var(--fs-caption);">${ICON.message}<span>${s.suggestResourceBtn}</span></button>` : ""}` : ""}
         </div>` : `
         <div class="callout" style="margin-bottom:var(--sp-4);">
@@ -13401,14 +14304,7 @@ function renderExamPrepHub(eventId){
         ${enrichment && enrichment.resources.length ? `
         <div class="callout" style="margin-bottom:var(--sp-4);">
           <div class="callout-label">${s.enrichmentResourcesLabel}</div>
-          ${enrichment.resources.map(r=>`
-            <a href="${r.url}" target="_blank" rel="noopener" style="display:block; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--surface); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.07);">
-              <div class="type-body" style="font-weight:700; color:var(--accent);">${escapeHtml(r.title[l])} ↗</div>
-              <div class="type-caption" style="color:var(--ink-muted); opacity:.7; margin-top:2px;">${resourceBadge(r, l)}</div>
-              <div class="type-caption" style="color:var(--ink-muted); margin-top:2px;">${escapeHtml(r.reason[l])}</div>
-              ${arabicVersionLink(r, l)}
-            </a>
-          `).join("")}
+          ${enrichment.resources.map(r=>resourceCardHtml(r, l)).join("")}
         </div>` : ""}
         ` : ""}
 
@@ -14155,7 +15051,7 @@ function renderCourseNotebook(courseId){
 
   const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
-    <section class="screen no-tabbar">
+    <section class="screen no-tabbar has-rail">
       <div class="screen-header">
         <button type="button" class="btn-icon" id="notebookBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title" style="font-size:var(--fs-body);">${escapeHtml(course.name)}</div>
@@ -14169,45 +15065,21 @@ function renderCourseNotebook(courseId){
              sit scattered under each section, so the student met the same kind
              of button three times in three places and had to hunt for the one
              they wanted. One strip means one place to look. -->
-        <div class="tool-group">
-          <div class="tool-group-label">${s.nbToolsWrite}</div>
-          <div class="toolbar" role="group" aria-label="${s.notebookToolsLabel}">
-          <button type="button" class="tool" id="notebookEssays">
-            <span class="tool-icon">${ICON.essay}</span><span>${s.essaysToolLabel}</span>
-          </button>
-          <button type="button" class="tool" id="notebookTerms">
-            <span class="tool-icon">${ICON.openBook}</span><span>${s.termsToolLabel}</span>
-          </button>
-          <button type="button" class="tool" id="notebookNewPage">
-            <span class="tool-icon">${ICON.pen}</span><span>${s.pageOpenBtn}</span>
-          </button>
-          <button type="button" class="tool" id="notebookAddNote">
-            <span class="tool-icon">${ICON.pencil}</span><span>${s.toolNote}</span>
-          </button>
-          </div>
-        </div>
-        <div class="tool-group">
-          <div class="tool-group-label">${s.nbToolsAttach}</div>
-          <div class="toolbar" role="group">
-          <button type="button" class="tool" id="notebookAddImage">
-            <span class="tool-icon">${ICON.image}</span><span>${s.toolImage}</span>
-          </button>
-          <button type="button" class="tool" id="notebookAddFile">
-            <span class="tool-icon">${ICON.download}</span><span>${s.toolFile}</span>
-          </button>
-          </div>
-        </div>
-        <div class="tool-group">
-          <div class="tool-group-label">${s.nbToolsTrack}</div>
-          <div class="toolbar" role="group">
-          <button type="button" class="tool" id="notebookAddCheck">
-            <span class="tool-icon">${ICON.lens}</span><span>${s.toolCheck}</span>
-          </button>
-          <button type="button" class="tool" id="notebookAddExam">
-            <span class="tool-icon">${ICON.event}</span><span>${s.toolExam}</span>
-          </button>
-          </div>
-        </div>
+        ${(()=>{
+          /* Colour and glyph per tool, so the eye learns them by shape. */
+          const rail = [
+            { id:"notebookEssays",   icon:"essay",    rgb:"150,120,210", name:s.essaysToolLabel },
+            { id:"notebookTerms",    icon:"openBook", rgb:"70,170,165",  name:s.termsToolLabel },
+            { id:"notebookNewPage",  icon:"pen",      rgb:"70,140,215",  name:s.pageOpenBtn },
+            { id:"notebookAddNote",  icon:"pencil",   rgb:"90,175,120",  name:s.toolNote },
+            { id:"notebookAddImage", icon:"image",    rgb:"220,160,70",  name:s.toolImage },
+            { id:"notebookAddFile",  icon:"paperclip",rgb:"130,145,170", name:s.toolFile },
+            { id:"notebookAddCheck", icon:"check",    rgb:"200,110,160", name:s.toolCheck },
+            { id:"notebookAddExam",  icon:"event",    rgb:"210,100,85",  name:s.toolExam }
+          ];
+          return `<div class="rail">${rail.map(x=>`
+            <button type="button" class="rail-btn" id="${x.id}" data-name="${escapeHtml(x.name || "")}" aria-label="${escapeHtml(x.name || "")}" style="--rail-rgb:${x.rgb};">${ICON[x.icon] || ICON.check}</button>`).join("")}</div>`;
+        })()}
         <input type="file" id="notebookImageInput" accept="image/*" style="display:none;">
         <input type="file" id="notebookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" style="display:none;">
 
@@ -14987,7 +15859,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-07 11:08";
+const BUILD_ID = "2026-09-09 20:06";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -15049,7 +15921,7 @@ function renderReferenceMap(){
       <div class="screen-content">
         <p class="type-caption" style="color:var(--ink-muted); margin-bottom:var(--sp-3);">${s.refMapStats(courseCount, resourceCount, verifiedCount)}</p>
         ${(()=>{ if(!refMapLevel || !levels.find(lv=>lv.id===refMapLevel)) refMapLevel = levels.length ? levels[0].id : null; return ""; })()}
-        <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:7px; margin-bottom:var(--sp-4);">
+        <div class="refmap-path">
           ${levels.map((lv,i)=>{
             const on = lv.id === refMapLevel;
             const n = catalog[lv.id].filter(c=>Object.keys(COURSE_ENRICHMENT).find(x=>c.trim().startsWith(x))).length;
@@ -15201,7 +16073,7 @@ function renderCourseLibrary(){
               <button type="button" class="lib-step ${cls}" data-library-level="${lv.id}" style="${isActive?'border-color:rgba(var(--accent-rgb),.5);':''}">
                 <span class="lib-step-num">${behind ? ICON.check : (i+1).toLocaleString(lang()==="ar"?"ar-EG":"en")}</span>
                 <span class="lib-step-count">${donein.toLocaleString(lang()==="ar"?"ar-EG":"en")}/${courses.length.toLocaleString(lang()==="ar"?"ar-EG":"en")}</span>
-                <span class="lib-step-tag">${tag}</span>
+                ${here || behind ? `<span class="lib-step-tag">${tag}</span>` : ""}
               </button>`;
             }).join("");
           })()}
@@ -15324,13 +16196,7 @@ function openLibraryCoursePreview(catalogString){
       ${enrichment ? `
         <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[l])}</p>
         <p class="type-body" style="color:var(--ink-muted); font-size:var(--fs-caption); margin-bottom:var(--sp-3);"><strong>${s.enrichmentWhyLabel}</strong> ${escapeHtml(enrichment.why[l])}</p>
-        ${enrichment.resources ? enrichment.resources.map(r=>`
-          <a href="${r.url}" target="_blank" rel="noopener" style="display:block; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--surface); border-radius:var(--r-sm); border:1px solid rgba(255,255,255,.07);">
-            <div class="type-body" style="font-weight:700; color:var(--accent);">${escapeHtml(r.title[l])} ↗</div>
-            <div class="type-caption" style="color:var(--ink-muted); opacity:.7; margin-top:2px;">${resourceBadge(r, l)}</div>
-            ${arabicVersionLink(r, l)}
-          </a>
-        `).join("") : ""}
+        ${enrichment.resources ? enrichment.resources.map(r=>resourceCardHtml(r, l)).join("") : ""}
       ` : `
       <div class="empty-state" style="padding:var(--sp-4) 0;">
         <div class="empty-icon">${ICON.openBook}</div>
