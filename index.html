@@ -1071,6 +1071,34 @@ body[data-theme="daylight"] .card:before{
    Two per row on a phone, three on a tablet, four on a laptop. The description
    is kept but made secondary, so the tile is scanned by its icon first and
    read only if the icon wasn't enough. */
+/* ---- Update bar ----------------------------------------------------------
+   A new build reaches a device silently and takes effect on some later,
+   unpredictable open. A student who was told a fix had shipped, and doesn't
+   see it, concludes the app is broken. So the app says so plainly and lets
+   them take the update at a moment of their choosing rather than mid-note.
+
+   Sits above the tab bar rather than over the content, and never interrupts:
+   there is a Later. */
+.upd{
+  position:fixed; inset-inline:12px; bottom:calc(var(--footer-h) + 74px);
+  z-index:70; display:flex; align-items:center; gap:10px;
+  padding:11px var(--sp-3) 11px var(--sp-4); border-radius:16px;
+  background:var(--surface); border:1px solid rgba(var(--accent-rgb),.32);
+  box-shadow:var(--glass-shadow);
+  animation:upd-in 320ms var(--ease-spring) both;
+}
+@keyframes upd-in{ from{ opacity:0; transform:translateY(14px); } }
+.upd-text{ flex:1; font-size:var(--fs-caption); font-weight:600; line-height:1.4; }
+.upd-go{
+  padding:9px 17px; border-radius:999px; flex-shrink:0;
+  background:rgb(var(--accent-rgb)); color:#fff;
+  font-family:inherit; font-size:12.5px; font-weight:700;
+}
+.upd-later{
+  padding:9px 6px; flex-shrink:0; background:none; border:none;
+  color:var(--ink-muted); font-family:inherit; font-size:11.5px; font-weight:600;
+}
+@media (prefers-reduced-motion:reduce){ .upd{ animation:none; } }
 .tool-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:9px; }
 @media (min-width:560px){ .tool-grid{ grid-template-columns:repeat(3, 1fr); } }
 @media (min-width:820px){ .tool-grid{ grid-template-columns:repeat(4, 1fr); } }
@@ -2227,6 +2255,12 @@ const STR = {
     formulaEntry:"موجّه القوانين",
     ptEntry:"الجدول الدوري",
     toolsForYou:"لتخصصك",
+    updateReady:"تتوفر نسخة جديدة من التطبيق",
+    updateNow:"تحديث",
+    updateLater:"لاحقًا",
+    updateApplying:"جارٍ التحديث…",
+    updateDate:"آخر تحديث",
+    updateUpToDate:"أنت على أحدث نسخة",
     toolsAll:"كل الأدوات",
     toolsOtherFields:"أدوات تخصصات أخرى",
     toolsShowAll:"أظهر البقية",
@@ -3009,6 +3043,12 @@ const STR = {
     formulaEntry:"Formula guide",
     ptEntry:"Periodic table",
     toolsForYou:"For your field",
+    updateReady:"A new version of the app is ready",
+    updateNow:"Update",
+    updateLater:"Later",
+    updateApplying:"Updating…",
+    updateDate:"Last updated",
+    updateUpToDate:"You're on the latest version",
     toolsAll:"All tools",
     toolsOtherFields:"Tools for other fields",
     toolsShowAll:"Show the rest",
@@ -9959,6 +9999,42 @@ let ptPicked = [];
    skim past the group entirely. The plan already tells us the field — so it
    decides what is shown first, and the rest stays one tap away rather than
    deleted. */
+/* A waiting service worker means a newer build is already downloaded and
+   sitting one instruction away from taking over. Rather than letting it swap
+   in at some unpredictable moment — possibly mid-sentence in a lecture — we
+   say so and let the student choose when. */
+let pendingWorker = null;
+let updateDismissed = false;
+function showUpdateBar(worker){
+  pendingWorker = worker;
+  if(updateDismissed) return;
+  const s = t();
+  const old = document.getElementById("updBar");
+  if(old) old.remove();
+  const bar = document.createElement("div");
+  bar.id = "updBar";
+  bar.className = "upd";
+  bar.innerHTML = `
+    <span class="upd-text">${s.updateReady}</span>
+    <button type="button" class="upd-later" id="updLater">${s.updateLater}</button>
+    <button type="button" class="upd-go" id="updGo">${s.updateNow}</button>`;
+  document.body.appendChild(bar);
+  bar.querySelector("#updLater").addEventListener("click", ()=>{
+    /* Dismissed for this session only: the next launch offers it again, since
+       an update the student never takes is an update that never shipped. */
+    updateDismissed = true;
+    bar.remove();
+  });
+  bar.querySelector("#updGo").addEventListener("click", ()=>{
+    showToast(s.updateApplying);
+    pulse("saved");
+    if(pendingWorker) pendingWorker.postMessage("skip-waiting");
+    /* If the handover doesn't happen within a couple of seconds — an older
+       browser, a worker that never took control — reload anyway rather than
+       leaving the student staring at a button that did nothing. */
+    setTimeout(()=>location.reload(), 1800);
+  });
+}
 function fieldOfStudy(){
   const student = StudentModule.current();
   if(!student) return "other";
@@ -15859,7 +15935,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-09 20:06";
+const BUILD_ID = "2026-09-09 20:21";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -18732,6 +18808,13 @@ function renderSettings(){
             <span class="card-body">
               <span class="card-title">${s.buildLabel}</span>
               <span class="card-meta" dir="ltr" style="text-align:start;">${BUILD_ID}</span>
+              <span class="card-meta">${(()=>{
+                /* The build stamp is for us; a date in words is for the
+                   student, who wants to know how recent their copy is. */
+                const d = new Date(BUILD_ID.replace(" ", "T"));
+                if(isNaN(d)) return "";
+                return s.updateDate + ": " + d.toLocaleDateString(lang()==="ar" ? "ar-SA" : "en-GB", { year:"numeric", month:"long", day:"numeric" });
+              })()}</span>
             </span>
           </div>
           <button type="button" class="card" id="storageBtn">
@@ -19008,6 +19091,18 @@ function startApp(){
         // Actively ask "is there a newer sw.js?" every time the app opens,
         // instead of waiting for the browser's own periodic check.
         reg.update().catch(()=>{});
+        // A build downloaded on a previous visit and still waiting.
+        if(reg.waiting) showUpdateBar(reg.waiting);
+        // And one that finishes downloading while the app is open.
+        reg.addEventListener("updatefound", ()=>{
+          const nw = reg.installing;
+          if(!nw) return;
+          nw.addEventListener("statechange", ()=>{
+            /* installed + an existing controller means this is an update
+               rather than the very first install, which needs no announcement. */
+            if(nw.state === "installed" && navigator.serviceWorker.controller) showUpdateBar(nw);
+          });
+        });
         // Also re-check every time the person switches back to the app
         // (e.g. reopening it from the home screen after it was already
         // running) — covers the case where the app was never fully closed,
