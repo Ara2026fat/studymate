@@ -384,7 +384,10 @@ ul,ol{ list-style:none; }
   min-height:100vh; min-height:100dvh;
   display:flex; flex-direction:column;
   padding-bottom:calc(140px + var(--footer-h) + env(safe-area-inset-bottom));
-  animation:fadeIn var(--m-transition) var(--ease);
+  /* No animation here: fadeIn carries a transform, and a transformed element
+     becomes the containing block for its fixed descendants — which would pin
+     the tab bar to the screen instead of the viewport. The entrance now runs
+     on .screen-content. */
 }
 .screen.no-tabbar{ padding-bottom:calc(var(--sp-5) + var(--footer-h)); }
 @keyframes fadeIn{ from{ opacity:0; transform:translateY(8px) scale(.99); } to{ opacity:1; transform:translateY(0) scale(1); } }
@@ -967,16 +970,23 @@ body[data-theme="daylight"] .card:before{
   from{ opacity:0; transform:translateX(var(--screen-from, 16px)); }
   to{ opacity:1; transform:none; }
 }
-.screen{ animation:screen-in 220ms var(--ease) both; }
-[dir="rtl"] .screen{ --screen-from:-16px; }
-.screen-back{ --screen-from:16px; }
-[dir="rtl"] .screen-back{ --screen-from:-16px; }
+/* The motion lives on the content, never on .screen itself. An element with a
+   transform becomes the containing block for any fixed descendant — and the
+   tab bar, the tool rail and the quick button are fixed and sit inside the
+   screen. Animating .screen made all three scroll away with the page. */
+.screen > .screen-content{ animation:screen-in 220ms var(--ease) both; }
+/* A screen that renders fixed children inside its content opts out: the
+   animation's transform would capture them. */
+.has-rail > .screen-content{ animation:none; }
+[dir="rtl"] .screen > .screen-content{ --screen-from:-16px; }
+.screen-back > .screen-content{ --screen-from:16px; }
+[dir="rtl"] .screen-back > .screen-content{ --screen-from:-16px; }
 /* Tab changes are lateral, not deeper: they fade rather than slide, so the
    five tabs feel like one place seen from different sides. */
-.screen-tab{ animation:tab-in 180ms var(--ease) both; }
+.screen-tab > .screen-content{ animation:tab-in 180ms var(--ease) both; }
 @keyframes tab-in{ from{ opacity:0; transform:translateY(6px); } }
 @media (prefers-reduced-motion:reduce){
-  .screen, .screen-tab{ animation:none; }
+  .screen > .screen-content, .screen-tab > .screen-content{ animation:none; }
 }
 .moment{
   display:flex; flex-direction:column; gap:6px;
@@ -1231,6 +1241,10 @@ body[data-theme="daylight"] .card:before{
 }
 .res-why > summary::-webkit-details-marker{ display:none; }
 .res-why p{ font-size:var(--fs-caption); color:var(--ink-muted); line-height:1.7; margin:6px 0 0; }
+/* Rendered inside the screen's content, which is animated — so it is pulled
+   out of that box explicitly. Without this the rail scrolls with the notes it
+   is meant to sit beside. */
+.screen-content > .rail{ position:fixed; }
 .rail{
   position:fixed; inset-inline-start:8px; top:50%; transform:translateY(-50%);
   z-index:40; display:flex; flex-direction:column; gap:6px;
@@ -16714,7 +16728,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-12 08:25";
+const BUILD_ID = "2026-09-12 08:37";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */

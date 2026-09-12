@@ -16,7 +16,7 @@
    change between builds and re-fetching them wastes a student's data.
 */
 
-const BUILD = "2026-09-12-05";
+const BUILD = "2026-09-12-06";
 const CACHE = `studymate-${BUILD}`;
 const SHELL = ["./", "./index.html", "./manifest.json"];
 
