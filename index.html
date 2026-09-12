@@ -2298,6 +2298,9 @@ const STR = {
     carryAdd:"أضفه إلى فصلي الحالي",
     resWhy:"لماذا هذا المرجع؟",
     listenBtn:"استمع للشرح",
+    storageBlockedTitle:"تعذّر فتح بياناتك",
+    storageBlockedText:"لم يستطع المتصفح قراءة ما حفظتَه — وقد يكون السبب نافذة أخرى مفتوحة للتطبيق، أو ضغطًا مؤقتًا على الجهاز. بياناتك لم تُمسّ، ولن نكتب فوقها حتى نقرأها. أغلق نوافذ التطبيق الأخرى ثم أعد المحاولة.",
+    storageRetry:"أعد المحاولة",
     listenStop:"إيقاف",
     listenUnsupported:"جهازك لا يدعم القراءة الصوتية.",
     listenNote:"يُقرأ عليك شرح المقرر وأصعب ما فيه — للطريق، أو للعين المتعبة، أو لمن يحفظ بالسمع.",
@@ -3090,6 +3093,9 @@ const STR = {
     carryAdd:"Add it to my current term",
     resWhy:"Why this reference?",
     listenBtn:"Listen to the explanation",
+    storageBlockedTitle:"Couldn't open your data",
+    storageBlockedText:"The browser couldn't read what you saved — possibly another window of the app is open, or the device is momentarily under pressure. Your data is untouched, and we won't write over it until we can read it. Close the app's other windows and try again.",
+    storageRetry:"Try again",
     listenStop:"Stop",
     listenUnsupported:"Your device doesn't support reading aloud.",
     listenNote:"The course explanation and its hardest parts, read to you — for the road, for tired eyes, or for anyone who remembers by ear.",
@@ -12910,18 +12916,27 @@ function idbOpen(){
     req.onupgradeneeded = ()=>{ req.result.createObjectStore(IDB_STORE); };
     req.onsuccess = ()=>{ idbHandle = req.result; resolve(idbHandle); };
     req.onerror = ()=>{ idbUnavailable = true; resolve(null); };
-    req.onblocked = ()=>{ idbUnavailable = true; resolve(null); };
+    /* Blocked means another window holds it open — a temporary condition, not
+       a device without IndexedDB. Marking it unavailable would send this
+       session's writes to localStorage while the real data sits in IndexedDB,
+       and the two would then disagree for ever. */
+    req.onblocked = ()=>{ resolve(null); };
   });
 }
+/* Returns {ok, value}. The distinction matters more than it looks: "there is
+   no record" and "I could not read the record" are opposite situations, and
+   treating the second as the first is how a student's whole notebook
+   disappears. Previously both returned null, the app started empty, and the
+   first save wrote that emptiness over everything. */
 function idbRead(){
   return idbOpen().then(db=>{
-    if(!db) return null;
+    if(!db) return { ok:false, value:null };
     return new Promise((resolve)=>{
       try{
         const req = db.transaction(IDB_STORE, "readonly").objectStore(IDB_STORE).get(DB_KEY);
-        req.onsuccess = ()=>resolve(req.result || null);
-        req.onerror = ()=>resolve(null);
-      }catch(e){ resolve(null); }
+        req.onsuccess = ()=>resolve({ ok:true, value:req.result || null });
+        req.onerror = ()=>resolve({ ok:false, value:null });
+      }catch(e){ resolve({ ok:false, value:null }); }
     });
   });
 }
@@ -12955,11 +12970,17 @@ function dbLoadLocal(){
 }
 /* Resolves once DB is populated, so boot can wait rather than render an
    empty app for a frame and then jump. */
+/* Set when storage could not be read at all. While it is true the app refuses
+   to save, because saving would mean writing an empty database over work we
+   simply failed to load. */
+let storageUnreadable = false;
 function dbLoad(){
-  return idbRead().then(stored=>{
+  return idbRead().then(res=>{
+    const stored = res.value;
     if(stored && stored.version){
       DB = stored;
       fillMissingTables();
+      storageUnreadable = false;
       return;
     }
     const legacy = dbLoadLocal();
@@ -12969,14 +12990,25 @@ function dbLoad(){
       // itself on this device.
       DB = legacy;
       fillMissingTables();
+      storageUnreadable = false;
       idbWrite(DB);
       return;
     }
+    /* Read succeeded and there genuinely is nothing: a new student. Read
+       failed and localStorage held nothing either: we know nothing, so we
+       assume nothing and refuse to write. */
+    if(!res.ok && !idbUnavailable){
+      storageUnreadable = true;
+      DB = emptyDB();
+      return;
+    }
+    storageUnreadable = false;
     DB = emptyDB();
   }).catch(()=>{
     const legacy = dbLoadLocal();
-    DB = legacy || emptyDB();
-    fillMissingTables();
+    if(legacy){ DB = legacy; fillMissingTables(); storageUnreadable = false; return; }
+    storageUnreadable = true;
+    DB = emptyDB();
   });
 }
 /* Saves are frequent (every keystroke in a note ends here), so writes are
@@ -12984,6 +13016,8 @@ function dbLoad(){
 let dbSaveTimer = null;
 function dbSaveNow(){
   dbSaveTimer = null;
+  /* The one case where not saving is the safe act. */
+  if(storageUnreadable) return;
   idbWrite(DB).then(ok=>{
     if(ok) return;
     // No IndexedDB on this device — fall back to the old shelf, and let a
@@ -12996,6 +13030,12 @@ function dbSave(){
   dbSaveTimer = setTimeout(dbSaveNow, 120);
 }
 /* A page being closed won't wait for a timer, so flush immediately. */
+/* pagehide is the event mobile browsers actually fire when a tab is closed or
+   backgrounded and then discarded; visibilitychange alone loses the last
+   120ms of work on a phone. */
+window.addEventListener("pagehide", ()=>{
+  if(dbSaveTimer){ clearTimeout(dbSaveTimer); dbSaveNow(); }
+});
 document.addEventListener("visibilitychange", ()=>{
   if(document.visibilityState === "hidden" && dbSaveTimer){ clearTimeout(dbSaveTimer); dbSaveNow(); }
 });
@@ -16728,7 +16768,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-12 08:37";
+const BUILD_ID = "2026-09-12 13:13";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -19848,7 +19888,27 @@ function boot(){
   }
   dbLoad().then(startApp);
 }
+function renderStorageBlocked(){
+  const s = t();
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-content" style="display:flex; flex-direction:column; justify-content:center; flex:1; text-align:center;">
+        <div class="empty-icon" style="margin:0 auto var(--sp-4);">${ICON.info}</div>
+        <div class="type-display" style="margin-bottom:var(--sp-3);">${s.storageBlockedTitle}</div>
+        <p class="type-body" style="color:var(--ink-muted); line-height:1.85; max-width:340px; margin:0 auto var(--sp-5);">${s.storageBlockedText}</p>
+        <button type="button" class="btn btn-primary" id="storageRetryBtn" style="max-width:280px; margin:0 auto;">${ICON.undo}<span>${s.storageRetry}</span></button>
+      </div>
+    </section>`;
+  document.getElementById("storageRetryBtn").addEventListener("click", ()=>location.reload());
+}
 function startApp(){
+  /* Never show the sign-up screen to someone whose data we merely failed to
+     read: that is how a student is asked to register over their own work. */
+  if(storageUnreadable){
+    applyDir();
+    renderStorageBlocked();
+    return;
+  }
   const student = StudentModule.current();
   if(student){
     if(!student.companion) dbUpdate("students", student.id, { companion:"male" }); // pre-existing records default silently; visible/editable in Settings
