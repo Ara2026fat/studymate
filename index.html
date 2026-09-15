@@ -894,27 +894,6 @@ body[data-theme="daylight"] .card:before{
 .stat b, .hero-title, .horizon-line, .pager-count, .level-chip-count{
   font-variant-numeric:tabular-nums;
 }
-/* ---- Quick tools ---------------------------------------------------------
-   A small disc above the tab bar that opens the two or three tools belonging
-   to the screen you are on — the notebook and terms inside a course, the
-   timetable and mirror in the week. Deliberately small and on the opposite
-   side from the thumb's resting arc, because a floating button that covers
-   content is worse than no button: the whole point is to save a trip, not to
-   cost a tap dodging it. Hidden entirely on screens with nothing to offer. */
-.quick-fab{
-  position:fixed; bottom:calc(var(--footer-h) + 84px);
-  inset-inline-start:16px; z-index:45;
-  width:46px; height:46px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  background:var(--glass-sheen);
-  border:1px solid rgba(var(--accent-rgb),.32);
-  box-shadow:var(--glass-shadow);
-  color:var(--accent);
-  transition:transform 200ms var(--ease-spring), opacity 200ms var(--ease);
-}
-.quick-fab svg{ width:20px; height:20px; }
-.quick-fab:active{ transform:scale(.9); }
-.quick-fab-hidden{ opacity:0; pointer-events:none; transform:scale(.8); }
 /* Settings as a grid of squares rather than a column of rows: the whole tab
    is seen at once, and choosing becomes recognition instead of reading. Each
    tile carries its icon, its name, and its current value — so a student knows
@@ -988,6 +967,20 @@ body[data-theme="daylight"] .card:before{
 @media (prefers-reduced-motion:reduce){
   .screen > .screen-content, .screen-tab > .screen-content{ animation:none; }
 }
+/* One card, two levels: the hour's ask in full weight, the term's phase as the
+   quieter line beneath it. A single action button, because a card with two
+   buttons is two cards wearing one border. */
+.guide-phase{
+  margin-top:11px; padding-top:10px;
+  border-top:1px solid rgba(var(--accent-rgb),.18);
+}
+.guide-phase-week{
+  display:inline-block; padding:2px 9px; border-radius:999px;
+  background:rgba(var(--accent-rgb),.14); color:var(--accent);
+  font-size:10px; font-weight:700; margin-bottom:5px;
+}
+.guide-phase-title{ font-size:var(--fs-caption); font-weight:700; margin-bottom:3px; }
+.guide-phase-text{ font-size:11.5px; color:var(--ink-muted); line-height:1.7; }
 .moment{
   display:flex; flex-direction:column; gap:6px;
   padding:var(--sp-4); border-radius:var(--r-md); margin-bottom:var(--sp-4);
@@ -1040,6 +1033,85 @@ body[data-theme="daylight"] .card:before{
   background:rgba(var(--attention-rgb),.14); color:var(--attention);
   font-size:11.5px; font-weight:700;
 }
+/* ---- The course as a folder ----------------------------------------------
+   The tabs used to hold doors — open the notebook, open the terms — so a
+   student asking what is in this course had to walk through four of them to
+   find out. The folder shows the contents themselves: the notes, the drawn
+   pages, the attached files, the terms and the essays, each one a line you
+   tap. The course stops being a menu and becomes a place. */
+/* A plus badged onto the glyph of what it creates. The eye reads the thing
+   first and the action second, which is the order a student thinks in: "a
+   term — new one", not "add — of what?". */
+.btn-add{ position:relative; }
+.btn-add:after{
+  content:"+";
+  position:absolute; inset-block-start:2px; inset-inline-end:2px;
+  width:15px; height:15px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgb(var(--accent-rgb)); color:#fff;
+  font-size:12px; font-weight:800; line-height:1;
+  border:2px solid var(--surface);
+}
+/* The timetable's add button is smaller, so its badge is too. */
+/* One add button, and a sheet that asks what. Seventeen separate add icons
+   spread across the app meant the student had to know which screen held which
+   kind of adding before they could add anything. Now the question is asked
+   after the tap, where it is cheap, instead of before it, where it cost a
+   search. */
+.add-one{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; padding:13px; border-radius:var(--r-md);
+  background:rgba(var(--accent-rgb),.13);
+  border:1px solid rgba(var(--accent-rgb),.32);
+  color:var(--accent); font-family:inherit; font-size:var(--fs-caption); font-weight:700;
+}
+.add-one svg{ width:18px; height:18px; }
+.add-one:active{ transform:scale(.985); }
+.add-pick{
+  display:flex; align-items:center; gap:11px; width:100%; text-align:start;
+  padding:12px var(--sp-3); border-radius:var(--r-md); margin-top:7px;
+  background:var(--flat); border:1px solid var(--flat-line);
+}
+.add-pick:active{ transform:scale(.985); }
+.add-pick-ic{
+  width:36px; height:36px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--ap-rgb), .15);
+  border:1px solid rgba(var(--ap-rgb), .28);
+  color:rgb(var(--ap-rgb));
+}
+.add-pick-ic svg{ width:17px; height:17px; }
+.add-pick-name{ font-size:var(--fs-caption); font-weight:700; }
+.add-pick-desc{ font-size:10.5px; color:var(--ink-muted); margin-top:2px; }
+.btn-add[data-add-day]:after{ width:12px; height:12px; font-size:10px; border-width:1.5px; }
+.fold-head{
+  display:flex; align-items:baseline; justify-content:space-between;
+  margin:var(--sp-4) 0 6px;
+}
+.fold-title{ font-size:11px; font-weight:700; color:var(--ink-muted); letter-spacing:.03em; }
+.fold-act{
+  background:none; border:none; padding:2px 4px;
+  color:var(--accent); font-family:inherit; font-size:11px; font-weight:700;
+}
+.fold-item{
+  display:flex; align-items:flex-start; gap:10px; width:100%; text-align:start;
+  padding:10px var(--sp-3); border-radius:var(--r-sm);
+  background:var(--flat); border:1px solid var(--flat-line);
+  margin-top:6px;
+}
+.fold-item:active{ transform:scale(.988); }
+.fold-ic{
+  width:30px; height:30px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(var(--fi-rgb), .14);
+  border:1px solid rgba(var(--fi-rgb), .26);
+  color:rgb(var(--fi-rgb));
+}
+.fold-ic svg{ width:15px; height:15px; }
+.fold-body{ flex:1; min-width:0; }
+.fold-line{ font-size:var(--fs-caption); font-weight:600; line-height:1.45; }
+.fold-sub{ font-size:10.5px; color:var(--ink-muted); margin-top:2px; }
+.fold-thumb{ width:34px; height:34px; border-radius:8px; object-fit:cover; flex-shrink:0; }
 .hard-part{
   background:var(--surface); border:1px solid var(--flat-line);
   border-radius:var(--r-sm); padding:var(--sp-3);
@@ -2289,10 +2361,51 @@ const STR = {
     journeyEntry:"مسار رحلتك",
     journeyEntryD:"فصولك السابقة وما أنجزته فيها",
     cvTabLearn:"افهم",
+    folderEmpty:"لا شيء في هذه المادة بعد — أول ملاحظة تكتبها تظهر هنا.",
+    addOne:"أضف",
+    addWhat:"ماذا تضيف؟",
+    addNote:"ملاحظة",
+    addNoteD:"نصّ سريع تكتبه الآن",
+    addPage:"صفحة دفتر",
+    addPageD:"ورقة ترسم وتكتب عليها",
+    addImage:"صورة",
+    addImageD:"من الكاميرا أو المعرض",
+    addFile:"ملف",
+    addFileD:"PDF أو مستند",
+    addTermItem:"مصطلح",
+    addTermD:"كلمة ومعناها ومثالها",
+    addEssayItem:"تعبير",
+    addEssayD:"مقال مطلوب منك",
+    addCheckItem:"فحص فهم",
+    addCheckD:"موضوع فهمته أو لم تفهمه",
+    addExamItem:"اختبار أو تسليم",
+    addExamD:"موعد يخص هذه المادة",
+    folderNotes:"ملاحظات",
+    folderPages:"صفحات",
+    folderFiles:"ملفات وصور",
+    folderAll:"عرض الكل في الدفتر",
+    folderTerms:"مصطلحات",
+    folderEssays:"تعابير",
+    folderNoTerms:"لم تضف مصطلحًا بعد.",
+    folderNoEssays:"لم تكتب تعبيرًا بعد.",
+    folderAdd:"أضف",
+    folderCount:(n)=>n===0 ? "لا شيء" : (n===1 ? "واحد" : (n===2 ? "اثنان" : `${n}`)),
+    folderOpened:"آخر ما فتحت في هذه المادة",
     planFactoryEntry:"تخصصك غير موجود؟ أرسل خطتك",
     lectureEntry:"أنا في المحاضرة",
     weekAskTitle:"في أي أسبوع أنت الآن؟",
+    termAskTitle:"متى فصلك الدراسي؟",
+    termAskD:"تاريخان يكفيان، ويحسب التطبيق بعدهما كل شيء: أسبوعك، وما بقي، ومتى يقترب وقت الاختبارات.",
+    termStart:"بداية الفصل",
+    termEnd:"نهاية الفصل",
+    termSave:"احفظ",
+    termBad:"تأكّد من التاريخين: البداية قبل النهاية، والمدة بين شهر وسبعة أشهر.",
+    termChange:"تعديل تواريخ الفصل",
+    termLeft:(n)=>n<=0 ? "انتهى فصلك" : (n===1 ? "بقي أسبوع واحد" : (n===2 ? "بقي أسبوعان" : (n<11 ? `بقي ${n} أسابيع` : `بقي ${n} أسبوعًا`))),
+    phaseSettleTitle:"رتّب مكانك أولًا",
+    phaseSettleText:"أنت جديد على التطبيق والفصل قد بدأ — فابدأ بترتيب مقرراتك وجدولك ونظرة على خطتك. أيامٌ قليلة وسنمشي معك على إيقاع فصلك.",
     momentNow:"الآن",
+    guideWeekTag:(n)=>`الأسبوع ${n}`,
     readyTitle:"خطتك جاهزة",
     libProgressDone:(a,b)=>`${a} من ${b} مقررًا خلفك`,
     carryAdd:"أضفه إلى فصلي الحالي",
@@ -3084,10 +3197,51 @@ const STR = {
     journeyEntry:"Your journey",
     journeyEntryD:"Your past terms and what you finished in them",
     cvTabLearn:"Learn",
+    folderEmpty:"Nothing in this course yet — the first note you write appears here.",
+    addOne:"Add",
+    addWhat:"What are you adding?",
+    addNote:"Note",
+    addNoteD:"A quick piece of text",
+    addPage:"Notebook page",
+    addPageD:"A sheet to draw and write on",
+    addImage:"Image",
+    addImageD:"From the camera or gallery",
+    addFile:"File",
+    addFileD:"A PDF or document",
+    addTermItem:"Term",
+    addTermD:"A word, its meaning and an example",
+    addEssayItem:"Essay",
+    addEssayD:"An essay you've been asked for",
+    addCheckItem:"Understanding check",
+    addCheckD:"Something you did or didn't follow",
+    addExamItem:"Exam or submission",
+    addExamD:"A date for this course",
+    folderNotes:"Notes",
+    folderPages:"Pages",
+    folderFiles:"Files and images",
+    folderAll:"See everything in the notebook",
+    folderTerms:"Terms",
+    folderEssays:"Essays",
+    folderNoTerms:"No terms yet.",
+    folderNoEssays:"No essays yet.",
+    folderAdd:"Add",
+    folderCount:(n)=>n===0 ? "none" : `${n}`,
+    folderOpened:"Recently opened in this course",
     planFactoryEntry:"Your programme missing? Send us your plan",
     lectureEntry:"I'm in a lecture",
     weekAskTitle:"Which week are you in?",
+    termAskTitle:"When is your term?",
+    termAskD:"Two dates are enough, and the app works out the rest: your week, what remains, and when exams approach.",
+    termStart:"Term starts",
+    termEnd:"Term ends",
+    termSave:"Save",
+    termBad:"Check the dates: the start must precede the end, and the term must run between one and seven months.",
+    termChange:"Edit term dates",
+    termLeft:(n)=>n<=0 ? "Your term has ended" : (n===1 ? "one week left" : `${n} weeks left`),
+    phaseSettleTitle:"Settle in first",
+    phaseSettleText:"You're new to the app and the term has already started — so begin by setting up your courses, your timetable and a look at your plan. In a few days we'll move to your term's own rhythm.",
     momentNow:"Right now",
+    guideWeekTag:(n)=>`Week ${n}`,
     readyTitle:"Your plan is ready",
     libProgressDone:(a,b)=>`${a} of ${b} courses behind you`,
     carryAdd:"Add it to my current term",
@@ -3852,15 +4006,53 @@ function horizonHtml(){
 
    Stored as the week plus the day it was told to us, so the count advances by
    itself afterwards. */
-function currentTermWeek(){
+/* Asking a student which week they are in puts the burden on them and reads as
+   an interrogation. Two dates are a thing they know without counting — and
+   they give us more than the week did: what remains, and when the exam season
+   arrives. The old weekNo is still honoured for anyone who answered it before
+   this change, so nobody is asked twice. */
+function termDates(){
+  const st = StudentModule.current();
+  if(!st || !st.termStart || !st.termEnd) return null;
+  const a = new Date(st.termStart), b = new Date(st.termEnd);
+  if(isNaN(a) || isNaN(b) || b <= a) return null;
+  return { start:a, end:b };
+}
+function weeksLeftInTerm(){
+  const d = termDates();
+  if(!d) return null;
+  const ms = d.end.getTime() - Date.now();
+  return Math.max(0, Math.ceil(ms / (7 * 86400000)));
+}
+/* A student who installs the app in week nine still needs the first days'
+   guidance — setting up courses, the timetable, a look at the plan. So for
+   their first days we speak to where they are with the app, not where the
+   calendar is; after that the term takes over. */
+function isSettlingIn(){
+  const st = StudentModule.current();
+  if(!st || !st.createdAt) return false;
+  const days = (Date.now() - st.createdAt) / 86400000;
+  if(days > 5) return false;
+  const w = currentTermWeekRaw();
+  return w !== null && w > 2;
+}
+function currentTermWeekRaw(){
+  const d = termDates();
+  if(d){
+    const days = Math.floor((Date.now() - d.start.getTime()) / 86400000);
+    return Math.max(1, Math.min(30, Math.floor(days / 7) + 1));
+  }
+  /* Anyone who answered the old question keeps their answer. */
   const student = StudentModule.current();
   if(!student || !student.weekNo || !student.weekSetAt) return null;
   const days = Math.floor((Date.now() - student.weekSetAt) / 86400000);
-  return Math.max(1, Math.min(20, student.weekNo + Math.floor(days / 7)));
+  return Math.max(1, Math.min(30, student.weekNo + Math.floor(days / 7)));
 }
+function currentTermWeek(){ return currentTermWeekRaw(); }
 function termPhase(week){
   const s = t();
   if(week === null) return null;
+  if(isSettlingIn()) return { id:"settle", title:s.phaseSettleTitle, text:s.phaseSettleText };
   if(week <= 2)  return { id:"start",  title:s.phaseStartTitle,  text:s.phaseStartText };
   if(week <= 8)  return { id:"write",  title:s.phaseWriteTitle,  text:s.phaseWriteText };
   if(week <= 12) return { id:"review", title:s.phaseReviewTitle, text:s.phaseReviewText };
@@ -4033,75 +4225,89 @@ function momentNow(){
 
   return null;
 }
-function momentHtml(){
+/* The hour and the term in one card. Either half may be absent — an hour with
+   nothing to ask, or a student who hasn't told us their week — and the card
+   simply shows what it has. When it has neither, it doesn't appear at all. */
+function guideHtml(){
+  const s = t();
   const m = momentNow();
-  if(!m) return "";
+  const week = currentTermWeek();
+  const phase = week === null ? null : termPhase(week);
+  if(!m && !phase) return "";
   return `
     <div class="moment">
+      ${m ? `
       <span class="moment-when">${m.when}</span>
       <span class="moment-text">${escapeHtml(m.text)}</span>
-      ${m.go ? `<button type="button" class="moment-go" id="momentGo">${escapeHtml(m.go.label)}</button>` : ""}
+      ${m.go ? `<button type="button" class="moment-go" id="momentGo">${escapeHtml(m.go.label)}</button>` : ""}` : ""}
+      ${phase ? `
+      <button type="button" class="guide-phase" id="phaseCard" style="text-align:start; width:100%; background:none; border-inline:none; border-block-end:none;">
+        <span class="guide-phase-week">${s.guideWeekTag(week.toLocaleString(lang()==="ar"?"ar-EG":"en"))}${(()=>{ const left = weeksLeftInTerm(); return left === null ? "" : " · " + s.termLeft(left); })()}</span>
+        <span class="guide-phase-title" style="display:block;">${phase.title}</span>
+        <span class="guide-phase-text" style="display:block;">${phase.text}</span>
+      </button>` : ""}
     </div>`;
 }
-function phaseHtml(){
+/* Only the invitation remains here: once the week is known the phase is shown
+   inside the guide card instead. */
+function weekAskHtml(){
   const s = t();
   const week = currentTermWeek();
-  if(week === null){
-    return `
-      <button type="button" class="card card-compact" id="weekAskBtn" style="margin-bottom:var(--sp-3);">
-        <span class="card-icon">${ICON.event}</span>
-        <span class="card-body">
-          <span class="card-title">${s.weekAskTitle}</span>
-        </span>
-        <span class="card-chevron">${chevronFwd()}</span>
-      </button>`;
-  }
-  const phase = termPhase(week);
-  /* Tappable, because a student who answered once may repeat a term, take a
-     break, or simply have counted wrong — and a number they cannot correct is
-     worse than one never asked for. */
+  if(week !== null) return "";
   return `
-    <button type="button" class="phase" id="phaseCard" style="text-align:start; width:100%;">
-      <span class="phase-week">${s.weekLabel(week.toLocaleString(lang()==="ar"?"ar-EG":"en"))} · ${s.weekChange}</span>
-      <span class="phase-title">${phase.title}</span>
-      <span class="phase-text">${phase.text}</span>
+    <button type="button" class="card card-compact" id="weekAskBtn" style="margin-bottom:var(--sp-3);">
+      <span class="card-icon">${ICON.event}</span>
+      <span class="card-body">
+        <span class="card-title">${s.termAskTitle}</span>
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
     </button>`;
 }
 /* Asked once. A student who takes a term off would otherwise be told they are
    in week nineteen of a term that ended. */
 function openWeekSheet(onDone){
   const s = t();
+  const st = StudentModule.current();
   const overlay = document.createElement("div");
   overlay.className = "sheet-overlay";
   overlay.innerHTML = `
     <div class="sheet">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">${s.weekAskTitle}</div>
-      <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-bottom:var(--sp-3);">${s.weekAskD}</p>
-      <input type="number" class="field" id="wkNum" inputmode="numeric" min="1" max="20" placeholder="${s.weekAskPh}" value="${(StudentModule.current() && StudentModule.current().weekNo) || ""}" style="margin-bottom:8px;">
+      <div class="sheet-title">${s.termAskTitle}</div>
+      <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-bottom:var(--sp-3);">${s.termAskD}</p>
+      <div class="field-group">
+        <label class="field-label" for="tmStart">${s.termStart}</label>
+        <input type="date" class="field" id="tmStart" value="${(st && st.termStart) || ""}">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="tmEnd">${s.termEnd}</label>
+        <input type="date" class="field" id="tmEnd" value="${(st && st.termEnd) || ""}">
+      </div>
       <p class="type-caption" id="wkErr" style="color:var(--attention); min-height:16px; margin:0 0 var(--sp-2);"></p>
-      <button type="button" class="btn btn-primary" id="wkGo" style="width:100%;">${ICON.check}<span>${s.weekAskSave}</span></button>
+      <button type="button" class="btn btn-primary" id="wkGo" style="width:100%;">${ICON.check}<span>${s.termSave}</span></button>
     </div>`;
   document.body.appendChild(overlay);
   requestAnimationFrame(()=>overlay.classList.add("show"));
   const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 240); };
   overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
   const go = ()=>{
-    const v = parseInt(overlay.querySelector("#wkNum").value, 10);
+    const a = overlay.querySelector("#tmStart").value;
+    const b = overlay.querySelector("#tmEnd").value;
     const err = overlay.querySelector("#wkErr");
-    /* An empty or out-of-range field used to do nothing at all, which reads as
-       a broken button rather than a rejected value. */
-    if(!v || v < 1 || v > 20){
-      if(err) err.textContent = s.weekBad;
+    const da = new Date(a), db = new Date(b);
+    const weeks = (db - da) / (7 * 86400000);
+    /* A term shorter than four weeks or longer than thirty is a typo, not a
+       term — and accepting it would make every later calculation nonsense. */
+    if(!a || !b || isNaN(da) || isNaN(db) || weeks < 4 || weeks > 30){
+      if(err) err.textContent = s.termBad;
       return;
     }
-    StudentModule.update({ weekNo: v, weekSetAt: Date.now() });
+    StudentModule.update({ termStart: a, termEnd: b });
     pulse("saved");
     close(onDone);
   };
   overlay.querySelector("#wkGo").addEventListener("click", go);
-  overlay.querySelector("#wkNum").addEventListener("keydown", (e)=>{ if(e.key === "Enter") go(); });
-  setTimeout(()=>{ const f = overlay.querySelector("#wkNum"); if(f) f.focus(); }, 260);
+  setTimeout(()=>{ const f = overlay.querySelector("#tmStart"); if(f) f.focus(); }, 260);
 }
 function knowsHtml(){
   const gap = gapGreeting();
@@ -4705,6 +4911,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الدقّة وحدها تخدع", en:"Accuracy alone deceives"}, plain:{ar:"لو كان واحد من كل مئة مريضًا، فنموذج يقول «سليم» دائمًا دقّته تسعة وتسعون بالمئة — وهو عديم الفائدة تمامًا. ولهذا نقيس أيضًا: كم من المرضى اكتشفهم، وكم ممن قال إنهم مرضى كانوا كذلك. والمقياس يُختار بحسب أيّ الخطأين أغلى في مسألتك.", en:"If one in a hundred is ill, a model that always says healthy is ninety-nine percent accurate and completely useless. So we also measure how many of the ill it found, and how many of those it flagged truly were."}, trap:{ar:"الاكتفاء بالدقّة في بيانات غير متوازنة — وهو أشيع خطأ في مشاريع التعلّم الآلي الطلابية.", en:"Relying on accuracy with imbalanced data — the commonest error in student machine learning projects."} }
     ],
     resources:[
+      { title:{ar:"CS221 Artificial Intelligence — جامعة ستانفورد (محاضرات مجانية)", en:"CS221 Artificial Intelligence — Stanford University (Free lectures)"}, url:"https://stanford-cs221.github.io/autumn2023/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"مقرر ستانفورد في الذكاء الاصطناعي: البحث، والتخطيط، والاستدلال المنطقي، والتعلّم الآلي، والألعاب. وصفحة المقرر تحوي الشرائح والواجبات كاملة — وهي أنفع من الفيديو وحده لأنها تريك ما يُطلب من الطالب فعلًا", en:"Stanford's AI course: search, planning, logical inference, machine learning and games. The course page carries the full slides and assignments"} },
       { title:{ar:"الذكاء الاصطناعي والأنظمة الخبيرة — خمس وحدات PDF بالعربية (جامعة القدس المفتوحة، مجاني)", en:"Artificial Intelligence and Expert Systems — Five Arabic PDF Units (Al-Quds Open University, Free)"}, url:"https://mbabubaker.wordpress.com/aies/", lang:"ar", verified:"2026-08-15", reason:{ar:"مقرر جامعي عربي كامل (رقم ١٤٨٤) بخمس وحدات تُحمَّل مباشرة بلا تسجيل: ماهية الأنظمة، أساليب البحث، حساب المنطق، نظم قواعد الإنتاج، والبرمجة بلغة برولوج. فتحتُ الوحدة الثانية وتأكدت: شرح عربي لـ DFS وBFS وتسلق الجبل والأفضل أولًا وA* بأمثلة محلولة وتدريبات", en:"A complete Arabic university course (no. 1484) in five units downloadable directly without registration: the nature of AI systems, search methods, logic calculus, production rule systems, and Prolog programming. I opened Unit Two and confirmed: Arabic explanations of DFS, BFS, hill climbing, best-first and A* with worked examples and exercises"} }
     ]
   },
@@ -4806,6 +5013,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الدقّة وحدها تخدع", en:"Accuracy alone deceives"}, plain:{ar:"لو كان واحد من كل مئة مريضًا، فنموذج يقول «سليم» دائمًا دقّته تسعة وتسعون بالمئة — وهو عديم الفائدة تمامًا. ولهذا نقيس أيضًا: كم من المرضى اكتشفهم، وكم ممن قال إنهم مرضى كانوا كذلك. والمقياس يُختار بحسب أيّ الخطأين أغلى في مسألتك.", en:"If one in a hundred is ill, a model that always says healthy is ninety-nine percent accurate and completely useless. So we also measure how many of the ill it found, and how many of those it flagged truly were."}, trap:{ar:"الاكتفاء بالدقّة في بيانات غير متوازنة — وهو أشيع خطأ في مشاريع التعلّم الآلي الطلابية.", en:"Relying on accuracy with imbalanced data — the commonest error in student machine learning projects."} }
     ],
     resources:[
+      { title:{ar:"Python Data Science Handbook — كتاب مفتوح، جاك فاندربلاس (مجاني)", en:"Python Data Science Handbook — Open textbook by Jake VanderPlas (Free)"}, url:"https://jakevdp.github.io/PythonDataScienceHandbook/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"كتاب كامل يُقرأ في المتصفح: نمباي، وبانداز، وماتبلوتليب، وساي كِت ليرن — بأمثلة تُنسخ وتُشغَّل. وميزته أن كل فصل دفتر تفاعلي، فتقرأ السطر وتجرّبه في نفس اللحظة", en:"A complete book read in the browser: NumPy, pandas, Matplotlib and scikit-learn with examples you copy and run. Each chapter is a notebook, so you read a line and try it"} },
       { title:{ar:"Data Science & Analysis — علم البيانات وتحليلها (معارف، عربي، مجاني)", en:"Data Science & Analysis (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/8859", lang:"ar", reason:{ar:"دورة عربية مجانية تتناول إعداد البيانات للتحليل: التنقية والتجميع والمعالجة، ثم مراجعة النتائج لكشف الأنماط — بنفس ترتيب المقرر من البيانات الخام إلى الرؤية النهائية", en:"A free Arabic course covering data preparation for analysis: cleaning, aggregation and processing, then reviewing results to uncover patterns — in the same order as the course, from raw data to final insight"} }
     ]
   },
@@ -4996,6 +5204,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الدقّة وحدها تخدع", en:"Accuracy alone deceives"}, plain:{ar:"لو كان واحد من كل مئة مريضًا، فنموذج يقول «سليم» دائمًا دقّته تسعة وتسعون بالمئة — وهو عديم الفائدة تمامًا. ولهذا نقيس أيضًا: كم من المرضى اكتشفهم، وكم ممن قال إنهم مرضى كانوا كذلك. والمقياس يُختار بحسب أيّ الخطأين أغلى في مسألتك.", en:"If one in a hundred is ill, a model that always says healthy is ninety-nine percent accurate and completely useless. So we also measure how many of the ill it found, and how many of those it flagged truly were."}, trap:{ar:"الاكتفاء بالدقّة في بيانات غير متوازنة — وهو أشيع خطأ في مشاريع التعلّم الآلي الطلابية.", en:"Relying on accuracy with imbalanced data — the commonest error in student machine learning projects."} }
     ],
     resources:[
+      { title:{ar:"CS221 Artificial Intelligence — جامعة ستانفورد (محاضرات مجانية)", en:"CS221 Artificial Intelligence — Stanford University (Free lectures)"}, url:"https://stanford-cs221.github.io/autumn2023/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"مقرر ستانفورد في الذكاء الاصطناعي: البحث، والتخطيط، والاستدلال المنطقي، والتعلّم الآلي، والألعاب. وصفحة المقرر تحوي الشرائح والواجبات كاملة — وهي أنفع من الفيديو وحده لأنها تريك ما يُطلب من الطالب فعلًا", en:"Stanford's AI course: search, planning, logical inference, machine learning and games. The course page carries the full slides and assignments"} },
       { title:{ar:"الذكاء الاصطناعي والأنظمة الخبيرة — الوحدة الأولى بالعربية (جامعة القدس المفتوحة، مجاني)", en:"Artificial Intelligence and Expert Systems — First Arabic Unit (Al-Quds Open University, Free)"}, url:"https://mbabubaker.wordpress.com/aies/", lang:"ar", partial:true, verified:"2026-08-17", reason:{ar:"تنبيه صريح: هذه صفحة المقرر الجامعي الكامل بخمس وحدات، وهي نفسها المستخدمة في مقرر الذكاء الاصطناعي المتقدم (COMP 441). في مستواك الثاني تكفيك الوحدة الأولى وحدها — ماهية أنظمة الذكاء الاصطناعي — والبقية ستعودين إليها في المستوى السابع، فلا تُرهقي نفسك بها الآن", en:"Stated plainly: this is the page of the full five-unit university course, the same one used for the advanced Artificial Intelligence course (COMP 441). At your second level the first unit alone is enough — the nature of AI systems — and you will come back to the rest in level seven, so don't burden yourself with it now"} }
     ]
   },
@@ -5137,6 +5346,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"رياضيات متقطعة (MATH 107)", en:"Discrete Mathematics (MATH 107)"}] },
     resources:[
+      { title:{ar:"Theory of Computation — NPTEL، معهد التقنية الهندي (مجاني)", en:"Theory of Computation — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/106104028", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"الآلات المنتهية، واللغات النظامية، والنحو الخالي من السياق، وآلة تورنغ، وقابلية الحل. تنبيه: مقرر نظري ثقيل — خذه بالتوازي مع مقررك لا بعده، فالمفاهيم تتراكم ولا تُلحق بعد فوات الأوان", en:"Finite automata, regular languages, context-free grammars, Turing machines and decidability. A heavy theoretical course — take it alongside yours, not after"} },
       { title:{ar:"Theory of Computation — محاضرات NPTEL، معهد التقنية الهندي كانبور (مجاني)", en:"Theory of Computation — NPTEL, IIT Kanpur (Free)"}, url:"https://nptel.ac.in/courses/106104148", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر جامعي كامل للأستاذ رغوناث تيواري من معهد التقنية الهندي بكانبور، يغطي بترتيبه المعتاد: الأتمتة المنتهية، التعابير النمطية، مبرهنة الضخ، القواعد الحرة من السياق، آلة تورنغ، وعدم القابلية للحل. التسجيل والتعلّم مجانيان بالكامل. بالإنجليزية — وزر «اقرأها بالعربية» يعرّب صفحة المقرر", en:"A complete university course by Prof. Raghunath Tewari of IIT Kanpur, covering in the usual order: finite automata, regular expressions, the pumping lemma, context-free grammars, the Turing machine, and undecidability. Enrolling and learning are entirely free. In English — the 'Read it in Arabic' button translates the course page"} }
     ]
   },
@@ -5324,6 +5534,7 @@ const COURSE_ENRICHMENT = {
       en:"You cannot improve a process you don't understand. Knowing what happens inside the machine is how you find the real savings."
     },
     resources:[
+      { title:{ar:"Manufacturing Processes — NPTEL، معهد التقنية الهندي (مجاني)", en:"Manufacturing Processes — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112107219", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"السباكة، والتشكيل، واللحام، والتشغيل بالقطع، والتصنيع بالمساحيق — بمبادئ كل عملية وعيوبها الشائعة وأين تُستعمل. تنبيه: أوسع من مقرر واحد، فخذ العمليات التي في خطتك", en:"Casting, forming, welding, machining and powder metallurgy — the principle of each, its common defects and where it is used"} },
       { title:{ar:"Manufacturing Processes II — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Manufacturing Processes II — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/112105127", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل في التشغيل وعمليات التصنيع: تكوّن الرايشة، هندسة العدة، قوى القطع، وبِلى العدة. بالإنجليزية — وزر اقرأها بالعربية للمواد المكتوبة", en:"A complete machining and manufacturing course: chip formation, tool geometry, cutting forces and tool wear"} }
     ]
   },
@@ -5370,6 +5581,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"المتوسط يكذب حين تكون البيانات ملتوية", en:"The mean lies when the data is skewed"}, plain:{ar:"راتب عشرة موظفين متوسطه خمسون ألفًا قد يعني أن تسعة يأخذون خمسة آلاف وواحدًا يأخذ أربعمئة وخمسين ألفًا. المتوسط يُسحب نحو القيم المتطرفة، والوسيط لا. فحين تكون بياناتك ملتوية — الرواتب، والأسعار، وأزمنة الانتظار — فالوسيط أصدق.", en:"Ten salaries averaging fifty thousand may mean nine earn five thousand and one earns four hundred and fifty. The mean is dragged by extremes; the median isn't."}, trap:{ar:"استعمال المتوسط في بيانات ملتوية يعطي رقمًا صحيحًا حسابيًا ومضلّلًا تمامًا.", en:"Using the mean on skewed data gives an arithmetically correct and completely misleading number."} }
     ],
     resources:[
+      { title:{ar:"Quality Control and Improvement using Six Sigma — NPTEL (مجاني)", en:"Quality Control and Improvement using Six Sigma — NPTEL (Free)"}, url:"https://nptel.ac.in/courses/110105088", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"خرائط الضبط الإحصائي، وقدرة العملية، وتصميم التجارب، ومنهجية ستة سيجما كاملة. أدرجناه لأن ضبط الجودة يُدرَّس بالمعادلات ويُمارَس بالخرائط — وهذا المقرر يصل بينهما", en:"Statistical control charts, process capability, design of experiments and the full Six Sigma methodology"} },
       { title:{ar:"أساسيات إدارة الجودة الشاملة (معارف، عربي، مجاني)", en:"Total Quality Management Fundamentals (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/20677/%D8%A3%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA-%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9-%D8%A7%D9%84%D8%AC%D9%88%D8%AF%D8%A9-%D8%A7%D9%84%D8%B4%D8%A7%D9%85%D9%84%D8%A9-video", lang:"ar", reason:{ar:"مبادئ إدارة الجودة الشاملة ودورها في تحسين الأداء وتقليل التكاليف، وأدوات تحليل الجودة — وهي عماد هذا المقرر", en:"The principles of Total Quality Management and quality analysis tools — the backbone of this course"} }
     ]
   },
@@ -5398,6 +5610,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ leadsTo:[{ar:"سلاسل الإمداد والعمليات الصناعية (IE301)", en:"Supply Chains and Industrial Processes (IE301)"}] },
     resources:[
+      { title:{ar:"Fundamentals of Operations Research — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Fundamentals of Operations Research — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/112106134", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"البرمجة الخطية وطريقة السيمبلكس، والثنائية، ومسائل النقل والتخصيص، وإدارة المخزون، وصفوف الانتظار. مقرر مبني على المسائل المحلولة — وبحوث العمليات لا تُتعلَّم إلا بها", en:"Linear programming and the simplex method, duality, transportation and assignment problems, inventory and queues — built on worked problems"} },
       { title:{ar:"Operations and Supply Chain Management — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Operations and Supply Chain Management — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/110106045", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: هو المقرر نفسه المستخدم في سلاسل الإمداد (IE301). خذ منه الأجزاء الأولى — تصميم المرافق، تخطيط الطاقة، وقياس العمليات — فهي ما يخص هذا المقرر، ودع الجدولة وشبكات الإمداد لمقررها", en:"Stated plainly: this is the same course used for Supply Chains (IE301). Take its early parts — facility design, capacity planning and process measurement — which are what this course covers, and leave scheduling and supply networks to theirs"} }
     ]
   },
@@ -5440,6 +5653,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"بحوث العمليات (IE204)", en:"Operations Research (IE204)"}] },
     resources:[
+      { title:{ar:"Manufacturing Processes — NPTEL، معهد التقنية الهندي (مجاني)", en:"Manufacturing Processes — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112107219", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"السباكة، والتشكيل، واللحام، والتشغيل بالقطع، والتصنيع بالمساحيق — بمبادئ كل عملية وعيوبها الشائعة وأين تُستعمل. تنبيه: أوسع من مقرر واحد، فخذ العمليات التي في خطتك", en:"Casting, forming, welding, machining and powder metallurgy — the principle of each, its common defects and where it is used"} },
       { title:{ar:"Fundamentals of Operations Research — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Fundamentals of Operations Research — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/112106134", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: هو مقرر بحوث العمليات نفسه المستخدم في IE204. خذ منه أجزاء الجدولة والتخصيص وموازنة الخطوط — فهي أدوات تصميم نظم الإنتاج — ودع صياغة البرمجة الخطية لمقررها. ولم نجد مصدرًا عربيًا حرًّا يخص تصميم نظم الإنتاج تحديدًا", en:"Stated plainly: this is the same operations research course used for IE204. Take its scheduling, assignment and line-balancing parts — the tools of production system design — and leave linear programming formulation to its own course. We found no free Arabic source specific to production system design"} }
     ]
   },
@@ -5905,6 +6119,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"قانون فك: المادة تنتقل نحو التركيز الأقل", en:"Fick's law: matter moves toward lower concentration"}, plain:{ar:"الانتشار لا يحتاج دافعًا خارجيًا: يكفي فرق التركيز. والمعدل يتناسب مع هذا الفرق ومساحة السطح، ويعكس المسافة. ولهذا تُصمَّم أبراج الفصل بأسطح تلامس هائلة — لا لشيء إلا لتكبير مساحة الانتقال.", en:"Diffusion needs no external driver: a concentration difference suffices. The rate scales with that difference and the contact area, and inversely with distance — which is why separation columns are built with enormous contact surfaces."}, trap:{ar:"الطالب يحفظ المعادلة ولا يربطها بالتصميم، فلا يعرف لماذا تُملأ الأبراج بحشوات.", en:"Students memorize the equation without linking it to design, and can't say why columns are packed."} }
     ],
     resources:[
+      { title:{ar:"Mass Transfer Operations — NPTEL، معهد التقنية الهندي (مجاني)", en:"Mass Transfer Operations — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/103103035", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"الانتشار، ومعاملات انتقال المادة، والامتصاص، والتقطير، والاستخلاص، والتجفيف — بمسائل محلولة في كل وحدة. وانتقال المادة من أصعب مقررات التخصص لأنه يجمع الاتزان والحركية معًا، وهذا المقرر يفصلهما ثم يجمعهما", en:"Diffusion, mass transfer coefficients, absorption, distillation, extraction and drying with worked problems in every unit"} },
       { title:{ar:"Mass Transfer Operations II — NPTEL، معهد التقنية الهندي جواهاتي (مجاني)", en:"Mass Transfer Operations II — NPTEL, IIT Guwahati (Free)"}, url:"https://nptel.ac.in/courses/103103154", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ شاندان داس من معهد التقنية الهندي بجواهاتي، يغطي عمليات الفصل واحدةً واحدة: الامتصاص، الاستخلاص، الترشيح، الترطيب، التجفيف، والتبلور — وهي بعينها وحدات هذا المقرر. مجاني بالتسجيل والتعلّم، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Chandan Das of IIT Guwahati covering the separation operations one by one: absorption, extraction, leaching, humidification, drying and crystallization — precisely this course's units. Free to enrol and learn from"} }
     ]
   },
@@ -6119,6 +6334,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الدقّة وحدها تخدع", en:"Accuracy alone deceives"}, plain:{ar:"لو كان واحد من كل مئة مريضًا، فنموذج يقول «سليم» دائمًا دقّته تسعة وتسعون بالمئة — وهو عديم الفائدة تمامًا. ولهذا نقيس أيضًا: كم من المرضى اكتشفهم، وكم ممن قال إنهم مرضى كانوا كذلك. والمقياس يُختار بحسب أيّ الخطأين أغلى في مسألتك.", en:"If one in a hundred is ill, a model that always says healthy is ninety-nine percent accurate and completely useless. So we also measure how many of the ill it found, and how many of those it flagged truly were."}, trap:{ar:"الاكتفاء بالدقّة في بيانات غير متوازنة — وهو أشيع خطأ في مشاريع التعلّم الآلي الطلابية.", en:"Relying on accuracy with imbalanced data — the commonest error in student machine learning projects."} }
     ],
     resources:[
+      { title:{ar:"CS221 Artificial Intelligence — جامعة ستانفورد (محاضرات مجانية)", en:"CS221 Artificial Intelligence — Stanford University (Free lectures)"}, url:"https://stanford-cs221.github.io/autumn2023/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"مقرر ستانفورد في الذكاء الاصطناعي: البحث، والتخطيط، والاستدلال المنطقي، والتعلّم الآلي، والألعاب. وصفحة المقرر تحوي الشرائح والواجبات كاملة — وهي أنفع من الفيديو وحده لأنها تريك ما يُطلب من الطالب فعلًا", en:"Stanford's AI course: search, planning, logical inference, machine learning and games. The course page carries the full slides and assignments"} },
       { title:{ar:"الذكاء الاصطناعي والأنظمة الخبيرة — خمس وحدات PDF بالعربية (جامعة القدس المفتوحة، مجاني)", en:"AI and Expert Systems — Five Arabic PDF Units (Al-Quds Open University, Free)"}, url:"https://mbabubaker.wordpress.com/aies/", lang:"ar", verified:"2026-08-15", reason:{ar:"مقرر جامعي عربي كامل بخمس وحدات تُحمَّل بلا تسجيل: ماهية الأنظمة، أساليب البحث (DFS وBFS وتسلق الجبل وA*)، حساب المنطق، نظم قواعد الإنتاج، والبرمجة ببرولوج", en:"A complete Arabic university course in five downloadable units: the nature of AI systems, search methods (DFS, BFS, hill climbing, A*), logic calculus, production rule systems, and Prolog"} }
     ]
   },
@@ -6222,6 +6438,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"تحليل وتصميم نظم الإنتاج (IE203)", en:"Analysis and Design of Production Systems (IE203)"}] },
     resources:[
+      { title:{ar:"Quality Control and Improvement using Six Sigma — NPTEL (مجاني)", en:"Quality Control and Improvement using Six Sigma — NPTEL (Free)"}, url:"https://nptel.ac.in/courses/110105088", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"خرائط الضبط الإحصائي، وقدرة العملية، وتصميم التجارب، ومنهجية ستة سيجما كاملة. أدرجناه لأن ضبط الجودة يُدرَّس بالمعادلات ويُمارَس بالخرائط — وهذا المقرر يصل بينهما", en:"Statistical control charts, process capability, design of experiments and the full Six Sigma methodology"} },
       { title:{ar:"Principles of Industrial Engineering — NPTEL، معهد التقنية الهندي روركي (مجاني)", en:"Principles of Industrial Engineering — NPTEL, IIT Roorkee (Free)"}, url:"https://nptel.ac.in/courses/112107292", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ د. ك. دويفيدي من معهد التقنية الهندي بروركي، يغطي موقع المصنع وتخطيط المرافق، تخطيط الإنتاج والجدولة، التنبؤ، ضبط الجودة الإحصائي، ودراسة العمل وقياسه — بحالات دراسية تطبيقية. بالإنجليزية لعدم وجود مقابل عربي حر بهذا الشمول", en:"A complete course by Prof. D. K. Dwivedi of IIT Roorkee covering plant location and layout, production planning and scheduling, forecasting, statistical quality control, and work and method study — with case studies. In English for want of a free Arabic equivalent of this breadth"} }
     ]
   },
@@ -6314,6 +6531,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الاستدعاء الذاتي: ثق بالدالة", en:"Recursion: trust the function"}, plain:{ar:"أصعب ما في الاستدعاء الذاتي أن تحاول تتبّعه في ذهنك إلى الأعماق كلها — ولن تستطيع. الطريقة الصحيحة: افترض أن الدالة تعمل صحيحًا للحالة الأصغر، ثم اسأل نفسك سؤالين فقط: ما أبسط حالة أعرف جوابها بلا استدعاء؟ وكيف أبني الجواب الأكبر من الأصغر؟ إن أجبت عنهما فالدالة صحيحة.", en:"The hardest thing about recursion is trying to trace it all the way down in your head — you can't. The right way: assume the function works for the smaller case, then ask only two questions: what is the simplest case whose answer I know without recursing, and how do I build the bigger answer from the smaller?"}, trap:{ar:"محاولة تتبّع كل مستوى ذهنيًا تُرهق وتُوهم بالفشل. ثق بالخطوة الأصغر واختبر الحالة القاعدية.", en:"Trying to trace every level mentally exhausts you and feels like failure. Trust the smaller step and check the base case."} }
     ],
     resources:[
+      { title:{ar:"6.006 Introduction to Algorithms — MIT OpenCourseWare (مجاني)", en:"6.006 Introduction to Algorithms — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"مقرر الخوارزميات في معهد ماساتشوستس بمحاضراته المصوّرة وواجباته وحلولها واختباراته السابقة. وميزته على الكتب أنه يبني الخوارزمية أمامك خطوةً خطوة بدل أن يعرضها جاهزة — وهذا ما يُنقص فهم أغلب الطلاب", en:"MIT's algorithms course with its recorded lectures, problem sets with solutions and past exams. It builds an algorithm in front of you step by step rather than presenting it finished"} },
       { title:{ar:"Programming, Data Structures and Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Programming, Data Structures and Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106145", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ مادهافان موكوند من معهد التقنية الهندي بمدراس، يبني هياكل البيانات من الأساس — القوائم والمكدّسات والطوابير والأشجار وجداول التجزئة — مع تحليل الكفاءة لكل بنية. بالإنجليزية والأمثلة ببايثون، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Madhavan Mukund of IIT Madras, building data structures from the ground up — lists, stacks, queues, trees and hash tables — with an efficiency analysis for each. In English with Python examples"} }
     ]
   },
@@ -6372,6 +6590,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الاستدعاء الذاتي: ثق بالدالة", en:"Recursion: trust the function"}, plain:{ar:"أصعب ما في الاستدعاء الذاتي أن تحاول تتبّعه في ذهنك إلى الأعماق كلها — ولن تستطيع. الطريقة الصحيحة: افترض أن الدالة تعمل صحيحًا للحالة الأصغر، ثم اسأل نفسك سؤالين فقط: ما أبسط حالة أعرف جوابها بلا استدعاء؟ وكيف أبني الجواب الأكبر من الأصغر؟ إن أجبت عنهما فالدالة صحيحة.", en:"The hardest thing about recursion is trying to trace it all the way down in your head — you can't. The right way: assume the function works for the smaller case, then ask only two questions: what is the simplest case whose answer I know without recursing, and how do I build the bigger answer from the smaller?"}, trap:{ar:"محاولة تتبّع كل مستوى ذهنيًا تُرهق وتُوهم بالفشل. ثق بالخطوة الأصغر واختبر الحالة القاعدية.", en:"Trying to trace every level mentally exhausts you and feels like failure. Trust the smaller step and check the base case."} }
     ],
     resources:[
+      { title:{ar:"6.006 Introduction to Algorithms — MIT OpenCourseWare (مجاني)", en:"6.006 Introduction to Algorithms — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"مقرر الخوارزميات في معهد ماساتشوستس بمحاضراته المصوّرة وواجباته وحلولها واختباراته السابقة. وميزته على الكتب أنه يبني الخوارزمية أمامك خطوةً خطوة بدل أن يعرضها جاهزة — وهذا ما يُنقص فهم أغلب الطلاب", en:"MIT's algorithms course with its recorded lectures, problem sets with solutions and past exams. It builds an algorithm in front of you step by step rather than presenting it finished"} },
       { title:{ar:"Programming, Data Structures and Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Programming, Data Structures and Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106145", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ مادهافان موكوند من معهد التقنية الهندي بمدراس، يبني هياكل البيانات من الأساس — القوائم والمكدّسات والطوابير والأشجار وجداول التجزئة — مع تحليل الكفاءة لكل بنية. بالإنجليزية والأمثلة ببايثون، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Madhavan Mukund of IIT Madras, building data structures from the ground up — lists, stacks, queues, trees and hash tables — with an efficiency analysis for each. In English with Python examples"} },
       { title:{ar:"Design and Analysis of Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Design and Analysis of Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106131", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ مادهافان موكوند يغطي أساليب تصميم الخوارزميات — فرّق تسد، البرمجة الديناميكية، الأساليب الجشعة — وتحليل التعقيد الزمني والمكاني لكل منها. بالإنجليزية، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Madhavan Mukund covering algorithm design techniques — divide and conquer, dynamic programming, greedy methods — and the time and space complexity analysis of each"} }
     ]
@@ -6432,6 +6651,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الكارنوف: التبسيط بالنظر لا بالجبر", en:"Karnaugh maps: simplifying by sight, not algebra"}, plain:{ar:"خريطة كارنوف ترتّب جدول الحقيقة بحيث تختلف الخانتان المتجاورتان في بت واحد فقط. ولهذا كل تجميع للآحاد المتجاورة يحذف متغيّرًا. فبدل صفحة من قوانين بوول، تجمّع بالنظر وتقرأ الناتج المبسّط.", en:"A Karnaugh map arranges the truth table so adjacent cells differ in one bit, which is why grouping adjacent ones eliminates a variable. Instead of a page of boolean algebra, you group by sight."}, trap:{ar:"ترتيب الأعمدة تصاعديًا 00 01 10 11 بدل 00 01 11 10 — فتنكسر خاصية الجوار وتبطل الخريطة كلها.", en:"Ordering the columns 00 01 10 11 instead of 00 01 11 10 breaks adjacency and voids the whole map."} }
     ],
     resources:[
+      { title:{ar:"6.004 Computation Structures — MIT OpenCourseWare (مجاني)", en:"6.004 Computation Structures — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"يبني الحاسب من الترانزستور إلى المعالج: البوابات، فالدوائر التتابعية، فوحدة الحساب، فلغة الآلة، فخط الأنابيب والذاكرة المخبأة. أدرجناه لأن معمارية الحاسب تُفهم بالبناء صعودًا، وهذا المقرر مبني على ذلك", en:"Builds a computer from transistor to processor: gates, sequential circuits, the arithmetic unit, machine language, pipelining and cache. Architecture is understood by building upward"} },
       { title:{ar:"Programming, Data Structures and Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Programming, Data Structures and Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106145", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في هياكل البيانات لا في معمارية الحاسب، وهو المستخدم أيضًا في مقرر هياكل البيانات. أدرجناه لأن فهم تكلفة الوصول للذاكرة وكفاءة العمليات — وهو ما يشرحه بوضوح — هو الجسر بين البرمجة والمعمارية. أما مجموعة التعليمات ولغة التجميع فتبقى من مرجع مقررك", en:"Stated plainly: a data structures course rather than a computer architecture one, and the same used for data structures. We included it because understanding memory access cost and operation efficiency — which it explains clearly — is the bridge between programming and architecture. The instruction set and assembly stay with your course reference"} }
     ]
   },
@@ -6480,6 +6700,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الاستدعاء الذاتي: ثق بالدالة", en:"Recursion: trust the function"}, plain:{ar:"أصعب ما في الاستدعاء الذاتي أن تحاول تتبّعه في ذهنك إلى الأعماق كلها — ولن تستطيع. الطريقة الصحيحة: افترض أن الدالة تعمل صحيحًا للحالة الأصغر، ثم اسأل نفسك سؤالين فقط: ما أبسط حالة أعرف جوابها بلا استدعاء؟ وكيف أبني الجواب الأكبر من الأصغر؟ إن أجبت عنهما فالدالة صحيحة.", en:"The hardest thing about recursion is trying to trace it all the way down in your head — you can't. The right way: assume the function works for the smaller case, then ask only two questions: what is the simplest case whose answer I know without recursing, and how do I build the bigger answer from the smaller?"}, trap:{ar:"محاولة تتبّع كل مستوى ذهنيًا تُرهق وتُوهم بالفشل. ثق بالخطوة الأصغر واختبر الحالة القاعدية.", en:"Trying to trace every level mentally exhausts you and feels like failure. Trust the smaller step and check the base case."} }
     ],
     resources:[
+      { title:{ar:"6.006 Introduction to Algorithms — MIT OpenCourseWare (مجاني)", en:"6.006 Introduction to Algorithms — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"مقرر الخوارزميات في معهد ماساتشوستس بمحاضراته المصوّرة وواجباته وحلولها واختباراته السابقة. وميزته على الكتب أنه يبني الخوارزمية أمامك خطوةً خطوة بدل أن يعرضها جاهزة — وهذا ما يُنقص فهم أغلب الطلاب", en:"MIT's algorithms course with its recorded lectures, problem sets with solutions and past exams. It builds an algorithm in front of you step by step rather than presenting it finished"} },
       { title:{ar:"Introduction to Operating Systems — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Introduction to Operating Systems — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106144", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ تشيستر ريبيرو من معهد التقنية الهندي بمدراس، يغطي العمليات وجدولتها، التزامن وأقفال التزامن، الجمود، إدارة الذاكرة والذاكرة الافتراضية، ونظام الملفات. بالإنجليزية، وزر اقرأها بالعربية يعرّب صفحة المقرر", en:"A complete course by Prof. Chester Rebeiro of IIT Madras covering processes and scheduling, concurrency and locks, deadlock, memory management and virtual memory, and the file system"} }
     ]
   },
@@ -6718,6 +6939,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"قانون فك: المادة تنتقل نحو التركيز الأقل", en:"Fick's law: matter moves toward lower concentration"}, plain:{ar:"الانتشار لا يحتاج دافعًا خارجيًا: يكفي فرق التركيز. والمعدل يتناسب مع هذا الفرق ومساحة السطح، ويعكس المسافة. ولهذا تُصمَّم أبراج الفصل بأسطح تلامس هائلة — لا لشيء إلا لتكبير مساحة الانتقال.", en:"Diffusion needs no external driver: a concentration difference suffices. The rate scales with that difference and the contact area, and inversely with distance — which is why separation columns are built with enormous contact surfaces."}, trap:{ar:"الطالب يحفظ المعادلة ولا يربطها بالتصميم، فلا يعرف لماذا تُملأ الأبراج بحشوات.", en:"Students memorize the equation without linking it to design, and can't say why columns are packed."} }
     ],
     resources:[
+      { title:{ar:"Mass Transfer Operations — NPTEL، معهد التقنية الهندي (مجاني)", en:"Mass Transfer Operations — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/103103035", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"الانتشار، ومعاملات انتقال المادة، والامتصاص، والتقطير، والاستخلاص، والتجفيف — بمسائل محلولة في كل وحدة. وانتقال المادة من أصعب مقررات التخصص لأنه يجمع الاتزان والحركية معًا، وهذا المقرر يفصلهما ثم يجمعهما", en:"Diffusion, mass transfer coefficients, absorption, distillation, extraction and drying with worked problems in every unit"} },
       { title:{ar:"Heat Transfer — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Heat Transfer — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105140", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في انتقال الحرارة لا انتقال المادة، وهو المستخدم في مقرر انتقال الحرارة (CHE302). أدرجناه عمدًا لأن معادلات الظاهرتين متماثلة بنيويًا — من فهم قوانين التوصيل يفهم قوانين الانتشار بتغيير الرموز. استعمله لبناء الحدس، وابقَ على مرجع مقررك للتفاصيل الخاصة بانتقال المادة", en:"Stated plainly: a heat transfer course rather than a mass transfer one, the same used for CHE302. We included it deliberately because the two phenomena's equations are structurally identical — whoever understands conduction understands diffusion by changing the symbols. Use it to build intuition, and keep your course reference for mass-transfer specifics"} }
     ]
   },
@@ -6838,6 +7060,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"مقدمة في البرمجة (CSE101)", en:"Intro to Computer Programming (CSE101)"}, {ar:"الاحتمالات والإحصاء الهندسي (STAT200)", en:"Engineering Probability & Statistics (STAT200)"}] },
     resources:[
+      { title:{ar:"Python Data Science Handbook — كتاب مفتوح، جاك فاندربلاس (مجاني)", en:"Python Data Science Handbook — Open textbook by Jake VanderPlas (Free)"}, url:"https://jakevdp.github.io/PythonDataScienceHandbook/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"كتاب كامل يُقرأ في المتصفح: نمباي، وبانداز، وماتبلوتليب، وساي كِت ليرن — بأمثلة تُنسخ وتُشغَّل. وميزته أن كل فصل دفتر تفاعلي، فتقرأ السطر وتجرّبه في نفس اللحظة", en:"A complete book read in the browser: NumPy, pandas, Matplotlib and scikit-learn with examples you copy and run. Each chapter is a notebook, so you read a line and try it"} },
       { title:{ar:"Data Science & Analysis — علم البيانات وتحليلها (معارف، عربي، مجاني)", en:"Data Science & Analysis (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/8859", lang:"ar", reason:{ar:"دورة عربية مجانية تتناول إعداد البيانات للتحليل: التنقية والتجميع والمعالجة، ثم مراجعة النتائج لكشف الأنماط — بنفس ترتيب المقرر من البيانات الخام إلى الرؤية النهائية", en:"A free Arabic course covering data preparation for analysis: cleaning, aggregation and processing, then reviewing results to uncover patterns — in the course's own order"} }
     ]
   },
@@ -7150,6 +7373,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"أساسيات جودة الهواء (OHS 207)", en:"Air Quality Fundamentals (OHS 207)"}] },
     resources:[
+      { title:{ar:"US EPA — جودة الهواء وقياس الملوثات (مجاني)", en:"US EPA — Air quality and pollutant measurement (Free)"}, url:"https://www.epa.gov/air-quality-management-process", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"منهجية إدارة جودة الهواء كما تطبّقها الجهة التنظيمية: الملوثات المعيارية، وطرق القياس المعتمدة، ومعايير التعرّض. تنبيه: المعايير أمريكية وقد تختلف عن اللائحة السعودية — خذ المنهجية وطريقة القياس", en:"Air quality management as the regulator applies it: criteria pollutants, approved measurement methods and exposure standards"} },
       { title:{ar:"Air Pollution and Control — NPTEL، معهد التقنية الهندي روركي (مجاني)", en:"Air Pollution and Control — NPTEL, IIT Roorkee (Free)"}, url:"https://nptel.ac.in/courses/105107213", lang:"en", verified:"2026-08-18", reason:{ar:"مقرر كامل للأستاذ بهولا رام غورجار من معهد التقنية الهندي بروركي، وله ثلاثون عامًا من الخبرة في تلوث الهواء وتقييم المخاطر الصحية. يغطي: مصادر الملوثات وتصنيفها، مراقبة جودة الهواء ودليل AQI، نمذجة الانتشار، جرد الانبعاثات، وأجهزة التحكم في التلوث وتصميمها، والمعايير واللوائح. بالإنجليزية، وزر اقرأها بالعربية يعرّب الصفحة", en:"A complete course by Prof. Bhola Ram Gurjar of IIT Roorkee, with thirty years in air pollution and health risk assessment. It covers pollutant sources and classification, air quality monitoring and the AQI, dispersion modelling, emissions inventory, control devices and their design, and standards and regulations"} }
     ]
   },
@@ -7163,6 +7387,7 @@ const COURSE_ENRICHMENT = {
       en:"People spend over ninety percent of their time indoors, yet outdoor air quality is measured far more than indoor. That is a real professional gap — whoever masters it finds a market with little competition."
     },
     resources:[
+      { title:{ar:"US EPA — جودة الهواء وقياس الملوثات (مجاني)", en:"US EPA — Air quality and pollutant measurement (Free)"}, url:"https://www.epa.gov/air-quality-management-process", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"منهجية إدارة جودة الهواء كما تطبّقها الجهة التنظيمية: الملوثات المعيارية، وطرق القياس المعتمدة، ومعايير التعرّض. تنبيه: المعايير أمريكية وقد تختلف عن اللائحة السعودية — خذ المنهجية وطريقة القياس", en:"Air quality management as the regulator applies it: criteria pollutants, approved measurement methods and exposure standards"} },
       { title:{ar:"Air Pollution and Control — NPTEL، معهد التقنية الهندي روركي (مجاني)", en:"Air Pollution and Control — NPTEL, IIT Roorkee (Free)"}, url:"https://nptel.ac.in/courses/105107213", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في تلوث الهواء الخارجي أساسًا، وفيه أسبوع مخصص لتلوث الهواء الداخلي: مصادره وأنواعه وآثاره الصحية وطرق أخذ العينات وتقييم جودة الهواء الداخلي. خذ ذلك الأسبوع تحديدًا، والبقية تبني الأساس النظري", en:"Stated plainly: a course primarily on outdoor air pollution, with a dedicated week on indoor air pollution: its sources, types, health impacts, sampling and assessment. Take that week specifically; the rest builds the theoretical base"} }
     ]
   },
@@ -7889,6 +8114,7 @@ const COURSE_ENRICHMENT = {
     },
     connections:{ requires:[{ar:"تحليل وتصميم نظم الأعمال 1 (MIS 202)", en:"Systems Analysis and Design I (MIS 202)"}] },
     resources:[
+      { title:{ar:"Organizational Behavior — OpenStax (كتاب مفتوح مجاني)", en:"Organizational Behavior — OpenStax (Free open textbook)"}, url:"https://openstax.org/details/books/organizational-behavior", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"الدافعية، والقيادة، وديناميكية الفريق، والثقافة التنظيمية، وإدارة الصراع والتغيير — بحالات دراسية حقيقية في كل فصل. كتاب جامعي مفتوح بلا رسوم ولا تسجيل", en:"Motivation, leadership, team dynamics, organizational culture, and conflict and change management — with real case studies in every chapter"} },
       { title:{ar:"Database Management System — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Database Management System — NPTEL, IIT Kharagpur (Free)"}, url:"https://elearn.nptel.ac.in/shop/nptel/data-base-management-system/", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: نفس مقرر قواعد البيانات المستخدم في تحليل النظم 1. في هذه المرحلة خذ منه التطبيع وتصميم المخطط المنطقي والفهرسة — فهي مرحلة التصميم التي يعالجها مقررك", en:"Stated plainly: the same database course used in Systems Analysis I. At this stage take normalization, logical schema design and indexing — the design phase your course addresses"} }
     ]
   },
@@ -7915,6 +8141,7 @@ const COURSE_ENRICHMENT = {
       en:"The system you build serves an existing process: an inventory managed, an order fulfilled, a quality measured. Whoever doesn't understand the process builds a system that mirrors the existing chaos rather than fixing it."
     },
     resources:[
+      { title:{ar:"Fundamentals of Operations Research — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Fundamentals of Operations Research — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/112106134", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"البرمجة الخطية وطريقة السيمبلكس، والثنائية، ومسائل النقل والتخصيص، وإدارة المخزون، وصفوف الانتظار. مقرر مبني على المسائل المحلولة — وبحوث العمليات لا تُتعلَّم إلا بها", en:"Linear programming and the simplex method, duality, transportation and assignment problems, inventory and queues — built on worked problems"} },
       { title:{ar:"Introduction to Business — OpenStax، جامعة رايس الأمريكية (كتاب مفتوح مجاني)", en:"Introduction to Business — OpenStax, Rice University (Free open textbook)"}, url:"https://openstax.org/details/books/introduction-business", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: كتاب في مقدمة الأعمال لا في إدارة العمليات وحدها. أدرجناه لأن فصوله عن إدارة الإنتاج والعمليات وسلاسل الإمداد والجودة هي صلب هذا المقرر. أما جدولة الإنتاج وبحوث العمليات بتفاصيلها الكمية فتبقى من مرجع مقررك", en:"Stated plainly: an introduction to business textbook rather than one on operations management alone. Its chapters on production and operations management, supply chains and quality are this course's core"} }
     ]
   },
@@ -8447,6 +8674,7 @@ const COURSE_ENRICHMENT = {
       en:"Every modern machine has become electromechanical: a motor driven by a controller fed by a sensor. Whoever understands the whole loop diagnoses a fault where it lies, instead of calling an electrician for a mechanical problem or the reverse."
     },
     resources:[
+      { title:{ar:"6.003 Signals and Systems — MIT OpenCourseWare (مجاني)", en:"6.003 Signals and Systems — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-003-signals-and-systems-fall-2011/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"الإشارات والأنظمة، والالتفاف، وتحويلا لابلاس وزد، وتحليل فورييه. أدرجناه لأن هذا المقرر يقف عليه التحكم ومعالجة الإشارة معًا — ومن ضعف فيه ضعف فيهما", en:"Signals and systems, convolution, the Laplace and Z transforms and Fourier analysis — the course that both control and signal processing stand on"} },
       { title:{ar:"Mechatronics — NPTEL، معهد التقنية الهندي روركي (مجاني)", en:"Mechatronics — NPTEL, IIT Roorkee (Free)"}, url:"https://nptel.ac.in/courses/112107298", lang:"en", partial:true, verified:"2026-09-09", reason:{ar:"مقرر للأستاذ بوشباراج ماني باثاك يبني الميكاترونكس طبقةً طبقة: المجسّات والمحوّلات وأداؤها، ثم المشغّلات الميكانيكية والهيدروليكية والهوائية والكهربائية، ثم تهيئة الإشارة ومحوّلات التماثلي-الرقمي، ثم المعالجات والمتحكمات الدقيقة وبرمجتها، وينتهي بالنمذجة واستجابة المنظومة والتصميم", en:"A course by Prof. Pushparaj Mani Pathak building mechatronics layer by layer: sensors and transducers, mechanical, hydraulic, pneumatic and electrical actuators, signal conditioning and converters, microprocessors and microcontrollers, then modelling, system response and design"} },
       { title:{ar:"كورس أردوينو كامل — هندسة النظم المدمجة (معارف، عربي، مجاني)", en:"Complete Arduino Course — Embedded Systems (M3aarf, Arabic, Free)"}, url:"https://www.m3aarf.com/certificate/87/%D8%A7%D8%B1%D8%AF%D9%88%D9%8A%D9%86%D9%88-%D8%A7%D8%AA%D9%82%D9%86-%D9%87%D9%86%D8%AF%D8%B3%D8%A9-%D8%A7%D9%84%D9%86%D8%B8%D9%85-%D8%A7%D9%84%D9%85%D8%AF%D9%85%D8%AC%D8%A9-video", lang:"ar", partial:true, reason:{ar:"تنبيه صريح: دورة تطبيقية على الأردوينو لا مقرر منظومات كهروميكانيكية كامل — لكنها أقصر طريق عربي لتجربة الحلقة بيدك: حسّاس يقرأ، ومتحكم يقرر، ومحرّك ينفّذ. المفاهيم النظرية وتصميم دوائر القدرة تبقى من مرجع مقررك", en:"Stated plainly: an applied Arduino course rather than a complete electromechanical systems course — but the shortest Arabic path to running the whole loop with your own hands: a sensor reads, a controller decides, a motor acts"} }
     ]
@@ -8461,6 +8689,7 @@ const COURSE_ENRICHMENT = {
       en:"The cheapest way to cut assembly cost isn't speeding up the worker but simplifying the product: every part you remove from the design removes an assembly step, a potential failure and a spare part. That is industrial engineering thinking par excellence."
     },
     resources:[
+      { title:{ar:"Manufacturing Processes — NPTEL، معهد التقنية الهندي (مجاني)", en:"Manufacturing Processes — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112107219", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"السباكة، والتشكيل، واللحام، والتشغيل بالقطع، والتصنيع بالمساحيق — بمبادئ كل عملية وعيوبها الشائعة وأين تُستعمل. تنبيه: أوسع من مقرر واحد، فخذ العمليات التي في خطتك", en:"Casting, forming, welding, machining and powder metallurgy — the principle of each, its common defects and where it is used"} },
       { title:{ar:"Principles of Industrial Engineering — NPTEL، معهد التقنية الهندي روركي (مجاني)", en:"Principles of Industrial Engineering — NPTEL, IIT Roorkee (Free)"}, url:"https://nptel.ac.in/courses/112107292", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في مبادئ الهندسة الصناعية لا في التصميم للتجميع وحده، وهو المستخدم في مقررات أخرى. خذ منه أجزاء دراسة العمل وقياسه وتخطيط المرافق — فهي ما يُبنى عليه تبسيط التجميع. أما مبادئ DFA وDFM تحديدًا فمن مرجع مقررك", en:"Stated plainly: a principles of industrial engineering course rather than design for assembly alone. Take its work study, measurement and facility planning parts — what assembly simplification is built on"} }
     ]
   },
@@ -8740,6 +8969,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الكارنوف: التبسيط بالنظر لا بالجبر", en:"Karnaugh maps: simplifying by sight, not algebra"}, plain:{ar:"خريطة كارنوف ترتّب جدول الحقيقة بحيث تختلف الخانتان المتجاورتان في بت واحد فقط. ولهذا كل تجميع للآحاد المتجاورة يحذف متغيّرًا. فبدل صفحة من قوانين بوول، تجمّع بالنظر وتقرأ الناتج المبسّط.", en:"A Karnaugh map arranges the truth table so adjacent cells differ in one bit, which is why grouping adjacent ones eliminates a variable. Instead of a page of boolean algebra, you group by sight."}, trap:{ar:"ترتيب الأعمدة تصاعديًا 00 01 10 11 بدل 00 01 11 10 — فتنكسر خاصية الجوار وتبطل الخريطة كلها.", en:"Ordering the columns 00 01 10 11 instead of 00 01 11 10 breaks adjacency and voids the whole map."} }
     ],
     resources:[
+      { title:{ar:"6.004 Computation Structures — MIT OpenCourseWare (مجاني)", en:"6.004 Computation Structures — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"يبني الحاسب من الترانزستور إلى المعالج: البوابات، فالدوائر التتابعية، فوحدة الحساب، فلغة الآلة، فخط الأنابيب والذاكرة المخبأة. أدرجناه لأن معمارية الحاسب تُفهم بالبناء صعودًا، وهذا المقرر مبني على ذلك", en:"Builds a computer from transistor to processor: gates, sequential circuits, the arithmetic unit, machine language, pipelining and cache. Architecture is understood by building upward"} },
       { title:{ar:"Switching Circuits and Logic Design — NPTEL، معهد التقنية الهندي خاراغبور (مجاني)", en:"Switching Circuits and Logic Design — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/106105185", lang:"en", verified:"2026-08-20", reason:{ar:"مقرر كامل للأستاذ إندرانيل سينغوبتا، رئيس قسم علوم الحاسب سابقًا بمعهد التقنية الهندي بخاراغبور وله أكثر من مئتي بحث منشور. يغطي بالترتيب: أنظمة الأعداد والترميز وكشف الأخطاء، جبر بول والتبسيط، تصميم الدوائر التوافقية — الجامعات والمقارنات والمازجات، تمثيل الدوال، ثم القلّابات SR وD وJK وT والدوائر التتابعية. المحتوى والواجبات مجانية بالكامل", en:"A complete course by Prof. Indranil Sengupta, former head of computer science at IIT Kharagpur with over two hundred publications. It covers, in order: number systems, codes and error detection, Boolean algebra and minimization, combinational circuit design — adders, comparators, multiplexers — function representation, then SR, D, JK and T flip-flops and sequential circuits. All content and assignments are free"} }
     ]
   },
@@ -8766,6 +8996,7 @@ const COURSE_ENRICHMENT = {
       en:"Simulation answers a question you cannot test in reality: what if the users double? what if a server fails? Whoever builds a trustworthy model tries the decision before paying for it."
     },
     resources:[
+      { title:{ar:"Python Data Science Handbook — كتاب مفتوح، جاك فاندربلاس (مجاني)", en:"Python Data Science Handbook — Open textbook by Jake VanderPlas (Free)"}, url:"https://jakevdp.github.io/PythonDataScienceHandbook/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"كتاب كامل يُقرأ في المتصفح: نمباي، وبانداز، وماتبلوتليب، وساي كِت ليرن — بأمثلة تُنسخ وتُشغَّل. وميزته أن كل فصل دفتر تفاعلي، فتقرأ السطر وتجرّبه في نفس اللحظة", en:"A complete book read in the browser: NumPy, pandas, Matplotlib and scikit-learn with examples you copy and run. Each chapter is a notebook, so you read a line and try it"} },
       { title:{ar:"Design and Analysis of Algorithms — NPTEL، معهد التقنية الهندي مدراس (مجاني)", en:"Design and Analysis of Algorithms — NPTEL, IIT Madras (Free)"}, url:"https://nptel.ac.in/courses/106106131", lang:"en", partial:true, verified:"2026-08-18", reason:{ar:"تنبيه صريح: مقرر في الخوارزميات لا في النمذجة والمحاكاة. أدرجناه لأن المحاكاة في جوهرها خوارزمية تُنفَّذ ملايين المرات — ومن لا يقدّر تعقيدها الزمني يبني نموذجًا صحيحًا لا ينتهي حسابه. أما توليد الأعداد العشوائية ونماذج الطوابير فتبقى من مرجع مقررك", en:"Stated plainly: an algorithms course rather than modelling and simulation. A simulation is at heart an algorithm run millions of times — whoever can't judge its time complexity builds a correct model that never finishes"} }
     ]
   },
@@ -9343,6 +9574,7 @@ const COURSE_ENRICHMENT = {
       en:"This course builds abstract mathematical thinking that benefits you in designing any algorithm or programming language later — a theoretical foundation behind everything practical you've learned in programming courses."
     },
     resources:[
+      { title:{ar:"Python Data Science Handbook — كتاب مفتوح، جاك فاندربلاس (مجاني)", en:"Python Data Science Handbook — Open textbook by Jake VanderPlas (Free)"}, url:"https://jakevdp.github.io/PythonDataScienceHandbook/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"كتاب كامل يُقرأ في المتصفح: نمباي، وبانداز، وماتبلوتليب، وساي كِت ليرن — بأمثلة تُنسخ وتُشغَّل. وميزته أن كل فصل دفتر تفاعلي، فتقرأ السطر وتجرّبه في نفس اللحظة", en:"A complete book read in the browser: NumPy, pandas, Matplotlib and scikit-learn with examples you copy and run. Each chapter is a notebook, so you read a line and try it"} },
       { title:{ar:"مبادئ نظرية الحوسبة (كتاب، ٣٥ صفحة، مجاني)", en:"Principles of Theory of Computation (Book, 35 pages, Free)"}, url:"https://www.noor-book.com/en/ebook-%D9%85%D8%A8%D8%A7%D8%AF%D8%A6-%D9%86%D8%B8%D8%B1%D9%8A%D9%87-%D8%A7%D9%84%D8%AD%D9%88%D8%B3%D8%A8%D9%87-Theory-of-Computation--pdf", reason:{ar:"ملاحظة أمانة: كتاب مكثّف (لا فيديو) كتبه د. أيمن حمارشه تحديدًا لسد فجوة حقيقية — قلة المصادر العربية في هذا الموضوع النظري تحديدًا، بترخيص إتاحة حر", en:"Honesty note: a concise book (not video) written by Dr. Ayman Hamarsheh specifically to fill a real gap — the scarcity of Arabic resources on this specific theoretical topic, under a free-access license"} }
     ]
   },
@@ -9465,6 +9697,7 @@ const COURSE_ENRICHMENT = {
       en:"The best possible code is meaningless if the user doesn't understand how to use it — this course teaches you to think from the angle of \"who will use this\", an essential skill whether you become a front-end developer or even a backend programmer."
     },
     resources:[
+      { title:{ar:"The Encyclopedia of Human-Computer Interaction — كتاب مفتوح (مجاني)", en:"The Encyclopedia of Human-Computer Interaction — Open textbook (Free)"}, url:"https://www.interaction-design.org/literature/book/the-encyclopedia-of-human-computer-interaction-2nd-ed", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"موسوعة مفتوحة يكتب فصولها باحثو المجال أنفسهم: قابلية الاستخدام، والتصميم المتمركز حول المستخدم، والنماذج الذهنية، وتقييم الواجهات. تنبيه: فصول مستقلة لا مقرر متسلسل — اقرأ ما يوافق أسبوعك", en:"An open encyclopedia written by the field's own researchers: usability, user-centred design, mental models and interface evaluation. Independent chapters rather than a sequence"} },
       { title:{ar:"مقدمة في تفاعل الإنسان والحاسوب (يوتيوب، عربي، مجاني)", en:"Introduction to Human-Computer Interaction (YouTube, Arabic, Free)"}, url:"https://www.youtube.com/watch?v=NPQAN4tuYFI", reason:{ar:"ملاحظة أمانة: فيديو واحد شامل (لا سلسلة كاملة)، لكنه يغطي بوضوح أساسيات تصميم الواجهات وسلوك المستخدم — نقطة انطلاق جيدة", en:"Honesty note: a single comprehensive video (not a full series), but it clearly covers interface design fundamentals and user behavior — a good starting point"} }
     ]
   },
@@ -10014,6 +10247,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الكارنوف: التبسيط بالنظر لا بالجبر", en:"Karnaugh maps: simplifying by sight, not algebra"}, plain:{ar:"خريطة كارنوف ترتّب جدول الحقيقة بحيث تختلف الخانتان المتجاورتان في بت واحد فقط. ولهذا كل تجميع للآحاد المتجاورة يحذف متغيّرًا. فبدل صفحة من قوانين بوول، تجمّع بالنظر وتقرأ الناتج المبسّط.", en:"A Karnaugh map arranges the truth table so adjacent cells differ in one bit, which is why grouping adjacent ones eliminates a variable. Instead of a page of boolean algebra, you group by sight."}, trap:{ar:"ترتيب الأعمدة تصاعديًا 00 01 10 11 بدل 00 01 11 10 — فتنكسر خاصية الجوار وتبطل الخريطة كلها.", en:"Ordering the columns 00 01 10 11 instead of 00 01 11 10 breaks adjacency and voids the whole map."} }
     ],
     resources:[
+      { title:{ar:"6.004 Computation Structures — MIT OpenCourseWare (مجاني)", en:"6.004 Computation Structures — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"يبني الحاسب من الترانزستور إلى المعالج: البوابات، فالدوائر التتابعية، فوحدة الحساب، فلغة الآلة، فخط الأنابيب والذاكرة المخبأة. أدرجناه لأن معمارية الحاسب تُفهم بالبناء صعودًا، وهذا المقرر مبني على ذلك", en:"Builds a computer from transistor to processor: gates, sequential circuits, the arithmetic unit, machine language, pipelining and cache. Architecture is understood by building upward"} },
       { title:{ar:"دورة Digital Logic Design كاملة (Free4arab، مجاني)", en:"Complete Digital Logic Design Course (Free4arab, Free)"}, url:"https://free4arab.net/courses/digital-logic-design/", reason:{ar:"٣١ محاضرة مجانية بالكامل (٥٠ ساعة محتوى)، تغطي المنهج كاملًا من الأنظمة العددية حتى الدارات المتسلسلة", en:"31 completely free lectures (50 hours of content), covering the full curriculum from number systems to sequential circuits"} }
     ]
   },
@@ -10401,6 +10635,7 @@ const COURSE_ENRICHMENT = {
       { title:{ar:"الاستقرار: التصحيح القوي قد يهدم", en:"Stability: a strong correction can destroy"}, plain:{ar:"لو صحّح النظام الخطأ بقوة زائدة، تجاوز الهدف إلى الجهة الأخرى، ثم صحّح بقوة فتجاوز مرة أخرى — فتكبر التذبذبات حتى ينهار. ولهذا ضبط المتحكم ليس بحثًا عن أسرع استجابة بل عن أسرع استجابة **مستقرة**. والسرعة بلا استقرار كارثة لا إنجاز.", en:"If the system corrects too strongly it overshoots, corrects again and overshoots further until oscillations grow and it collapses. Tuning seeks the fastest *stable* response, not the fastest one."}, trap:{ar:"زيادة الكسب التناسبي لتسريع الاستجابة بلا فحص الاستقرار.", en:"Raising the proportional gain for speed without checking stability."} }
     ],
     resources:[
+      { title:{ar:"6.003 Signals and Systems — MIT OpenCourseWare (مجاني)", en:"6.003 Signals and Systems — MIT OpenCourseWare (Free)"}, url:"https://ocw.mit.edu/courses/6-003-signals-and-systems-fall-2011/", lang:"en", partial:true, verified:"2026-09-14", reason:{ar:"الإشارات والأنظمة، والالتفاف، وتحويلا لابلاس وزد، وتحليل فورييه. أدرجناه لأن هذا المقرر يقف عليه التحكم ومعالجة الإشارة معًا — ومن ضعف فيه ضعف فيهما", en:"Signals and systems, convolution, the Laplace and Z transforms and Fourier analysis — the course that both control and signal processing stand on"} },
       { title:{ar:"ديناميكا الأنظمة والتحكم (معارف، ١٣ درسًا، مجاني بشهادة)", en:"Systems Dynamics & Control (M3aarf, 13 lessons, Free with Certificate)"}, url:"https://www.m3aarf.com/certificate/22206/%D8%AF%D9%8A%D9%86%D8%A7%D9%85%D9%8A%D9%83%D8%A7-%D8%A7%D9%84%D8%A3%D9%86%D8%B8%D9%85%D8%A9-%D9%88%D8%A7%D9%84%D8%AA%D8%AD%D9%83%D9%85-video", reason:{ar:"يغطي بالضبط نمذجة الأنظمة الميكانيكية بدالة التحويل، وتقنيات PID، مع تطبيق عملي على MATLAB وSimulink", en:"Covers exactly modeling mechanical systems with transfer functions, and PID techniques, with hands-on MATLAB and Simulink application"} }
     ]
   },
@@ -10800,7 +11035,6 @@ function renderPeriodic(){
   applyDir();
   const s = t();
   const l = lang();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   const q = normalizeSearchText(ptSearch);
   const list = q.length >= 1
     ? ELEMENTS.filter(e=>normalizeSearchText(e[0] + " " + e[1] + " " + e[2]).includes(q))
@@ -10839,7 +11073,7 @@ function renderPeriodic(){
       </div>
     </section>`;
 
-  document.getElementById("ptBack").addEventListener("click", ()=>{ activeTab = "tools"; renderTools(); });
+  document.getElementById("ptBack").addEventListener("click", ()=>navBack(()=>{ activeTab = "tools"; renderTools(); }));
   const qEl = document.getElementById("ptQ");
   qEl.addEventListener("input", (e)=>{
     ptSearch = e.target.value;
@@ -10918,7 +11152,6 @@ function renderConverter(){
   applyDir();
   const s = t();
   const l = lang();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   const fam = CONV[convFam];
   const names = Object.keys(fam.units);
   if(names.indexOf(convFrom) === -1) convFrom = names[0];
@@ -10983,7 +11216,7 @@ function renderConverter(){
       </div>
     </section>`;
 
-  document.getElementById("cvBack").addEventListener("click", ()=>{ activeTab = "tools"; renderTools(); });
+  document.getElementById("cvBack").addEventListener("click", ()=>navBack(()=>{ activeTab = "tools"; renderTools(); }));
   document.querySelectorAll("[data-cv-fam]").forEach(b=>b.addEventListener("click", ()=>{
     if(b.dataset.cvFam === convFam) return;
     convFam = b.dataset.cvFam;
@@ -11006,7 +11239,6 @@ function renderFormulaGuide(){
   applyDir();
   const s = t();
   const l = lang();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   const fieldLaws = LAWS.filter(L=>L.f === fgField);
   const inputs = [...new Set(fieldLaws.reduce((a,L)=>a.concat(L.needs), []))].filter(q=>q !== "g");
   const outputs = [...new Set(fieldLaws.reduce((a,L)=>a.concat(L.gives), []))];
@@ -11051,7 +11283,7 @@ function renderFormulaGuide(){
       </div>
     </section>`;
 
-  document.getElementById("fgBack").addEventListener("click", ()=>{ activeTab = "tools"; renderTools(); });
+  document.getElementById("fgBack").addEventListener("click", ()=>navBack(()=>{ activeTab = "tools"; renderTools(); }));
   document.getElementById("fgReset").addEventListener("click", ()=>{ fgHave = []; fgWant = null; renderFormulaGuide(); });
   document.querySelectorAll("[data-fg-field]").forEach(b=>b.addEventListener("click", ()=>{
     if(b.dataset.fgField === fgField) return;
@@ -11317,7 +11549,6 @@ function renderRecovery(){
     majorId: student.majorId || "", major: student.major || "",
     levelId: "", level: student.level || ""
   };
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-content" style="padding-top:var(--sp-6);">
@@ -11601,7 +11832,6 @@ function renderDevPlans(){
   const s = t();
   const mine = (()=>{ const keep = devPlanOverride; devPlanOverride = null; const k = catalogKeyFor(StudentModule.current()); devPlanOverride = keep; return k; })();
   const rows = allPlanEntries();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -11634,7 +11864,7 @@ function renderDevPlans(){
         </div>
       </div>
     </section>`;
-  document.getElementById("devBack").addEventListener("click", ()=>{ renderSettings(); });
+  document.getElementById("devBack").addEventListener("click", ()=>navBack(renderSettings));
   document.querySelectorAll("[data-dev-plan]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const k = btn.dataset.devPlan;
@@ -13088,7 +13318,7 @@ const StudentModule = {
   update(data){
     const s = this.current();
     if(!s || !data) return;
-    const allowed = ["university","universityId","college","collegeId","major","majorId","level","passed","companion","theme","weekNo","weekSetAt"];
+    const allowed = ["university","universityId","college","collegeId","major","majorId","level","passed","companion","theme","weekNo","weekSetAt","termStart","termEnd"];
     const patch = {};
     allowed.forEach(k=>{ if(Object.prototype.hasOwnProperty.call(data, k)) patch[k] = data[k]; });
     if(Object.keys(patch).length) dbUpdate("students", s.id, patch);
@@ -13504,82 +13734,6 @@ function noteRecentTool(entry){
   recentTools = [entry].concat(recentTools.filter(x=>x.key !== entry.key)).slice(0, 3);
 }
 
-/* What each screen can offer, and nothing more. A menu that always shows the
-   same eleven items is a second tools tab; one that shows only what belongs
-   here is a shortcut. */
-function quickToolsFor(context, courseId){
-  const s = t();
-  if(context === "course" && courseId) return [
-    { id:"notebook", icon:"book", label:s.toolNotebook, courseId },
-    { id:"terms", icon:"openBook", label:s.termsTitle, courseId },
-    { id:"essays", icon:"essay", label:s.essaysTitle, courseId }
-  ];
-  if(context === "semester") return [
-    { id:"schedule", icon:"weekGrid", label:s.weeklyScheduleEntryLabel },
-    { id:"raw", icon:"pen", label:s.rawNotebookTitle },
-    { id:"search", icon:"lens", label:s.searchEntryLabel }
-  ];
-  if(context === "today") return [
-    { id:"search", icon:"lens", label:s.searchEntryLabel },
-    { id:"schedule", icon:"weekGrid", label:s.weeklyScheduleEntryLabel },
-    { id:"mirror", icon:"weekGrid", label:s.mirrorEntryLabel }
-  ];
-  if(context === "library") return [
-    { id:"refmap", icon:"weekGrid", label:s.refMapEntry },
-    { id:"glossary", icon:"openBook", label:s.refGlossaryEntryLabel },
-    { id:"search", icon:"lens", label:s.searchEntryLabel }
-  ];
-  return [];
-}
-/* Called at the end of a screen's render. Removes any previous button first,
-   so navigating never leaves two behind. */
-function mountQuickTools(context, courseId){
-  const old = document.getElementById("quickFab");
-  if(old) old.remove();
-  const items = quickToolsFor(context, courseId);
-  if(!items.length) return;
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.id = "quickFab";
-  btn.className = "quick-fab";
-  btn.setAttribute("aria-label", t().quickTitle);
-  btn.innerHTML = ICON.tools;
-  document.body.appendChild(btn);
-  btn.addEventListener("click", ()=>openQuickSheet(items, courseId));
-}
-function openQuickSheet(items, courseId){
-  const s = t();
-  const overlay = document.createElement("div");
-  overlay.className = "sheet-overlay";
-  overlay.innerHTML = `
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">${s.quickTitle}</div>
-      <div class="stack">
-        ${items.map(x=>`
-          <button type="button" class="card" data-quick="${x.id}">
-            <span class="card-icon">${ICON[x.icon] || ICON.openBook}</span>
-            <span class="card-body"><span class="card-title">${escapeHtml(x.label || "")}</span></span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>`).join("")}
-      </div>
-      <button type="button" class="btn btn-secondary" id="quickAll" style="width:100%; margin-top:var(--sp-3);">${ICON.tools}<span>${s.quickAll}</span></button>
-    </div>`;
-  document.body.appendChild(overlay);
-  requestAnimationFrame(()=>overlay.classList.add("show"));
-  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 260); };
-  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
-  overlay.querySelectorAll("[data-quick]").forEach(b=>{
-    b.addEventListener("click", ()=>{
-      const id = b.dataset.quick;
-      const course = courseId ? dbGet("courses", courseId) : null;
-      close(()=>openTool(id, course));
-    });
-  });
-  overlay.querySelector("#quickAll").addEventListener("click", ()=>{
-    close(()=>{ activeTab = "tools"; renderTools(); });
-  });
-}
 /* What the app is using of the device, and of what. The browser reports one
    total; the breakdown is measured from our own records, so the two are
    labelled separately rather than pretending to be one exact figure. */
@@ -13658,7 +13812,6 @@ function courseInSessionNow(){
 function renderLecture(courseId){
   applyDir();
   const s = t();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   const student = StudentModule.current();
   const journey = student ? JourneyModule.forStudent(student.id) : null;
   const semester = journey ? SemesterModule.current(journey.id) : null;
@@ -13689,7 +13842,7 @@ function renderLecture(courseId){
           </div>
         </div>
       </section>`;
-    document.getElementById("lecBack").addEventListener("click", ()=>{ renderToday(); });
+    document.getElementById("lecBack").addEventListener("click", ()=>navBack(renderToday));
     document.querySelectorAll("[data-lec-course]").forEach(b=>
       b.addEventListener("click", ()=>renderLecture(b.dataset.lecCourse)));
     return;
@@ -13730,7 +13883,7 @@ function renderLecture(courseId){
   });
   setTimeout(()=>sheet.focus(), 120);
 
-  document.getElementById("lecBack").addEventListener("click", ()=>{ renderToday(); });
+  document.getElementById("lecBack").addEventListener("click", ()=>navBack(renderToday));
 
   /* Marking takes one tap and one word. Asking for a full description mid
      lecture guarantees it is never used. */
@@ -13805,7 +13958,6 @@ function openQuickMarkSheet(onDone){
 function renderPlanFactory(){
   applyDir();
   const s = t();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   const student = StudentModule.current();
   app.innerHTML = `
     <section class="screen no-tabbar">
@@ -13850,7 +14002,7 @@ function renderPlanFactory(){
       </div>
     </section>`;
 
-  document.getElementById("pfBack").addEventListener("click", ()=>{ renderCourseLibrary(); });
+  document.getElementById("pfBack").addEventListener("click", ()=>navBack(renderCourseLibrary));
   document.getElementById("pfSend").addEventListener("click", ()=>{
     const uni = document.getElementById("pfUni").value.trim();
     const major = document.getElementById("pfMajor").value.trim();
@@ -13886,7 +14038,6 @@ function renderPlanFactory(){
 async function renderStorage(){
   applyDir();
   const s = t();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   let quota = null, usage = null;
   try{
     if(navigator.storage && navigator.storage.estimate){
@@ -13931,7 +14082,7 @@ async function renderStorage(){
         <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-top:var(--sp-4);">${s.storageHint}</p>
       </div>
     </section>`;
-  document.getElementById("storageBack").addEventListener("click", ()=>{ settingsTab = "app"; renderSettings(); });
+  document.getElementById("storageBack").addEventListener("click", ()=>navBack(()=>{ settingsTab = "app"; renderSettings(); }));
 }
 function renderTools(){
   applyDir();
@@ -13960,7 +14111,6 @@ function renderTools(){
       <span class="tool-tileX-desc">${desc}</span>
     </button>`;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
@@ -14007,8 +14157,8 @@ function renderTools(){
         <div class="section-label" style="margin-top:0;">${s.toolsGroupWeek}</div>
         <div class="tool-grid" style="margin-bottom:var(--sp-5);">
           ${tool("schedule", ICON.weekGrid, s.weeklyScheduleEntryLabel, s.toolScheduleD)}
-          ${tool("mirror", ICON.weekGrid, s.mirrorEntryLabel, s.toolMirrorD)}
-          ${tool("raw", ICON.pen, s.rawNotebookTitle, s.toolRawD)}
+          ${tool("raw", ICON.pencil, s.rawNotebookTitle, s.toolRawD)}
+          ${tool("mirror", ICON.compass, s.mirrorEntryLabel, s.toolMirrorD)}
         </div>
 
         ` : ""}
@@ -14016,8 +14166,8 @@ function renderTools(){
         <div class="section-label" style="margin-top:0;">${s.toolsGroupLang}</div>
         <div class="tool-grid" style="margin-bottom:var(--sp-5);">
           ${tool("search", ICON.lens, s.searchEntryLabel, s.toolSearchD)}
-          ${tool("translate", ICON.message, s.liveTranslateEntryLabel, s.toolTranslateD)}
           ${tool("glossary", ICON.openBook, s.refGlossaryEntryLabel, s.toolGlossaryD)}
+          ${tool("translate", ICON.message, s.liveTranslateEntryLabel, s.toolTranslateD)}
           ${(()=>{
             const meta = {
               formula:   { icon:ICON.target, name:s.formulaEntry, desc:s.formulaEntryD },
@@ -14039,7 +14189,7 @@ function renderTools(){
         <div class="section-label" style="margin-top:0;">${s.toolsGroupMine}</div>
         <div class="tool-grid">
           ${tool("journey", ICON.journey, s.tabJourney, s.toolJourneyD)}
-          ${tool("refmap", ICON.weekGrid, s.refMapEntry, s.toolRefMapD)}
+          ${tool("refmap", ICON.cap, s.refMapEntry, s.toolRefMapD)}
           ${tool("backup", ICON.download, s.backupTitle, s.toolBackupD)}
         </div>` : ""}
       </div>
@@ -14070,6 +14220,9 @@ function renderTools(){
 
 function openTool(id, course){
   const s = t();
+  /* Opening anything from Tools must come back to Tools, not to the screen
+     that tool happens to live under. */
+  navPush(()=>{ activeTab = "tools"; renderTools(); });
   const named = (title, sub, icon)=>noteRecentTool({ key:id + (course?(":"+course.id):""), title, sub, icon });
   const withCourse = (fn, title, icon)=>{
     if(!course) return;
@@ -14126,6 +14279,7 @@ function wireTabBar(){
       if(tab === activeTab) return;
       pulse("tap");
       markScreenMotion("tab");
+      navReset();
       activeTab = tab;
       if(tab==="today") renderToday();
       else if(tab==="semester") renderSemester();
@@ -14365,7 +14519,6 @@ function showFlagshipMoment(message, onDone){
 function renderWelcome(){
   applyDir();
   const s = t();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar pace-reflective" style="justify-content:center;">
       <div class="screen-content" style="display:flex; flex-direction:column; justify-content:center; flex:1; text-align:center; padding-top:var(--sp-7);">
@@ -14415,7 +14568,6 @@ function renderOnboarding(){
   const s = t();
   const obDraft = { name:"", companion:"", universityId:"", university:"", collegeId:"", college:"", majorId:"", major:"", levelId:"", level:"" };
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header" style="display:block; padding-top:var(--sp-6)">
@@ -14632,8 +14784,8 @@ function renderToday(){
           <div class="hero-sub">${escapeHtml(student.major)}${student.university? ' · '+escapeHtml(student.university):''}</div>
           <div class="type-caption">${s.coursesCount(courses.length)}</div>
         </div>
-        ${momentHtml()}
-        ${phaseHtml()}
+        ${guideHtml()}
+        ${weekAskHtml()}
         ${(()=>{
           /* Offered first when a class is in session, because at that moment it
              is the only thing the student wants. */
@@ -14705,7 +14857,6 @@ function renderToday(){
     lectureCourseId = null; lectureText = ""; lectureMarks = [];
     renderLecture(now ? now.id : null);
   });
-  mountQuickTools("today");
   const knowsBtn = document.getElementById("knowsCard");
   if(knowsBtn) knowsBtn.addEventListener("click", ()=>{ const k = whatWeKnow(); if(k && k.go) k.go(); });
   /* Remembering when they were last here is what makes a welcome back
@@ -14864,7 +15015,6 @@ function renderSemester(){
       renderSemester();
     });
   });
-  mountQuickTools("semester");
   const addBtn = document.getElementById("addCourseBtn");
   if(addBtn) addBtn.addEventListener("click", ()=>{ openCourseSheet(semester.id, null, renderSemester); });
   const weeklyBtn = document.getElementById("weeklyScheduleBtn");
@@ -14877,7 +15027,7 @@ function renderSemester(){
     });
   });
   const journeyEntryBtn = document.getElementById("journeyEntryBtn");
-  if(journeyEntryBtn) journeyEntryBtn.addEventListener("click", ()=>{ renderJourney(); });
+  if(journeyEntryBtn) journeyEntryBtn.addEventListener("click", ()=>{ navPush(renderSemester); renderJourney(); });
   const rawBtn = document.getElementById("rawNotebookBtn");
   if(rawBtn) rawBtn.addEventListener("click", ()=>{ renderRawNotebook(); });
   document.querySelectorAll("[data-course-id]").forEach(card=>{
@@ -14902,6 +15052,85 @@ function renderSemester(){
    instead. Four tabs hold the same things in the order a term actually uses
    them: understand it, write about it, keep what matters, prepare for it. */
 let courseTab = "learn";
+/* One line per thing the course holds, whatever kind it is. Built here rather
+   than in the screen so the same list can be reused wherever a course's
+   contents need showing. */
+/* Everything a student can add to a course, in the order they are reached for
+   during a term. The sheet is the only place this list exists, so adding a new
+   kind of thing later means one entry here rather than another icon on a
+   screen somewhere. */
+function addOptionsFor(courseId){
+  const s = t();
+  return [
+    { id:"note",  icon:"pencil",    rgb:"90,175,120",  name:s.addNote,      desc:s.addNoteD },
+    { id:"page",  icon:"pen",       rgb:"70,140,215",  name:s.addPage,      desc:s.addPageD },
+    { id:"image", icon:"image",     rgb:"220,160,70",  name:s.addImage,     desc:s.addImageD },
+    { id:"file",  icon:"paperclip", rgb:"130,145,170", name:s.addFile,      desc:s.addFileD },
+    { id:"term",  icon:"openBook",  rgb:"70,170,165",  name:s.addTermItem,  desc:s.addTermD },
+    { id:"essay", icon:"essay",     rgb:"150,120,210", name:s.addEssayItem, desc:s.addEssayD },
+    { id:"check", icon:"check",     rgb:"200,110,160", name:s.addCheckItem, desc:s.addCheckD },
+    { id:"exam",  icon:"event",     rgb:"210,100,85",  name:s.addExamItem,  desc:s.addExamD }
+  ];
+}
+function openAddSheet(courseId, onDone){
+  const s = t();
+  const items = addOptionsFor(courseId);
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">${s.addWhat}</div>
+      ${items.map(x=>`
+        <button type="button" class="add-pick" data-add="${x.id}" style="--ap-rgb:${x.rgb};">
+          <span class="add-pick-ic">${ICON[x.icon] || ICON.plus}</span>
+          <span>
+            <span class="add-pick-name" style="display:block;">${escapeHtml(x.name)}</span>
+            <span class="add-pick-desc" style="display:block;">${escapeHtml(x.desc)}</span>
+          </span>
+        </button>`).join("")}
+    </div>`;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>overlay.classList.add("show"));
+  const close = (after)=>{ overlay.classList.remove("show"); setTimeout(()=>{ overlay.remove(); if(after) after(); }, 240); };
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) close(); });
+  overlay.querySelectorAll("[data-add]").forEach(b=>{
+    b.addEventListener("click", ()=>close(()=>runAdd(b.dataset.add, courseId, onDone)));
+  });
+}
+/* One place that knows how each kind is created. The screens no longer need
+   to: they ask for "add" and this decides what that means. */
+function runAdd(kind, courseId, onDone){
+  const done = onDone || (()=>renderCourseNotebook(courseId));
+  if(kind === "note")  return openNoteSheet(courseId, null, done);
+  if(kind === "page")  return renderNotebookPage(courseId);
+  if(kind === "image"){ const el = document.getElementById("notebookImageInput"); if(el) el.click(); return; }
+  if(kind === "file"){  const el = document.getElementById("notebookFileInput");  if(el) el.click(); return; }
+  if(kind === "term"){  termsSearch = "";  navPush(done); return renderCourseTerms(courseId); }
+  if(kind === "essay"){ essaysSearch = ""; navPush(done); return renderCourseEssays(courseId); }
+  if(kind === "check")  return openUnderstandingCheckSheet(courseId, done);
+  if(kind === "exam")   return openPastExamSheet(courseId, done);
+}
+function folderItemHtml(kind, label, sub, extra){
+  const rgb = { note:"90,175,120", page:"70,140,215", file:"130,145,170",
+                image:"220,160,70", term:"70,170,165", essay:"150,120,210" }[kind] || "120,140,175";
+  const icon = { note:ICON.pencil, page:ICON.pen, file:ICON.paperclip,
+                 image:ICON.image, term:ICON.openBook, essay:ICON.essay }[kind] || ICON.openBook;
+  return `
+    <button type="button" class="fold-item" style="--fi-rgb:${rgb};"${extra || ""}>
+      <span class="fold-ic">${icon}</span>
+      <span class="fold-body">
+        <span class="fold-line" dir="auto">${escapeHtml(label || "")}</span>
+        ${sub ? `<span class="fold-sub" dir="auto">${escapeHtml(sub)}</span>` : ""}
+      </span>
+    </button>`;
+}
+/* Trimmed to what a line can carry: a student scanning ten notes wants the
+   first words of each, not the whole of one. */
+function folderSnippet(text, n){
+  const t2 = String(text || "").replace(/\s+/g, " ").trim();
+  return t2.length > n ? t2.slice(0, n) + "…" : t2;
+}
 function renderCourseView(courseId, keepTab){
   if(!keepTab) courseTab = "learn";
   applyDir();
@@ -14977,45 +15206,60 @@ function renderCourseView(courseId, keepTab){
             <button type="button" class="set-tab ${courseTab===id?'set-tab-active':''}" data-course-tab="${id}">${label}</button>`).join("")}
         </div>
 
-        ${courseTab==="write" ? `
-        <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-bottom:var(--sp-3);">${s.cvWriteD}</p>
-        <div class="stack">
-          <button type="button" class="card" data-cv="notebook">
-            <span class="card-icon">${ICON.book}</span>
-            <span class="card-body"><span class="card-title">${s.cvOpenNotebook}</span></span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>
-          <button type="button" class="card" data-cv="page">
-            <span class="card-icon">${ICON.pen}</span>
-            <span class="card-body"><span class="card-title">${s.pageOpenBtn}</span></span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>
-          <button type="button" class="card" data-cv="raw">
-            <span class="card-icon">${ICON.pencil}</span>
-            <span class="card-body"><span class="card-title">${s.rawNotebookTitle}</span></span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>
-        </div>` : ""}
+        ${courseTab==="write" ? (()=>{
+          const nb = NotebookModule.get(courseId);
+          const notes = (nb.notes || []);
+          const texts = notes.filter(n=>n.type !== "drawing" && n.type !== "file" && n.type !== "image");
+          const pages = notes.filter(n=>n.type === "drawing");
+          const files = notes.filter(n=>n.type === "file" || n.type === "image");
+          const when = (ts)=>{
+            if(!ts) return "";
+            const d = new Date(ts);
+            return d.toLocaleDateString(lang()==="ar" ? "ar-SA" : "en-GB", { month:"short", day:"numeric" });
+          };
+          if(!notes.length) return `
+            <div class="empty-state">
+              <div class="empty-icon">${ICON.book}</div>
+              <p class="empty-text">${s.folderEmpty}</p>
+              <button type="button" class="btn btn-primary" data-cv="notebook">${ICON.plus}<span>${s.cvOpenNotebook}</span></button>
+            </div>`;
+          const group = (title, count, items, addKind)=>`
+            <div class="fold-head">
+              <span class="fold-title">${title} · ${s.folderCount(count)}</span>
+              <button type="button" class="fold-act" data-cv="add">${s.folderAdd}</button>
+            </div>
+            ${items}`;
+          return `
+            ${texts.length ? group(s.folderNotes, texts.length,
+              texts.slice(0, 5).map(n=>folderItemHtml("note", folderSnippet(n.text || n.body, 60), when(n.createdAt), ' data-cv="notebook"')).join(""), "notebook") : ""}
+            ${pages.length ? group(s.folderPages, pages.length,
+              pages.slice(0, 5).map(n=>folderItemHtml("page", n.topic || s.folderPages, when(n.createdAt), ' data-cv="notebook"')).join(""), "page") : ""}
+            ${files.length ? group(s.folderFiles, files.length,
+              files.slice(0, 5).map(n=>folderItemHtml(n.type === "image" ? "image" : "file", n.name || s.folderFiles, when(n.createdAt), ' data-cv="notebook"')).join(""), "notebook") : ""}
+            <button type="button" class="btn btn-secondary" data-cv="notebook" style="width:100%; margin-top:var(--sp-4);">${ICON.book}<span>${s.folderAll}</span></button>`;
+        })() : ""}
 
-        ${courseTab==="keep" ? `
-        <div class="stack">
-          <button type="button" class="card" data-cv="terms">
-            <span class="card-icon">${ICON.openBook}</span>
-            <span class="card-body">
-              <span class="card-title">${s.cvKeepTerms}</span>
-              <span class="card-meta">${s.termsCount(NotebookModule.terms(courseId).length)}</span>
-            </span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>
-          <button type="button" class="card" data-cv="essays">
-            <span class="card-icon">${ICON.essay}</span>
-            <span class="card-body">
-              <span class="card-title">${s.cvKeepEssays}</span>
-              <span class="card-meta">${s.essaysCount(NotebookModule.essays(courseId).length)}</span>
-            </span>
-            <span class="card-chevron">${chevronFwd()}</span>
-          </button>
-        </div>` : ""}
+        ${courseTab==="keep" ? (()=>{
+          const terms = NotebookModule.terms(courseId);
+          const essays = NotebookModule.essays(courseId);
+          const words = (txt)=>(txt||"").trim() ? txt.trim().split(/\s+/).length : 0;
+          return `
+            <div class="fold-head" style="margin-top:0;">
+              <span class="fold-title">${s.folderTerms} · ${s.folderCount(terms.length)}</span>
+              <button type="button" class="fold-act" data-cv="terms">${s.folderAdd}</button>
+            </div>
+            ${terms.length
+              ? terms.slice(0, 6).map(x=>folderItemHtml("term", x.word, folderSnippet(x.meaning, 50), ' data-cv="terms"')).join("")
+              : `<p class="type-caption" style="color:var(--ink-muted);">${s.folderNoTerms}</p>`}
+
+            <div class="fold-head">
+              <span class="fold-title">${s.folderEssays} · ${s.folderCount(essays.length)}</span>
+              <button type="button" class="fold-act" data-cv="essays">${s.folderAdd}</button>
+            </div>
+            ${essays.length
+              ? essays.slice(0, 6).map(x=>folderItemHtml("essay", x.title, s.essaysWords(words(x.body)), ' data-cv="essays"')).join("")
+              : `<p class="type-caption" style="color:var(--ink-muted);">${s.folderNoEssays}</p>`}`;
+        })() : ""}
 
         ${courseTab==="prep" ? `
         <div class="section-label" style="margin-top:0;">${s.addEventBtn}</div>
@@ -15111,6 +15355,7 @@ function renderCourseView(courseId, keepTab){
   document.querySelectorAll("[data-cv]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const what = btn.dataset.cv;
+      if(what === "add") return openAddSheet(courseId, ()=>renderCourseView(courseId, true));
       if(what === "notebook") return renderCourseNotebook(courseId);
       if(what === "page") return renderNotebookPage(courseId);
       if(what === "raw") return renderRawNotebook();
@@ -15119,7 +15364,6 @@ function renderCourseView(courseId, keepTab){
       if(what === "prep" && upcomingEvaluative) return renderExamPrepHub(upcomingEvaluative.id);
     });
   });
-  mountQuickTools("course", courseId);
   document.getElementById("courseBack").addEventListener("click", ()=>{ stopSpeaking(); renderSemester(); });
   const suggestBtn = document.getElementById("suggestResourceBtn");
   if(suggestBtn) suggestBtn.addEventListener("click", ()=>{
@@ -15153,7 +15397,6 @@ function renderExamPrepHub(eventId){
   const enrichment = enrichmentForCourse(course.name);
   const daysLabel = days===0 ? s.todayLabel : days===1 ? s.tomorrowLabel : s.inDaysLabel(days);
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15229,7 +15472,7 @@ function renderExamPrepHub(eventId){
       renderExamPrepHub(eventId);
     });
   });
-  document.getElementById("prepBack").addEventListener("click", ()=>{ renderCourseView(course.id); });
+  document.getElementById("prepBack").addEventListener("click", ()=>navBack(()=>renderCourseView(course.id)));
   document.getElementById("prepGoNotebook").addEventListener("click", ()=>{ renderCourseNotebook(course.id); });
   const prepAdd = document.getElementById("prepAddExam");
   if(prepAdd) prepAdd.addEventListener("click", ()=>{ openPastExamSheet(course.id, ()=>renderExamPrepHub(eventId)); });
@@ -15348,7 +15591,6 @@ function renderNotebookPage(courseId){
   if(!pageColor) pageColor = PAGE_PALETTE[0];
   pageStrokes = [];
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15627,7 +15869,7 @@ function renderNotebookPage(courseId){
     }catch(err){ say(s.voiceUnsupported, "var(--attention)"); }
   });
 
-  document.getElementById("pgBack").addEventListener("click", ()=>{ renderCourseNotebook(courseId); });
+  document.getElementById("pgBack").addEventListener("click", ()=>navBack(()=>renderCourseNotebook(courseId)));
   document.getElementById("pgSave").addEventListener("click", ()=>{
     bakeTypedText();
     if(!pageStrokes.length){ say(s.pageEmpty, "var(--attention)"); return; }
@@ -15662,7 +15904,6 @@ function renderCourseTerms(courseId){
     ? all.filter(x=>normalizeSearchText([x.word, x.meaning, x.example].join(" ")).includes(q))
     : all;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15671,7 +15912,7 @@ function renderCourseTerms(courseId){
           <div class="screen-header-title">${s.termsTitle}</div>
           <div class="screen-header-sub">${escapeHtml(course.name)}</div>
         </div>
-        <button type="button" class="btn-icon" id="termsAddTop" data-label="${s.termsAdd}" aria-label="${s.termsAdd}">${ICON.plus}</button>
+        <button type="button" class="btn-icon btn-add" id="termsAddTop" data-label="${s.termsAdd}" aria-label="${s.termsAdd}">${ICON.openBook}</button>
       </div>
       <div class="screen-content">
         ${all.length ? `
@@ -15702,7 +15943,7 @@ function renderCourseTerms(courseId){
       </div>
     </section>`;
 
-  document.getElementById("termsBack").addEventListener("click", ()=>{ termsSearch = ""; renderCourseNotebook(courseId); });
+  document.getElementById("termsBack").addEventListener("click", ()=>{ termsSearch = ""; navBack(()=>renderCourseNotebook(courseId)); });
   const open = (existing)=>openTermSheet(courseId, existing, ()=>renderCourseTerms(courseId));
   document.getElementById("termsAdd").addEventListener("click", ()=>open(null));
   document.getElementById("termsAddTop").addEventListener("click", ()=>open(null));
@@ -15802,7 +16043,6 @@ function renderCourseEssays(courseId){
     : all;
   const words = (txt)=>(txt||"").trim() ? (txt.trim().split(/\s+/).length) : 0;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15811,7 +16051,7 @@ function renderCourseEssays(courseId){
           <div class="screen-header-title">${s.essaysTitle}</div>
           <div class="screen-header-sub">${escapeHtml(course.name)}</div>
         </div>
-        <button type="button" class="btn-icon" id="essaysAddTop" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.essaysAdd}">${ICON.plus}</button>
+        <button type="button" class="btn-icon btn-add" id="essaysAddTop" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.essaysAdd}">${ICON.essay}</button>
       </div>
       <div class="screen-content">
         ${all.length ? `
@@ -15842,7 +16082,7 @@ function renderCourseEssays(courseId){
       </div>
     </section>`;
 
-  document.getElementById("essaysBack").addEventListener("click", ()=>{ essaysSearch = ""; renderCourseNotebook(courseId); });
+  document.getElementById("essaysBack").addEventListener("click", ()=>{ essaysSearch = ""; navBack(()=>renderCourseNotebook(courseId)); });
   const add = ()=>openEssayTitleSheet(courseId);
   document.getElementById("essaysAdd").addEventListener("click", add);
   document.getElementById("essaysAddTop").addEventListener("click", add);
@@ -15900,7 +16140,6 @@ function renderEssayEditor(courseId, essayId){
   const essay = NotebookModule.essays(courseId).find(x=>x.id===essayId);
   if(!essay) return renderCourseEssays(courseId);
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -15958,9 +16197,8 @@ function renderCourseNotebook(courseId){
   const visibleNotes = notebookMatches(nb.notes);
   const searching = normalizeSearchText(notebookSearch).length >= 2;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
-    <section class="screen no-tabbar has-rail">
+    <section class="screen no-tabbar">
       <div class="screen-header">
         <button type="button" class="btn-icon" id="notebookBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title" style="font-size:var(--fs-body);">${escapeHtml(course.name)}</div>
@@ -15974,21 +16212,15 @@ function renderCourseNotebook(courseId){
              sit scattered under each section, so the student met the same kind
              of button three times in three places and had to hunt for the one
              they wanted. One strip means one place to look. -->
-        ${(()=>{
-          /* Colour and glyph per tool, so the eye learns them by shape. */
-          const rail = [
-            { id:"notebookEssays",   icon:"essay",    rgb:"150,120,210", name:s.essaysToolLabel },
-            { id:"notebookTerms",    icon:"openBook", rgb:"70,170,165",  name:s.termsToolLabel },
-            { id:"notebookNewPage",  icon:"pen",      rgb:"70,140,215",  name:s.pageOpenBtn },
-            { id:"notebookAddNote",  icon:"pencil",   rgb:"90,175,120",  name:s.toolNote },
-            { id:"notebookAddImage", icon:"image",    rgb:"220,160,70",  name:s.toolImage },
-            { id:"notebookAddFile",  icon:"paperclip",rgb:"130,145,170", name:s.toolFile },
-            { id:"notebookAddCheck", icon:"check",    rgb:"200,110,160", name:s.toolCheck },
-            { id:"notebookAddExam",  icon:"event",    rgb:"210,100,85",  name:s.toolExam }
-          ];
-          return `<div class="rail">${rail.map(x=>`
-            <button type="button" class="rail-btn" id="${x.id}" data-name="${escapeHtml(x.name || "")}" aria-label="${escapeHtml(x.name || "")}" style="--rail-rgb:${x.rgb};">${ICON[x.icon] || ICON.check}</button>`).join("")}</div>`;
-        })()}
+        <div class="toolbar" role="group" aria-label="${s.notebookToolsLabel}">
+          <button type="button" class="tool" id="notebookTerms">
+            <span class="tool-icon">${ICON.openBook}</span><span>${s.termsToolLabel}</span>
+          </button>
+          <button type="button" class="tool" id="notebookEssays">
+            <span class="tool-icon">${ICON.essay}</span><span>${s.essaysToolLabel}</span>
+          </button>
+        </div>
+        <button type="button" class="add-one" id="notebookAddOne" style="margin-top:var(--sp-3);">${ICON.plus}<span>${s.addOne}</span></button>
         <input type="file" id="notebookImageInput" accept="image/*" style="display:none;">
         <input type="file" id="notebookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" style="display:none;">
 
@@ -16092,12 +16324,10 @@ function renderCourseNotebook(courseId){
   document.getElementById("notebookBack").addEventListener("click", ()=>{ notebookSearch=""; notebookGroupBy="all"; renderCourseView(courseId); });
   const essaysBtn = document.getElementById("notebookEssays");
   if(essaysBtn) essaysBtn.addEventListener("click", ()=>{ essaysSearch = ""; renderCourseEssays(courseId); });
+  const addOneBtn = document.getElementById("notebookAddOne");
+  if(addOneBtn) addOneBtn.addEventListener("click", ()=>openAddSheet(courseId, ()=>renderCourseNotebook(courseId)));
   const termsBtn = document.getElementById("notebookTerms");
   if(termsBtn) termsBtn.addEventListener("click", ()=>{ termsSearch = ""; renderCourseTerms(courseId); });
-  const newPageBtn = document.getElementById("notebookNewPage");
-  if(newPageBtn) newPageBtn.addEventListener("click", ()=>{ renderNotebookPage(courseId); });
-  document.getElementById("notebookAddNote").addEventListener("click", ()=>{ openNoteSheet(courseId, null, ()=>renderCourseNotebook(courseId)); });
-  document.getElementById("notebookAddImage").addEventListener("click", ()=>{ document.getElementById("notebookImageInput").click(); });
   document.getElementById("notebookImageInput").addEventListener("change", (e)=>{
     const file = e.target.files[0];
     if(!file) return;
@@ -16105,7 +16335,6 @@ function renderCourseNotebook(courseId){
     reader.onload = ()=>{ NotebookModule.addImageNote(courseId, reader.result, "default"); renderCourseNotebook(courseId); };
     reader.readAsDataURL(file);
   });
-  document.getElementById("notebookAddFile").addEventListener("click", ()=>{ document.getElementById("notebookFileInput").click(); });
   document.getElementById("notebookFileInput").addEventListener("change", (e)=>{
     const file = e.target.files[0];
     if(!file) return;
@@ -16146,8 +16375,6 @@ function renderCourseNotebook(courseId){
       openNoteSheet(courseId, note, ()=>renderCourseNotebook(courseId));
     });
   });
-  document.getElementById("notebookAddCheck").addEventListener("click", ()=>{ openUnderstandingCheckSheet(courseId, ()=>renderCourseNotebook(courseId)); });
-  document.getElementById("notebookAddExam").addEventListener("click", ()=>{ openPastExamSheet(courseId, ()=>renderCourseNotebook(courseId)); });
   document.getElementById("downloadNotebookBtn").addEventListener("click", ()=>{ downloadNotebook(courseId); });
   document.querySelectorAll("[data-remove-check]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ NotebookModule.removeCheck(courseId, btn.dataset.removeCheck); renderCourseNotebook(courseId); });
@@ -16256,13 +16483,12 @@ function renderRawNotebook(){
   const courses = semester ? CourseModule.listForSemester(semester.id) : [];
   const notes = RawNotebookModule.list();
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
         <button type="button" class="btn-icon" id="rawBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.rawNotebookTitle}</div>
-        <button type="button" class="btn-icon" id="rawAddBtn" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.notebookAddNoteBtn}">${ICON.plus}</button>
+        <button type="button" class="btn-icon btn-add" id="rawAddBtn" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.notebookAddNoteBtn}">${ICON.pencil}</button>
       </div>
       <div class="screen-content">
         <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.rawNotebookSub}</p>
@@ -16295,7 +16521,7 @@ function renderRawNotebook(){
       </div>
     </section>
   `;
-  document.getElementById("rawBack").addEventListener("click", ()=>{ renderSemester(); });
+  document.getElementById("rawBack").addEventListener("click", ()=>navBack(renderSemester));
   document.getElementById("rawAddBtn").addEventListener("click", ()=>{ openRawNoteSheet(null, renderRawNotebook); });
   document.querySelectorAll("[data-raw-edit]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ openRawNoteSheet(RawNotebookModule.get(btn.dataset.rawEdit), renderRawNotebook); });
@@ -16768,7 +16994,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-12 13:13";
+const BUILD_ID = "2026-09-14 22:14";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -16819,7 +17045,6 @@ function renderReferenceMap(){
 
   const line = (label, value)=>`<div class="type-caption" style="color:var(--ink-muted); margin-top:4px; line-height:1.6;"><strong style="color:var(--ink);">${label}:</strong> ${value}</div>`;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -16870,7 +17095,7 @@ function renderReferenceMap(){
       </div>
     </section>
   `;
-  document.getElementById("refMapBack").addEventListener("click", ()=>{ renderCourseLibrary(); });
+  document.getElementById("refMapBack").addEventListener("click", ()=>navBack(renderCourseLibrary));
   document.querySelectorAll("[data-refmap-level]").forEach(chip=>{
     chip.addEventListener("click", ()=>{
       if(chip.dataset.refmapLevel === refMapLevel) return;
@@ -17025,11 +17250,10 @@ function renderCourseLibrary(){
   `;
   wireTabBar();
   afterRender();
-  mountQuickTools("library");
   const refMapBtn = document.getElementById("openRefMap");
   if(refMapBtn) refMapBtn.addEventListener("click", ()=>{ renderReferenceMap(); });
   const pfBtn = document.getElementById("planFactoryBtn");
-  if(pfBtn) pfBtn.addEventListener("click", ()=>{ renderPlanFactory(); });
+  if(pfBtn) pfBtn.addEventListener("click", ()=>{ navPush(renderCourseLibrary); renderPlanFactory(); });
   const libInfo = document.getElementById("libInfoBtn");
   /* The two explanations that used to sit above the list — what this screen is,
      and why some sources are in English — are still one tap away, just not in
@@ -17165,11 +17389,12 @@ function renderJourney(){
         }).join("")}
       </div>`;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
+        <button type="button" class="btn-icon" id="journeyBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.journeyTitle}</div>
+        <span style="width:40px;"></span>
       </div>
       <div class="screen-content">
         ${horizonHtml()}
@@ -17180,6 +17405,8 @@ function renderJourney(){
   `;
   wireTabBar();
   afterRender();
+  const journeyBack = document.getElementById("journeyBack");
+  if(journeyBack) journeyBack.addEventListener("click", ()=>navBack(renderSemester));
   document.querySelectorAll("[data-semester-id]").forEach(card=>{
     card.addEventListener("click", ()=>{
       const sem = dbGet("semesters", card.dataset.semesterId);
@@ -17858,7 +18085,6 @@ function renderSkillsHub(){
   const currentGroup = categoryMap[skillsHubCategory] || {items:[]};
   const archivedCount = Object.keys(DB.archivedSkills || {}).length;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen">
       <div class="screen-header">
@@ -17968,7 +18194,6 @@ function renderSkillsArchive(){
   const archivedIds = Object.keys(DB.archivedSkills || {});
   const archivedSkillObjs = archivedIds.map(id=> SKILLS.find(sk=>sk.id===id)).filter(Boolean);
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -17996,7 +18221,7 @@ function renderSkillsArchive(){
       </div>
     </section>
   `;
-  document.getElementById("skillsArchiveBack").addEventListener("click", ()=>{ renderSkillsHub(); });
+  document.getElementById("skillsArchiveBack").addEventListener("click", ()=>navBack(renderSkillsHub));
   document.querySelectorAll("[data-unarchive-id]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       unarchiveSkill(btn.dataset.unarchiveId);
@@ -18070,7 +18295,6 @@ function renderSkillDetail(skillId){
       ${forward?chevronFwd():""}
     </button>` : "";
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar" style="--sk:${rgb};">
       <div class="screen-header">
@@ -18160,13 +18384,12 @@ function renderGlossary(){
         </button>`;
       }).join("")}</div>`;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
         <button type="button" class="btn-icon" id="glossaryBack" data-label="${lang()==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
         <div class="screen-header-title">${s.glossaryTitle}</div>
-        <button type="button" class="btn-icon" id="addTermBtn" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.glossaryAddBtn}">${ICON.plus}</button>
+        <button type="button" class="btn-icon btn-add" id="addTermBtn" data-label="${lang()==="ar" ? "إضافة" : "Add"}" aria-label="${s.glossaryAddBtn}">${ICON.openBook}</button>
       </div>
       <div class="screen-content">
         <p class="type-body" style="color:var(--ink-muted); margin-bottom:var(--sp-4);">${s.glossarySub}</p>
@@ -18188,7 +18411,7 @@ function renderGlossary(){
       </div>
     </section>
   `;
-  document.getElementById("glossaryBack").addEventListener("click", ()=>{ renderSkillsHub(); });
+  document.getElementById("glossaryBack").addEventListener("click", ()=>navBack(renderSkillsHub));
   document.getElementById("addTermBtn").addEventListener("click", ()=>{ openTermSheet(null, renderGlossary); });
   const reviewBtn = document.getElementById("reviewDueBtn");
   if(reviewBtn) reviewBtn.addEventListener("click", ()=>{ startReviewSession(); });
@@ -18410,7 +18633,6 @@ function renderSearch(){
       </span>
     </div>`);
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -18479,7 +18701,6 @@ function renderReferenceGlossary(){
   if(refGlossaryPage < 0) refGlossaryPage = 0;
   const entries = matches.slice(refGlossaryPage * REF_GLOSSARY_PER_PAGE, (refGlossaryPage + 1) * REF_GLOSSARY_PER_PAGE);
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -18545,7 +18766,6 @@ function renderLiveTranslate(){
   applyDir();
   const s = t();
   let direction = "en-ar";
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -18839,7 +19059,6 @@ function renderWeeklyWhitening(){
   const whitenedCount = coursesWithSessions.filter(c=>isWhitened(c.id)).length;
   const untransferredRaw = rawNotesThisWeek.filter(n=>!n.transferredToCourseId).length;
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -18884,7 +19103,7 @@ function renderWeeklyWhitening(){
       </div>
     </section>
   `;
-  document.getElementById("whiteningBack").addEventListener("click", ()=>{ renderToday(); });
+  document.getElementById("whiteningBack").addEventListener("click", ()=>navBack(renderToday));
   const rawLink = document.getElementById("whiteningRawLink");
   if(rawLink) rawLink.addEventListener("click", ()=>{ renderRawNotebook(); });
   document.querySelectorAll("[data-whitening-course]").forEach(btn=>{
@@ -18909,7 +19128,6 @@ function renderWeeklySchedule(){
     scheduleDay = days.find(d=>d.id===today) ? today : days[0].id;
   }
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -18989,7 +19207,7 @@ function renderWeeklySchedule(){
           <div style="margin-bottom:var(--sp-5);">
             <div class="section-label" style="display:flex; align-items:center; justify-content:space-between; margin-top:0;">
               <span>${day[l]}</span>
-              <button type="button" class="btn-icon" data-add-day="${day.id}" aria-label="${s.addSessionBtn}" style="width:30px; height:30px;">${ICON.plus}</button>
+              <button type="button" class="btn-icon btn-add" data-add-day="${day.id}" aria-label="${s.addSessionBtn}" style="width:30px; height:30px;">${ICON.book}</button>
             </div>
             ${daySessions.length===0 ? `<p class="type-caption" style="color:var(--ink-muted);">${s.scheduleDayEmpty}</p>` : `
             <div class="stack">
@@ -19012,7 +19230,7 @@ function renderWeeklySchedule(){
       </div>
     </section>
   `;
-  document.getElementById("scheduleBack").addEventListener("click", ()=>{ renderSemester(); });
+  document.getElementById("scheduleBack").addEventListener("click", ()=>navBack(renderSemester));
   document.querySelectorAll("[data-empty]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ if(btn.dataset.empty === "semester") renderSemester(); });
   });
@@ -19319,7 +19537,6 @@ function renderReflection(semesterId){
   const s = t();
   const semester = dbGet("semesters", semesterId);
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar pace-reflective">
       <div class="screen-content" style="padding-top:var(--sp-7);">
@@ -19396,7 +19613,6 @@ function renderWeeklyMirror(){
   const terms = WeeklyMirrorModule.termsThisWeek();
   const reviews = WeeklyMirrorModule.reviewsThisWeek();
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -19432,12 +19648,11 @@ function renderWeeklyMirror(){
       </div>
     </section>
   `;
-  document.getElementById("mirrorBack").addEventListener("click", ()=>{ renderSettings(); });
+  document.getElementById("mirrorBack").addEventListener("click", ()=>navBack(renderSettings));
 }
 function renderAbout(){
   applyDir();
   const s = t();
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -19488,7 +19703,7 @@ function renderAbout(){
       </div>
     </section>
   `;
-  document.getElementById("aboutBack").addEventListener("click", ()=>{ renderSettings(); });
+  document.getElementById("aboutBack").addEventListener("click", ()=>navBack(renderSettings));
   document.getElementById("aboutShareBtn").addEventListener("click", async (e)=>{
     const btn = e.currentTarget;
     const shareData = {
@@ -19514,7 +19729,6 @@ function renderSettings(){
   const l = lang();
   const student = StudentModule.current();
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -19705,7 +19919,7 @@ function renderSettings(){
       renderSettings();
     });
   });
-  document.getElementById("settingsBack").addEventListener("click", ()=>{ renderToday(); });
+  document.getElementById("settingsBack").addEventListener("click", ()=>navBack(renderToday));
   document.querySelectorAll("[data-text-size]").forEach(btn=>{
     btn.addEventListener("click", ()=>{ StudentModule.updateTextSize(btn.dataset.textSize); renderSettings(); });
   });
@@ -19726,7 +19940,7 @@ function renderSettings(){
     window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
   });
   const storageBtn = document.getElementById("storageBtn");
-  if(storageBtn) storageBtn.addEventListener("click", ()=>{ renderStorage(); });
+  if(storageBtn) storageBtn.addEventListener("click", ()=>{ navPush(renderSettings); renderStorage(); });
   const aboutBtn = document.getElementById("aboutBtn");
   if(aboutBtn) aboutBtn.addEventListener("click", ()=>{ renderAbout(); });
   const setInstall = document.getElementById("settingsInstallBtn");
@@ -19821,7 +20035,6 @@ function renderProfileEditSettings(){
     majorId:student.majorId||"", major:student.major, levelId:"", level:student.level
   };
 
-  const __oldFab = document.getElementById("quickFab"); if(__oldFab) __oldFab.remove();
   app.innerHTML = `
     <section class="screen no-tabbar">
       <div class="screen-header">
@@ -19839,7 +20052,7 @@ function renderProfileEditSettings(){
       </div>
     </section>
   `;
-  document.getElementById("profileEditBack").addEventListener("click", ()=>{ renderSettings(); });
+  document.getElementById("profileEditBack").addEventListener("click", ()=>navBack(renderSettings));
 
   wireProfilePickers("set", setDraft);
   refreshProfilePickerUI("set", setDraft);
@@ -19888,6 +20101,28 @@ function boot(){
   }
   dbLoad().then(startApp);
 }
+/* Where the student came from, most recent last. Held in memory only: a
+   history that survives a restart would be a record of movement, and we keep
+   none. */
+let navStack = [];
+/* Called by a screen as it opens, with the thing that would put the student
+   back where they were. Depth is capped because a student who has gone twelve
+   screens deep wants the tab bar, not eleven more taps. */
+function navPush(fn){
+  if(typeof fn !== "function") return;
+  navStack.push(fn);
+  if(navStack.length > 8) navStack.shift();
+}
+/* Back: return to the recorded place, or to the screen's natural parent when
+   there is nothing recorded — which is the case on the first screen after a
+   launch. */
+function navBack(fallback){
+  const prev = navStack.pop();
+  if(prev){ prev(); return; }
+  if(typeof fallback === "function") fallback();
+}
+/* Entering a tab is a fresh start, not a step deeper. */
+function navReset(){ navStack = []; }
 function renderStorageBlocked(){
   const s = t();
   app.innerHTML = `
