@@ -849,7 +849,11 @@ body[data-theme="daylight"] .card:before{
 .btn-icon{ position:relative; }
 .btn-icon[data-label]:after{
   content:attr(data-label);
-  position:absolute; top:100%; inset-inline-start:50%; transform:translateX(-50%);
+  /* Anchored to both sides of the button and centred inside that box, so a
+     word wider than the button grows symmetrically instead of spilling past
+     the screen's edge. translateX(-50%) pushed the wrong way under RTL,
+     which is why the settings label was being clipped. */
+  position:absolute; top:100%; inset-inline:-16px; text-align:center;
   margin-top:2px; font-size:9px; font-weight:600; color:var(--ink-muted);
   white-space:nowrap; pointer-events:none; line-height:1;
 }
@@ -2636,6 +2640,7 @@ const STR = {
     guideEntry:"كيف تستعمل رفيقك",
     introOpen:"اقرأها — ست دقائق تغيّر سنتك",
     todayTabNow:"الآن",
+    setTabHelp:"المساعدة",
     todayTabDay:"يومك",
     todayTabStart:"ابدأ",
     introClose:"طوِ المقدمة",
@@ -3593,6 +3598,7 @@ const STR = {
     guideEntry:"How to use your companion",
     introOpen:"Read it — six minutes that change your year",
     todayTabNow:"Now",
+    setTabHelp:"Help",
     todayTabDay:"Your day",
     todayTabStart:"Start",
     introClose:"Fold the introduction",
@@ -4363,8 +4369,8 @@ const COLLEGES = [
   {id:"design", ar:"كلية التصميم والفنون", en:"College of Design & Arts"}
 ];
 const COLLEGE_MAJORS = {
-  eng: [["الهندسة المدنية","Civil Engineering"],["الهندسة الكهربائية","Electrical Engineering"],["الهندسة الميكانيكية","Mechanical Engineering"],["الهندسة الكيميائية","Chemical Engineering"],["هندسة الصناعات","Industrial Engineering"],["السنة التحضيرية (سنة المهارات)","Skills Year (Foundation)"],["مهارات تشغيل الرافعات","Crane and Forklift Operation"],["هندسة الحاسب","Computer Engineering"]],
-  cs: [["علوم الحاسب","Computer Science"],["تقنية المعلومات","Information Technology"],["هندسة البرمجيات","Software Engineering"],["نظم المعلومات","Information Systems"],["الذكاء الاصطناعي","Artificial Intelligence"],["الأمن السيبراني","Cybersecurity"],["تقنية إدارة أنظمة الشبكات","Network Systems Administration"],["علوم البيانات","Data Science"],["ماجستير الأمن السيبراني","MSc Cybersecurity"],["ماجستير علوم البيانات","MSc Data Science"]],
+  eng: [["الهندسة المدنية","Civil Engineering"],["الهندسة الكهربائية","Electrical Engineering"],["الهندسة الميكانيكية","Mechanical Engineering"],["الهندسة الكيميائية","Chemical Engineering"],["مهارات الأجهزة والتحكم","Instrumentation and Control Skills"],["السنة التحضيرية (سنة المهارات)","Skills Year (Foundation)"],["مهارات تشغيل الرافعات","Crane and Forklift Operation"],["هندسة الحاسب","Computer Engineering"],["المهارات الكهربائية الصناعية","Industrial Electrical Skills"],["مهارات الميكانيكا الصناعية","Industrial Millwright Skills"],["مهارات تشغيل العمليات","Process Operation Skills"]],
+  cs: [["علوم الحاسب","Computer Science"],["تقنية المعلومات","Information Technology"],["هندسة البرمجيات","Software Engineering"],["نظم المعلومات","Information Systems"],["الذكاء الاصطناعي","Artificial Intelligence"],["الأمن السيبراني","Cybersecurity"],["تقنية إدارة أنظمة الشبكات","Network Systems Administration"],["علوم البيانات","Data Science"],["ماجستير الأمن السيبراني","MSc Cybersecurity"],["ماجستير علوم البيانات","MSc Data Science"],["تقنية الشبكات","Network Technology"]],
   bus: [["إدارة الأعمال","Business Administration"],["التمويل","Finance"],["المحاسبة","Accounting"],["التسويق","Marketing"],["نظم المعلومات الإدارية","Management Information Systems"],["إدارة الموارد البشرية","Human Resources Management"],["ماجستير إدارة الأعمال","MBA"],["ماجستير إدارة الأعمال (التسويق الرقمي)","MBA Digital Marketing"]],
   med: [["الطب والجراحة","Medicine & Surgery"]],
   dent: [["طب الأسنان","Dentistry"]],
@@ -5754,6 +5760,125 @@ const COURSE_CATALOG = {
       "ENGL 022 - اللغة الإنجليزية ٢ — English II"
     ]
   },
+  "jti-eng-eng-8": {
+    l1: [
+      "IELT 1428 - الدوائر الكهربائية — Electrical Circuits",
+      "IENX 1211 - الدوائر الإلكترونية — Electronic Circuits",
+      "IELT 1429 - التمديدات الكهربائية — Electrical Wiring",
+      "IELT 1430 - الآلات الكهربائية — Electrical Machines",
+      "IELT 1431 - كود NEC والحسابات — NEC Code and Calculations",
+      "IELT 1432 - تطبيقات المهارات الكهربائية ١ — Electrical Skills Practice 1",
+      "BSELC 1504 - التواصل بالإنجليزية — English Communication",
+      "BSIC 1502 - الثقافة الإسلامية — Islamic Culture"
+    ],
+    l2: [
+      "IELT 2433 - توزيع القدرة الكهربائية — Electrical Power Distribution",
+      "IELT 2434 - التحكم في المحركات الكهربائية — Electrical Motor Control",
+      "IELT 2435 - لفّ المحركات — Motor Winding",
+      "IELT 2436 - التركيب الكهربائي واستكشاف الأعطال — Electrical Installation and Troubleshooting",
+      "IELT 2437 - قراءة المخططات الكهربائية — Electrical Blueprint Reading",
+      "IELT 2438 - تطبيقات المهارات الكهربائية ٢ — Electrical Skills Practice 2",
+      "BSTRW 2506 - كتابة التقارير الفنية — Technical Report Writing",
+      "BSPE 1502 - التربية البدنية — Physical Education"
+    ],
+    l3: [
+      "IELT 3439 - برنامج التدريب التعاوني — Cooperative Training Program"
+    ]
+  },
+  "jti-eng-eng-9": {
+    l1: [
+      "IMWT1475 - مقدمة في الصيانة — Introduction to Maintenance",
+      "IMWT1476 - قراءة المخططات الصناعية — Industrial Blueprint Reading",
+      "IMWT1477 - تشكيل المعادن — Metal Fabrication",
+      "IMWT1478 - عناصر الآلات — Machine Elements",
+      "IMWT1479 - نقل القدرة الميكانيكية — Mechanical Power Transmissions",
+      "IMWT1480 - الرفع والتجهيز — Rigging and Hoisting",
+      "BSELC 1504 - التواصل بالإنجليزية — English Communication",
+      "BSPE 1502 - التربية البدنية — Physical Education"
+    ],
+    l2: [
+      "IMWT2481 - الهيدروليكا والنيوماتيكا — Hydraulics and Pneumatics",
+      "IMWT2482 - محاذاة الآلات — Machine Alignment",
+      "IMWT2483 - المعدات الثابتة — Stationary Equipment",
+      "IMWT2484 - المعدات الدوّارة — Rotating Equipment",
+      "IMWT2485 - المحرّكات الأولية — Prime Movers",
+      "IMWT2486 - تحليل الاهتزاز — Vibration Analysis",
+      "BSTRW 2506 - كتابة التقارير الفنية — Technical Report Writing",
+      "BSIC 1502 - الثقافة الإسلامية — Islamic Culture"
+    ],
+    l3: [
+      "IMWT 3487 - برنامج التدريب التعاوني — Cooperative Training Program"
+    ]
+  },
+  "jti-eng-eng-10": {
+    l1: [
+      "PROS 1101 - تقنية العمليات ١: المعدات — Process Technology I: Equipment",
+      "PROS 1102 - أجهزة العمليات — Process Instrumentation",
+      "PROS 1103 - الكيمياء لمشغّلي العمليات — Chemistry for Process Operators",
+      "PROS 1104 - الفيزياء التطبيقية — Applied Physics",
+      "PROS 1105 - السلامة الصناعية — Industrial Safety",
+      "PROS 1106 - العمليات الصناعية — Industrial Processes",
+      "BSELC 1504 - التواصل بالإنجليزية — English Communication",
+      "BSIC 1502 - الثقافة الإسلامية — Islamic Culture"
+    ],
+    l2: [
+      "PROS 2107 - تقنية العمليات ٢: الأنظمة والتشغيل — Process Technology II: Systems & Operations",
+      "PROS 2108 - التحكم في العمليات — Process Control",
+      "PROS 2109 - محاكاة العمليات — Process Simulation",
+      "PROS 2110 - مخططات العمليات — Process Diagrams",
+      "PROS 2111 - استكشاف أعطال العمليات — Process Troubleshooting",
+      "PROS 2112 - ضبط جودة العمليات — Process Quality Control",
+      "BSTRW 2506 - كتابة التقارير الفنية — Technical Report Writing",
+      "BSPE 1502 - التربية البدنية — Physical Education"
+    ],
+    l3: [
+      "PROS 3113 - برنامج التدريب التعاوني — Cooperative Training Program"
+    ]
+  },
+  "jti-eng-eng-4": {
+    l1: [
+      "IELT 1428 - الدوائر الكهربائية — Electrical Circuits",
+      "IENX 1211 - الدوائر الإلكترونية — Electronic Circuits",
+      "INCT 1426 - مبادئ الأجهزة ومعايرتها وصيانتها — Instruments Principles & Calibration and Maintenance",
+      "INCT 1427 - مبادئ التحكم — Principles of Control",
+      "INCT 1428 - تشغيل صمامات التحكم وصيانتها — Control Valves Operation and Maintenance",
+      "INCT 1429 - تطبيقات مهارات الأجهزة — Instrumentation Skills Practice",
+      "ENGC 1404 - التواصل بالإنجليزية — English Communication"
+    ],
+    l2: [
+      "INCT 2430 - تشغيل نظام التحكم الموزّع — Distributed Control System Operation (DCS)",
+      "IENX 2215 - استكشاف أعطال الدوائر الإلكترونية — Electronic Circuits Troubleshooting",
+      "IENX 2217 - الأجهزة الإلكترونية — Electronic Instrumentation",
+      "INCT 2431 - برمجة المتحكم المنطقي والربط والمتحكم الدقيق — PLC Programming and Interfacing & Microcontroller",
+      "INCT 2432 - قراءة مخططات الأنابيب والأجهزة — Piping and Instrumentation Diagrams Reading",
+      "INCT 2433 - تطبيقات مهارات الأجهزة — Instrumentation Skills Practice",
+      "TRWT 2406 - كتابة التقارير الفنية — Technical Report Writing"
+    ]
+  },
+  "jti-cs-cs-10": {
+    l1: [
+      "BSIC 1502 - الثقافة الإسلامية — Islamic Culture",
+      "CITS 1207 - تطبيقات الحاسب المتقدمة — Advanced Computer Applications",
+      "CITS 1208 - عتاد الحاسب ونظام التشغيل — Computer Hardware & Operating System",
+      "CITS 1209 - أساسيات الحاسب الشخصي — PC Essentials",
+      "CITS 1210 - تقنية الشبكات — Network Technology",
+      "ENGC 1404 - التواصل بالإنجليزية — English Communication",
+      "ITNA 1218 - أساسيات الشبكات — Network Fundamentals",
+      "ITNA 1219 - أساسيات الشبكات: التكامل — Network Fundamentals-Integration"
+    ],
+    l2: [
+      "BSPE 1502 - التربية البدنية — Physical Education",
+      "ITNA 2220 - بروتوكولات التوجيه والوصول للشبكة الواسعة — Routing Protocols and Accessing the WAN",
+      "ITNA 2221 - بروتوكولات التوجيه والوصول للشبكة الواسعة: التكامل — Routing Protocols and Accessing the WAN-Integration",
+      "ITNA 2222 - تقنية تبديل الشبكة المحلية والواسعة — LAN Switching and WAN Technology",
+      "ITNA 2223 - تبديل الشبكة المحلية والواسعة: التكامل — LAN Switching and WAN Technology-Integration",
+      "ITNA 2224 - مشروع الشبكات — Networking Project",
+      "TRWT 2406 - كتابة التقارير الفنية — Technical Report Writing"
+    ],
+    l3: [
+      "ITNA 3225 - برنامج التدريب التعاوني — Cooperative Training Program"
+    ]
+  },
   "seu-cs-cs-0": {
     l1: [
       "CS001 - Introduction to Artificial Intelligent and Computing",
@@ -6333,6 +6458,907 @@ const COURSE_CATALOG = {
    in COURSE_CATALOG entries (e.g. "COMP 111"). Built incrementally, course by
    course, across sessions — see project notes for progress. */
 const COURSE_ENRICHMENT = {
+  "CROP 3110": {
+    explain:{
+      ar:"برنامج التدريب التعاوني: فصل في موقع تشغيل حقيقي — رفع فعلي تحت إشراف، وخطط رفع، وتفتيش يومي.",
+      en:"Cooperative Training Program: a term on a real site — supervised lifting, lift plans and daily inspection"
+    },
+    why:{
+      ar:"هنا تكتشف أن الرفع في الكتاب حسبة، وفي الموقع ريح وأرض غير مستوية وزملاء ينتظرون. والمشغّل الذي يوقف الرفع حين يشكّ هو المشغّل الذي يُوثق به.",
+      en:"Here you find that a lift in a book is a calculation and on site it is wind, uneven ground and people waiting."
+    },
+    resources:[
+      { title:{ar:"OSHA — الرافعات والرفع والتجهيز (مجاني)", en:"OSHA — Cranes, rigging and hoisting (Free)"}, url:"https://www.osha.gov/cranes-derricks", lang:"en", partial:true, covers:"اشتراطات التشغيل والتفتيش وخطة الرفع", gap:"التدريب العملي على الجهاز", reason:{ar:"اشتراطات التشغيل والتفتيش وخطة الرفع ومؤهلات المشغّل — والمعيار هو ما يُحاسَب عليه عملك", en:"Operating and inspection requirements, the lift plan and operator qualification"} },
+      { title:{ar:"منصة دروب — مسارات مهنية مجانية (بالعربية)", en:"Doroob — Free Saudi tracks (Arabic)"}, url:"https://www.doroob.sa/", lang:"ar", partial:true, reason:{ar:"مسارات عربية في السلامة والتواصل وآداب المهنة بسياق سوق العمل السعودي", en:"Arabic tracks in safety, communication and professional conduct"} }
+    ]
+  },
+  "IMWT1475": {
+    explain:{
+      ar:"مقدمة في الصيانة: أنواعها، والخطة الوقائية، والأدوات، والسجلات، والسلامة.",
+      en:"Introduction to Maintenance: types, the preventive plan, tools, records and safety."
+    },
+    why:{
+      ar:"الصيانة الوقائية أرخص من العلاجية بأضعاف، والفرق بينهما سجل يُملأ بانتظام. ومن يتقن التوثيق هنا يصير مرجع زملائه لاحقًا.",
+      en:"Preventive maintenance costs a fraction of corrective, and the difference is a log kept regularly."
+    },
+    resources:[
+      { title:{ar:"OSHA — حراسة الآلات والسلامة الميكانيكية (مجاني)", en:"OSHA — Machine guarding and mechanical safety (Free)"}, url:"https://www.osha.gov/machine-guarding", lang:"en", partial:true, covers:"حراسة الآلات ونقاط القرص وإجراءات العزل والوسم", gap:"مهارات الصيانة نفسها", reason:{ar:"حراسة الآلات، ونقاط القرص، وإجراءات العزل والوسم، وحوادث الصيانة وأسبابها", en:"Machine guarding, pinch points, lockout-tagout and maintenance incidents"} }
+    ]
+  },
+  "IMWT1476": {
+    explain:{
+      ar:"قراءة المخططات الصناعية: المساقط، والأبعاد، والتفاوتات، ورموز اللحام والتشغيل.",
+      en:"Industrial Blueprint Reading: views, dimensions, tolerances and welding and machining symbols."
+    },
+    why:{
+      ar:"المخطط لغة عملك المكتوبة، والتفاوت فيه ليس تفصيلًا: مئة جزء من الملّيمتر تحدّد إن كانت القطعة تركّب أم لا.",
+      en:"The drawing is your trade's written language, and its tolerance decides whether a part fits."
+    },
+    resources:[
+      { title:{ar:"FreeCAD — النمذجة وقراءة المجسّمات (مجاني ومفتوح المصدر)", en:"FreeCAD — Modelling and reading solids (Free and open source)"}, url:"https://wiki.freecad.org/Getting_started", lang:"en", partial:true, covers:"النمذجة والمساقط والتجميعات ثلاثية الأبعاد", gap:"معايير الرسم الصناعي — خذها من مقررك", reason:{ar:"برنامج مفتوح بتوثيق متدرّج. أدرجناه لأن قراءة المخطط تتحسّن كثيرًا حين ترى القطعة مجسّمة وتدوّرها بيدك", en:"An open program with graded tutorials; reading a drawing improves when you can rotate the solid"} }
+    ]
+  },
+  "IMWT1477": {
+    explain:{
+      ar:"تشكيل المعادن: القصّ، والثني، واللحام، والتجميع، والقياس.",
+      en:"Metal Fabrication: cutting, bending, welding, assembly and measurement."
+    },
+    why:{
+      ar:"أكثر ما ستصنعه بيدك. والقياس مرتين والقصّ مرة ليست حكمة قديمة بل اقتصاد: المادة المقصوصة خطأ لا تُعاد.",
+      en:"Measure twice and cut once isn't folk wisdom but economics."
+    },
+    resources:[
+      { title:{ar:"Manufacturing Processes — NPTEL، معهد التقنية الهندي (مجاني)", en:"Manufacturing Processes — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/112107219", lang:"en", partial:true, covers:"السباكة والتشكيل واللحام والتشغيل وعيوب كل عملية", gap:"التدريب اليدوي", reason:{ar:"السباكة والتشكيل واللحام والتشغيل بالقطع — بمبادئ كل عملية وعيوبها الشائعة", en:"Casting, forming, welding and machining with common defects"} }
+    ]
+  },
+  "IMWT1478": {
+    explain:{
+      ar:"عناصر الآلات: البراغي، والمفاتيح، والياي، والمحامل، والوصلات، والتروس.",
+      en:"Machine Elements: fasteners, keys, springs, bearings, couplings and gears."
+    },
+    why:{
+      ar:"كل آلة مجموعة عناصر قياسية. ومن يعرفها يفكّك ما لم يره قط لأنه يتوقّع ما بداخله.",
+      en:"Every machine is a set of standard elements."
+    },
+    resources:[
+      { title:{ar:"SKF — أدلة المحامل والمحاذاة والتزييت (مجاني)", en:"SKF — Bearing, alignment and lubrication handbooks (Free)"}, url:"https://www.skf.com/group/support/engineering-tools", lang:"en", partial:true, covers:"تركيب المحامل ومحاذاتها وتزييتها وتشخيص تلفها", gap:"بقية عناصر الآلة", reason:{ar:"أدلة التركيب والمحاذاة والتزييت وتشخيص التلف من شكله. تنبيه صريح: محتوى شركة تبيع محامل — أدلتها الفنية محايدة، واحذر ما هو توصية بمنتجها", en:"Handbooks on fitting, alignment, lubrication and reading a failure from its marks"} },
+      { title:{ar:"The Engineering ToolBox — جداول وحسابات هندسية (مجاني)", en:"The Engineering ToolBox (Free)"}, url:"https://www.engineeringtoolbox.com/", lang:"en", partial:true, covers:"جداول الخواص والمضخات والبخار والتروس والسيور", gap:"الشرح والمبادئ — وهذا مرجع أرقام", reason:{ar:"خواص الموائع والمواد، وفقد الضغط، والمضخات، والبخار، والتروس والسيور — مرجع أرقام عملي", en:"Fluid and material properties, pressure loss, pumps, steam, gears and belts"} }
+    ]
+  },
+  "IMWT1479": {
+    explain:{
+      ar:"نقل القدرة الميكانيكية: السيور، والسلاسل، والتروس، والوصلات، والنسب.",
+      en:"Mechanical Power Transmissions: belts, chains, gears, couplings and ratios."
+    },
+    why:{
+      ar:"من المحرّك إلى الآلة طريقٌ يفقد فيه جزء من القدرة. ومن يعرف الشدّ الصحيح للسير يمنع انزلاقًا وتلفًا معًا.",
+      en:"Between motor and machine lies a path where power is lost."
+    },
+    resources:[
+      { title:{ar:"The Engineering ToolBox — جداول وحسابات هندسية (مجاني)", en:"The Engineering ToolBox (Free)"}, url:"https://www.engineeringtoolbox.com/", lang:"en", partial:true, covers:"جداول الخواص والمضخات والبخار والتروس والسيور", gap:"الشرح والمبادئ — وهذا مرجع أرقام", reason:{ar:"خواص الموائع والمواد، وفقد الضغط، والمضخات، والبخار، والتروس والسيور — مرجع أرقام عملي", en:"Fluid and material properties, pressure loss, pumps, steam, gears and belts"} },
+      { title:{ar:"SKF — أدلة المحامل والمحاذاة والتزييت (مجاني)", en:"SKF — Bearing, alignment and lubrication handbooks (Free)"}, url:"https://www.skf.com/group/support/engineering-tools", lang:"en", partial:true, covers:"تركيب المحامل ومحاذاتها وتزييتها وتشخيص تلفها", gap:"بقية عناصر الآلة", reason:{ar:"أدلة التركيب والمحاذاة والتزييت وتشخيص التلف من شكله. تنبيه صريح: محتوى شركة تبيع محامل — أدلتها الفنية محايدة، واحذر ما هو توصية بمنتجها", en:"Handbooks on fitting, alignment, lubrication and reading a failure from its marks"} }
+    ]
+  },
+  "IMWT1480": {
+    explain:{
+      ar:"الرفع والتجهيز: الحبال والأحزمة، وزوايا الشدّ، ومركز الثقل، والتفتيش، وخطة الرفع.",
+      en:"Rigging and Hoisting: slings, sling angles, centre of gravity, inspection and the lift plan."
+    },
+    why:{
+      ar:"أخطر ما تفعله في الموقع، وأكثره قابلية للحساب. والحادث هنا لا يُصلَح — فالحسبة قبل الرفع ليست بيروقراطية.",
+      en:"The most dangerous thing you do on site and the most calculable."
+    },
+    hard:[
+      { title:{ar:"الرفع: الحمل يزيد كلما ضاقت الزاوية", en:"Rigging: the load grows as the sling angle narrows"}, plain:{ar:"حبلان يرفعان حملًا بزاوية واسعة يتحمّل كل منهما أكثر من نصف الوزن — وكلما ضاقت الزاوية زاد الشدّ حتى يتجاوز الوزن كله. ولهذا يُحسب الشدّ ولا يُقدَّر.", en:"Two slings at a wide angle each carry more than half the weight; the narrower the angle the greater the tension."}, trap:{ar:"تقدير قدرة الحبل بالوزن وحده بلا حساب الزاوية.", en:"Rating a sling by weight alone without the angle."} },
+      { title:{ar:"مركز الثقل يقرّر كيف يميل الحمل", en:"The centre of gravity decides how a load tilts"}, plain:{ar:"نقطة الرفع فوق مركز الثقل تمامًا يرتفع الحمل مستويًا، وإن أزاحتها شبرًا مال. وأغلب الأحمال الصناعية غير متجانسة — فمحرّك في صندوق مركزه ليس وسطه.", en:"A lift point directly above the centre of gravity rises level; a hand's width off and it tilts."}, trap:{ar:"افتراض أن مركز الثقل في منتصف الصندوق — وأغلب الأحمال الصناعية ليست كذلك.", en:"Assuming the centre is the middle of the crate."} }
+    ],
+    resources:[
+      { title:{ar:"OSHA — الرفع والتجهيز والرافعات (مجاني)", en:"OSHA — Rigging, hoisting and cranes (Free)"}, url:"https://www.osha.gov/cranes-derricks", lang:"en", partial:true, covers:"الحبال والأحزمة وزوايا الشدّ والتفتيش وخطة الرفع", gap:"الحسابات الهندسية التفصيلية", reason:{ar:"اشتراطات الرفع: الحبال والأحزمة والخطافات، وزوايا الشدّ، والتفتيش قبل الاستعمال، وخطة الرفع", en:"Rigging requirements: slings, hooks, sling angles, pre-use inspection and the lift plan"} }
+    ]
+  },
+  "IMWT2481": {
+    explain:{
+      ar:"الهيدروليكا والنيوماتيكا: الضغط، والمضخات، والصمامات، والأسطوانات، والدوائر.",
+      en:"Hydraulics and Pneumatics: pressure, pumps, valves, cylinders and circuits."
+    },
+    why:{
+      ar:"قوة هائلة في أنبوب صغير. ومن لا يفرّغ الضغط قبل الفكّ يواجه سائلًا يخترق الجلد — وهي إصابة لا تُرى وتُبتَر بسببها الأطراف.",
+      en:"Enormous force in a small pipe; not relieving pressure before opening risks injection injury."
+    },
+    resources:[
+      { title:{ar:"The Engineering ToolBox — جداول وحسابات هندسية (مجاني)", en:"The Engineering ToolBox (Free)"}, url:"https://www.engineeringtoolbox.com/", lang:"en", partial:true, covers:"جداول الخواص والمضخات والبخار والتروس والسيور", gap:"الشرح والمبادئ — وهذا مرجع أرقام", reason:{ar:"خواص الموائع والمواد، وفقد الضغط، والمضخات، والبخار، والتروس والسيور — مرجع أرقام عملي", en:"Fluid and material properties, pressure loss, pumps, steam, gears and belts"} },
+      { title:{ar:"OSHA — حراسة الآلات والسلامة الميكانيكية (مجاني)", en:"OSHA — Machine guarding and mechanical safety (Free)"}, url:"https://www.osha.gov/machine-guarding", lang:"en", partial:true, covers:"حراسة الآلات ونقاط القرص وإجراءات العزل والوسم", gap:"مهارات الصيانة نفسها", reason:{ar:"حراسة الآلات، ونقاط القرص، وإجراءات العزل والوسم، وحوادث الصيانة وأسبابها", en:"Machine guarding, pinch points, lockout-tagout and maintenance incidents"} }
+    ]
+  },
+  "IMWT2482": {
+    explain:{
+      ar:"محاذاة الآلات: المحاذاة بالمؤشرات والليزر، والقدم الناعمة، والتمدد الحراري.",
+      en:"Machine Alignment: dial and laser alignment, soft foot and thermal growth."
+    },
+    why:{
+      ar:"أكثر ما يُطلب منك في الصيانة الدقيقة. والقدم الناعمة وحدها تُفسد محاذاة متقنة — فافحصها قبل أن تبدأ.",
+      en:"What precision maintenance asks of you most, and soft foot alone ruins a perfect alignment."
+    },
+    hard:[
+      { title:{ar:"سوء المحاذاة يقتل المحامل لا الحمل", en:"Misalignment kills bearings, not the load"}, plain:{ar:"أغلب أعطال المحامل ليست من حمل زائد بل من محاذاة رديئة: عمودان غير متعامدين على خطّ واحد يفرضان قوة جانبية في كل دورة. ولهذا ساعة محاذاة دقيقة توفّر سنة عمر.", en:"Most bearing failures come from poor alignment: two shafts off one line impose a side force every revolution."}, trap:{ar:"الحكم على المحاذاة بالنظر أو بالمسطرة — والفرق الذي يتلف المحمل أصغر مما تراه العين.", en:"Judging alignment by eye: the difference that destroys a bearing is smaller than the eye can see."} },
+      { title:{ar:"الاهتزاز يخبرك بالعطل قبل وقوعه", en:"Vibration tells you the fault before it happens"}, plain:{ar:"كل آلة تهتزّ بنمط ثابت وهي سليمة. وحين يتغيّر النمط فقد بدأ شيء: عدم اتزان عند تردد الدوران، وسوء محاذاة عند ضعفه، وتلف محمل عند ترددات عالية.", en:"A healthy machine vibrates in a steady pattern; a change names the fault before it is audible."}, trap:{ar:"قياس الاهتزاز مرة واحدة بلا قراءة مرجعية — فالرقم وحده لا يعني شيئًا.", en:"One reading with no baseline means nothing."} }
+    ],
+    resources:[
+      { title:{ar:"SKF — أدلة المحامل والمحاذاة والتزييت (مجاني)", en:"SKF — Bearing, alignment and lubrication handbooks (Free)"}, url:"https://www.skf.com/group/support/engineering-tools", lang:"en", partial:true, covers:"تركيب المحامل ومحاذاتها وتزييتها وتشخيص تلفها", gap:"بقية عناصر الآلة", reason:{ar:"أدلة التركيب والمحاذاة والتزييت وتشخيص التلف من شكله. تنبيه صريح: محتوى شركة تبيع محامل — أدلتها الفنية محايدة، واحذر ما هو توصية بمنتجها", en:"Handbooks on fitting, alignment, lubrication and reading a failure from its marks"} }
+    ]
+  },
+  "IMWT2483": {
+    explain:{
+      ar:"المعدات الثابتة: الأوعية، والمبادلات، والخزانات، والأنابيب، والصمامات، وصيانتها.",
+      en:"Stationary Equipment: vessels, exchangers, tanks, piping, valves and their maintenance."
+    },
+    why:{
+      ar:"لا تدور فتُنسى — حتى تتسرّب. والتفتيش الدوري على المعدات الثابتة يكشف التآكل قبل أن يصير حادثًا.",
+      en:"It doesn't rotate so it is forgotten — until it leaks."
+    },
+    resources:[
+      { title:{ar:"The Engineering ToolBox — جداول وحسابات هندسية (مجاني)", en:"The Engineering ToolBox (Free)"}, url:"https://www.engineeringtoolbox.com/", lang:"en", partial:true, covers:"جداول الخواص والمضخات والبخار والتروس والسيور", gap:"الشرح والمبادئ — وهذا مرجع أرقام", reason:{ar:"خواص الموائع والمواد، وفقد الضغط، والمضخات، والبخار، والتروس والسيور — مرجع أرقام عملي", en:"Fluid and material properties, pressure loss, pumps, steam, gears and belts"} },
+      { title:{ar:"OSHA — حراسة الآلات والسلامة الميكانيكية (مجاني)", en:"OSHA — Machine guarding and mechanical safety (Free)"}, url:"https://www.osha.gov/machine-guarding", lang:"en", partial:true, covers:"حراسة الآلات ونقاط القرص وإجراءات العزل والوسم", gap:"مهارات الصيانة نفسها", reason:{ar:"حراسة الآلات، ونقاط القرص، وإجراءات العزل والوسم، وحوادث الصيانة وأسبابها", en:"Machine guarding, pinch points, lockout-tagout and maintenance incidents"} }
+    ]
+  },
+  "IMWT2484": {
+    explain:{
+      ar:"المعدات الدوّارة: المضخات، والضواغط، والمراوح، والتوربينات، وصيانتها.",
+      en:"Rotating Equipment: pumps, compressors, fans, turbines and their maintenance."
+    },
+    why:{
+      ar:"قلب المصنع النابض وأكثر ما يُصلَح. ومن يعرف منحنى المضخة يعرف لماذا تهتزّ حين تُشغَّل بعيدًا عن نقطة كفاءتها.",
+      en:"The plant's beating heart and what you repair most."
+    },
+    hard:[
+      { title:{ar:"سوء المحاذاة يقتل المحامل لا الحمل", en:"Misalignment kills bearings, not the load"}, plain:{ar:"أغلب أعطال المحامل ليست من حمل زائد بل من محاذاة رديئة: عمودان غير متعامدين على خطّ واحد يفرضان قوة جانبية في كل دورة. ولهذا ساعة محاذاة دقيقة توفّر سنة عمر.", en:"Most bearing failures come from poor alignment: two shafts off one line impose a side force every revolution."}, trap:{ar:"الحكم على المحاذاة بالنظر أو بالمسطرة — والفرق الذي يتلف المحمل أصغر مما تراه العين.", en:"Judging alignment by eye: the difference that destroys a bearing is smaller than the eye can see."} },
+      { title:{ar:"الاهتزاز يخبرك بالعطل قبل وقوعه", en:"Vibration tells you the fault before it happens"}, plain:{ar:"كل آلة تهتزّ بنمط ثابت وهي سليمة. وحين يتغيّر النمط فقد بدأ شيء: عدم اتزان عند تردد الدوران، وسوء محاذاة عند ضعفه، وتلف محمل عند ترددات عالية.", en:"A healthy machine vibrates in a steady pattern; a change names the fault before it is audible."}, trap:{ar:"قياس الاهتزاز مرة واحدة بلا قراءة مرجعية — فالرقم وحده لا يعني شيئًا.", en:"One reading with no baseline means nothing."} }
+    ],
+    resources:[
+      { title:{ar:"The Engineering ToolBox — جداول وحسابات هندسية (مجاني)", en:"The Engineering ToolBox (Free)"}, url:"https://www.engineeringtoolbox.com/", lang:"en", partial:true, covers:"جداول الخواص والمضخات والبخار والتروس والسيور", gap:"الشرح والمبادئ — وهذا مرجع أرقام", reason:{ar:"خواص الموائع والمواد، وفقد الضغط، والمضخات، والبخار، والتروس والسيور — مرجع أرقام عملي", en:"Fluid and material properties, pressure loss, pumps, steam, gears and belts"} },
+      { title:{ar:"SKF — أدلة المحامل والمحاذاة والتزييت (مجاني)", en:"SKF — Bearing, alignment and lubrication handbooks (Free)"}, url:"https://www.skf.com/group/support/engineering-tools", lang:"en", partial:true, covers:"تركيب المحامل ومحاذاتها وتزييتها وتشخيص تلفها", gap:"بقية عناصر الآلة", reason:{ar:"أدلة التركيب والمحاذاة والتزييت وتشخيص التلف من شكله. تنبيه صريح: محتوى شركة تبيع محامل — أدلتها الفنية محايدة، واحذر ما هو توصية بمنتجها", en:"Handbooks on fitting, alignment, lubrication and reading a failure from its marks"} }
+    ]
+  },
+  "IMWT2485": {
+    explain:{
+      ar:"المحرّكات الأولية: المحركات الكهربائية والتوربينات ومحركات الاحتراق ومبادئها.",
+      en:"Prime Movers: electric motors, turbines and combustion engines and their principles."
+    },
+    why:{
+      ar:"مصدر الحركة في كل منظومة. ومن يعرف حدود المحرّك يعرف متى يكون العطل فيه ومتى في الحمل الذي يجرّه.",
+      en:"The source of motion in every system."
+    },
+    resources:[
+      { title:{ar:"The Engineering ToolBox — جداول وحسابات هندسية (مجاني)", en:"The Engineering ToolBox (Free)"}, url:"https://www.engineeringtoolbox.com/", lang:"en", partial:true, covers:"جداول الخواص والمضخات والبخار والتروس والسيور", gap:"الشرح والمبادئ — وهذا مرجع أرقام", reason:{ar:"خواص الموائع والمواد، وفقد الضغط، والمضخات، والبخار، والتروس والسيور — مرجع أرقام عملي", en:"Fluid and material properties, pressure loss, pumps, steam, gears and belts"} }
+    ]
+  },
+  "IMWT2486": {
+    explain:{
+      ar:"تحليل الاهتزاز: القياس، والطيف، وتشخيص عدم الاتزان وسوء المحاذاة وتلف المحامل.",
+      en:"Vibration Analysis: measurement, the spectrum, and diagnosing imbalance, misalignment and bearing damage."
+    },
+    why:{
+      ar:"أقرب ما يكون الفنّي إلى الطبيب: تسمع الآلة قبل أن تشكو. والقراءة الدورية تحوّل الصيانة من ردّ فعل إلى توقّع.",
+      en:"The closest a technician comes to a physician: you hear the machine before it complains."
+    },
+    hard:[
+      { title:{ar:"سوء المحاذاة يقتل المحامل لا الحمل", en:"Misalignment kills bearings, not the load"}, plain:{ar:"أغلب أعطال المحامل ليست من حمل زائد بل من محاذاة رديئة: عمودان غير متعامدين على خطّ واحد يفرضان قوة جانبية في كل دورة. ولهذا ساعة محاذاة دقيقة توفّر سنة عمر.", en:"Most bearing failures come from poor alignment: two shafts off one line impose a side force every revolution."}, trap:{ar:"الحكم على المحاذاة بالنظر أو بالمسطرة — والفرق الذي يتلف المحمل أصغر مما تراه العين.", en:"Judging alignment by eye: the difference that destroys a bearing is smaller than the eye can see."} },
+      { title:{ar:"الاهتزاز يخبرك بالعطل قبل وقوعه", en:"Vibration tells you the fault before it happens"}, plain:{ar:"كل آلة تهتزّ بنمط ثابت وهي سليمة. وحين يتغيّر النمط فقد بدأ شيء: عدم اتزان عند تردد الدوران، وسوء محاذاة عند ضعفه، وتلف محمل عند ترددات عالية.", en:"A healthy machine vibrates in a steady pattern; a change names the fault before it is audible."}, trap:{ar:"قياس الاهتزاز مرة واحدة بلا قراءة مرجعية — فالرقم وحده لا يعني شيئًا.", en:"One reading with no baseline means nothing."} }
+    ],
+    resources:[
+      { title:{ar:"Vibration Institute — أساسيات تحليل الاهتزاز (موارد مجانية)", en:"Vibration Institute — Vibration analysis basics (Free resources)"}, url:"https://www.vi-institute.org/resources", lang:"en", partial:true, covers:"قياس الاهتزاز وتفسير الطيف وتشخيص الأعطال الدوّارة", gap:"الشهادات المعتمدة — وهي مدفوعة", reason:{ar:"مقالات في قياس الاهتزاز وتفسير طيفه: عدم الاتزان، وسوء المحاذاة، وتلف المحامل. تنبيه: بعض المواد للأعضاء", en:"Articles on vibration measurement and spectrum interpretation"} },
+      { title:{ar:"SKF — أدلة المحامل والمحاذاة والتزييت (مجاني)", en:"SKF — Bearing, alignment and lubrication handbooks (Free)"}, url:"https://www.skf.com/group/support/engineering-tools", lang:"en", partial:true, covers:"تركيب المحامل ومحاذاتها وتزييتها وتشخيص تلفها", gap:"بقية عناصر الآلة", reason:{ar:"أدلة التركيب والمحاذاة والتزييت وتشخيص التلف من شكله. تنبيه صريح: محتوى شركة تبيع محامل — أدلتها الفنية محايدة، واحذر ما هو توصية بمنتجها", en:"Handbooks on fitting, alignment, lubrication and reading a failure from its marks"} }
+    ]
+  },
+  "IMWT 3487": {
+    explain:{
+      ar:"برنامج التدريب التعاوني: خمسة عشر أسبوعًا في منشأة صناعية حقيقية.",
+      en:"Cooperative Training Program: fifteen weeks in a real industrial facility."
+    },
+    why:{
+      ar:"هنا تكتشف أن الآلة في الكتاب نظيفة ومفكّكة، وفي الواقع ساخنة وضيّقة وعليها ضغط وقت. وهذا ما يصنع الفنّي.",
+      en:"Here you find the machine in the book is clean and dismantled; in reality it is hot and cramped."
+    },
+    resources:[
+      { title:{ar:"OSHA — حراسة الآلات والسلامة الميكانيكية (مجاني)", en:"OSHA — Machine guarding and mechanical safety (Free)"}, url:"https://www.osha.gov/machine-guarding", lang:"en", partial:true, covers:"حراسة الآلات ونقاط القرص وإجراءات العزل والوسم", gap:"مهارات الصيانة نفسها", reason:{ar:"حراسة الآلات، ونقاط القرص، وإجراءات العزل والوسم، وحوادث الصيانة وأسبابها", en:"Machine guarding, pinch points, lockout-tagout and maintenance incidents"} },
+      { title:{ar:"منصة دروب — مسارات مهنية مجانية (بالعربية)", en:"Doroob — Free Saudi tracks (Arabic)"}, url:"https://www.doroob.sa/", lang:"ar", partial:true, reason:{ar:"مسارات عربية في التواصل والسلامة وآداب المهنة بسياق سوق العمل السعودي", en:"Arabic tracks in communication, safety and professional conduct"} }
+    ]
+  },
+  "PROS 1101": {
+    explain:{
+      ar:"تقنية العمليات ١: المعدات — المضخات، والمبادلات، والأبراج، والأوعية، والصمامات.",
+      en:"Process Technology I: Equipment — pumps, exchangers, columns, vessels and valves."
+    },
+    why:{
+      ar:"تتعرّف على ما ستشغّله. ومن يعرف ما بداخل البرج يفهم لماذا يتغيّر الضغط حين يتغيّر التدفق.",
+      en:"You meet what you will operate."
+    },
+    resources:[
+      { title:{ar:"The Engineering ToolBox — البخار والمضخات وأنظمة العمليات (مجاني)", en:"The Engineering ToolBox — Steam, pumps and process systems (Free)"}, url:"https://www.engineeringtoolbox.com/steam-thermodynamics-t_31.html", lang:"en", partial:true, covers:"جداول البخار وخواص الموائع وحسابات المضخات والصمامات", gap:"المبادئ النظرية", reason:{ar:"جداول البخار، وخواص الموائع، وحسابات المضخات والصمامات — وهي الأرقام التي يفتحها مشغّل الوحدة يوميًا", en:"Steam tables, fluid properties and pump and valve calculations"} }
+    ]
+  },
+  "PROS 1102": {
+    explain:{
+      ar:"أجهزة العمليات: قياس الضغط والحرارة والتدفق والمستوى، والمرسلات، والمعايرة.",
+      en:"Process Instrumentation: measuring pressure, temperature, flow and level, transmitters and calibration."
+    },
+    why:{
+      ar:"أنت لا ترى العملية بل تقرأها من الأجهزة. وجهاز غير معاير يعطي رقمًا ثابتًا خاطئًا — وهو أخطر من غياب القياس.",
+      en:"You don't see the process; you read it from instruments."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "PROS 1103": {
+    explain:{
+      ar:"الكيمياء لمشغّلي العمليات: المواد، والتفاعلات، والخواص، والمخاطر الكيميائية.",
+      en:"Chemistry for Process Operators: materials, reactions, properties and chemical hazards."
+    },
+    why:{
+      ar:"تتعامل مع مواد لا ترى خطرها. ومن يقرأ صحيفة بيانات السلامة يعرف ما يفعله التسرّب قبل أن يقع.",
+      en:"You handle materials whose danger you cannot see."
+    },
+    resources:[
+      { title:{ar:"AIChE — منارة سلامة العمليات: حادثة شهريًا بدرسها (مجاني، وبالعربية)", en:"AIChE — Process Safety Beacon: one incident a month (Free, Arabic available)"}, url:"https://www.aiche.org/ccps/resources/process-safety-beacon", lang:"en", partial:true, covers:"حوادث حقيقية شهرية بدرسها، بالعربية", gap:"المعايير الكاملة — وهي للأعضاء", reason:{ar:"نشرة شهرية في صفحة: حادثة حقيقية، وما الذي أخفق، وما الدرس — بلغات منها العربية. وهي أنفع ما يقرؤه مشغّل الوحدة، لأن أكبر الكوارث بدأت بإشارة صغيرة", en:"A monthly one-page bulletin: a real incident, what failed and the lesson, in several languages including Arabic"} }
+    ]
+  },
+  "PROS 1104": {
+    explain:{
+      ar:"الفيزياء التطبيقية: الضغط، والحرارة، والتدفق، والطاقة في سياق صناعي.",
+      en:"Applied Physics: pressure, heat, flow and energy in an industrial context."
+    },
+    why:{
+      ar:"تفسّر لك ما تراه في الشاشة: لماذا يرتفع الضغط حين تُغلق صمّامًا، ولماذا تبرد الأسطوانة حين يتمدّد الغاز.",
+      en:"It explains what you see on the screen."
+    },
+    resources:[
+      { title:{ar:"The Engineering ToolBox — البخار والمضخات وأنظمة العمليات (مجاني)", en:"The Engineering ToolBox — Steam, pumps and process systems (Free)"}, url:"https://www.engineeringtoolbox.com/steam-thermodynamics-t_31.html", lang:"en", partial:true, covers:"جداول البخار وخواص الموائع وحسابات المضخات والصمامات", gap:"المبادئ النظرية", reason:{ar:"جداول البخار، وخواص الموائع، وحسابات المضخات والصمامات — وهي الأرقام التي يفتحها مشغّل الوحدة يوميًا", en:"Steam tables, fluid properties and pump and valve calculations"} }
+    ]
+  },
+  "PROS 1105": {
+    explain:{
+      ar:"السلامة الصناعية: المخاطر، وتصاريح العمل، والعزل، والمعدات الواقية، والطوارئ.",
+      en:"Industrial Safety: hazards, work permits, isolation, protective equipment and emergencies."
+    },
+    why:{
+      ar:"أهم مقرر في التخصص كله. وأكبر كوارث الصناعة لم تقع بجهل بل بتجاهل إشارات صغيرة — وهذا المقرر يعلّمك أن تراها.",
+      en:"The most important course in the field: the industry's worst disasters came from ignoring small signals."
+    },
+    resources:[
+      { title:{ar:"OSHA — إدارة سلامة العمليات (مجاني)", en:"OSHA — Process Safety Management (Free)"}, url:"https://www.osha.gov/process-safety-management", lang:"en", partial:true, covers:"تحليل المخاطر وتصاريح العمل وإدارة التغيير والتحقيق", gap:"تشغيل الوحدة نفسه", reason:{ar:"العناصر الأربعة عشر لإدارة سلامة العمليات: تحليل المخاطر، وتصاريح العمل، وإدارة التغيير، والتحقيق في الحوادث", en:"The fourteen elements of process safety management"} },
+      { title:{ar:"AIChE — منارة سلامة العمليات: حادثة شهريًا بدرسها (مجاني، وبالعربية)", en:"AIChE — Process Safety Beacon: one incident a month (Free, Arabic available)"}, url:"https://www.aiche.org/ccps/resources/process-safety-beacon", lang:"en", partial:true, covers:"حوادث حقيقية شهرية بدرسها، بالعربية", gap:"المعايير الكاملة — وهي للأعضاء", reason:{ar:"نشرة شهرية في صفحة: حادثة حقيقية، وما الذي أخفق، وما الدرس — بلغات منها العربية. وهي أنفع ما يقرؤه مشغّل الوحدة، لأن أكبر الكوارث بدأت بإشارة صغيرة", en:"A monthly one-page bulletin: a real incident, what failed and the lesson, in several languages including Arabic"} }
+    ]
+  },
+  "PROS 1106": {
+    explain:{
+      ar:"العمليات الصناعية: الوحدات، وتسلسلها، ومنتجاتها، وترابطها في المصنع.",
+      en:"Industrial Processes: units, their sequence, products and how they connect."
+    },
+    why:{
+      ar:"ترى المصنع كاملًا لا وحدتك وحدها. ومن يفهم ما قبله وما بعده يعرف أثر ما يفعله على زملائه.",
+      en:"You see the whole plant rather than your unit alone."
+    },
+    resources:[
+      { title:{ar:"The Engineering ToolBox — البخار والمضخات وأنظمة العمليات (مجاني)", en:"The Engineering ToolBox — Steam, pumps and process systems (Free)"}, url:"https://www.engineeringtoolbox.com/steam-thermodynamics-t_31.html", lang:"en", partial:true, covers:"جداول البخار وخواص الموائع وحسابات المضخات والصمامات", gap:"المبادئ النظرية", reason:{ar:"جداول البخار، وخواص الموائع، وحسابات المضخات والصمامات — وهي الأرقام التي يفتحها مشغّل الوحدة يوميًا", en:"Steam tables, fluid properties and pump and valve calculations"} }
+    ]
+  },
+  "PROS 2107": {
+    explain:{
+      ar:"تقنية العمليات ٢: الأنظمة والتشغيل — بدء التشغيل، والإيقاف، والتشغيل الطبيعي.",
+      en:"Process Technology II: Systems & Operations — startup, shutdown and normal operation."
+    },
+    why:{
+      ar:"بدء التشغيل والإيقاف أخطر لحظتين في عمر الوحدة: فيهما تخرج العملية عن حالتها المستقرة، وأغلب الحوادث تقع فيهما.",
+      en:"Startup and shutdown are the two most dangerous moments in a unit's life."
+    },
+    resources:[
+      { title:{ar:"OSHA — إدارة سلامة العمليات (مجاني)", en:"OSHA — Process Safety Management (Free)"}, url:"https://www.osha.gov/process-safety-management", lang:"en", partial:true, covers:"تحليل المخاطر وتصاريح العمل وإدارة التغيير والتحقيق", gap:"تشغيل الوحدة نفسه", reason:{ar:"العناصر الأربعة عشر لإدارة سلامة العمليات: تحليل المخاطر، وتصاريح العمل، وإدارة التغيير، والتحقيق في الحوادث", en:"The fourteen elements of process safety management"} },
+      { title:{ar:"AIChE — منارة سلامة العمليات: حادثة شهريًا بدرسها (مجاني، وبالعربية)", en:"AIChE — Process Safety Beacon: one incident a month (Free, Arabic available)"}, url:"https://www.aiche.org/ccps/resources/process-safety-beacon", lang:"en", partial:true, covers:"حوادث حقيقية شهرية بدرسها، بالعربية", gap:"المعايير الكاملة — وهي للأعضاء", reason:{ar:"نشرة شهرية في صفحة: حادثة حقيقية، وما الذي أخفق، وما الدرس — بلغات منها العربية. وهي أنفع ما يقرؤه مشغّل الوحدة، لأن أكبر الكوارث بدأت بإشارة صغيرة", en:"A monthly one-page bulletin: a real incident, what failed and the lesson, in several languages including Arabic"} }
+    ]
+  },
+  "PROS 2108": {
+    explain:{
+      ar:"التحكم في العمليات: الحلقة المغلقة، والمتحكم، والضبط، والإنذارات، والتشغيل اليدوي.",
+      en:"Process Control: the closed loop, the controller, tuning, alarms and manual operation."
+    },
+    why:{
+      ar:"تتعلّم كيف تبقى الوحدة في نطاقها وحدها، ومتى تتدخّل بيدك. ومن يفهم الحلقة يعرف لماذا يتذبذب المستوى حين يُضبط المتحكم خطأ.",
+      en:"You learn how a unit stays in range by itself and when to take over."
+    },
+    hard:[
+      { title:{ar:"العملية تُدار بالاتجاه لا بالرقم", en:"A process is run by the trend, not the number"}, plain:{ar:"قراءة واحدة لا تقول شيئًا: تسعون درجة قد تكون طبيعية وقد تكون في طريقها إلى مئة وعشرين. والمشغّل الماهر يقرأ الاتجاه — صاعد أم هابط وبأي سرعة — فيتدخّل قبل الإنذار لا بعده.", en:"One reading says nothing: ninety degrees may be normal or on its way to a hundred and twenty. Read the trend."}, trap:{ar:"الانتظار حتى يعمل الإنذار — وحينها تكون الوحدة قد خرجت عن نطاقها بالفعل.", en:"Waiting for the alarm means the unit has already left its range."} },
+      { title:{ar:"التغيير البطيء أخطر من المفاجئ", en:"A slow drift is more dangerous than a sudden change"}, plain:{ar:"القفزة المفاجئة تُرى ويُتعامل معها. والانحراف البطيء على مدى أيام لا يلفت أحدًا حتى يصير الوضع الجديد مألوفًا — وهذا ما يسبق أغلب الحوادث الكبرى في الصناعة.", en:"A sudden jump is seen and handled; a slow drift over days goes unnoticed until the new state feels normal."}, trap:{ar:"اعتبار القراءة مقبولة لأنها لم تتغيّر منذ أمس — وقارنها بما كانت عليه الشهر الماضي.", en:"Calling a reading acceptable because it hasn't changed since yesterday."} }
+    ],
+    resources:[
+      { title:{ar:"Process Control and Instrumentation — NPTEL، خاراغبور (مجاني)", en:"Process Control and Instrumentation — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105064", lang:"en", partial:true, covers:"نمذجة العمليات وضبط المتحكم والأجهزة الصناعية", gap:"تشغيل نظام تحكم بعينه", reason:{ar:"نمذجة العمليات، والمتحكم التناسبي-التكاملي-التفاضلي وضبطه، والأجهزة الصناعية. تنبيه: مستوى جامعي — خذ منه سبب ما تضبطه في الشاشة", en:"Process modelling, PID control and industrial instrumentation"} },
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "PROS 2109": {
+    explain:{
+      ar:"محاكاة العمليات: التدريب على المحاكي، وسيناريوهات التشغيل، والاستجابة للاضطراب.",
+      en:"Process Simulation: simulator training, operating scenarios and responding to upsets."
+    },
+    why:{
+      ar:"المحاكي يعلّمك ما لا يُتعلَّم في الوحدة: أن تخطئ وتتعلّم بلا أن يدفع أحد الثمن.",
+      en:"The simulator teaches what a live unit cannot: erring and learning with nobody paying."
+    },
+    resources:[
+      { title:{ar:"Process Control and Instrumentation — NPTEL، خاراغبور (مجاني)", en:"Process Control and Instrumentation — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105064", lang:"en", partial:true, covers:"نمذجة العمليات وضبط المتحكم والأجهزة الصناعية", gap:"تشغيل نظام تحكم بعينه", reason:{ar:"نمذجة العمليات، والمتحكم التناسبي-التكاملي-التفاضلي وضبطه، والأجهزة الصناعية. تنبيه: مستوى جامعي — خذ منه سبب ما تضبطه في الشاشة", en:"Process modelling, PID control and industrial instrumentation"} }
+    ]
+  },
+  "PROS 2110": {
+    explain:{
+      ar:"مخططات العمليات: مخطط التدفق، ومخطط الأنابيب والأجهزة P&ID، والرموز.",
+      en:"Process Diagrams: flow diagrams, P&IDs and their symbols."
+    },
+    why:{
+      ar:"الـP&ID خريطة وحدتك. ومن يقرؤها يعرف أين الصمّام قبل أن يمشي إليه — وفي الطارئ لا وقت للبحث.",
+      en:"The P&ID is your unit's map, and in an emergency there is no time to search."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "PROS 2111": {
+    explain:{
+      ar:"استكشاف أعطال العمليات: منهجية التشخيص، والأسباب الشائعة، والتصرّف الصحيح.",
+      en:"Process Troubleshooting: diagnostic method, common causes and the right response."
+    },
+    why:{
+      ar:"ما يفصل بين مشغّل ومشغّل ماهر. والمنهج واحد: ما الذي تغيّر؟ ومتى؟ وما الذي يفسّر كل الأعراض لا بعضها؟",
+      en:"What separates an operator from a skilled one, and the method is one."
+    },
+    hard:[
+      { title:{ar:"العملية تُدار بالاتجاه لا بالرقم", en:"A process is run by the trend, not the number"}, plain:{ar:"قراءة واحدة لا تقول شيئًا: تسعون درجة قد تكون طبيعية وقد تكون في طريقها إلى مئة وعشرين. والمشغّل الماهر يقرأ الاتجاه — صاعد أم هابط وبأي سرعة — فيتدخّل قبل الإنذار لا بعده.", en:"One reading says nothing: ninety degrees may be normal or on its way to a hundred and twenty. Read the trend."}, trap:{ar:"الانتظار حتى يعمل الإنذار — وحينها تكون الوحدة قد خرجت عن نطاقها بالفعل.", en:"Waiting for the alarm means the unit has already left its range."} },
+      { title:{ar:"التغيير البطيء أخطر من المفاجئ", en:"A slow drift is more dangerous than a sudden change"}, plain:{ar:"القفزة المفاجئة تُرى ويُتعامل معها. والانحراف البطيء على مدى أيام لا يلفت أحدًا حتى يصير الوضع الجديد مألوفًا — وهذا ما يسبق أغلب الحوادث الكبرى في الصناعة.", en:"A sudden jump is seen and handled; a slow drift over days goes unnoticed until the new state feels normal."}, trap:{ar:"اعتبار القراءة مقبولة لأنها لم تتغيّر منذ أمس — وقارنها بما كانت عليه الشهر الماضي.", en:"Calling a reading acceptable because it hasn't changed since yesterday."} }
+    ],
+    resources:[
+      { title:{ar:"AIChE — منارة سلامة العمليات: حادثة شهريًا بدرسها (مجاني، وبالعربية)", en:"AIChE — Process Safety Beacon: one incident a month (Free, Arabic available)"}, url:"https://www.aiche.org/ccps/resources/process-safety-beacon", lang:"en", partial:true, covers:"حوادث حقيقية شهرية بدرسها، بالعربية", gap:"المعايير الكاملة — وهي للأعضاء", reason:{ar:"نشرة شهرية في صفحة: حادثة حقيقية، وما الذي أخفق، وما الدرس — بلغات منها العربية. وهي أنفع ما يقرؤه مشغّل الوحدة، لأن أكبر الكوارث بدأت بإشارة صغيرة", en:"A monthly one-page bulletin: a real incident, what failed and the lesson, in several languages including Arabic"} }
+    ]
+  },
+  "PROS 2112": {
+    explain:{
+      ar:"ضبط جودة العمليات: العيّنات، والمواصفات، وخرائط الضبط، والانحرافات.",
+      en:"Process Quality Control: sampling, specifications, control charts and deviations."
+    },
+    why:{
+      ar:"المنتج خارج المواصفة يعود إلى المصنع أو يُرفض. وخريطة الضبط تكشف الانحراف قبل أن يصير دفعة مرفوضة.",
+      en:"Off-spec product is returned or rejected, and a control chart catches the drift first."
+    },
+    resources:[
+      { title:{ar:"OSHA — إدارة سلامة العمليات (مجاني)", en:"OSHA — Process Safety Management (Free)"}, url:"https://www.osha.gov/process-safety-management", lang:"en", partial:true, covers:"تحليل المخاطر وتصاريح العمل وإدارة التغيير والتحقيق", gap:"تشغيل الوحدة نفسه", reason:{ar:"العناصر الأربعة عشر لإدارة سلامة العمليات: تحليل المخاطر، وتصاريح العمل، وإدارة التغيير، والتحقيق في الحوادث", en:"The fourteen elements of process safety management"} }
+    ]
+  },
+  "PROS 3113": {
+    explain:{
+      ar:"برنامج التدريب التعاوني: خمسة عشر أسبوعًا في وحدة تشغيل حقيقية.",
+      en:"Cooperative Training Program: fifteen weeks in a real operating unit."
+    },
+    why:{
+      ar:"هنا تكتشف أن الوحدة لا تشبه المحاكي: أصوات، وروائح، وزملاء يعرفون ما لا تعرفه — واسأل، فالسؤال أرخص من الخطأ.",
+      en:"Here you find a unit is nothing like the simulator."
+    },
+    resources:[
+      { title:{ar:"AIChE — منارة سلامة العمليات: حادثة شهريًا بدرسها (مجاني، وبالعربية)", en:"AIChE — Process Safety Beacon: one incident a month (Free, Arabic available)"}, url:"https://www.aiche.org/ccps/resources/process-safety-beacon", lang:"en", partial:true, covers:"حوادث حقيقية شهرية بدرسها، بالعربية", gap:"المعايير الكاملة — وهي للأعضاء", reason:{ar:"نشرة شهرية في صفحة: حادثة حقيقية، وما الذي أخفق، وما الدرس — بلغات منها العربية. وهي أنفع ما يقرؤه مشغّل الوحدة، لأن أكبر الكوارث بدأت بإشارة صغيرة", en:"A monthly one-page bulletin: a real incident, what failed and the lesson, in several languages including Arabic"} },
+      { title:{ar:"منصة دروب — مسارات مهنية مجانية (بالعربية)", en:"Doroob — Free Saudi tracks (Arabic)"}, url:"https://www.doroob.sa/", lang:"ar", partial:true, reason:{ar:"مسارات عربية في التواصل والسلامة وآداب المهنة بسياق سوق العمل السعودي", en:"Arabic tracks in communication, safety and professional conduct"} }
+    ]
+  },
+  "CITS 1208": {
+    explain:{
+      ar:"عتاد الحاسب ونظام التشغيل: المكوّنات، والتجميع، والتثبيت، والصيانة.",
+      en:"Computer Hardware & Operating System: components, assembly, installation and maintenance."
+    },
+    why:{
+      ar:"تفكّك الجهاز وتركّبه بيدك. ومن يعرف ما بداخله يشخّص العطل بدل أن يستبدل القطع واحدة واحدة.",
+      en:"You take the machine apart and rebuild it."
+    },
+    resources:[
+      { title:{ar:"GCFGlobal — مهارات الحاسب من الصفر (بالعربية، مجاني)", en:"GCFGlobal (Arabic, Free)"}, url:"https://edu.gcfglobal.org/ar/", lang:"ar", partial:true, reason:{ar:"دروس مصوّرة بالعربية: النظام، والإنترنت، وبرامج المكتب — خطوة خطوة", en:"Illustrated Arabic lessons on the system, the internet and Office"} },
+      { title:{ar:"Operating Systems: Three Easy Pieces — كتاب مفتوح (مجاني)", en:"Operating Systems: Three Easy Pieces (Free)"}, url:"https://pages.cs.wisc.edu/~remzi/OSTEP/", lang:"en", partial:true, reason:{ar:"المعالجة والذاكرة والتزامن والتخزين. تنبيه: مستوى جامعي — خذ منه ما يفسّر ما تراه في النظام", en:"Virtualization, concurrency and persistence. University level"} }
+    ]
+  },
+  "CITS 1209": {
+    explain:{
+      ar:"أساسيات الحاسب الشخصي: النظام، والملفات، والشبكة المحلية، والدعم الفني.",
+      en:"PC Essentials: the system, files, the local network and technical support."
+    },
+    why:{
+      ar:"أول ما يُطلب منك في أي وظيفة تقنية: أن تُرجع جهازًا إلى العمل. والمنهج هو ما يميّزك لا الحفظ.",
+      en:"The first thing any technical job asks: bring a machine back to work."
+    },
+    resources:[
+      { title:{ar:"GCFGlobal — مهارات الحاسب من الصفر (بالعربية، مجاني)", en:"GCFGlobal (Arabic, Free)"}, url:"https://edu.gcfglobal.org/ar/", lang:"ar", partial:true, reason:{ar:"دروس مصوّرة بالعربية: النظام، والإنترنت، وبرامج المكتب — خطوة خطوة", en:"Illustrated Arabic lessons on the system, the internet and Office"} }
+    ]
+  },
+  "CITS 1210": {
+    explain:{
+      ar:"تقنية الشبكات: المكوّنات، والتوصيل، والعنونة، والبروتوكولات الأساسية.",
+      en:"Network Technology: components, cabling, addressing and basic protocols."
+    },
+    why:{
+      ar:"مدخلك إلى التخصص. ومن يفهم العنونة هنا يفهم كل ما بعده — ومن يحفظها يتعثّر في أول شبكة غير نمطية.",
+      en:"Your entry to the field: understanding addressing here explains everything after."
+    },
+    hard:[
+      { title:{ar:"الطبقات: اعزل الطبقة قبل أن تعزل الجهاز", en:"Layers: isolate the layer before the device"}, plain:{ar:"حين تنقطع الشبكة، السؤال الأول: هل المشكلة في الكيبل أم العنونة أم التوجيه أم التطبيق؟ وترتيب الفحص من الأسفل للأعلى يجد العطل في دقائق — والقفز بين الأجهزة عشوائيًا يضيّع ساعة.", en:"When a network fails, ask which layer before which device; checking bottom-up finds it in minutes."}, trap:{ar:"البدء بإعادة تشغيل الأجهزة — قد ينجح مرة ويُخفي السبب دائمًا.", en:"Starting by rebooting may work once and always hides the cause."} }
+    ],
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} },
+      { title:{ar:"IETF — وثائق RFC: تعريفات البروتوكولات نفسها (مجاني)", en:"IETF — RFCs (Free)"}, url:"https://www.rfc-editor.org/", lang:"en", partial:true, reason:{ar:"النصّ الذي يُعرّف البروتوكول. ابدأ بواحدة قصيرة عن بروتوكول تعرفه", en:"The text that defines the protocol"} }
+    ]
+  },
+  "ITNA 1218": {
+    explain:{
+      ar:"أساسيات الشبكات: النموذج الطبقي، والتبديل، والعنونة، وبناء شبكة صغيرة.",
+      en:"Network Fundamentals: the layered model, switching, addressing and building a small network."
+    },
+    why:{
+      ar:"الطبقات ليست حفظًا بل منهج تشخيص: أي طبقة فيها العطل؟ ومن يبدأ من الأسفل يجده في دقائق.",
+      en:"Layers aren't memorization but a diagnostic method."
+    },
+    hard:[
+      { title:{ar:"الطبقات: اعزل الطبقة قبل أن تعزل الجهاز", en:"Layers: isolate the layer before the device"}, plain:{ar:"حين تنقطع الشبكة، السؤال الأول: هل المشكلة في الكيبل أم العنونة أم التوجيه أم التطبيق؟ وترتيب الفحص من الأسفل للأعلى يجد العطل في دقائق — والقفز بين الأجهزة عشوائيًا يضيّع ساعة.", en:"When a network fails, ask which layer before which device; checking bottom-up finds it in minutes."}, trap:{ar:"البدء بإعادة تشغيل الأجهزة — قد ينجح مرة ويُخفي السبب دائمًا.", en:"Starting by rebooting may work once and always hides the cause."} }
+    ],
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} },
+      { title:{ar:"IETF — وثائق RFC: تعريفات البروتوكولات نفسها (مجاني)", en:"IETF — RFCs (Free)"}, url:"https://www.rfc-editor.org/", lang:"en", partial:true, reason:{ar:"النصّ الذي يُعرّف البروتوكول. ابدأ بواحدة قصيرة عن بروتوكول تعرفه", en:"The text that defines the protocol"} }
+    ]
+  },
+  "ITNA 1219": {
+    explain:{
+      ar:"أساسيات الشبكات — التكامل: التطبيق العملي على معامل ومحاكيات.",
+      en:"Network Fundamentals-Integration: hands-on application in labs and simulators."
+    },
+    why:{
+      ar:"المعمل هو حيث تصير المعرفة مهارة. وكل خطأ ترتكبه على محاكي خطأ لن ترتكبه على شبكة حقيقية.",
+      en:"The lab is where knowledge becomes skill."
+    },
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} }
+    ]
+  },
+  "ITNA 2220": {
+    explain:{
+      ar:"بروتوكولات التوجيه والوصول للشبكة الواسعة: التوجيه الساكن والديناميكي، وربط المواقع.",
+      en:"Routing Protocols and Accessing the WAN: static and dynamic routing and site interconnection."
+    },
+    why:{
+      ar:"من شبكة في غرفة إلى شبكة بين مدن. والموجّه يقرّر الطريق — ومن يفهم جدول التوجيه يقرأ قرار الشبكة كله.",
+      en:"From a room's network to one between cities."
+    },
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} },
+      { title:{ar:"IETF — وثائق RFC: تعريفات البروتوكولات نفسها (مجاني)", en:"IETF — RFCs (Free)"}, url:"https://www.rfc-editor.org/", lang:"en", partial:true, reason:{ar:"النصّ الذي يُعرّف البروتوكول. ابدأ بواحدة قصيرة عن بروتوكول تعرفه", en:"The text that defines the protocol"} }
+    ]
+  },
+  "ITNA 2221": {
+    explain:{
+      ar:"بروتوكولات التوجيه — التكامل: تطبيق التوجيه والربط على معامل حقيقية.",
+      en:"Routing Protocols-Integration: applying routing and interconnection in real labs."
+    },
+    why:{
+      ar:"الإعداد الصحيح في الكتاب سطر، وفي الجهاز عشرة — والفرق بينهما هو ما يُوظَّف عليه.",
+      en:"A correct configuration is one line in a book and ten on a device."
+    },
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} }
+    ]
+  },
+  "ITNA 2222": {
+    explain:{
+      ar:"تقنية تبديل الشبكة المحلية والواسعة: المبدّلات، والشبكات الافتراضية، والتوصيل.",
+      en:"LAN Switching and WAN Technology: switches, VLANs and trunking."
+    },
+    why:{
+      ar:"التقسيم الافتراضي يفصل الأقسام بلا كيبل جديد. ومن يتقنه يصمّم شبكة آمنة ومنظّمة بالبرمجة لا بالمقصّ.",
+      en:"Virtual segmentation separates departments without new cable."
+    },
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} }
+    ]
+  },
+  "ITNA 2223": {
+    explain:{
+      ar:"تبديل الشبكة — التكامل: التطبيق العملي على المبدّلات والشبكات الافتراضية.",
+      en:"LAN Switching-Integration: hands-on switching and VLAN practice."
+    },
+    why:{
+      ar:"تطبيق ما تعلّمته على أجهزة حقيقية بأعطال مفتعلة — وهذه أقرب بيئة إلى عملك.",
+      en:"Applying it on real devices with introduced faults."
+    },
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} }
+    ]
+  },
+  "ITNA 2224": {
+    explain:{
+      ar:"مشروع الشبكات: تصميم شبكة كاملة وتنفيذها وتوثيقها.",
+      en:"Networking Project: designing, implementing and documenting a full network."
+    },
+    why:{
+      ar:"هنا تجتمع مقرراتك في شبكة تعمل. وأكثر ما يُفقد الدرجات ليس التنفيذ بل التوثيق — فالشبكة غير الموثّقة يصعب تسليمها.",
+      en:"Here your courses meet in a working network."
+    },
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} }
+    ]
+  },
+  "ITNA 3225": {
+    explain:{
+      ar:"برنامج التدريب التعاوني: خمسة عشر أسبوعًا في بيئة شبكات حقيقية.",
+      en:"Cooperative Training Program: fifteen weeks in a real network environment."
+    },
+    why:{
+      ar:"الشبكة في الكتاب مخطط، وفي الواقع كوابل قديمة وإعدادات ورثتَها ولا أحد يعرف سببها.",
+      en:"A network in a book is a diagram; in reality it is inherited settings nobody can explain."
+    },
+    resources:[
+      { title:{ar:"Cisco Networking Academy — مقررات الشبكات (مجاني جزئيًا)", en:"Cisco Networking Academy — Networking courses (Partly free)"}, url:"https://www.netacad.com/", lang:"en", partial:true, covers:"أساسيات الشبكات والتوجيه والتبديل بمعامل محاكاة", gap:"الشهادة نفسها — ولها رسوم", reason:{ar:"مقرراتها هي ما يُبنى عليه مقررك: أساسيات الشبكات، والتوجيه، والتبديل. تنبيه صريح: بعض المسارات مجانية بالتسجيل وبعضها عبر مؤسسة تعليمية — ومعهدك غالبًا أكاديمية معتمدة، فاسأل عن حسابك", en:"Its courses are what your syllabus is built on: fundamentals, routing and switching"} },
+      { title:{ar:"منصة دروب — مسارات مهنية مجانية (بالعربية)", en:"Doroob — Free Saudi tracks (Arabic)"}, url:"https://www.doroob.sa/", lang:"ar", partial:true, reason:{ar:"مسارات عربية في التواصل والسلامة وآداب المهنة بسياق سوق العمل السعودي", en:"Arabic tracks in communication, safety and professional conduct"} }
+    ]
+  },
+  "INCT 1426": {
+    explain:{
+      ar:"مبادئ الأجهزة ومعايرتها وصيانتها: القياس، والمرسلات، والمعايرة، والصيانة.",
+      en:"Instruments Principles & Calibration and Maintenance: measurement, transmitters, calibration and maintenance."
+    },
+    why:{
+      ar:"الجهاز غير المعاير أخطر من غياب الجهاز: يعطي رقمًا يثق به المشغّل وهو خاطئ.",
+      en:"An uncalibrated instrument is worse than none: it gives a trusted wrong number."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "INCT 1427": {
+    explain:{
+      ar:"مبادئ التحكم: الحلقة المفتوحة والمغلقة، والتغذية الراجعة، والمتحكم، والضبط.",
+      en:"Principles of Control: open and closed loop, feedback, the controller and tuning."
+    },
+    why:{
+      ar:"التغذية الراجعة هي ما يجعل النظام يصحّح نفسه. وبلا قياس لا تصحيح — ولهذا يبدأ التحكم بالمجسّ.",
+      en:"Feedback makes a system correct itself, and without measurement there is no correction."
+    },
+    hard:[
+      { title:{ar:"العملية تُدار بالاتجاه لا بالرقم", en:"A process is run by the trend, not the number"}, plain:{ar:"قراءة واحدة لا تقول شيئًا: تسعون درجة قد تكون طبيعية وقد تكون في طريقها إلى مئة وعشرين. والمشغّل الماهر يقرأ الاتجاه — صاعد أم هابط وبأي سرعة — فيتدخّل قبل الإنذار لا بعده.", en:"One reading says nothing: ninety degrees may be normal or on its way to a hundred and twenty. Read the trend."}, trap:{ar:"الانتظار حتى يعمل الإنذار — وحينها تكون الوحدة قد خرجت عن نطاقها بالفعل.", en:"Waiting for the alarm means the unit has already left its range."} },
+      { title:{ar:"التغيير البطيء أخطر من المفاجئ", en:"A slow drift is more dangerous than a sudden change"}, plain:{ar:"القفزة المفاجئة تُرى ويُتعامل معها. والانحراف البطيء على مدى أيام لا يلفت أحدًا حتى يصير الوضع الجديد مألوفًا — وهذا ما يسبق أغلب الحوادث الكبرى في الصناعة.", en:"A sudden jump is seen and handled; a slow drift over days goes unnoticed until the new state feels normal."}, trap:{ar:"اعتبار القراءة مقبولة لأنها لم تتغيّر منذ أمس — وقارنها بما كانت عليه الشهر الماضي.", en:"Calling a reading acceptable because it hasn't changed since yesterday."} }
+    ],
+    resources:[
+      { title:{ar:"Process Control and Instrumentation — NPTEL، خاراغبور (مجاني)", en:"Process Control and Instrumentation — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105064", lang:"en", partial:true, covers:"نمذجة العمليات وضبط المتحكم والأجهزة الصناعية", gap:"تشغيل نظام تحكم بعينه", reason:{ar:"نمذجة العمليات، والمتحكم التناسبي-التكاملي-التفاضلي وضبطه، والأجهزة الصناعية. تنبيه: مستوى جامعي — خذ منه سبب ما تضبطه في الشاشة", en:"Process modelling, PID control and industrial instrumentation"} }
+    ]
+  },
+  "INCT 1428": {
+    explain:{
+      ar:"تشغيل صمامات التحكم وصيانتها: أنواعها، والمشغّلات، والمواضع، والصيانة.",
+      en:"Control Valves Operation and Maintenance: types, actuators, positioners and maintenance."
+    },
+    why:{
+      ar:"الصمّام هو يد نظام التحكم. ومن لا يعرف وضع الفشل الآمن لصمّام لا يعرف ماذا يحدث للوحدة حين ينقطع الهواء.",
+      en:"The valve is the control system's hand, and its fail-safe position decides what happens when air is lost."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "INCT 1429": {
+    explain:{
+      ar:"تطبيقات مهارات الأجهزة: التدريب العملي على التركيب والمعايرة والتشخيص.",
+      en:"Instrumentation Skills Practice: hands-on installation, calibration and diagnosis."
+    },
+    why:{
+      ar:"المهارة تُبنى في المشغل. وكل معايرة تجريها بيدك تُضاف إلى ما لا يُنسى.",
+      en:"Skill is built in the workshop."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "INCT 2430": {
+    explain:{
+      ar:"تشغيل نظام التحكم الموزّع DCS: البنية، والشاشات، والإنذارات، والتشغيل.",
+      en:"Distributed Control System Operation (DCS): architecture, screens, alarms and operation."
+    },
+    why:{
+      ar:"شاشة التحكم هي عينك على المصنع كله. ومن يفهم بنية النظام يعرف أين يفسد الرقم قبل أن يصل إلى الشاشة.",
+      en:"The control screen is your eye on the whole plant."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} },
+      { title:{ar:"Process Control and Instrumentation — NPTEL، خاراغبور (مجاني)", en:"Process Control and Instrumentation — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105064", lang:"en", partial:true, covers:"نمذجة العمليات وضبط المتحكم والأجهزة الصناعية", gap:"تشغيل نظام تحكم بعينه", reason:{ar:"نمذجة العمليات، والمتحكم التناسبي-التكاملي-التفاضلي وضبطه، والأجهزة الصناعية. تنبيه: مستوى جامعي — خذ منه سبب ما تضبطه في الشاشة", en:"Process modelling, PID control and industrial instrumentation"} }
+    ]
+  },
+  "INCT 2431": {
+    explain:{
+      ar:"برمجة المتحكم المنطقي والربط والمتحكم الدقيق: لغة السلّم، والمدخلات والمخرجات، والاتصال.",
+      en:"PLC Programming and Interfacing & Microcontroller: ladder logic, I/O and communication."
+    },
+    why:{
+      ar:"المتحكم المنطقي هو ما يشغّل المصانع فعلًا. ولغة السلّم قياسية لا تخصّ مورّدًا — فمن أتقنها قرأ برنامج أي خط إنتاج.",
+      en:"The PLC is what actually runs factories, and ladder logic is a standard rather than a vendor's."
+    },
+    resources:[
+      { title:{ar:"Process Control and Instrumentation — NPTEL، خاراغبور (مجاني)", en:"Process Control and Instrumentation — NPTEL, IIT Kharagpur (Free)"}, url:"https://nptel.ac.in/courses/103105064", lang:"en", partial:true, covers:"نمذجة العمليات وضبط المتحكم والأجهزة الصناعية", gap:"تشغيل نظام تحكم بعينه", reason:{ar:"نمذجة العمليات، والمتحكم التناسبي-التكاملي-التفاضلي وضبطه، والأجهزة الصناعية. تنبيه: مستوى جامعي — خذ منه سبب ما تضبطه في الشاشة", en:"Process modelling, PID control and industrial instrumentation"} }
+    ]
+  },
+  "INCT 2432": {
+    explain:{
+      ar:"قراءة مخططات الأنابيب والأجهزة P&ID: الرموز، وحلقات التحكم، وتتبّع الخطوط.",
+      en:"Piping and Instrumentation Diagrams Reading: symbols, control loops and line tracing."
+    },
+    why:{
+      ar:"خريطة الوحدة. ومن يتتبّع حلقة تحكم على الورق يعرف ماذا يقيس وماذا يحرّك قبل أن يلمس شيئًا.",
+      en:"The unit's map: tracing a loop on paper tells you what it measures and moves."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "INCT 2433": {
+    explain:{
+      ar:"تطبيقات مهارات الأجهزة: التدريب العملي المتقدم على الحلقات والتشخيص.",
+      en:"Instrumentation Skills Practice: advanced hands-on loop work and diagnosis."
+    },
+    why:{
+      ar:"تطبيق على حلقات حقيقية بأعطال مفتعلة — وهذه أقرب بيئة إلى عملك بعد التخرج.",
+      en:"Work on real loops with introduced faults."
+    },
+    resources:[
+      { title:{ar:"ISA — الجمعية الدولية للأتمتة: موارد ومعايير (مجاني جزئيًا)", en:"ISA — International Society of Automation: resources (Partly free)"}, url:"https://www.isa.org/technical-topics", lang:"en", partial:true, covers:"مقالات وموارد في الأجهزة والتحكم ورموز المخططات", gap:"نصوص المعايير الكاملة — وهي مدفوعة", reason:{ar:"الجهة التي تضع معايير الأجهزة والتحكم عالميًا — ومنها معيار الرموز الذي تقرأ به مخططات P&ID. تنبيه صريح: المعايير الكاملة مدفوعة، والمقالات والموارد التعريفية مفتوحة وهي ما يحتاجه الطالب", en:"The body that sets instrumentation and control standards, including the P&ID symbols standard"} }
+    ]
+  },
+  "ENGC 1404": {
+    explain:{
+      ar:"التواصل بالإنجليزية: المهارات الأربع بمفردات فنية وسياق صناعي.",
+      en:"English Communication: the four skills with technical vocabulary in an industrial context."
+    },
+    why:{
+      ar:"دليل الجهاز، وشاشة التحكم، وتقرير العطل — كلها بالإنجليزية. ومستواك فيها يحدّ سقف استقلالك في الموقع.",
+      en:"The manual, the control screen and the fault report are all in English."
+    },
+    resources:[
+      { title:{ar:"British Council — مهارات الكتابة والتواصل (مجاني)", en:"British Council — Writing and communication skills (Free)"}, url:"https://learnenglish.britishcouncil.org/skills/writing", lang:"en", partial:true, reason:{ar:"بنية النص، وربط الأفكار، والنبرة المهنية، والمراسلات — بتمارين تصحّح نفسها ومستويات متدرّجة", en:"Text structure, linking ideas, professional tone and correspondence"} },
+      { title:{ar:"منصة دروب — مسارات مهنية مجانية (بالعربية)", en:"Doroob — Free Saudi professional tracks (Arabic)"}, url:"https://www.doroob.sa/", lang:"ar", partial:true, reason:{ar:"مسارات عربية في التواصل والعرض وآداب المهنة والسلامة، بسياق سوق العمل السعودي", en:"Arabic tracks in communication, conduct and safety in the Saudi labour context"} }
+    ]
+  },
+  "TRWT 2406": {
+    explain:{
+      ar:"كتابة التقارير الفنية: بنية التقرير، والوصف الدقيق، والجداول والأشكال.",
+      en:"Technical Report Writing: report structure, precise description, tables and figures."
+    },
+    why:{
+      ar:"ما لا يُوثَّق لم يحدث. وتقرير اليوم هو ما يحلّ عطل السنة القادمة — إن كُتب بما يكفي من التفصيل.",
+      en:"What isn't documented didn't happen."
+    },
+    resources:[
+      { title:{ar:"Purdue OWL — كتابة التقارير الفنية (مجاني)", en:"Purdue OWL — Technical report writing (Free)"}, url:"https://owl.purdue.edu/owl/subject_specific_writing/professional_technical_writing/index.html", lang:"en", partial:true, covers:"بنية التقرير والملخص التنفيذي والجداول والأشكال", gap:"اللغة الأساسية — خذها من مقرر الإنجليزية", reason:{ar:"التقرير الفني: بنيته، والملخّص التنفيذي، والجداول والأشكال، والوضوح. والفنّي الذي يكتب تقرير عطل واضحًا يُعتمد عليه أكثر ممن يصلح بصمت", en:"The technical report: structure, executive summary, tables and figures, and clarity"} }
+    ]
+  },
+  "CITS 1207": {
+    explain:{
+      ar:"تطبيقات الحاسب المتقدمة: وورد وإكسل وباوربوينت بمستوى عملي.",
+      en:"Advanced Computer Applications: Word, Excel and PowerPoint at a working level."
+    },
+    why:{
+      ar:"إكسل أداتك في سجلات الصيانة والقياسات. ومن يتقن الصيغ والجداول هنا يوفّر ساعات في كل تقرير.",
+      en:"Excel is your tool for maintenance logs and measurements."
+    },
+    resources:[
+      { title:{ar:"GCFGlobal — مهارات الحاسب من الصفر (بالعربية، مجاني)", en:"GCFGlobal — Computer skills from zero (Arabic, Free)"}, url:"https://edu.gcfglobal.org/ar/", lang:"ar", partial:true, reason:{ar:"دروس مصوّرة بالعربية: النظام، والإنترنت، ووورد وإكسل وباوربوينت — خطوة خطوة بالصور", en:"Illustrated Arabic lessons on the system, the internet and Office"} }
+    ]
+  },
+  "IELT 1428": {
+    explain:{
+      ar:"الدوائر الكهربائية: قانون أوم، والتوالي والتوازي، والتيار المستمر والمتردد، والقياس.",
+      en:"Electrical Circuits: Ohm's law, series and parallel, DC and AC, and measurement."
+    },
+    why:{
+      ar:"أساس كل ما بعده. ومن لا يتقن تتبّع الدارة هنا يبقى يستبدل القطع بالتخمين بدل أن يشخّص.",
+      en:"The foundation of everything after it."
+    },
+    hard:[
+      { title:{ar:"التيار يسري في الدارة المغلقة لا في السلك", en:"Current flows in a closed loop, not in a wire"}, plain:{ar:"لا يتحرّك التيار ما لم يجد طريقًا كاملًا يعود منه إلى مصدره. ولهذا العطل غالبًا ليس في الجهاز بل في نقطة انفتحت في الطريق — وصولة مفكوكة أو محايد مقطوع يوقفان كل شيء وهما سليمان في الظاهر.", en:"Current won't move without a complete path back to its source, so a fault is usually an opened point in the path."}, trap:{ar:"البحث عن العطل في الحِمل أولًا — والأسرع أن تتتبّع الطريق من المصدر حتى تجد أين انقطع.", en:"Looking at the load first instead of tracing the path from the source."} },
+      { title:{ar:"العزل والوسم: الآلة المتوقفة ليست آمنة", en:"Lockout-tagout: a stopped machine isn't a safe machine"}, plain:{ar:"قطع المفتاح لا يكفي: قد يعيده أحد، وقد تبقى طاقة مخزّنة في مكثّف أو زنبرك أو ضغط. والإجراء يقفل المصدر بقفلك أنت، ويُفرِّغ المخزون، ثم يتحقق بالقياس — ثلاث خطوات لا واحدة.", en:"Switching off isn't enough: someone may switch it back, and stored energy may remain. Lock, discharge, then verify."}, trap:{ar:"الاكتفاء بفصل المفتاح والبدء بالعمل — وهو سبب أكثر حوادث الصيانة الكهربائية القاتلة.", en:"Switching off and starting work is behind most fatal maintenance incidents."} },
+      { title:{ar:"التأريض ليس للتشغيل بل للحياة", en:"Earthing isn't for operation but for life"}, plain:{ar:"الجهاز يعمل بلا تأريض تمامًا — ولهذا يُهمَل. وفائدته تظهر في اللحظة التي يلامس فيها التيار الهيكل المعدني: إمّا أن يجد طريقًا إلى الأرض فيفصل القاطع، أو يجد طريقه عبر من يلمسه.", en:"A device works perfectly without earth, which is why it gets neglected; its value appears the instant a live conductor touches the casing."}, trap:{ar:"اعتبار التأريض إجراءً شكليًا لأن الجهاز يعمل بدونه.", en:"Treating earthing as a formality because the device works without it."} }
+    ],
+    resources:[
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
+  "IENX 1211": {
+    explain:{
+      ar:"الدوائر الإلكترونية: الثنائيات، والترانزستورات، والمقوّمات، ومصادر القدرة.",
+      en:"Electronic Circuits: diodes, transistors, rectifiers and power supplies."
+    },
+    why:{
+      ar:"كل لوحة تحكم فيها إلكترونيات. ومن يعرف المقوّم ومصدر القدرة يشخّص نصف أعطال اللوحات.",
+      en:"Every control panel contains electronics."
+    },
+    resources:[
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
+  "IELT 1429": {
+    explain:{
+      ar:"التمديدات الكهربائية: الموصّلات والمجاري والتوصيلات واللوحات والحماية.",
+      en:"Electrical Wiring: conductors, conduits, terminations, panels and protection."
+    },
+    why:{
+      ar:"أكثر ما ستفعله في أول سنة. والتوصيلة الرديئة تسخن ثم تحترق بعد شهور — ولهذا تُشدّ بالعزم المحدّد لا باليد.",
+      en:"What you will do most in your first year, and a poor termination burns months later."
+    },
+    resources:[
+      { title:{ar:"NFPA — كود الكهرباء الوطني NEC: الوصول المجاني للقراءة", en:"NFPA — National Electrical Code (NEC), free read-only access"}, url:"https://www.nfpa.org/for-professionals/codes-and-standards/list-of-codes-and-standards/detail?code=70", lang:"en", partial:true, covers:"نصّ الكود كاملًا بموادّه وجداوله", gap:"الشرح والأمثلة — خذها من مقررك، فهذه نصوص معيارية", reason:{ar:"النصّ الرسمي للكود الذي يُدرَّس في مقررك. تنبيه صريح: القراءة مجانية بعد تسجيل حساب، والنسخة المطبوعة مدفوعة — وهذا المرجع تفتحه للتحقق من مادة بعينها لا لتقرأه كله", en:"The official text of the code your course teaches, free to read after registering"} },
+      { title:{ar:"OSHA — السلامة الكهربائية في مواقع العمل (مجاني)", en:"OSHA — Electrical safety at work (Free)"}, url:"https://www.osha.gov/electrical", lang:"en", partial:true, covers:"المخاطر وإجراءات العزل والوسم ومسافات الاقتراب الآمنة", gap:"التمديدات والحسابات — خذها من كودك", reason:{ar:"مخاطر الكهرباء، وإجراءات العزل والوسم، ومسافات الاقتراب الآمنة، والحوادث الموثّقة وأسبابها. أدرجناه لأن الكهربائي يُقاس بسلامته قبل مهارته", en:"Electrical hazards, lockout-tagout, approach boundaries and documented incidents"} }
+    ]
+  },
+  "IELT 1430": {
+    explain:{
+      ar:"الآلات الكهربائية: المحوّلات، والمحركات التحريضية، ومولّدات التيار المستمر، وأداؤها.",
+      en:"Electrical Machines: transformers, induction motors, DC generators and their performance."
+    },
+    why:{
+      ar:"كل حركة في المصنع محرّك. ومن يفهم المحرّك التحريضي يشخّص أغلب ما يقابله في الصناعة.",
+      en:"Every motion in a plant is a motor."
+    },
+    resources:[
+      { title:{ar:"Electrical Machines — NPTEL، معهد التقنية الهندي (مجاني)", en:"Electrical Machines — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/108105155", lang:"en", partial:true, covers:"مبادئ الآلات ودوائرها المكافئة ومنحنيات أدائها", gap:"الصيانة العملية واللفّ — وهي مهارة يد", reason:{ar:"المحوّلات وآلات التيار المستمر والتحريضية والتزامنية. تنبيه: مستوى جامعي أعمق من مقررك — خذ منه المبدأ وراء ما تشغّله وتصلحه، لا الرياضيات كاملة", en:"Transformers, DC, induction and synchronous machines. Deeper than a trade course"} },
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
+  "IELT 1431": {
+    explain:{
+      ar:"كود NEC والحسابات: مقاطع الموصّلات، والحماية، والأحمال، والجداول النظامية.",
+      en:"NEC Code and Calculations: conductor sizing, protection, loads and code tables."
+    },
+    why:{
+      ar:"الكود هو ما يُحاسَب عليه عملك لا رأيك. ومقطع أصغر من النظامي يعمل اليوم ويحترق في الصيف.",
+      en:"The code is what your work is judged by, not your opinion."
+    },
+    resources:[
+      { title:{ar:"NFPA — كود الكهرباء الوطني NEC: الوصول المجاني للقراءة", en:"NFPA — National Electrical Code (NEC), free read-only access"}, url:"https://www.nfpa.org/for-professionals/codes-and-standards/list-of-codes-and-standards/detail?code=70", lang:"en", partial:true, covers:"نصّ الكود كاملًا بموادّه وجداوله", gap:"الشرح والأمثلة — خذها من مقررك، فهذه نصوص معيارية", reason:{ar:"النصّ الرسمي للكود الذي يُدرَّس في مقررك. تنبيه صريح: القراءة مجانية بعد تسجيل حساب، والنسخة المطبوعة مدفوعة — وهذا المرجع تفتحه للتحقق من مادة بعينها لا لتقرأه كله", en:"The official text of the code your course teaches, free to read after registering"} }
+    ]
+  },
+  "IELT 1432": {
+    explain:{
+      ar:"تطبيقات المهارات الكهربائية ١: التدريب العملي على التمديد والتوصيل والقياس.",
+      en:"Electrical Skills Practice 1: hands-on wiring, termination and measurement."
+    },
+    why:{
+      ar:"المهارة تُبنى في المشغل لا في القاعة. وكل توصيلة تشدّها بيدك تُضاف إلى ما لا يُنسى.",
+      en:"Skill is built in the workshop, not the classroom."
+    },
+    resources:[
+      { title:{ar:"OSHA — السلامة الكهربائية في مواقع العمل (مجاني)", en:"OSHA — Electrical safety at work (Free)"}, url:"https://www.osha.gov/electrical", lang:"en", partial:true, covers:"المخاطر وإجراءات العزل والوسم ومسافات الاقتراب الآمنة", gap:"التمديدات والحسابات — خذها من كودك", reason:{ar:"مخاطر الكهرباء، وإجراءات العزل والوسم، ومسافات الاقتراب الآمنة، والحوادث الموثّقة وأسبابها. أدرجناه لأن الكهربائي يُقاس بسلامته قبل مهارته", en:"Electrical hazards, lockout-tagout, approach boundaries and documented incidents"} }
+    ]
+  },
+  "IELT 2433": {
+    explain:{
+      ar:"توزيع القدرة الكهربائية: الشبكات، واللوحات، والقواطع، والأحمال، والتأريض.",
+      en:"Electrical Power Distribution: networks, panels, breakers, loads and earthing."
+    },
+    why:{
+      ar:"تنتقل من دائرة واحدة إلى منشأة كاملة. ومن يفهم انتقائية القواطع يعرف لماذا تطفئ وحدة بدل المصنع كله.",
+      en:"You move from one circuit to a whole facility."
+    },
+    resources:[
+      { title:{ar:"NFPA — كود الكهرباء الوطني NEC: الوصول المجاني للقراءة", en:"NFPA — National Electrical Code (NEC), free read-only access"}, url:"https://www.nfpa.org/for-professionals/codes-and-standards/list-of-codes-and-standards/detail?code=70", lang:"en", partial:true, covers:"نصّ الكود كاملًا بموادّه وجداوله", gap:"الشرح والأمثلة — خذها من مقررك، فهذه نصوص معيارية", reason:{ar:"النصّ الرسمي للكود الذي يُدرَّس في مقررك. تنبيه صريح: القراءة مجانية بعد تسجيل حساب، والنسخة المطبوعة مدفوعة — وهذا المرجع تفتحه للتحقق من مادة بعينها لا لتقرأه كله", en:"The official text of the code your course teaches, free to read after registering"} },
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
+  "IELT 2434": {
+    explain:{
+      ar:"التحكم في المحركات الكهربائية: دوائر البدء، والعكس، والمؤقتات، والحماية الحرارية.",
+      en:"Electrical Motor Control: starting circuits, reversing, timers and thermal protection."
+    },
+    why:{
+      ar:"دوائر التحكم هي ما تصلحه يوميًّا. ومن يقرأ مخطط السلّم يجد العطل في دقائق بدل ساعة.",
+      en:"Control circuits are what you repair daily."
+    },
+    resources:[
+      { title:{ar:"الرسم الكهربائي وقراءة المخططات بالعربية (يوتيوب، قائمة تشغيل)", en:"Electrical drawings and blueprint reading in Arabic (YouTube playlist)"}, url:"https://www.youtube.com/playlist?list=PLMLA3hMhCm6fgFEE0nkOyTHrVfPkd9oNE", lang:"ar", partial:true, covers:"رموز المخططات الكهربائية ولوحات التوزيع ومخططات التحكم", gap:"الكود والحسابات", reason:{ar:"شرح عربي لرموز المخططات الكهربائية وقراءتها: الدوائر، ولوحات التوزيع، ومخططات التحكم. تنبيه: قائمة من قناة فردية لا مقرر معتمد — خذ منها التدريب على القراءة، وخذ الرموز المعتمدة من كتاب مقررك", en:"An Arabic explanation of electrical drawing symbols and how to read them"} },
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
+  "IELT 2435": {
+    explain:{
+      ar:"لفّ المحركات: فكّ الملفات، وحساب اللفّات، وإعادة اللفّ، والاختبار.",
+      en:"Motor Winding: stripping, turn counting, rewinding and testing."
+    },
+    why:{
+      ar:"مهارة يد قليل من يتقنها، وقيمتها في السوق عالية. ودقّة اللفّ تحدّد عمر المحرّك بعد إصلاحه.",
+      en:"A hand skill few master and the market values."
+    },
+    resources:[
+      { title:{ar:"Electrical Machines — NPTEL، معهد التقنية الهندي (مجاني)", en:"Electrical Machines — NPTEL, IIT (Free)"}, url:"https://nptel.ac.in/courses/108105155", lang:"en", partial:true, covers:"مبادئ الآلات ودوائرها المكافئة ومنحنيات أدائها", gap:"الصيانة العملية واللفّ — وهي مهارة يد", reason:{ar:"المحوّلات وآلات التيار المستمر والتحريضية والتزامنية. تنبيه: مستوى جامعي أعمق من مقررك — خذ منه المبدأ وراء ما تشغّله وتصلحه، لا الرياضيات كاملة", en:"Transformers, DC, induction and synchronous machines. Deeper than a trade course"} }
+    ]
+  },
+  "IELT 2436": {
+    explain:{
+      ar:"التركيب الكهربائي واستكشاف الأعطال: منهجية التشخيص، والقياس، والعزل، والإصلاح.",
+      en:"Electrical Installation and Troubleshooting: diagnostic method, measurement, isolation and repair."
+    },
+    why:{
+      ar:"أهم مقرر في تخصصك: من يملك منهجًا يشخّص ما لم يره قط، ومن يستبدل بالتخمين ينجح أحيانًا ويكلّف كثيرًا.",
+      en:"Whoever has a method diagnoses what they have never seen."
+    },
+    hard:[
+      { title:{ar:"التيار يسري في الدارة المغلقة لا في السلك", en:"Current flows in a closed loop, not in a wire"}, plain:{ar:"لا يتحرّك التيار ما لم يجد طريقًا كاملًا يعود منه إلى مصدره. ولهذا العطل غالبًا ليس في الجهاز بل في نقطة انفتحت في الطريق — وصولة مفكوكة أو محايد مقطوع يوقفان كل شيء وهما سليمان في الظاهر.", en:"Current won't move without a complete path back to its source, so a fault is usually an opened point in the path."}, trap:{ar:"البحث عن العطل في الحِمل أولًا — والأسرع أن تتتبّع الطريق من المصدر حتى تجد أين انقطع.", en:"Looking at the load first instead of tracing the path from the source."} },
+      { title:{ar:"العزل والوسم: الآلة المتوقفة ليست آمنة", en:"Lockout-tagout: a stopped machine isn't a safe machine"}, plain:{ar:"قطع المفتاح لا يكفي: قد يعيده أحد، وقد تبقى طاقة مخزّنة في مكثّف أو زنبرك أو ضغط. والإجراء يقفل المصدر بقفلك أنت، ويُفرِّغ المخزون، ثم يتحقق بالقياس — ثلاث خطوات لا واحدة.", en:"Switching off isn't enough: someone may switch it back, and stored energy may remain. Lock, discharge, then verify."}, trap:{ar:"الاكتفاء بفصل المفتاح والبدء بالعمل — وهو سبب أكثر حوادث الصيانة الكهربائية القاتلة.", en:"Switching off and starting work is behind most fatal maintenance incidents."} },
+      { title:{ar:"التأريض ليس للتشغيل بل للحياة", en:"Earthing isn't for operation but for life"}, plain:{ar:"الجهاز يعمل بلا تأريض تمامًا — ولهذا يُهمَل. وفائدته تظهر في اللحظة التي يلامس فيها التيار الهيكل المعدني: إمّا أن يجد طريقًا إلى الأرض فيفصل القاطع، أو يجد طريقه عبر من يلمسه.", en:"A device works perfectly without earth, which is why it gets neglected; its value appears the instant a live conductor touches the casing."}, trap:{ar:"اعتبار التأريض إجراءً شكليًا لأن الجهاز يعمل بدونه.", en:"Treating earthing as a formality because the device works without it."} }
+    ],
+    resources:[
+      { title:{ar:"OSHA — السلامة الكهربائية في مواقع العمل (مجاني)", en:"OSHA — Electrical safety at work (Free)"}, url:"https://www.osha.gov/electrical", lang:"en", partial:true, covers:"المخاطر وإجراءات العزل والوسم ومسافات الاقتراب الآمنة", gap:"التمديدات والحسابات — خذها من كودك", reason:{ar:"مخاطر الكهرباء، وإجراءات العزل والوسم، ومسافات الاقتراب الآمنة، والحوادث الموثّقة وأسبابها. أدرجناه لأن الكهربائي يُقاس بسلامته قبل مهارته", en:"Electrical hazards, lockout-tagout, approach boundaries and documented incidents"} },
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
+  "IELT 2437": {
+    explain:{
+      ar:"قراءة المخططات الكهربائية: الرموز، ومخططات الخط الواحد، ودوائر التحكم، ولوحات التوزيع.",
+      en:"Electrical Blueprint Reading: symbols, single-line diagrams, control circuits and panel layouts."
+    },
+    why:{
+      ar:"المخطط لغة عملك المكتوبة. ومن لا يقرؤه ينتظر من يشرح له، ومن يقرؤه يرى المنشأة كلها في ورقة.",
+      en:"The drawing is your trade's written language."
+    },
+    resources:[
+      { title:{ar:"الرسم الكهربائي وقراءة المخططات بالعربية (يوتيوب، قائمة تشغيل)", en:"Electrical drawings and blueprint reading in Arabic (YouTube playlist)"}, url:"https://www.youtube.com/playlist?list=PLMLA3hMhCm6fgFEE0nkOyTHrVfPkd9oNE", lang:"ar", partial:true, covers:"رموز المخططات الكهربائية ولوحات التوزيع ومخططات التحكم", gap:"الكود والحسابات", reason:{ar:"شرح عربي لرموز المخططات الكهربائية وقراءتها: الدوائر، ولوحات التوزيع، ومخططات التحكم. تنبيه: قائمة من قناة فردية لا مقرر معتمد — خذ منها التدريب على القراءة، وخذ الرموز المعتمدة من كتاب مقررك", en:"An Arabic explanation of electrical drawing symbols and how to read them"} }
+    ]
+  },
+  "IELT 2438": {
+    explain:{
+      ar:"تطبيقات المهارات الكهربائية ٢: التدريب العملي على التحكم والتشخيص والصيانة.",
+      en:"Electrical Skills Practice 2: hands-on control, diagnosis and maintenance."
+    },
+    why:{
+      ar:"تطبيق ما تعلّمته على لوحات حقيقية بأعطال مفتعلة. وهذه أقرب بيئة إلى عملك بعد التخرج.",
+      en:"Applying what you learned to real panels with introduced faults."
+    },
+    resources:[
+      { title:{ar:"OSHA — السلامة الكهربائية في مواقع العمل (مجاني)", en:"OSHA — Electrical safety at work (Free)"}, url:"https://www.osha.gov/electrical", lang:"en", partial:true, covers:"المخاطر وإجراءات العزل والوسم ومسافات الاقتراب الآمنة", gap:"التمديدات والحسابات — خذها من كودك", reason:{ar:"مخاطر الكهرباء، وإجراءات العزل والوسم، ومسافات الاقتراب الآمنة، والحوادث الموثّقة وأسبابها. أدرجناه لأن الكهربائي يُقاس بسلامته قبل مهارته", en:"Electrical hazards, lockout-tagout, approach boundaries and documented incidents"} }
+    ]
+  },
+  "IELT 3439": {
+    explain:{
+      ar:"برنامج التدريب التعاوني: خمسة عشر أسبوعًا في منشأة صناعية حقيقية.",
+      en:"Cooperative Training Program: fifteen weeks in a real industrial facility."
+    },
+    why:{
+      ar:"هنا تكتشف أن المصنع لا يشبه المشغل: إجراءات، وتصاريح عمل، وضغط وقت، وزملاء ورثوا تمديدات لا أحد يعرف تاريخها.",
+      en:"Here you discover a plant is nothing like the workshop."
+    },
+    resources:[
+      { title:{ar:"OSHA — السلامة الكهربائية في مواقع العمل (مجاني)", en:"OSHA — Electrical safety at work (Free)"}, url:"https://www.osha.gov/electrical", lang:"en", partial:true, covers:"المخاطر وإجراءات العزل والوسم ومسافات الاقتراب الآمنة", gap:"التمديدات والحسابات — خذها من كودك", reason:{ar:"مخاطر الكهرباء، وإجراءات العزل والوسم، ومسافات الاقتراب الآمنة، والحوادث الموثّقة وأسبابها. أدرجناه لأن الكهربائي يُقاس بسلامته قبل مهارته", en:"Electrical hazards, lockout-tagout, approach boundaries and documented incidents"} },
+      { title:{ar:"منصة دروب — مسارات مهنية مجانية (بالعربية)", en:"Doroob — Free Saudi professional tracks (Arabic)"}, url:"https://www.doroob.sa/", lang:"ar", partial:true, reason:{ar:"مسارات عربية في التواصل والعرض وآداب المهنة والسلامة، بسياق سوق العمل السعودي", en:"Arabic tracks in communication, conduct and safety in the Saudi labour context"} }
+    ]
+  },
+  "IENX 2215": {
+    explain:{
+      ar:"استكشاف أعطال الدوائر الإلكترونية: منهجية القياس، والأجهزة، وعزل العنصر التالف.",
+      en:"Electronic Circuits Troubleshooting: measurement method, instruments and isolating the failed part."
+    },
+    why:{
+      ar:"العنصر الإلكتروني لا يُرى تلفه غالبًا. والمنهج هو ما يجده: قِس عند المدخل والمخرج، ثم قسّم الدائرة نصفين.",
+      en:"A failed component is usually invisible; method finds it by halving the circuit."
+    },
+    resources:[
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
+  "IENX 2217": {
+    explain:{
+      ar:"الأجهزة الإلكترونية: المحوّلات الإشارية، والمكبّرات، والتحويل الرقمي التماثلي.",
+      en:"Electronic Instrumentation: signal transducers, amplifiers and analogue-digital conversion."
+    },
+    why:{
+      ar:"الجسر بين الظاهرة الفيزيائية وشاشة التحكم. ومن يفهمه يعرف أين يفسد الرقم قبل أن يصل.",
+      en:"The bridge between a physical phenomenon and the control screen."
+    },
+    resources:[
+      { title:{ar:"All About Circuits — كتب مفتوحة في الكهرباء والإلكترونيات (مجاني)", en:"All About Circuits — Free open textbooks in electricity and electronics"}, url:"https://www.allaboutcircuits.com/textbook/", lang:"en", partial:true, covers:"التيار المستمر والمتردد وأشباه الموصلات والمنطق الرقمي", gap:"الكود والتمديدات النظامية", reason:{ar:"ستة مجلدات مفتوحة: التيار المستمر، والمتردد، وأشباه الموصلات، والمنطق الرقمي — بشرح يبدأ من الصفر وأمثلة عملية. وهو أقرب ما وجدنا إلى مستوى مقرراتك", en:"Six open volumes: DC, AC, semiconductors and digital logic, starting from zero"} }
+    ]
+  },
   "CIT 001": {
     explain:{
       ar:"مقدمة في الحاسب: أجزاء الجهاز، ونظام التشغيل، والملفات والمجلدات، والإنترنت والبريد، وبرامج المكتب — وورد وإكسل وباوربوينت.",
@@ -26728,7 +27754,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-19 07:25";
+const BUILD_ID = "2026-09-19 19:29";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
@@ -27663,6 +28689,11 @@ const PROGRAM_ACCENT = {
   "seu-ams-ams-7": { rgb:"120,165,190", hex:"#78A5BE" },
   "seu-ams-ams-8": { rgb:"100,170,160", hex:"#64AAA0" },
   "rcj-eng-eng-5": { rgb:"90,150,190", hex:"#5A96BE" },
+  "jti-eng-eng-8": { rgb:"196,140,92", hex:"#C48C5C" },
+  "jti-eng-eng-9": { rgb:"150,150,130", hex:"#969682" },
+  "jti-eng-eng-10": { rgb:"190,120,110", hex:"#BE786E" },
+  "jti-eng-eng-4": { rgb:"120,160,200", hex:"#78A0C8" },
+  "jti-cs-cs-10": { rgb:"100,160,150", hex:"#64A096" },
   "seu-cs-cs-0": { rgb:"120,150,200", hex:"#7896C8" },
   "seu-cs-cs-7": { rgb:"100,175,175", hex:"#64AFAF" },
   "seu-cs-cs-1": { rgb:"170,140,190", hex:"#AA8CBE" },
@@ -29596,7 +30627,7 @@ function renderSettings(){
       </div>
       <div class="screen-content">
         <div class="set-tabs">
-          ${[["display",s.setTabDisplay],["account",s.setTabAccount],["app",s.setTabApp]].map(([id,label])=>`
+          ${[["display",s.setTabDisplay],["account",s.setTabAccount],["help",s.setTabHelp],["app",s.setTabApp]].map(([id,label])=>`
             <button type="button" class="set-tab ${settingsTab===id?'set-tab-active':''}" data-set-tab="${id}">${label}</button>`).join("")}
         </div>
         ${settingsTab==="display" ? `
@@ -29679,18 +30710,8 @@ function renderSettings(){
             <span class="card-chevron">${chevronFwd()}</span>
           </button>
         </div>` : ""}
-        ${settingsTab==="app" ? `
-        ${(()=>{ const on = isStandalone(); return `
-        <div class="card" style="cursor:default; align-items:flex-start; margin-bottom:var(--sp-4);">
-          <span class="card-icon" style="${on?'color:var(--support); background:rgba(88,182,144,.16);':''}">${on ? ICON.check : ICON.download}</span>
-          <span class="card-body">
-            <span class="card-title">${on ? s.installStatusYes : s.installStatusNo}</span>
-            <span class="card-meta" style="white-space:normal;">${on ? s.installStatusYesNote : s.installStatusNoNote}</span>
-            ${(!on && deferredInstallPrompt) ? `<button type="button" class="btn btn-primary" id="settingsInstallBtn" style="margin-top:var(--sp-3); padding:10px;">${ICON.download}<span>${s.installNowBtn}</span></button>` : ""}
-          </span>
-        </div>`; })()}
-        <div class="stack">
-          ${hasContact() ? `
+        ${settingsTab==="help" ? `
+${hasContact() ? `
           <button type="button" class="card" id="contactBtn">
             <span class="card-icon">${ICON.message}</span>
             <span class="card-body">
@@ -29708,22 +30729,7 @@ function renderSettings(){
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>` : ""}
-          <div class="card" style="cursor:default;">
-            <span class="card-icon">${ICON.info}</span>
-            <span class="card-body">
-              <span class="card-title">${s.buildLabel}</span>
-              <span class="card-meta" dir="ltr" style="text-align:start;">${BUILD_ID}</span>
-              <span class="card-meta">${(()=>{
-                /* The build stamp is for us; a date in words is for the
-                   student, who wants to know how recent their copy is. */
-                const d = new Date(BUILD_ID.replace(" ", "T"));
-                if(isNaN(d)) return "";
-                return s.updateDate + ": " + d.toLocaleDateString(lang()==="ar" ? "ar-SA" : "en-GB", { year:"numeric", month:"long", day:"numeric" });
-              })()}</span>
-            </span>
-          </div>
-          ${founderHtml()}
-          <button type="button" class="card" id="guideBtn">
+<button type="button" class="card" id="guideBtn">
             <span class="card-icon">${ICON.compass}</span>
             <span class="card-body">
               <span class="card-title">${s.guideEntry}</span>
@@ -29747,6 +30753,35 @@ function renderSettings(){
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>
+          ` : ""}
+          ${settingsTab==="app" ? `
+        ${(()=>{ const on = isStandalone(); return `
+        <div class="card" style="cursor:default; align-items:flex-start; margin-bottom:var(--sp-4);">
+          <span class="card-icon" style="${on?'color:var(--support); background:rgba(88,182,144,.16);':''}">${on ? ICON.check : ICON.download}</span>
+          <span class="card-body">
+            <span class="card-title">${on ? s.installStatusYes : s.installStatusNo}</span>
+            <span class="card-meta" style="white-space:normal;">${on ? s.installStatusYesNote : s.installStatusNoNote}</span>
+            ${(!on && deferredInstallPrompt) ? `<button type="button" class="btn btn-primary" id="settingsInstallBtn" style="margin-top:var(--sp-3); padding:10px;">${ICON.download}<span>${s.installNowBtn}</span></button>` : ""}
+          </span>
+        </div>`; })()}
+        <div class="stack">
+          
+          <div class="card" style="cursor:default;">
+            <span class="card-icon">${ICON.info}</span>
+            <span class="card-body">
+              <span class="card-title">${s.buildLabel}</span>
+              <span class="card-meta" dir="ltr" style="text-align:start;">${BUILD_ID}</span>
+              <span class="card-meta">${(()=>{
+                /* The build stamp is for us; a date in words is for the
+                   student, who wants to know how recent their copy is. */
+                const d = new Date(BUILD_ID.replace(" ", "T"));
+                if(isNaN(d)) return "";
+                return s.updateDate + ": " + d.toLocaleDateString(lang()==="ar" ? "ar-SA" : "en-GB", { year:"numeric", month:"long", day:"numeric" });
+              })()}</span>
+            </span>
+          </div>
+          ${founderHtml()}
+          
           ${devUnlocked ? `
           <button type="button" class="card" id="hardRefreshBtn">
             <span class="card-icon" style="color:var(--attention); background:var(--attention-soft);">${ICON.undo}</span>
