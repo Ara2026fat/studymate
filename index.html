@@ -397,7 +397,7 @@ ul,ol{ list-style:none; }
 /* ---------- C. Screen template zones ---------- */
 .screen-header{
   display:flex; align-items:center; justify-content:space-between;
-  padding:var(--sp-5) var(--sp-4) var(--sp-3);
+  padding:var(--sp-3) var(--sp-4) var(--sp-2);
 }
 .screen-header-title{ font-size:var(--fs-heading); font-weight:600; flex:1; min-width:0; overflow-wrap:break-word; }
 .screen-header-sub{ font-size:var(--fs-caption); color:var(--ink-muted); margin-top:2px; }
@@ -413,7 +413,7 @@ ul,ol{ list-style:none; }
 /* Buttons */
 .btn{
   display:flex; align-items:center; justify-content:center; gap:var(--sp-2);
-  width:100%; padding:14px var(--sp-4); border-radius:999px;
+  width:100%; padding:11px var(--sp-4); border-radius:999px;
   font-size:var(--fs-body); font-weight:600;
   transition:transform 200ms var(--ease-spring), opacity var(--m-micro), box-shadow 200ms var(--ease);
 }
@@ -464,7 +464,7 @@ ul,ol{ list-style:none; }
   background:var(--surface);
   border:1px solid rgba(255,255,255,.07);
   border-radius:var(--r-md); box-shadow:var(--shadow-card);
-  padding:var(--sp-3) var(--sp-4);
+  padding:10px var(--sp-3);
   position:relative; overflow:hidden;
   transition:transform 220ms var(--ease-spring), box-shadow 220ms var(--ease);
 }
@@ -502,7 +502,7 @@ body[data-theme="daylight"] .card:before{
    clearly and leaves the title as the loudest thing in the row, which is the
    correct order — the words carry the meaning. */
 .card-icon{
-  width:34px; height:34px; border-radius:10px; flex-shrink:0;
+  width:28px; height:28px; border-radius:9px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
   background:rgba(var(--accent-rgb),.13);
   color:var(--accent);
@@ -1000,8 +1000,8 @@ body[data-theme="daylight"] .card:before{
 .guide-phase-title{ font-size:var(--fs-caption); font-weight:700; margin-bottom:3px; }
 .guide-phase-text{ font-size:11.5px; color:var(--ink-muted); line-height:1.7; }
 .moment{
-  display:flex; flex-direction:column; gap:6px;
-  padding:var(--sp-4); border-radius:var(--r-md); margin-bottom:var(--sp-4);
+  display:flex; flex-direction:column; gap:5px;
+  padding:var(--sp-3); border-radius:var(--r-md); margin-bottom:var(--sp-3);
   background:var(--glass-sheen);
   border:1px solid rgba(var(--accent-rgb),.26);
   box-shadow:var(--glass-shadow);
@@ -1631,16 +1631,16 @@ body[data-theme="daylight"] .card:before{
   font-size:10.5px; font-weight:700; color:var(--ink-muted);
   letter-spacing:.04em; margin-bottom:5px; padding-inline-start:2px;
 }
-.set-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:9px; }
+.set-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:7px; }
 .set-tile{
-  display:flex; flex-direction:column; align-items:flex-start; gap:6px;
-  padding:14px; border-radius:var(--r-md); text-align:start;
+  display:flex; flex-direction:column; align-items:flex-start; gap:4px;
+  padding:10px 11px; border-radius:var(--r-md); text-align:start;
   background:var(--flat); border:1px solid var(--flat-line);
   transition:transform 180ms var(--ease-spring);
 }
 .set-tile:active{ transform:scale(.97); }
 .set-tile-icon{
-  width:32px; height:32px; border-radius:10px;
+  width:24px; height:24px; border-radius:8px;
   display:flex; align-items:center; justify-content:center;
   background:rgba(var(--accent-rgb),.13); color:var(--accent);
 }
@@ -1796,7 +1796,7 @@ body[data-theme="daylight"] .card:before{
   background:var(--surface); border-radius:var(--r-md); padding:4px;
 }
 .set-tab{
-  flex:1; padding:9px 6px; border-radius:calc(var(--r-md) - 4px); border:none;
+  flex:1; padding:7px 6px; border-radius:calc(var(--r-md) - 4px); border:none;
   background:none; color:var(--ink-muted); font-family:inherit;
   font-size:var(--fs-caption); font-weight:600;
   transition:background 220ms var(--ease), color 220ms var(--ease);
@@ -1958,13 +1958,13 @@ body[data-theme="daylight"] .segmented-active{
    fairground. A theme is a colour, so it is shown as one: a small disc the
    size of the choice it represents, four to a row, with its name beneath. */
 .theme-swatch{
-  display:flex; flex-direction:column; align-items:center; gap:5px; padding:6px 2px;
+  display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 1px;
   border-radius:var(--r-sm); border:1.5px solid transparent; background:none;
   transition:transform 200ms var(--ease-spring);
 }
 .theme-swatch:active{ transform:scale(.94); }
 .theme-swatch-preview{
-  display:block; width:28px; height:28px; border-radius:50%;
+  display:block; width:22px; height:22px; border-radius:50%;
   border:1px solid rgba(255,255,255,.14); position:relative;
 }
 .theme-swatch-active .theme-swatch-preview{
@@ -1972,7 +1972,7 @@ body[data-theme="daylight"] .segmented-active{
 }
 .theme-swatch-label{ font-size:9.5px; font-weight:600; color:var(--ink-muted); text-align:center; line-height:1.25; }
 .theme-swatch-active .theme-swatch-label{ color:var(--accent); }
-.theme-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px 6px; margin-top:var(--sp-2); }
+.theme-grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:7px 4px; margin-top:var(--sp-2); }
 .callout{
   background:var(--surface); border:1px solid rgba(255,255,255,.06);
   border-radius:var(--r-md);
@@ -2172,7 +2172,7 @@ body[data-theme="daylight"] .segmented-active{
 .pace-reflective textarea.field{ line-height:1.6; }
 
 /* utility */
-.stack{ display:flex; flex-direction:column; gap:var(--sp-3); }
+.stack{ display:flex; flex-direction:column; gap:var(--sp-2); }
 .journey-bridge{
   position:relative; perspective:700px; perspective-origin:50% 50%;
   padding:var(--sp-4) 0 var(--sp-5);
@@ -26728,7 +26728,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-19 07:11";
+const BUILD_ID = "2026-09-19 07:25";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
