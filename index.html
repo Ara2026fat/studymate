@@ -322,7 +322,8 @@ body{
   font-size:var(--fs-body);
   touch-action:manipulation;
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  /* The document is fixed; only .screen-content moves. */
+  overflow:hidden; overscroll-behavior:none;
   position:relative;
 }
 /* ---- Ambient field -------------------------------------------------------
@@ -371,7 +372,15 @@ ul,ol{ list-style:none; }
 .type-caption{ font-size:var(--fs-caption); font-weight:400; color:var(--ink-muted); }
 
 /* ---------- App shell ---------- */
-#app{ min-height:100vh; min-height:100dvh; max-width:var(--app-max-w); margin:0 auto; position:relative; }
+/* Pinned to the visible viewport, not to the document: the page itself never
+   scrolls, and each screen scrolls its own content if it needs to. This is
+   what stops the whole interface sliding up and down under a thumb. */
+#app{
+  position:fixed; inset:0; margin:0 auto;
+  max-width:var(--app-max-w);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
 
 #creditFooter{
   position:fixed; bottom:0; left:0; right:0; z-index:55;
@@ -381,15 +390,21 @@ ul,ol{ list-style:none; }
   text-align:center; font-size:9px; line-height:1.35; color:var(--ink-muted);
 }
 .screen{
-  min-height:100vh; min-height:100dvh;
+  /* Fills its pinned parent instead of the document, so its height is the
+     screen's height and nothing more. */
+  flex:1; min-height:0;
   display:flex; flex-direction:column;
-  padding-bottom:calc(140px + var(--footer-h) + env(safe-area-inset-bottom));
+  padding-bottom:0;
   /* No animation here: fadeIn carries a transform, and a transformed element
      becomes the containing block for its fixed descendants — which would pin
      the tab bar to the screen instead of the viewport. The entrance now runs
      on .screen-content. */
 }
-.screen.no-tabbar{ padding-bottom:calc(var(--sp-5) + var(--footer-h)); }
+.screen/* Screens without the tab bar still need clearance for the footer, and that
+   clearance belongs on the surface that scrolls. */
+.no-tabbar > .screen-content{
+  padding-bottom:calc(var(--sp-5) + var(--footer-h) + env(safe-area-inset-bottom));
+}
 @keyframes fadeIn{ from{ opacity:0; transform:translateY(8px) scale(.99); } to{ opacity:1; transform:translateY(0) scale(1); } }
 @keyframes celebrateIn{ 0%{ opacity:0; transform:scale(.5) rotate(-8deg); } 60%{ opacity:1; transform:scale(1.08) rotate(2deg); } 100%{ transform:scale(1) rotate(0); } }
 .celebrate-icon{ animation:celebrateIn 550ms var(--ease-spring); }
@@ -402,7 +417,15 @@ ul,ol{ list-style:none; }
 .screen-header-title{ font-size:var(--fs-heading); font-weight:600; flex:1; min-width:0; overflow-wrap:break-word; }
 .screen-header-sub{ font-size:var(--fs-caption); color:var(--ink-muted); margin-top:2px; }
 
-.screen-content{ flex:1; min-width:0; padding:0 var(--sp-4); }
+/* The only scrolling surface in the app. Momentum scrolling stays on for iOS,
+   and the bottom padding clears the tab bar and the footer. */
+.screen-content{
+  flex:1; min-width:0; min-height:0;
+  padding:0 var(--sp-4);
+  padding-bottom:calc(140px + var(--footer-h) + env(safe-area-inset-bottom));
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
 
 .screen-action{
   position:sticky; bottom:var(--footer-h); padding:var(--sp-4); background:linear-gradient(to top, var(--background) 65%, transparent);
@@ -1122,6 +1145,23 @@ body[data-theme="daylight"] .card:before{
 
    The concept's name is shown first and the fault hidden, so the student
    thinks before the answer arrives. The reveal is the whole mechanism. */
+/* ---- The fatigue guard ---------------------------------------------------
+   Three wrong in a row is where a student stops learning and starts drilling
+   the mistake. An app that calls itself a companion should be the one to say
+   enough for today — and it offers rather than decides, because the student
+   may be mid-revision the night before an exam.
+
+   Offered once per session: a guard that keeps interrupting becomes noise. */
+.tired{
+  padding:var(--sp-4) var(--sp-3); border-radius:16px; margin-top:var(--sp-3);
+  background:rgba(var(--attention-rgb),.10);
+  border:1px solid rgba(var(--attention-rgb),.28);
+  animation:trap-in 260ms var(--ease) both;
+}
+.tired-title{ font-size:var(--fs-subheading); font-weight:800; color:var(--attention); }
+.tired-body{ font-size:var(--fs-caption); line-height:1.85; color:var(--ink-muted); margin-top:6px; }
+.tired-acts{ display:flex; gap:8px; margin-top:var(--sp-3); }
+.tired-acts .btn{ flex:1; }
 .trap-card{
   padding:var(--sp-4) var(--sp-3); border-radius:var(--r-md);
   background:var(--flat); border:1px solid var(--flat-line);
@@ -2704,6 +2744,10 @@ const STR = {
     guideOpenTools:"افتح الأدوات",
     guideDone:"فهمت، لنبدأ",
     trapEntry:"أرني خطأً",
+    tiredTitle:"ثلاثة أخطاء متتالية",
+    tiredBody:"الإرهاق يبدأ هنا، والإصرار الآن يرسّخ الخطأ لا الصواب. عُد بعد راحة قصيرة — وما علّمتَه محفوظ.",
+    tiredStop:"أكتفي اليوم",
+    tiredGo:"أكمل",
     trapEntryD:"خطأ شائع في هذا المقرر — هل تعرف أين موضعه؟",
     trapTitle:"أرني خطأً",
     trapIntro:"في كل بطاقة خطأ يقع فيه الطلاب فعلًا. اقرأه، وخمّن أين الخلل، ثم اكشف الجواب — والتخمين قبل الكشف هو ما يثبّت الفكرة.",
@@ -3662,6 +3706,10 @@ const STR = {
     guideOpenTools:"Open the tools",
     guideDone:"Understood, let's begin",
     trapEntry:"Show me a mistake",
+    tiredTitle:"Three wrong in a row",
+    tiredBody:"Fatigue starts here, and pushing on now fixes the error rather than the answer. Come back after a short break — what you marked is kept.",
+    tiredStop:"That's enough today",
+    tiredGo:"Carry on",
     trapEntryD:"A common error in this course — can you see where it is?",
     trapTitle:"Show me a mistake",
     trapIntro:"Each card holds a mistake students actually make. Read it, guess where the fault lies, then reveal — guessing before revealing is what makes the idea stick.",
@@ -25305,6 +25353,25 @@ let trapList = [];
 let trapAt = 0;
 let trapShown = false;
 let trapRight = 0;
+/* Consecutive misses, and whether the guard has already spoken this session. */
+let trapMissStreak = 0;
+let trapTiredShown = false;
+
+/* The card the guard shows. It offers and does not decide: a student revising
+   the night before an exam has a reason to carry on, and an app that overrules
+   that reason is not a companion. */
+function tiredHtml(){
+  const s = t();
+  return `
+    <div class="tired">
+      <div class="tired-title">${s.tiredTitle}</div>
+      <p class="tired-body">${s.tiredBody}</p>
+      <div class="tired-acts">
+        <button type="button" class="btn btn-secondary" id="tiredGo">${s.tiredGo}</button>
+        <button type="button" class="btn btn-primary" id="tiredStop">${ICON.check}<span>${s.tiredStop}</span></button>
+      </div>
+    </div>`;
+}
 
 function renderTrapDrill(courseId, restart){
   applyDir();
@@ -25323,6 +25390,7 @@ function renderTrapDrill(courseId, restart){
       const tmp = trapList[i]; trapList[i] = trapList[j]; trapList[j] = tmp;
     }
     trapAt = 0; trapShown = false; trapRight = 0;
+    trapMissStreak = 0; trapTiredShown = false;
   }
 
   const total = trapList.length;
@@ -25347,6 +25415,7 @@ function renderTrapDrill(courseId, restart){
           <p class="empty-text">${s.trapDoneD(trapRight.toLocaleString(l==="ar"?"ar-EG":"en"), total.toLocaleString(l==="ar"?"ar-EG":"en"))}</p>
           <button type="button" class="btn btn-primary" id="tdAgain">${ICON.undo}<span>${s.trapAgain}</span></button>
         </div>` : `
+        ${(trapMissStreak >= 3 && !trapTiredShown) ? tiredHtml() : ""}
         <p class="type-caption" style="color:var(--ink-muted); line-height:1.75;">${s.trapIntro}</p>
         <div class="trap-card">
           <span class="trap-count">${s.trapOf((trapAt + 1).toLocaleString(l==="ar"?"ar-EG":"en"), total.toLocaleString(l==="ar"?"ar-EG":"en"))}</span>
@@ -25369,12 +25438,17 @@ function renderTrapDrill(courseId, restart){
   const reveal = document.getElementById("tdReveal");
   if(reveal) reveal.addEventListener("click", ()=>{ trapShown = true; renderTrapDrill(courseId); });
   const got = document.getElementById("tdGot");
-  if(got) got.addEventListener("click", ()=>{ trapRight++; trapAt++; trapShown = false; pulse("tap"); renderTrapDrill(courseId); });
+  if(got) got.addEventListener("click", ()=>{ trapRight++; trapMissStreak = 0; trapAt++; trapShown = false; pulse("tap"); renderTrapDrill(courseId); });
+  const tiredGo = document.getElementById("tiredGo");
+  if(tiredGo) tiredGo.addEventListener("click", ()=>{ trapTiredShown = true; trapMissStreak = 0; renderTrapDrill(courseId); });
+  const tiredStop = document.getElementById("tiredStop");
+  if(tiredStop) tiredStop.addEventListener("click", ()=>{ const c = courseId; trapMissStreak = 0; trapTiredShown = true; navBack(()=>renderCourseView(c, true)); });
   const missed = document.getElementById("tdMissed");
   if(missed) missed.addEventListener("click", ()=>{
     /* A trap the student didn't see becomes an open question in this course —
        so the drill feeds the same list the exam preparation screen reads. */
     NotebookModule.addCheck(courseId, cur.title[l], false, null);
+    trapMissStreak++;
     trapAt++; trapShown = false;
     renderTrapDrill(courseId);
   });
@@ -27754,7 +27828,7 @@ const CONTACT = {
 function hasContact(){ return !!(CONTACT.whatsapp || CONTACT.email); }
 /* Stamped at build time. Shown in Settings so a stale cached copy can be
    identified in one glance instead of guessed at. */
-const BUILD_ID = "2026-09-19 19:29";
+const BUILD_ID = "2026-09-19 21:16";
 /* The plan browser and the force-update control are for the app's owner, not
    for students. Change this to whatever you like; it is the only place the
    passcode appears. */
