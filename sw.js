@@ -16,9 +16,9 @@
    change between builds and re-fetching them wastes a student's data.
 */
 
-const BUILD = "2026-09-20-01";
+const BUILD = "2026-09-29-01";
 const CACHE = `studymate-${BUILD}`;
-const SHELL = ["./", "./index.html", "./manifest.json"];
+const SHELL = ["./", "./index.html"];
 
 self.addEventListener("install", (event)=>{
   event.waitUntil(
