@@ -1,24 +1,29 @@
 /* StudyMate service worker
    ---------------------------------------------------------------------------
-   The app is one HTML file, so caching it wrongly is the difference between a
-   student getting this week's fixes and staring at last month's build. Two
-   rules keep that from happening:
+   The app ships as two files — index.html (the shell and logic) and
+   course-data.js (the course content, split out because it's the far bigger
+   half of the app and changes on its own schedule). Caching either wrongly is
+   the difference between a student getting this week's fixes and staring at
+   last month's build. Three rules keep that from happening:
 
    1. The cache name carries the build stamp. A new build cannot collide with
       an old cache, and every old cache is deleted on activation — so there is
-      no way for yesterday's index.html to survive a deploy.
+      no way for yesterday's files to survive a deploy.
 
-   2. Navigations go to the network first, and fall back to the cache only when
-      the network fails. A student with signal always gets the current app; a
-      student on a bus with no signal still gets the last one that worked.
+   2. Navigations (index.html) go to the network first, and fall back to the
+      cache only when the network fails. A student with signal always gets the
+      current app; a student on a bus with no signal still gets the last one
+      that worked.
 
-   Static assets (fonts, the manifest) are cache-first, because they don't
-   change between builds and re-fetching them wastes a student's data.
+   3. Everything else — course-data.js, fonts, the manifest — is cache-first,
+      because within one build it doesn't change, and re-fetching a multi-
+      megabyte data file on every visit would waste a student's data for
+      nothing. A new BUILD stamp still forces a fresh copy, per rule 1.
 */
 
-const BUILD = "2026-09-29-01";
+const BUILD = "2026-09-29-02";
 const CACHE = `studymate-${BUILD}`;
-const SHELL = ["./", "./index.html"];
+const SHELL = ["./", "./index.html", "./course-data.js"];
 
 self.addEventListener("install", (event)=>{
   event.waitUntil(
