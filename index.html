@@ -9283,11 +9283,16 @@ function renderOnboarding(){
 
     activeTab = "today";
     /* The plan first, then whatever the flagship moment had to say. Seeing what
-       was built for them is the thing that makes the rest worth reading. */
+       was built for them is the thing that makes the rest worth reading. Only
+       once both have had their moment do we explain the screens themselves —
+       a new student who hasn't seen their own plan yet has no reason to care
+       what any of the tabs are for. */
     renderToday();
     setTimeout(()=>showPlanReady(()=>{
       const flagMsg = flagshipMessage(student);
-      if(flagMsg) showFlagshipMoment(flagMsg, ()=>renderToday());
+      const openGuide = ()=>{ navPush(renderToday); renderGuide(); };
+      if(flagMsg) showFlagshipMoment(flagMsg, openGuide);
+      else openGuide();
     }), 260);
   });
 }
