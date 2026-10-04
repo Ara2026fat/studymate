@@ -2638,9 +2638,9 @@ const COURSE_CATALOG = {
     l3:["0817240 - معادلات تفاضلية","0817244 - رياضيات متعددة المتغيرات","2202231 - التصميم المنطقي الرقمي","7401101 - العقيدة الإسلامية والمذاهب","2202241 - دوائر كهربائية 1","2202247 - معمل دوائر كهربائية","2202232 - معمل التصميم المنطقي الرقمي"],
     l4:["0817215 - رياضيات لطلبة الهندسة الكهربائية","0901204 - البرمجة الهندسية","1722137 - الكتابة التقنية","7401301 - قضايا ثقافية معاصرة","2202243 - الكترونيات 1","2202248 - معمل دوائر الكترونية","2202242 - الدوائر الكهربائية 2"],
     l5:["2200340 - الاحتمالات والإحصاءات للمهندسين","2202233 - المعالجات الدقيقة","2202331 - كهرومغناطيسية هندسية","2202244 - الكترونيات 2","2202330 - الإشارات والأنظمة","2202234 - معمل المعالجات الدقيقة"],
-    l6:["2200205 - علم المواد","2200223 - ميكانيكا هندسية","2200310 - طرق الحل العددية","2202336 - معمل نظم الطاقة والقدرة الكهربائية","2202333 - مختبر مبادئ في أنظمة الاتصال","2202335 - نظم الطاقة والقدرة الكهربائية","2202332 - مبادئ نظم الاتصالات"],
+    l6:["2200307 - الاقتصاد الهندسي","2200223 - ميكانيكا هندسية","2200310 - طرق الحل العددية","2202336 - معمل نظم الطاقة والقدرة الكهربائية","2202333 - مختبر مبادئ في أنظمة الاتصال","2202335 - نظم الطاقة والقدرة الكهربائية","2202332 - مبادئ نظم الاتصالات","2200399 - تدريب هندسي"],
     l7:["2202429 - ميكاترونيكس","2202430 - نظم التحكم التماثلي","2202495 - مشروع تخرج 1","2202434 - معالجة الإشارة الرقمية","2202431 - معمل التحكم والميكاترونيكس"],
-    l8:["0622292 - أساسيات ومهارات الإدارة","2202496 - مشروع تخرج 2","2200307 - الاقتصاد الهندسي","2200303 - الموائع الحرارية","7401102 - فقه السيرة (اختياري)","7401302 - الاسلام وقضايا العلم والتقنية (اختياري)","7401418 - النظام السياسي وحقوق الإنسان (اختياري)","7401318 - النظام الاقتصادي في الإسلام (اختياري)","7401401 - النظام الاجتماعي في الإسلام (اختياري)","7401317 - الأخلاق الإسلامية وآداب المهنة (اختياري)","2202480 - الآلات الكهربائية (اختياري تخصص)","2202481 - أنظمة القوى (اختياري تخصص)","2202482 - الكترونيات القوى (اختياري تخصص)","2202483 - أنظمة التحكم الحديثة (اختياري تخصص)","2202484 - التحكم الصناعي (اختياري تخصص)","2202493 - الاتصالات بالألياف الضوئية (اختياري تخصص)","2202486 - أنظمة الاتصالات الرقمية (اختياري تخصص)","2202487 - الكترونيات الاتصالات (اختياري تخصص)","2202488 - الاتصالات اللاسلكية والخلوية (اختياري تخصص)","2202489 - موضوعات خاصة (اختياري تخصص)","2202490 - البحث الجامعي (اختياري تخصص)","2202485 - أنظمة التحكم الرقمية (اختياري تخصص)"]
+    l8:["0622292 - أساسيات ومهارات الإدارة","2202496 - مشروع تخرج 2","2200205 - علم المواد","2200303 - الموائع الحرارية","7401102 - فقه السيرة (اختياري)","7401302 - الاسلام وقضايا العلم والتقنية (اختياري)","7401418 - النظام السياسي وحقوق الإنسان (اختياري)","7401318 - النظام الاقتصادي في الإسلام (اختياري)","7401401 - النظام الاجتماعي في الإسلام (اختياري)","7401317 - الأخلاق الإسلامية وآداب المهنة (اختياري)","2202480 - الآلات الكهربائية (اختياري تخصص)","2202481 - أنظمة القوى (اختياري تخصص)","2202482 - الكترونيات القوى (اختياري تخصص)","2202483 - أنظمة التحكم الحديثة (اختياري تخصص)","2202484 - التحكم الصناعي (اختياري تخصص)","2202493 - الاتصالات بالألياف الضوئية (اختياري تخصص)","2202486 - أنظمة الاتصالات الرقمية (اختياري تخصص)","2202487 - الكترونيات الاتصالات (اختياري تخصص)","2202488 - الاتصالات اللاسلكية والخلوية (اختياري تخصص)","2202489 - موضوعات خاصة (اختياري تخصص)","2202490 - البحث الجامعي (اختياري تخصص)","2202485 - أنظمة التحكم الرقمية (اختياري تخصص)"]
   },
   "kfu-eng-eng-2": {
     l1:["0814140 - فيزياء عامة 1","0814144 - معمل فيزياء عامة 1","0815140 - كيمياء عامة 1","2200106 - الرسم الهندسي","1722133 - إنشاء انجليزي 1","2200100 - مدخل إلى الهندسة","0817144 - تفاضل وتكامل 1"],
@@ -23058,6 +23058,9 @@ const KFU_GP_ENG = {"explain": {"ar": "مشروع التخرج (هندسة): م�
 const KFU_GP_HEALTH = {"explain": {"ar": "مشروع/بحث التخرج: بحث علمي صغير — سؤال بحثي، ومراجعة الأدبيات، ومنهجية، وتحليل، وكتابة ومناقشة أمام لجنة. يحدد مشرفك التفاصيل.", "en": "Graduation research project: a small study — research question, literature review, method, analysis, writing and defence before a panel; your supervisor sets the details."}, "why": {"ar": "القدرة على صياغة سؤال بحثي وقراءة الدليل من أهم مهارات المهنيين الصحيين، وتبقى معك بعد التخرج.", "en": "Framing a question and reading evidence is a core skill for health professionals and stays with you after graduation."}, "resources": [{"title": {"ar": "Research Methods Knowledge Base — مرجع مفتوح (مجاني)", "en": "Research Methods Knowledge Base (Free)"}, "url": "https://conjointly.com/kb/", "lang": "en", "partial": true, "reason": {"ar": "صياغة السؤال والتصاميم والعينات والقياس والتحليل — بلغة مبسّطة", "en": "Questions, designs, sampling and analysis in plain language"}}, {"title": {"ar": "Purdue OWL — الكتابة الأكاديمية والمهنية (مجاني)", "en": "Purdue OWL — Academic and Professional Writing (Free)"}, "url": "https://owl.purdue.edu/owl/general_writing/academic_writing/index.html", "lang": "en", "partial": true, "covers": "بناء الفقرة والحجة والنبرة المهنية، ووضوح الجملة، وتنظيم التقرير", "gap": "لا يغطي قوالب التقارير الهندسية تحديدًا (كمواصفات المشروع)، فقط مبادئ الكتابة الواضحة العامة", "reason": {"ar": "مصدر Purdue الرسمي لمهارات الكتابة الأكاديمية والمهنية، مجاني وبلا تسجيل. يغطي بالضبط ما يحتاجه أي تقرير هندسي: جملة واضحة، فقرة منظمة، وحجة مقنعة بلا حشو", "en": "Purdue's official resource for academic and professional writing skills, free with no registration. Covers exactly what any engineering report needs: a clear sentence, an organized paragraph, and a convincing argument without padding"}}]};
 const KFU_GP_IT = {"explain": {"ar": "مشروع التخرج (حاسب ومعلومات): بناء نظام أو تطبيق حقيقي — تحديد المشكلة والمتطلبات، والتحليل والتصميم والتنفيذ والاختبار، وتوثيق العمل وعرضه. يحدد مشرفك القسم والتفاصيل.", "en": "Graduation Project (computing/IT): building a real system or application — problem and requirements, analysis, design, implementation, testing, documentation and presentation; your supervisor sets the details."}, "why": {"ar": "هو أقرب ما ستفعله في الجامعة إلى عمل حقيقي، وغالبًا أول ما يُسأل عنه في مقابلة العمل. وأكثر المشاريع تعثرًا تلك التي بدأت بلا خطة زمنية.", "en": "It is the closest thing at university to real work and often the first topic in a job interview; the projects that struggle most are those that began without a schedule."}, "resources": [{"title": {"ar": "Project Management Institute — مكتبة إدارة المشاريع (مجاني)", "en": "Project Management Institute — Library (Free)"}, "url": "https://www.pmi.org/learning/library", "lang": "en", "partial": true, "reason": {"ar": "أوراق ودراسات حالة في النطاق والوقت والتكلفة والمخاطر. مكتبة لا مقرر", "en": "Papers and case studies on scope, time, cost and risk"}}, {"title": {"ar": "Purdue OWL — الكتابة الأكاديمية والمهنية (مجاني)", "en": "Purdue OWL — Academic and Professional Writing (Free)"}, "url": "https://owl.purdue.edu/owl/general_writing/academic_writing/index.html", "lang": "en", "partial": true, "covers": "بناء الفقرة والحجة والنبرة المهنية، ووضوح الجملة، وتنظيم التقرير", "gap": "لا يغطي قوالب التقارير الهندسية تحديدًا (كمواصفات المشروع)، فقط مبادئ الكتابة الواضحة العامة", "reason": {"ar": "مصدر Purdue الرسمي لمهارات الكتابة الأكاديمية والمهنية، مجاني وبلا تسجيل. يغطي بالضبط ما يحتاجه أي تقرير هندسي: جملة واضحة، فقرة منظمة، وحجة مقنعة بلا حشو", "en": "Purdue's official resource for academic and professional writing skills, free with no registration. Covers exactly what any engineering report needs: a clear sentence, an organized paragraph, and a convincing argument without padding"}}]};
 const KFU_TRAINING = {"explain": {"ar": "التدريب التعاوني العملي: فصل تعمل فيه في جهة حقيقية تحت إشراف — مهام فعلية، وتقارير دورية، وتقييم من الجهة ومن الجامعة.", "en": "Co-operative practical training: a term working in a real organisation under supervision — real tasks, periodic reports and evaluation by both employer and university."}, "why": {"ar": "التدريب فرصتك للتعرف على سوق العمل وبناء علاقات مهنية، وكثير من الخريجين يوظَّفون في جهة تدربوا فيها.", "en": "Training lets you see the labour market and build professional contacts; many graduates are hired where they trained."}, "resources": [{"title": {"ar": "منصة دروب — مسارات مهنية مجانية (بالعربية)", "en": "Doroob (Arabic, Free)"}, "url": "https://www.doroob.sa/", "lang": "ar", "partial": true, "reason": {"ar": "مسارات عربية في التواصل والعرض وآداب المهنة بسياق سوق العمل السعودي", "en": "Arabic tracks in communication and professional conduct"}}, {"title": {"ar": "Purdue OWL — الكتابة الأكاديمية والمهنية (مجاني)", "en": "Purdue OWL — Academic and Professional Writing (Free)"}, "url": "https://owl.purdue.edu/owl/general_writing/academic_writing/index.html", "lang": "en", "partial": true, "covers": "بناء الفقرة والحجة والنبرة المهنية، ووضوح الجملة، وتنظيم التقرير", "gap": "لا يغطي قوالب التقارير الهندسية تحديدًا (كمواصفات المشروع)، فقط مبادئ الكتابة الواضحة العامة", "reason": {"ar": "مصدر Purdue الرسمي لمهارات الكتابة الأكاديمية والمهنية، مجاني وبلا تسجيل. يغطي بالضبط ما يحتاجه أي تقرير هندسي: جملة واضحة، فقرة منظمة، وحجة مقنعة بلا حشو", "en": "Purdue's official resource for academic and professional writing skills, free with no registration. Covers exactly what any engineering report needs: a clear sentence, an organized paragraph, and a convincing argument without padding"}}]};
+/* KFU_TRAINING existed but was never actually attached to a course code —
+   found while cross-checking the official EE plan against our catalog. */
+COURSE_ENRICHMENT["2200399"] = KFU_TRAINING;
 const KFU_SHARED = {
   KFU_RESEARCH:["2201481","2201482","2202490","2203486","2204481","2204482","3102407","ENGL 407"],
   KFU_GP_ENG:["2201495","2201496","2202495","2202496","2203495","2203496","2204495","2204496","IE402","IE406","CHE491","CHE492","همك498"],
@@ -23664,58 +23667,8 @@ let ptPicked = [];
    sitting one instruction away from taking over. Rather than letting it swap
    in at some unpredictable moment — possibly mid-sentence in a lecture — we
    say so and let the student choose when. */
-let pendingWorker = null;
-let updateDismissed = false;
-function showUpdateBar(worker){
-  pendingWorker = worker;
-  if(updateDismissed) return;
-  const s = t();
-  const old = document.getElementById("updBar");
-  if(old) old.remove();
-  const bar = document.createElement("div");
-  bar.id = "updBar";
-  bar.className = "upd";
-  bar.innerHTML = `
-    <span class="upd-text">${s.updateReady}</span>
-    <button type="button" class="upd-later" id="updLater">${s.updateLater}</button>
-    <button type="button" class="upd-go" id="updGo">${s.updateNow}</button>`;
-  document.body.appendChild(bar);
-  bar.querySelector("#updLater").addEventListener("click", ()=>{
-    /* Dismissed for this session only: the next launch offers it again, since
-       an update the student never takes is an update that never shipped. */
-    updateDismissed = true;
-    bar.remove();
-  });
-  bar.querySelector("#updGo").addEventListener("click", ()=>{
-    showToast(s.updateApplying);
-    pulse("saved");
-    if(pendingWorker) pendingWorker.postMessage("skip-waiting");
-    /* If the handover doesn't happen within a couple of seconds — an older
-       browser, a worker that never took control — reload anyway rather than
-       leaving the student staring at a button that did nothing. */
-    setTimeout(()=>location.reload(), 1800);
-  });
-}
-function fieldOfStudy(){
-  const student = StudentModule.current();
-  if(!student) return "other";
-  const key = catalogKeyFor(student) || "";
-  const major = String(student.major || "");
-  /* The plan key decides first — it is exact. Only when a student's programme
-     isn't one we carry do we fall back to reading their major's wording, and
-     there the order matters: "نظم المعلومات الإدارية" contains the word for
-     information but is an administration degree, while "تقنية إدارة أنظمة
-     الشبكات" contains the word for administration but is a computing one. */
-  if(/-bus-/.test(key)) return "business";
-  if(/-cs-/.test(key)) return "computing";
-  if(/شبكات|حاسب|برمج|سيبراني/.test(major)) return "computing";
-  if(/إدار|أعمال|محاسب|تسويق/.test(major)) return "business";
-  if(/eng-3/.test(key) || /كيميائ/.test(major)) return "chemical";
-  if(/eng-/.test(key) || /هندس|ميكانيك|صناع|رافعات|تحضيري|سلامة صناعية/.test(major)) return "engineering";
-  if(/ams-/.test(key) || /صحة|سلامة/.test(major)) return "health";
-  if(/arts-/.test(key) || /ترجم|لغة|أدب/.test(major)) return "language";
-  return "other";
-}
+
+
 /* Every field gets the language tools; the sciences add what they compute
    with. Nothing is hidden from anyone — only ordered. */
 const FIELD_TOOLS = {
@@ -23729,7 +23682,4 @@ const FIELD_TOOLS = {
 };
 /* المهارات السريرية وحاسبة الجرعات: أدوات لتخصصات عملية سريرية فقط (طب، أسنان، صيدلة،
    والعلوم الطبية التطبيقية بأقسامها — تمريض وأشعة ومختبرات وعلاج طبيعي). */
-function isClinicalCollege(){
-  const student = StudentModule.current();
-  return !!student && ["med","dent","pharm","ams"].indexOf(student.collegeId) !== -1;
-}
+
