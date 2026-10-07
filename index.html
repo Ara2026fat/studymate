@@ -2416,6 +2416,13 @@ let deferredInstallPrompt = null;
 window.addEventListener("beforeinstallprompt", (e)=>{
   e.preventDefault();
   deferredInstallPrompt = e;
+  /* This fires whenever the browser decides to — often a moment after Today
+     has already rendered without it, since nothing was available yet at that
+     render. Without this, the banner's own logic is correct but never gets a
+     second chance to run, and a real install offer silently never appears. */
+  if(typeof activeTab !== "undefined" && activeTab === "today" && typeof StudentModule !== "undefined" && StudentModule.current()){
+    try{ renderToday(); }catch(err){}
+  }
 });
 function isStandalone(){
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
@@ -2894,6 +2901,10 @@ const STR = {
     sheetOurs:"منّا",
     sheetYours:"منك",
     sheetWhat:"ما هذا المقرر",
+    sheetWhy:"لماذا يهمّك",
+    sheetKind:"طبيعة المقرر",
+    sheetTheory:"نظري",
+    sheetPractical:"عملي / معملي",
     sheetHard:"أصعب ما فيه",
     sheetTraps:"الفخاخ التي يقع فيها الطلاب",
     sheetRefs:"مراجعك",
@@ -3038,6 +3049,16 @@ const STR = {
     dosDropLabel:"عامل التنقيط (نقطة/مل) — يُكتب على عبوة جهاز التسريب",
     dosDropsMin:"نقطة/دقيقة",
     dosDisclaimer:"للتدريب والمراجعة فقط. طبّق دائمًا بروتوكول منشأتك الصحية وتحقق مع مشرفك قبل أي إعطاء فعلي للدواء.",
+    tvmTitle:"حاسبة القيمة الزمنية للنقود",
+    tvmSub:"تعرض الصيغة كاملة، لا الرقم النهائي وحده — فالفكرة أهم من أي رقم: ريال اليوم لا يساوي ريال بعد سنوات.",
+    tvmModeFv:"القيمة المستقبلية",
+    tvmModePv:"القيمة الحالية",
+    tvmPvLabel:"المبلغ الحالي (PV)",
+    tvmFvLabel:"المبلغ المستقبلي (FV)",
+    tvmRateLabel:"معدل الفائدة السنوي (٪)",
+    tvmYearsLabel:"عدد السنوات",
+    tvmCurrency:"ريال",
+    tvmNote:"للفهم والتدريب فقط. المعدلات الحقيقية قد تُحتسب بطرق أدق (شهرية، ربع سنوية)، راجع كتاب مقررك للحالة الدقيقة المطلوبة منك.",
     convFamilyLen:"طول", convFamilyMass:"كتلة", convFamilyTime:"زمن",
     convFamilySpeed:"سرعة", convFamilyPres:"ضغط", convFamilyEnergy:"طاقة", convFamilyTemp:"حرارة",
     formulaEntryD:"قل ما عندك وما تريد، ونعطيك القانون",
@@ -3227,6 +3248,30 @@ const STR = {
     searchKindEssay:"تعبير",
     searchKindFile:"مرفق",
     essaysToolLabel:"التعابير",
+    askSeniorToolLabel:"اسأل من سبقك",
+    askSeniorTitle:"اسأل من سبقك",
+    askSeniorLead:"أفضل معلومة عن هذه المادة موجودة في رأس طالب أخذها قبلك، لا في أي مرجع. اطبع هذه الأسئلة أو اقرأها له، ودوّن إجاباته هنا — ستصير جزءًا من دفترك.",
+    askSeniorQ1:"ما الذي يركّز عليه الدكتور فعليًا في الاختبار، لا في المنهج المكتوب فقط؟",
+    askSeniorQ2:"أي جزء يبدو بسيطًا لكنه يأخذ حيزًا كبيرًا من الدرجات؟",
+    askSeniorQ3:"ما أكثر خطأ وقع فيه أغلب من أخذ هذه المادة؟",
+    askSeniorQ4:"هل يوجد مرجع أو ملخص ساعدك أنت تحديدًا أكثر من غيره؟",
+    askSeniorQ5:"لو عدت لأول أسبوع من المادة، ماذا كنت ستفعل بشكل مختلف؟",
+    askSeniorQ6:"هل تحتاج المادة حفظًا أم فهمًا أكثر، أم الاثنين معًا؟",
+    askSeniorQ7:"هل هناك جزء عملي أو تطبيقي يستحق وقتًا إضافيًا من البداية؟",
+    askSeniorQ8:"ما نصيحة واحدة كنت تتمنى أن يقولها لك أحد قبل أن تبدأ؟",
+    askSeniorQ9:"كيف كانت طبيعة أسئلة الاختبار: مباشرة من الشرائح أم تحتاج تفكيرًا؟",
+    askSeniorAnswerPH:"دوّن إجابته هنا (اختياري)…",
+    askSeniorSave:"احفظ اللقاء في دفتري",
+    askSeniorEmpty:"لا بأس إن لم تملأ كل الأسئلة — أجب ما سُئل عنه فعلًا.",
+    askSeniorSavedNote:"لقاء مع من سبقني في هذه المادة",
+    askSeniorToast:"حُفظ اللقاء في دفترك",
+    weakSpotTitle:"رادار نقاط الضعف",
+    weakSpotLead:(n)=>`${n} ${n===1?"موضوع":"مواضيع"} لم تفهمها بعد، مجمّعة من كل مقرراتك في مكان واحد. اضغط أي نقطة لتفتح دفتر مادتها مباشرة.`,
+    weakSpotEmptyTitle:"لا نقاط ضعف مسجّلة الآن 🎉",
+    weakSpotEmptyBody:"كل ما وسمته هذا الفصل كان «فهمتها». استمر على هذا.",
+    weakSpotListTitle:"القائمة كاملة",
+    weakSpotHomeCard:"رادار نقاط الضعف",
+    weakSpotHomeCardD:(n)=>`${n} ${n===1?"موضوع يحتاج":"مواضيع تحتاج"} مراجعة عبر مقرراتك`,
     essaysSub:"المقالات والتعابير المطلوبة منك في هذه المادة — اكتبها هنا، وراجعها قبل الاختبار من مكان واحد.",
     essaysEmpty:"لم تكتب تعبيرًا بعد. أضف عنوان أول تعبير مطلوب منك، واكتبه على مهلك.",
     essaysAdd:"أضف تعبيرًا",
@@ -3908,6 +3953,10 @@ const STR = {
     sheetOurs:"From us",
     sheetYours:"From you",
     sheetWhat:"What this course is",
+    sheetWhy:"Why it matters to you",
+    sheetKind:"Course type",
+    sheetTheory:"Theory",
+    sheetPractical:"Practical / Lab",
     sheetHard:"Its hardest parts",
     sheetTraps:"The traps students fall into",
     sheetRefs:"Your references",
@@ -4052,6 +4101,16 @@ const STR = {
     dosDropLabel:"Drop factor (gtt/mL) — printed on the giving set",
     dosDropsMin:"drops/min",
     dosDisclaimer:"For training and review only. Always follow your facility's protocol and confirm with your supervisor before any real medication administration.",
+    tvmTitle:"Time Value of Money Calculator",
+    tvmSub:"Shows the full working, not just the final number — the idea matters more than any one answer: a riyal today isn't worth the same as a riyal years from now.",
+    tvmModeFv:"Future Value",
+    tvmModePv:"Present Value",
+    tvmPvLabel:"Present amount (PV)",
+    tvmFvLabel:"Future amount (FV)",
+    tvmRateLabel:"Annual interest rate (%)",
+    tvmYearsLabel:"Number of years",
+    tvmCurrency:"SAR",
+    tvmNote:"For understanding and practice only. Real-world rates may compound differently (monthly, quarterly) — check your course textbook for the exact method required of you.",
     convFamilyLen:"Length", convFamilyMass:"Mass", convFamilyTime:"Time",
     convFamilySpeed:"Speed", convFamilyPres:"Pressure", convFamilyEnergy:"Energy", convFamilyTemp:"Temperature",
     formulaEntryD:"Say what you have and what you want, and we'll give you the law",
@@ -4241,6 +4300,30 @@ const STR = {
     searchKindEssay:"essay",
     searchKindFile:"attachment",
     essaysToolLabel:"Essays",
+    askSeniorToolLabel:"Ask someone who took it",
+    askSeniorTitle:"Ask someone who took it",
+    askSeniorLead:"The best information about this course lives in the head of a student who already took it, not in any reference. Read these questions to them, or print them, and jot their answers here — they'll become part of your notebook.",
+    askSeniorQ1:"What does the professor actually focus on in the exam, not just the written syllabus?",
+    askSeniorQ2:"Which part looks simple but takes up a big share of the grade?",
+    askSeniorQ3:"What's the most common mistake most people made in this course?",
+    askSeniorQ4:"Was there a specific reference or summary that helped you more than others?",
+    askSeniorQ5:"If you went back to week one, what would you do differently?",
+    askSeniorQ6:"Does this course need more memorisation, more understanding, or both equally?",
+    askSeniorQ7:"Is there a practical or applied part worth extra time from the start?",
+    askSeniorQ8:"What's one piece of advice you wish someone had told you before you started?",
+    askSeniorQ9:"What were the exam questions like: straight from the slides, or did they need real thinking?",
+    askSeniorAnswerPH:"Jot their answer here (optional)…",
+    askSeniorSave:"Save this talk to my notebook",
+    askSeniorEmpty:"It's fine not to fill every question — answer only what was actually asked.",
+    askSeniorSavedNote:"A talk with someone who took this course before me",
+    askSeniorToast:"Saved to your notebook",
+    weakSpotTitle:"Weak-Spot Radar",
+    weakSpotLead:(n)=>`${n} topic${n===1?"":"s"} you haven't understood yet, gathered from all your courses in one place. Tap any dot to open that course's notebook directly.`,
+    weakSpotEmptyTitle:"No weak spots logged right now 🎉",
+    weakSpotEmptyBody:"Everything you tagged this term was marked \"understood.\" Keep it up.",
+    weakSpotListTitle:"Full list",
+    weakSpotHomeCard:"Weak-spot radar",
+    weakSpotHomeCardD:(n)=>`${n} topic${n===1?"":"s"} need review across your courses`,
     essaysSub:"The essays and compositions this course asks of you — written here, revised before the exam from one place.",
     essaysEmpty:"No essay yet. Add the title of the first one you've been asked for, and write it at your own pace.",
     essaysAdd:"Add an essay",
@@ -6295,6 +6378,111 @@ function renderDosageCalc(){
   wireLive("dosDropIn", v=>dosDrop=v);
 }
 
+/* ============================================================
+   TIME VALUE OF MONEY — the one idea that quietly underlies Finance,
+   Accounting and every MBA course: a riyal today is worth more than the
+   same riyal next year. Shows the formula worked through, not just the
+   final number, exactly like the dosage calculator does for nursing.
+   ============================================================ */
+let tvmMode = "fv";
+let tvmPV = "", tvmFV = "", tvmRate = "", tvmYears = "";
+function renderTvmCalc(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const num = (v)=>{ const n = parseFloat(v); return isNaN(n) ? null : n; };
+  const fmt = (x)=> x===null ? "—" : String(Math.round(x*100)/100);
+
+  const rate = num(tvmRate), years = num(tvmYears);
+  const rDec = rate!==null ? rate/100 : null;
+
+  const pv = num(tvmPV);
+  const fvOut = (pv!==null && rDec!==null && years!==null) ? pv * Math.pow(1+rDec, years) : null;
+  const fvWork = (pv!==null && rDec!==null && years!==null)
+    ? `${tvmPV}  ×  (1 + ${tvmRate}/100)^${tvmYears}\n=  ${tvmPV}  ×  (${fmt(1+rDec)})^${tvmYears}\n=  ${fmt(fvOut)}`
+    : "";
+
+  const fv = num(tvmFV);
+  const pvOut = (fv!==null && rDec!==null && years!==null && (1+rDec)!==0) ? fv / Math.pow(1+rDec, years) : null;
+  const pvWork = (fv!==null && rDec!==null && years!==null)
+    ? `${tvmFV}  ÷  (1 + ${tvmRate}/100)^${tvmYears}\n=  ${tvmFV}  ÷  (${fmt(1+rDec)})^${tvmYears}\n=  ${fmt(pvOut)}`
+    : "";
+
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="tvmBack" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.tvmTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-3);">${s.tvmSub}</p>
+        <div class="set-tabs">
+          <button type="button" class="set-tab ${tvmMode==='fv'?'set-tab-active':''}" data-tvm-mode="fv">${s.tvmModeFv}</button>
+          <button type="button" class="set-tab ${tvmMode==='pv'?'set-tab-active':''}" data-tvm-mode="pv">${s.tvmModePv}</button>
+        </div>
+
+        ${tvmMode==='fv' ? `
+        <div class="field-group">
+          <label class="field-label" for="tvmPvIn">${s.tvmPvLabel}</label>
+          <input type="text" class="field" id="tvmPvIn" inputmode="decimal" dir="ltr" value="${escapeHtml(tvmPV)}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="tvmRateIn1">${s.tvmRateLabel}</label>
+          <input type="text" class="field" id="tvmRateIn1" inputmode="decimal" dir="ltr" value="${escapeHtml(tvmRate)}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="tvmYearsIn1">${s.tvmYearsLabel}</label>
+          <input type="text" class="field" id="tvmYearsIn1" inputmode="decimal" dir="ltr" value="${escapeHtml(tvmYears)}">
+        </div>
+        <div class="conv-out" style="margin-bottom:var(--sp-3);">${fmt(fvOut)} ${s.tvmCurrency}</div>
+        <div class="section-label" style="margin-top:0;">${s.convWork}</div>
+        <div class="conv-work">${escapeHtml(fvWork)}</div>
+        ` : `
+        <div class="field-group">
+          <label class="field-label" for="tvmFvIn">${s.tvmFvLabel}</label>
+          <input type="text" class="field" id="tvmFvIn" inputmode="decimal" dir="ltr" value="${escapeHtml(tvmFV)}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="tvmRateIn2">${s.tvmRateLabel}</label>
+          <input type="text" class="field" id="tvmRateIn2" inputmode="decimal" dir="ltr" value="${escapeHtml(tvmRate)}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="tvmYearsIn2">${s.tvmYearsLabel}</label>
+          <input type="text" class="field" id="tvmYearsIn2" inputmode="decimal" dir="ltr" value="${escapeHtml(tvmYears)}">
+        </div>
+        <div class="conv-out" style="margin-bottom:var(--sp-3);">${fmt(pvOut)} ${s.tvmCurrency}</div>
+        <div class="section-label" style="margin-top:0;">${s.convWork}</div>
+        <div class="conv-work">${escapeHtml(pvWork)}</div>
+        `}
+        <p class="type-caption" style="color:var(--ink-muted); margin-top:var(--sp-4); line-height:1.7;">${s.tvmNote}</p>
+      </div>
+    </section>`;
+
+  document.getElementById("tvmBack").addEventListener("click", ()=>navBack(()=>{ activeTab = "tools"; renderTools(); }));
+  document.querySelectorAll("[data-tvm-mode]").forEach(b=>b.addEventListener("click", ()=>{
+    if(b.dataset.tvmMode === tvmMode) return;
+    tvmMode = b.dataset.tvmMode; renderTvmCalc();
+  }));
+  const wireLiveTvm = (id, setter)=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("input", (e)=>{
+      setter(e.target.value);
+      const pos = e.target.selectionStart;
+      renderTvmCalc();
+      const again = document.getElementById(id);
+      if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(err){} }
+    });
+  };
+  wireLiveTvm("tvmPvIn", v=>tvmPV=v);
+  wireLiveTvm("tvmFvIn", v=>tvmFV=v);
+  wireLiveTvm("tvmRateIn1", v=>tvmRate=v);
+  wireLiveTvm("tvmRateIn2", v=>tvmRate=v);
+  wireLiveTvm("tvmYearsIn1", v=>tvmYears=v);
+  wireLiveTvm("tvmYearsIn2", v=>tvmYears=v);
+}
+
 /* A brief confirmation that something happened, then out of the way. */
 function showToast(message){
   const el = document.createElement("div");
@@ -7976,6 +8164,71 @@ const StudentModule = {
   }
 };
 
+/* These three belong with the app logic, not the course-data file — each
+   reaches into StudentModule or t(), both scoped to this closure. They were
+   briefly misplaced in course-data.js during the file split and are back
+   where they can actually resolve what they reference. */
+function fieldOfStudy(){
+  const student = StudentModule.current();
+  if(!student) return "other";
+  const key = catalogKeyFor(student) || "";
+  const major = String(student.major || "");
+  /* The plan key decides first — it is exact. Only when a student's programme
+     isn't one we carry do we fall back to reading their major's wording, and
+     there the order matters: "نظم المعلومات الإدارية" contains the word for
+     information but is an administration degree, while "تقنية إدارة أنظمة
+     الشبكات" contains the word for administration but is a computing one. */
+  if(/-bus-/.test(key)) return "business";
+  if(/-cs-/.test(key)) return "computing";
+  if(/شبكات|حاسب|برمج|سيبراني/.test(major)) return "computing";
+  if(/إدار|أعمال|محاسب|تسويق/.test(major)) return "business";
+  if(/eng-3/.test(key) || /كيميائ/.test(major)) return "chemical";
+  if(/eng-/.test(key) || /هندس|ميكانيك|صناع|رافعات|تحضيري|سلامة صناعية/.test(major)) return "engineering";
+  if(/ams-/.test(key) || /صحة|سلامة/.test(major)) return "health";
+  if(/arts-/.test(key) || /ترجم|لغة|أدب/.test(major)) return "language";
+  return "other";
+}
+function isClinicalCollege(){
+  const student = StudentModule.current();
+  return !!student && ["med","dent","pharm","ams"].indexOf(student.collegeId) !== -1;
+}
+function isBusinessCollege(){
+  const student = StudentModule.current();
+  return !!student && student.collegeId === "bus";
+}
+let pendingWorker = null;
+let updateDismissed = false;
+function showUpdateBar(worker){
+  pendingWorker = worker;
+  if(updateDismissed) return;
+  const s = t();
+  const old = document.getElementById("updBar");
+  if(old) old.remove();
+  const bar = document.createElement("div");
+  bar.id = "updBar";
+  bar.className = "upd";
+  bar.innerHTML = `
+    <span class="upd-text">${s.updateReady}</span>
+    <button type="button" class="upd-later" id="updLater">${s.updateLater}</button>
+    <button type="button" class="upd-go" id="updGo">${s.updateNow}</button>`;
+  document.body.appendChild(bar);
+  bar.querySelector("#updLater").addEventListener("click", ()=>{
+    /* Dismissed for this session only: the next launch offers it again, since
+       an update the student never takes is an update that never shipped. */
+    updateDismissed = true;
+    bar.remove();
+  });
+  bar.querySelector("#updGo").addEventListener("click", ()=>{
+    showToast(s.updateApplying);
+    pulse("saved");
+    if(pendingWorker) pendingWorker.postMessage("skip-waiting");
+    /* If the handover doesn't happen within a couple of seconds — an older
+       browser, a worker that never took control — reload anyway rather than
+       leaving the student staring at a button that did nothing. */
+    setTimeout(()=>location.reload(), 1800);
+  });
+}
+
 /* ---- Academic Journey — the continuous container ---- */
 const JourneyModule = {
   ensureFor(studentId){
@@ -8029,6 +8282,136 @@ function courseColorFor(course){
   for(let i=0;i<course.id.length;i++) hash = (hash*31 + course.id.charCodeAt(i)) >>> 0;
   return COURSE_COLOR_PALETTE[hash % COURSE_COLOR_PALETTE.length];
 }
+/* ============================================================
+   WEAK-SPOT RADAR — every "لم أفهم" tag across every course this semester
+   already lives in that course's own notebook, scattered and easy to lose
+   track of. This pulls them into one place, grouped by the same five reasons
+   already used when a student marks something unclear — so the pattern
+   becomes visible, not just each instance in isolation.
+   ============================================================ */
+function weakSpotData(){
+  const student = StudentModule.current();
+  if(!student) return [];
+  const journey = JourneyModule.forStudent(student.id);
+  if(!journey) return [];
+  const semester = SemesterModule.current(journey.id);
+  if(!semester) return [];
+  const courses = CourseModule.listForSemester(semester.id) || [];
+  const buckets = UNDERSTANDING_REASONS.map(r=>({ reasonId:r.id, items:[] }));
+  const byId = {}; buckets.forEach(b=>byId[b.reasonId]=b);
+  courses.forEach(course=>{
+    const nb = NotebookModule.get(course.id);
+    (nb.checks || []).forEach(c=>{
+      if(c.understood !== false) return;
+      const bucket = byId[c.reasonId];
+      if(!bucket) return;
+      bucket.items.push({
+        checkId: c.id, topic: c.topic, createdAt: c.createdAt,
+        courseId: course.id, courseName: course.name, courseColor: courseColorFor(course)
+      });
+    });
+  });
+  return buckets;
+}
+function weakSpotTotal(){ return weakSpotData().reduce((n,b)=>n+b.items.length, 0); }
+
+const WEAKSPOT_SHORT = {
+  gap:{ar:"فجوة سابقة",en:"Earlier gap"},
+  jargon:{ar:"مصطلح",en:"Terminology"},
+  pace:{ar:"سرعة الشرح",en:"Pace"},
+  hard:{ar:"صعوبة حقيقية",en:"Genuinely hard"},
+  distracted:{ar:"شرود وقتي",en:"Lapse in focus"}
+};
+function weakSpotRadarSvg(buckets, size){
+  const l = lang();
+  /* A generous viewBox with real margin for the sector labels — the first
+     version placed labels right at the viewBox edge, which clipped the
+     longer ones (Arabic and, worse, English: "Lapse in focus" is 14
+     characters). Everything below is sized for that worst case, not the
+     shortest label. */
+  const cx = 150, cy = 150, rMax = 90, rMin = 18;
+  const now = Date.now();
+  const sectorAngle = 360 / buckets.length;
+  let dots = "", labels = "", guides = "";
+  for(let f=1; f<=3; f++){
+    guides += `<circle cx="${cx}" cy="${cy}" r="${(rMax*f/3).toFixed(1)}" fill="none" stroke="rgb(var(--ink-rgb,17,17,17))" stroke-opacity="${f===3?0.16:0.08}" stroke-width="1"/>`;
+  }
+  buckets.forEach((bucket,bi)=>{
+    const startAngle = -90 + bi*sectorAngle;
+    const midAngle = startAngle + sectorAngle/2;
+    const rad = midAngle * Math.PI/180;
+    guides += `<line x1="${cx}" y1="${cy}" x2="${(cx+rMax*Math.cos(startAngle*Math.PI/180)).toFixed(1)}" y2="${(cy+rMax*Math.sin(startAngle*Math.PI/180)).toFixed(1)}" stroke="rgb(var(--ink-rgb,17,17,17))" stroke-opacity="0.10" stroke-width="1"/>`;
+    const lx = cx + (rMax+24)*Math.cos(rad), ly = cy + (rMax+24)*Math.sin(rad);
+    const short = (WEAKSPOT_SHORT[bucket.reasonId] || {ar:"",en:""})[l] || "";
+    /* Anchor shifts with horizontal position so a long label grows away from
+       the circle instead of straddling it — middle at top/bottom, start/end
+       on the sides, matching whichever edge it's nearest. */
+    const cos = Math.cos(rad);
+    const anchor = cos > 0.3 ? "start" : cos < -0.3 ? "end" : "middle";
+    labels += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" font-size="9.5" font-weight="700" fill="var(--ink-muted)" text-anchor="${anchor}" dominant-baseline="middle">${escapeHtml(short)}</text>`;
+    const n = bucket.items.length;
+    bucket.items.forEach((item,j)=>{
+      const ageDays = Math.max(0, (now - item.createdAt) / 86400000);
+      const r = Math.max(rMin, rMax - ageDays*4);
+      const spread = sectorAngle*0.7;
+      const a = (n<=1) ? midAngle : startAngle + sectorAngle*0.15 + (j/(n-1||1))*spread;
+      const ar = a * Math.PI/180;
+      const dx = cx + r*Math.cos(ar), dy = cy + r*Math.sin(ar);
+      const dotR = 4.6 + Math.min(ageDays/6, 1)*2.8;
+      dots += `<circle class="weakspot-dot" data-check="${item.checkId}" data-course="${item.courseId}" cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="${dotR.toFixed(1)}" fill="${item.courseColor}" stroke="var(--surface)" stroke-width="1.6" style="cursor:pointer;"><title>${escapeHtml(item.courseName)} — ${escapeHtml(item.topic)}</title></circle>`;
+    });
+  });
+  return `<svg viewBox="0 0 300 300" width="${size}" height="${size}" style="display:block; margin:0 auto; overflow:visible;" role="img" aria-label="${l==='ar'?'رادار نقاط الضعف':'Weak-spot radar'}">${guides}${labels}${dots}<circle cx="${cx}" cy="${cy}" r="2.6" fill="var(--ink-muted)"/></svg>`;
+}
+function renderWeakSpotRadar(){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const buckets = weakSpotData();
+  const total = buckets.reduce((n,b)=>n+b.items.length,0);
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="weakSpotBack" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.weakSpotTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        ${total===0 ? `
+        <div class="done-banner"><h3>${s.weakSpotEmptyTitle}</h3><p>${s.weakSpotEmptyBody}</p></div>
+        ` : `
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-3);">${s.weakSpotLead(total)}</p>
+        <div class="card" style="padding:var(--sp-4);">${weakSpotRadarSvg(buckets, 280)}</div>
+        <div class="section-label" style="margin-top:var(--sp-4);">${s.weakSpotListTitle}</div>
+        <div class="stack">
+          ${buckets.filter(b=>b.items.length).map(bucket=>{
+            const reason = UNDERSTANDING_REASONS.find(r=>r.id===bucket.reasonId);
+            return bucket.items.slice().sort((a,b)=>a.createdAt-b.createdAt).map(item=>`
+              <button type="button" class="card" data-weakspot-course="${item.courseId}" style="display:flex; align-items:center; gap:10px; text-align:start; width:100%;">
+                <span style="width:10px; height:10px; border-radius:50%; background:${item.courseColor}; flex:none;"></span>
+                <span style="flex:1; min-width:0;">
+                  <span class="card-title" style="white-space:normal; display:block;">${escapeHtml(item.topic)}</span>
+                  <span class="card-meta">${escapeHtml(item.courseName)} · ${reason ? escapeHtml(reason[l]) : ""}</span>
+                </span>
+                <span class="card-chevron">${chevronFwd()}</span>
+              </button>`).join("");
+          }).join("")}
+        </div>`}
+      </div>
+    </section>`;
+  document.getElementById("weakSpotBack").addEventListener("click", ()=>navBack(()=>renderToday()));
+  /* The notebook's own back button always returns to its course page,
+     regardless of where it was opened from — true everywhere else in the
+     app, so staying consistent here rather than pushing a stack entry the
+     notebook would ignore anyway. */
+  document.querySelectorAll("[data-weakspot-course]").forEach(btn=>{
+    btn.addEventListener("click", ()=>renderCourseNotebook(btn.dataset.weakspotCourse));
+  });
+  document.querySelectorAll(".weakspot-dot").forEach(dot=>{
+    dot.addEventListener("click", ()=>renderCourseNotebook(dot.dataset.course));
+  });
+}
+
 const CourseModule = {
   create(semesterId, data){
     return dbInsert("courses", { id:genId(), semesterId, name:data.name, professor:data.professor||"", color:data.color||null, createdAt:Date.now() });
@@ -8832,6 +9215,7 @@ function renderTools(){
             return `
               ${isClinicalCollege() ? tool("skills", ICON.target, s.clinSkillsTitle, s.clinSkillsSub) : ""}
               ${isClinicalCollege() ? tool("dosage", ICON.target, s.dosTitle, s.dosSub) : ""}
+              ${isBusinessCollege() ? tool("tvm", ICON.target, s.tvmTitle, s.tvmSub) : ""}
               ${mine.map(k=>tool(k, meta[k].icon, meta[k].name, meta[k].desc)).join("")}
               ${rest.length ? `
                 <button type="button" class="lib-info-btn" id="toolsMoreBtn" style="margin-top:var(--sp-2);">${ICON.plus}<span>${toolsShowRest ? s.toolsHideAll : s.toolsShowAll}</span></button>
@@ -8900,6 +9284,7 @@ function openTool(id, course){
     case "refmap":    named(s.refMapEntry, "", "weekGrid"); return renderReferenceMap();
     case "skills":    named(s.clinSkillsTitle, "", "target"); return renderClinicalSkills();
     case "dosage":    named(s.dosTitle, "", "target"); return renderDosageCalc();
+    case "tvm":       named(s.tvmTitle, "", "target"); return renderTvmCalc();
     case "backup":    settingsTab = "account"; return renderSettings();
   }
 }
@@ -9299,6 +9684,20 @@ function renderOnboarding(){
 /* ============================================================
    STAGE 6: TODAY (Dashboard) — one hero zone, at most one secondary zone
    ============================================================ */
+function renderWeakSpotTeaserHtml(){
+  const s = t();
+  const total = weakSpotTotal();
+  if(!total) return "";
+  return `
+    <button type="button" class="card" id="weakSpotTeaser" style="align-items:center;">
+      <span class="card-icon">${ICON.target}</span>
+      <span class="card-body">
+        <span class="card-title">${s.weakSpotHomeCard}</span>
+        <span class="card-meta">${s.weakSpotHomeCardD(total)}</span>
+      </span>
+      <span class="card-chevron">${chevronFwd()}</span>
+    </button>`;
+}
 function shouldShowInstallBanner(){
   if(isStandalone() || installBannerDismissed()) return false;
   return !!deferredInstallPrompt || isIOS();
@@ -9454,6 +9853,7 @@ function renderToday(){
         ${firstWeekHtml(student)}
         ${guideHtml()}
         ${weekAskHtml()}
+        ${renderWeakSpotTeaserHtml()}
         ${(()=>{
           /* Offered first when a class is in session, because at that moment it
              is the only thing the student wants. */
@@ -9528,6 +9928,8 @@ function renderToday(){
      possible; it never leaves the device. */
   if(student) StudentModule.update({ lastSeen: Date.now() });
   wireInstallBanner(renderToday);
+  const weakSpotTeaser = document.getElementById("weakSpotTeaser");
+  if(weakSpotTeaser) weakSpotTeaser.addEventListener("click", ()=>{ navPush(renderToday); renderWeakSpotRadar(); });
   const whiteningCard = document.getElementById("whiteningPromptCard");
   if(whiteningCard) whiteningCard.addEventListener("click", ()=>{ renderWeeklyWhitening(); });
   const fwBtn = document.getElementById("fwDone");
@@ -10367,9 +10769,25 @@ function renderCourseSheet(courseId){
 
         <div class="cs-half cs-half-ours">
           <span class="cs-tag cs-tag-ours">${s.sheetOurs}</span>
+          ${(()=>{
+            /* The name itself usually says نظري/عملي/معملي — a cue already
+               written by the university, not one we invented. Showing it here
+               answers "is this a lecture or a lab" before the student reads
+               a word further. */
+            const nm = course.name || "";
+            const isLab = /معمل[يى]|عملي|تطبيقي|\bLab\b|\bPractical\b/i.test(nm);
+            const isTheory = /نظري|\bTheory\b/i.test(nm);
+            if(!isLab && !isTheory) return "";
+            return `
+          <div class="cs-sec">${s.sheetKind}</div>
+          <div class="cs-li"><span class="cs-dot" style="background:${isLab?'var(--support)':'rgb(var(--accent-rgb))'};"></span><span>${isLab ? s.sheetPractical : s.sheetTheory}</span></div>`;
+          })()}
           ${e && e.explain ? `
           <div class="cs-sec">${s.sheetWhat}</div>
           <p class="cs-text">${escapeHtml(e.explain[l])}</p>` : ""}
+          ${e && e.why ? `
+          <div class="cs-sec">${s.sheetWhy}</div>
+          <p class="cs-text">${escapeHtml(e.why[l])}</p>` : ""}
           ${e && e.hard && e.hard.length ? `
           <div class="cs-sec">${s.sheetHard}</div>
           ${e.hard.map(h=>li(h.title[l], "rgb(var(--accent-rgb))")).join("")}
@@ -11345,6 +11763,53 @@ function openTermSheet(courseId, existing, onDone){
    rewritten. Given its own place, not folded into the vocabulary notebook:
    an essay and a term are different objects with different uses.
    ============================================================ */
+/* ============================================================
+   ASK SOMEONE WHO TOOK IT — the best information about a course lives in
+   the head of a student who already finished it, not in any reference.
+   A fixed set of well-chosen questions turns one real conversation into a
+   structured note, saved straight into this course's own notebook.
+   ============================================================ */
+function renderAskSenior(courseId){
+  applyDir();
+  const s = t();
+  const l = lang();
+  const course = CourseModule.get(courseId);
+  const questions = [s.askSeniorQ1,s.askSeniorQ2,s.askSeniorQ3,s.askSeniorQ4,s.askSeniorQ5,s.askSeniorQ6,s.askSeniorQ7,s.askSeniorQ8,s.askSeniorQ9];
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="askSeniorBack" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="Back">${chevronBack()}</button>
+        <div class="screen-header-title">${s.askSeniorTitle}</div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content">
+        <p class="type-caption" style="color:var(--ink-muted); line-height:1.75; margin-bottom:var(--sp-4);">${s.askSeniorLead}</p>
+        <div class="stack">
+          ${questions.map((q,i)=>`
+            <div class="card" style="display:block;">
+              <p class="type-body" style="font-weight:600; margin-bottom:8px;">${i+1}. ${escapeHtml(q)}</p>
+              <textarea class="field" data-ask-answer="${i}" style="min-height:64px; width:100%;" placeholder="${s.askSeniorAnswerPH}"></textarea>
+            </div>`).join("")}
+        </div>
+        <p class="type-caption" style="color:var(--ink-muted); margin:var(--sp-2) 0 var(--sp-3);">${s.askSeniorEmpty}</p>
+        <button type="button" class="btn btn-primary" id="askSeniorSave" style="width:100%;">${ICON.check}<span>${s.askSeniorSave}</span></button>
+      </div>
+    </section>`;
+  document.getElementById("askSeniorBack").addEventListener("click", ()=>navBack(()=>renderCourseNotebook(courseId)));
+  document.getElementById("askSeniorSave").addEventListener("click", ()=>{
+    const parts = [];
+    document.querySelectorAll("[data-ask-answer]").forEach(ta=>{
+      const idx = +ta.dataset.askAnswer;
+      const val = ta.value.trim();
+      if(val) parts.push(`${idx+1}. ${questions[idx]}\n${val}`);
+    });
+    if(!parts.length){ navBack(()=>renderCourseNotebook(courseId)); return; }
+    const text = s.askSeniorSavedNote + "\n\n" + parts.join("\n\n");
+    NotebookModule.addNote(courseId, text, "default", { topic: s.askSeniorSavedNote });
+    navBack(()=>renderCourseNotebook(courseId));
+  });
+}
+
 let essaysSearch = "";
 
 function renderCourseEssays(courseId){
@@ -11535,6 +12000,9 @@ function renderCourseNotebook(courseId){
           <button type="button" class="tool" id="notebookEssays">
             <span class="tool-icon">${ICON.essay}</span><span>${s.essaysToolLabel}</span>
           </button>
+          <button type="button" class="tool" id="notebookAskSenior">
+            <span class="tool-icon">${ICON.compass}</span><span>${s.askSeniorToolLabel}</span>
+          </button>
         </div>
         <button type="button" class="add-one" id="notebookAddOne" style="margin-top:var(--sp-3);">${ICON.plus}<span>${s.addOne}</span></button>
         ${(()=>{
@@ -11661,6 +12129,8 @@ function renderCourseNotebook(courseId){
   if(addOneBtn) addOneBtn.addEventListener("click", ()=>openAddSheet(courseId, ()=>renderCourseNotebook(courseId)));
   const termsBtn = document.getElementById("notebookTerms");
   if(termsBtn) termsBtn.addEventListener("click", ()=>{ termsSearch = ""; renderCourseTerms(courseId); });
+  const askSeniorBtn = document.getElementById("notebookAskSenior");
+  if(askSeniorBtn) askSeniorBtn.addEventListener("click", ()=>{ navPush(()=>renderCourseNotebook(courseId)); renderAskSenior(courseId); });
   document.getElementById("notebookImageInput").addEventListener("change", (e)=>{
     const file = e.target.files[0];
     if(!file) return;
@@ -12777,6 +13247,356 @@ function markSkillViewed(skillId){
    one, distinct from the personal "My Terms" glossary the student builds
    themselves. Keyed by collegeId. */
 const REFERENCE_GLOSSARY = {
+  arch: [
+    ["Floor Plan","المسقط الأفقي — رسم يوضح توزيع الفراغات في طابق واحد من أعلى"],
+    ["Elevation","الواجهة — رسم يوضح شكل المبنى الخارجي من جهة معيّنة (أمامية، جانبية)"],
+    ["Section (Architecture)","القطاع — رسم يوضح المبنى كأنه قُطع رأسيًا، يُظهر الارتفاعات الداخلية"],
+    ["Site Plan","مخطط الموقع — رسم يوضح موقع المبنى ضمن الأرض والمحيط العام"],
+    ["Scale (Drawing)","المقياس الرسمي — النسبة بين حجم الرسم وحجم المبنى الحقيقي"],
+    ["Axonometric Drawing","الرسم التجسيمي المحوري — رسم ثلاثي الأبعاد يحافظ على نسب الأبعاد الحقيقية"],
+    ["Perspective Drawing","المنظور — رسم يحاكي كيف تراه العين فعليًا، بخطوط تتلاقى عند نقطة بعيدة"],
+    ["Building Information Modeling (BIM)","نمذجة معلومات البناء — نظام رقمي يبني نموذجًا ثلاثي الأبعاد يحوي كل بيانات المبنى"],
+    ["Computer-Aided Design (CAD)","التصميم بمساعدة الحاسوب — برامج رسم هندسي دقيق رقميًا بدل اليد"],
+    ["Load-Bearing Wall","الجدار الحامل — جدار يحمل وزن المبنى فعليًا، لا يمكن إزالته بسهولة"],
+    ["Structural System","النظام الإنشائي — الطريقة التي يحمل بها المبنى نفسه ووزنه (هيكلي، جدراني...)"],
+    ["Foundation","الأساس — الجزء السفلي من المبنى الذي ينقل حمله إلى الأرض"],
+    ["Column","العمود — عنصر إنشائي رأسي يحمل الأحمال من الأعلى وينقلها للأساس"],
+    ["Beam","الكمرة — عنصر إنشائي أفقي يحمل السقف وينقل حمله للأعمدة"],
+    ["Span","البحر الإنشائي — المسافة بين نقطتي دعم (كعمودين) دون عائق بينهما"],
+    ["Facade","الواجهة المعمارية — الوجه الخارجي للمبنى كما يراه المارة"],
+    ["Fenestration","توزيع الفتحات — ترتيب النوافذ والأبواب على واجهة المبنى"],
+    ["Circulation (Architecture)","الحركة الداخلية — كيف يتنقل الناس داخل المبنى بين الفراغات"],
+    ["Program (Architecture)","البرنامج المعماري — قائمة الفراغات المطلوبة ومساحاتها قبل بدء التصميم"],
+    ["Zoning","التقسيم العمراني — أنظمة تحدد كيف يُستخدم كل جزء من الأرض (سكني، تجاري...)"],
+    ["Setback","الارتداد — المسافة الإلزامية بين حدود الأرض وجسم المبنى"],
+    ["Massing","الكتلة المعمارية — الشكل العام الخارجي للمبنى قبل التفاصيل"],
+    ["Vernacular Architecture","العمارة المحلية — طراز نشأ من بيئة وثقافة مكان معيّن دون تصميم أكاديمي رسمي"],
+    ["Sustainable Design","التصميم المستدام — تصميم يقلّل الأثر البيئي ويرشّد استهلاك الطاقة"],
+    ["Passive Design","التصميم السلبي — استغلال الطبيعة (الشمس، الهواء) لتبريد أو تدفئة المبنى دون طاقة إضافية"],
+    ["LEED Certification","شهادة LEED — تصنيف عالمي يقيس مدى استدامة واستحقاق المبنى بيئيًا"],
+    ["Daylighting","الإضاءة الطبيعية — تصميم يُدخل ضوء الشمس للفراغات الداخلية بدل الإضاءة الصناعية"],
+    ["Thermal Mass","الكتلة الحرارية — قدرة مادة البناء على تخزين الحرارة وإطلاقها تدريجيًا"],
+    ["Urban Planning","التخطيط العمراني — تصميم المدن والأحياء على مستوى أكبر من المبنى الواحد"],
+    ["Landscape Architecture","عمارة المناظر الطبيعية — تصميم الفراغات الخارجية والحدائق المحيطة بالمبنى"],
+    ["Renders / 3D Visualization","التصور ثلاثي الأبعاد — صورة واقعية للمبنى قبل بنائه فعليًا"],
+    ["Model (Architectural)","المجسم المعماري — نموذج مصغَّر مجسَّم للمبنى، يدوي أو مطبوع"],
+    ["Orientation (Building)","توجيه المبنى — اتجاه المبنى بالنسبة للشمس والرياح، يؤثر في الراحة والطاقة"],
+    ["Modular Design","التصميم المعياري — تصميم بوحدات متكررة قابلة للتجميع والتكرار"],
+    ["Ergonomics","بيئة العمل البشرية — تصميم الفراغ بما يناسب قياسات وحركة جسم الإنسان"],
+    ["Accessibility (Design)","إمكانية الوصول — تصميم يراعي ذوي الإعاقة وسهولة استخدام الجميع للمبنى"],
+    ["Historic Preservation","الحفاظ على التراث — ترميم والحفاظ على المباني ذات القيمة التاريخية"],
+    ["Adaptive Reuse","إعادة الاستخدام التكيّفي — تحويل مبنى قديم لوظيفة جديدة دون هدمه"],
+    ["Curtain Wall","الجدار الستائري — واجهة زجاجية خفيفة لا تحمل وزن المبنى، شائعة بالأبراج"],
+    ["Parametric Design","التصميم البارامتري — تصميم تتحكم فيه معادلات وقواعد رقمية قابلة للتعديل"],
+    ["Form Follows Function","الشكل يتبع الوظيفة — مبدأ حداثي: شكل المبنى يُشتق من الغرض الذي يخدمه"],
+    ["Proportion","التناسب — العلاقة الحجمية المتناغمة بين أجزاء المبنى المختلفة"],
+    ["Rhythm (Design)","الإيقاع التصميمي — تكرار منتظم لعنصر معماري (كالأعمدة أو النوافذ) يخلق انسجامًا بصريًا"],
+    ["Golden Ratio","النسبة الذهبية — نسبة تناسب تُعتبر الأكثر توازنًا بصريًا (تقريبًا ١ : ١.٦١٨)"],
+    ["Symmetry","التماثل — تطابق الشكل حول محور معيّن، يمنح إحساسًا بالاتزان"],
+    ["Asymmetry","اللاتماثل — تصميم متوازن بصريًا دون تطابق حرفي بين جانبيه"],
+    ["Hierarchy (Design)","التدرج الهرمي — ترتيب العناصر بحيث يبرز الأهم ويتراجع الأقل أهمية"],
+    ["Context (Architecture)","السياق المكاني — البيئة المحيطة بالموقع التي يجب أن يتجاوب معها التصميم"],
+    ["Concept (Design)","الفكرة التصميمية — الرؤية أو المبدأ الأساسي الذي يُبنى عليه كل قرار في المشروع"],
+    ["Design Brief","وثيقة التكليف — وصف مكتوب لمتطلبات العميل وأهداف المشروع قبل بدء التصميم"],
+    ["Feasibility Study","دراسة الجدوى — تقييم مبدئي لإمكانية تنفيذ المشروع ماليًا وفنيًا"],
+    ["Working Drawings","المخططات التنفيذية — الرسومات الدقيقة التي يُبنى المشروع فعليًا بناءً عليها"],
+    ["Specifications","المواصفات — وثيقة تصف المواد وطرق التنفيذ المطلوبة بدقة"],
+    ["Bill of Quantities (BOQ)","جدول الكميات — وثيقة تحصي كميات المواد والأعمال لتقدير التكلفة"],
+    ["Construction Documents","وثائق التنفيذ — كل الرسومات والمواصفات اللازمة لبدء البناء الفعلي"],
+    ["Design Development","تطوير التصميم — المرحلة التي تُفصَّل فيها الفكرة الأولية إلى حلول عملية"],
+    ["Schematic Design","التصميم المبدئي — أول مرحلة رسمية تُظهر الفكرة العامة قبل التفاصيل"],
+    ["Client Brief Review","مراجعة متطلبات العميل — التأكد من أن التصميم يحقق ما طلبه العميل فعلًا"],
+    ["Gothic Architecture","العمارة القوطية — طراز أوروبي قديم يتميّز بالأقواس المدببة والنوافذ الزجاجية الملوّنة"],
+    ["Islamic Architecture","العمارة الإسلامية — طراز يتميّز بالزخرفة الهندسية والأقواس والقباب والأفنية الداخلية"],
+    ["Modernism (Architecture)","الحداثة المعمارية — حركة القرن العشرين التي فضّلت البساطة ووظيفة الشكل على الزخرفة"],
+    ["Brutalism","الوحشية المعمارية — طراز يُبرز الخرسانة الخام دون تغليف أو زخرفة"],
+    ["Postmodernism (Architecture)","ما بعد الحداثة — حركة أعادت الزخرفة والرمزية ردًّا على بساطة الحداثة"]
+  ],
+  design: [
+    ["Typography","فن الطباعة — اختيار وترتيب الخطوط بطريقة تخدم القراءة والتعبير معًا"],
+    ["Typeface","طقم الخط — مجموعة حروف مصمَّمة بأسلوب موحَّد (كخط Helvetica)"],
+    ["Font","الخط — نسخة محدَّدة من طقم الخط (كالسُمك والحجم: Bold 12pt)"],
+    ["Serif","خط مزخرف — خط له زوائد صغيرة عند أطراف الحروف"],
+    ["Sans-serif","خط بلا زوائد — خط بسيط الحروف دون زخارف طرفية"],
+    ["Kerning","تباعد الحروف — ضبط المسافة بين حرفين متجاورين تحديدًا"],
+    ["Leading","تباعد الأسطر — المسافة الرأسية بين سطر نص وآخر"],
+    ["Tracking (Typography)","تباعد النص العام — ضبط المسافة بين كل حروف نص كامل بالتساوي"],
+    ["Hierarchy (Typography)","التدرج الطباعي — استخدام الحجم والسُمك لتوجيه القارئ لما هو أهم أولًا"],
+    ["Grid System","نظام الشبكة — إطار خفي من الأعمدة والصفوف ينظّم توزيع العناصر في التصميم"],
+    ["Alignment","المحاذاة — ترتيب العناصر بالنسبة لخط مرجعي واحد (يمين، يسار، وسط)"],
+    ["White Space / Negative Space","الفراغ — المساحة الفارغة حول العناصر، تمنح التصميم تنفسًا ووضوحًا"],
+    ["Composition","التكوين البصري — طريقة ترتيب كل عناصر التصميم معًا في مساحة واحدة"],
+    ["Visual Balance","التوازن البصري — توزيع وزن العناصر (حجمًا ولونًا) بحيث لا تميل اللوحة لجهة واحدة"],
+    ["Contrast","التباين — فرق واضح بين عنصرين (لون، حجم) يبرز أحدهما أو كليهما"],
+    ["Focal Point","نقطة التركيز — العنصر الذي يجذب عين المشاهد أولًا في التصميم"],
+    ["Color Theory","نظرية الألوان — دراسة كيف تتفاعل الألوان وتؤثر نفسيًا وبصريًا معًا"],
+    ["Color Wheel","عجلة الألوان — مخطط دائري يرتّب الألوان حسب علاقتها ببعضها"],
+    ["Complementary Colors","الألوان المتكاملة — ألوان متقابلة في العجلة، تخلق تباينًا قويًا معًا"],
+    ["Analogous Colors","الألوان المتجاورة — ألوان متجاورة في العجلة، تخلق انسجامًا هادئًا"],
+    ["Color Palette","لوحة الألوان — مجموعة ألوان محدَّدة تُستخدم باتساق في مشروع واحد"],
+    ["Hue","درجة اللون — اللون الأساسي نفسه (أحمر، أزرق) بصرف النظر عن فاتحه أو غامقه"],
+    ["Saturation","التشبّع اللوني — مدى نقاء أو قوة اللون مقابل الرمادي"],
+    ["CMYK","نظام الطباعة اللوني — سيان وأرجواني وأصفر وأسود، يُستخدم في الطباعة"],
+    ["RGB","نظام الشاشة اللوني — أحمر وأخضر وأزرق، يُستخدم في الشاشات الرقمية"],
+    ["Logo","الشعار — رمز بصري يمثّل هوية العلامة التجارية مباشرة"],
+    ["Brand Guidelines","دليل الهوية البصرية — وثيقة تحدد كيف يُستخدم شعار وألوان وخطوط العلامة بثبات"],
+    ["Mockup","النموذج التصميمي — عرض واقعي للتصميم كأنه مطبوع أو مستخدم فعليًا (كعلى كوب أو هاتف)"],
+    ["Wireframe","المخطط الهيكلي — رسم بسيط يوضح ترتيب عناصر صفحة قبل التصميم النهائي"],
+    ["Vector Graphics","الرسومات المتجهية — صور مبنية على معادلات رياضية، لا تفقد جودتها عند التكبير"],
+    ["Raster Graphics","الرسومات النقطية — صور مبنية من بكسلات، تفقد وضوحها عند التكبير الكبير"],
+    ["Layer (Design Software)","الطبقة — مستوى منفصل من التصميم يمكن تعديله دون التأثير على البقية"],
+    ["Resolution (DPI/PPI)","الدقة — عدد النقاط لكل إنش، يحدد وضوح الصورة عند الطباعة أو العرض"],
+    ["Bleed (Print)","منطقة الفائض — مساحة إضافية خارج حدود التصميم النهائي لتفادي حواف بيضاء عند القص"],
+    ["Crop Marks","علامات القص — خطوط صغيرة توضح للمطبعة أين تُقصّ الورقة بدقة"],
+    ["Pantone (PMS)","نظام بانتون اللوني — نظام عالمي موحَّد لتسمية الألوان لضمان تطابقها بين الطباعات"],
+    ["User Interface (UI)","واجهة المستخدم — الشكل البصري الذي يتفاعل معه المستخدم في تطبيق أو موقع"],
+    ["User Experience (UX)","تجربة المستخدم — مدى سهولة ومتعة استخدام المنتج ككل، لا الشكل فقط"],
+    ["Prototype","النموذج الأوّلي — نسخة تجريبية تفاعلية من التصميم قبل البناء النهائي"],
+    ["Style Guide","دليل الأسلوب — مرجع موحَّد لكل قواعد التصميم البصرية في مشروع واحد"],
+    ["Mood Board","لوحة الإلهام — تجميع صور وألوان وخامات تعبّر عن الاتجاه البصري المطلوب قبل التصميم"],
+    ["Iteration (Design)","التكرار التصميمي — نسخة معدَّلة من التصميم بناءً على ملاحظات سابقة"],
+    ["Client Feedback","ملاحظات العميل — تعليقات العميل على التصميم تُبنى عليها التعديلات التالية"],
+    ["Portfolio (Design)","ملف الأعمال — مجموعة مُختارة من أفضل أعمال المصمم لعرضها على العملاء"],
+    ["Design Brief","ملخص التكليف — وثيقة تشرح ما يريده العميل وأهداف المشروع قبل البدء"],
+    ["Print Production","الإنتاج الطباعي — تحويل التصميم الرقمي إلى مطبوع فعلي بجودة ودقة"],
+    ["Packaging Design","تصميم التغليف — تصميم غلاف المنتج ليجذب العميل ويحمي المحتوى معًا"],
+    ["Illustration","الرسم التوضيحي — صورة مرسومة يدويًا أو رقميًا تخدم فكرة أو نصًا معيّنًا"],
+    ["Infographic","الرسم البياني المعلوماتي — تصميم يحوّل بيانات ومعلومات معقدة لصورة سهلة الفهم"],
+    ["Visual Identity","الهوية البصرية — مجموع العناصر المرئية (شعار، ألوان، خطوط) التي تميّز علامة تجارية"],
+    ["Rebranding","إعادة العلامة التجارية — تغيير جذري في الهوية البصرية لعلامة قائمة"],
+    ["Minimalism (Design)","التصميم البسيط — أسلوب يعتمد على أقل عدد ممكن من العناصر لإيصال الفكرة"],
+    ["Gestalt Principles","مبادئ الجشطالت — قواعد نفسية تفسّر كيف تُدرك العين تجميع العناصر ككل لا كأجزاء منفصلة"],
+    ["Responsive Design","التصميم المتجاوب — تصميم يتكيّف تلقائيًا مع مقاسات شاشات مختلفة"],
+    ["Accessibility (Design)","إمكانية الوصول — تصميم يراعي ذوي الإعاقة (كتباين الألوان لضعاف البصر)"],
+    ["Design Thinking","التفكير التصميمي — منهجية حل مشكلات تبدأ بفهم المستخدم قبل التصميم"],
+    ["Sketching","الرسم الأولي — رسم سريع باليد لتجربة أفكار قبل التنفيذ الرقمي"],
+    ["Asset (Design)","الأصل التصميمي — أي عنصر جاهز يُعاد استخدامه (أيقونة، صورة، خط)"],
+    ["Export Format","صيغة التصدير — الشكل النهائي لحفظ الملف (JPG للويب، PDF للطباعة، مثلًا)"],
+    ["Icon Design","تصميم الأيقونات — رموز بصرية صغيرة تمثّل فكرة أو وظيفة ببساطة"]
+  ],
+  sts: [
+    ["Content Creation","صناعة المحتوى — إنتاج مواد رقمية (نص، صورة، فيديو) لجمهور محدَّد"],
+    ["Content Strategy","استراتيجية المحتوى — خطة توضح ماذا نُنشر ولمن ومتى ولماذا"],
+    ["Editorial Calendar","التقويم التحريري — جدول يحدد مواعيد نشر كل محتوى مسبقًا"],
+    ["Target Audience","الجمهور المستهدف — الفئة التي يُصمَّم المحتوى خصيصًا لأجلها"],
+    ["Engagement","التفاعل — تعليقات وإعجابات ومشاركات الجمهور مع المحتوى"],
+    ["Reach","الوصول — عدد الأشخاص الذين شاهدوا المحتوى فعليًا"],
+    ["Impressions","مرات الظهور — عدد مرات ظهور المحتوى على الشاشة، ولو لنفس الشخص مرارًا"],
+    ["Viral Content","المحتوى الفيروسي — محتوى ينتشر بسرعة كبيرة عبر المشاركة المتكررة"],
+    ["Call to Action (CTA)","دعوة لاتخاذ إجراء — جملة تطلب من الجمهور فعلًا محددًا (اشترك، اضغط هنا)"],
+    ["Hashtag","وسم — كلمة بعلامة # تجمع منشورات بنفس الموضوع"],
+    ["Algorithm (Social Media)","الخوارزمية — النظام الذي يقرر أي محتوى يظهر لأي مستخدم ولماذا"],
+    ["Influencer","المؤثر — شخص له جمهور يثق برأيه فيؤثر على قراراتهم"],
+    ["User-Generated Content (UGC)","محتوى من إنتاج المستخدمين — مواد ينشئها الجمهور نفسه لا العلامة التجارية"],
+    ["Community Management","إدارة المجتمع الرقمي — التفاعل اليومي مع جمهور المنصة والرد عليه"],
+    ["Social Listening","الإصغاء الاجتماعي — متابعة ما يُقال عن علامتك التجارية عبر الإنترنت"],
+    ["Search Engine Optimization (SEO)","تحسين محركات البحث — تهيئة المحتوى ليظهر أعلى في نتائج البحث"],
+    ["Keyword","الكلمة المفتاحية — الكلمة أو العبارة التي يبحث بها الجمهور فعليًا"],
+    ["Click-Through Rate (CTR)","معدل النقر — نسبة من شاهدوا رابطًا ونقروا عليه فعلًا"],
+    ["Bounce Rate","معدل الارتداد — نسبة الزوّار الذين غادروا الصفحة فورًا دون تفاعل"],
+    ["Analytics","التحليلات — أرقام وبيانات تقيس أداء المحتوى فعليًا لا انطباعًا"],
+    ["Key Performance Indicator (KPI)","مؤشر الأداء الرئيسي — رقم محدَّد يُقاس به نجاح حملة أو محتوى"],
+    ["A/B Testing","اختبار أ/ب — تجربة نسختين من محتوى لمعرفة أيهما يحقق نتيجة أفضل"],
+    ["Conversion","التحويل — تحوّل متابع أو زائر إلى عميل فعلي أو مشترك"],
+    ["Storyboard","اللوحة القصصية — رسم مُسبق لتسلسل مشاهد الفيديو قبل التصوير"],
+    ["Script","السيناريو — النص المكتوب الذي يُبنى عليه الفيديو أو البرنامج"],
+    ["B-roll","اللقطات الثانوية — لقطات إضافية تُستخدم لدعم اللقطة الرئيسية في المونتاج"],
+    ["Voiceover","التعليق الصوتي — صوت مُسجَّل يُضاف فوق الصورة دون ظهور المتحدث"],
+    ["Aspect Ratio","نسبة الأبعاد — نسبة عرض الفيديو إلى ارتفاعه (مثل 16:9 أو 9:16)"],
+    ["Frame Rate","معدل الإطارات — عدد الصور الثابتة المعروضة كل ثانية في الفيديو"],
+    ["Resolution","الدقة — عدد البكسلات التي تشكّل الصورة أو الفيديو، كلما زادت وضحت التفاصيل"],
+    ["Editing / Post-Production","المونتاج — تجميع وتعديل اللقطات بعد التصوير لتكوين العمل النهائي"],
+    ["Color Grading","تصحيح الألوان — ضبط ألوان الفيديو لمنحه طابعًا بصريًا موحَّدًا"],
+    ["Thumbnail","الصورة المصغّرة — الصورة التي تمثّل الفيديو قبل أن يُشغَّله المشاهد"],
+    ["Livestream","البث المباشر — نقل فيديو مباشر دون تسجيل مسبق"],
+    ["Podcast","البودكاست — برنامج صوتي دوري يُنشر حلقات يمكن الاستماع إليها لاحقًا"],
+    ["Journalism Ethics","أخلاقيات الصحافة — مبادئ الصدق والحياد والتحقق قبل النشر"],
+    ["Fact-Checking","التحقق من الحقائق — التأكد من صحة معلومة قبل نشرها للجمهور"],
+    ["Source (Journalism)","المصدر — الجهة أو الشخص الذي يُستقى منه الخبر أو المعلومة"],
+    ["Byline","سطر الكاتب — السطر الذي يذكر اسم من كتب المقال أو الخبر"],
+    ["Headline","العنوان الصحفي — الجملة الأولى التي تلخّص الخبر وتجذب القارئ"],
+    ["Lead (Journalism)","المقدمة الصحفية — الفقرة الأولى التي تحوي أهم معلومات الخبر"],
+    ["Press Release","البيان الصحفي — إعلان رسمي مكتوب تُصدره جهة للإعلام"],
+    ["Misinformation","المعلومات المضلِّلة — معلومات خاطئة تُنشر دون قصد التضليل بالضرورة"],
+    ["Disinformation","التضليل الإعلامي المتعمَّد — معلومات خاطئة تُنشر عمدًا لخداع الجمهور"],
+    ["Media Literacy","الوعي الإعلامي — القدرة على تحليل ونقد المحتوى الإعلامي لا تصديقه تلقائيًا"],
+    ["Copyright","حقوق النشر — الحق القانوني لصاحب العمل في التحكم بنسخه واستخدامه"],
+    ["Fair Use","الاستخدام العادل — استثناء قانوني يسمح باستخدام محتوى محمي بحقوق لأغراض محدودة (كالنقد أو التعليم)"],
+    ["Attribution","نسب العمل — ذكر صاحب العمل الأصلي عند استخدام محتواه"],
+    ["Brand Identity","الهوية البصرية للعلامة — الألوان والخطوط والأسلوب الذي يميّز العلامة التجارية بصريًا"],
+    ["Tone of Voice","نبرة الصوت — الأسلوب والشخصية التي تتحدث بها العلامة مع جمهورها (رسمي، ودّي...)"],
+    ["Campaign","الحملة — مجموعة محتوى منسَّقة تخدم هدفًا تسويقيًا أو إعلاميًا واحدًا خلال فترة محددة"],
+    ["Media Kit","الحقيبة الإعلامية — مجموعة ملفات جاهزة (صور، معلومات) تُرسَل للصحفيين أو الشركاء"],
+    ["Native Advertising","الإعلان المندمج — إعلان مصمَّم ليبدو كجزء طبيعي من المحتوى لا إعلانًا واضحًا"],
+    ["Clickbait","الطُعم الرقمي — عنوان مبالَغ فيه يجذب النقر دون أن يفي بما وعد به فعليًا"]
+  ],
+  pharm: [
+    ["Pharmacology","علم الأدوية — دراسة تأثير الدواء في الجسم وآلية عمله"],
+    ["Pharmacokinetics","الحرائك الدوائية — ماذا يفعل الجسم بالدواء (امتصاص، توزيع، استقلاب، إطراح)"],
+    ["Pharmacodynamics","الديناميكا الدوائية — ماذا يفعل الدواء بالجسم (آلية التأثير)"],
+    ["Absorption","الامتصاص — انتقال الدواء من موضع الإعطاء إلى الدم"],
+    ["Distribution","التوزيع — انتقال الدواء من الدم إلى أنسجة الجسم المختلفة"],
+    ["Metabolism","الاستقلاب — تحويل الدواء كيميائيًا، غالبًا في الكبد"],
+    ["Excretion","الإطراح — خروج الدواء أو مستقلباته من الجسم، غالبًا عبر الكلى"],
+    ["Bioavailability","التوافر الحيوي — نسبة الدواء التي تصل فعليًا إلى الدورة الدموية"],
+    ["Half-life","نصف العمر — الزمن اللازم لانخفاض تركيز الدواء في الدم للنصف"],
+    ["Therapeutic Index","المؤشر العلاجي — الفارق بين الجرعة الفعالة والجرعة السامة"],
+    ["Onset of Action","بداية التأثير — الوقت من إعطاء الدواء حتى ظهور أثره"],
+    ["Duration of Action","مدة التأثير — طول الفترة التي يبقى فيها الدواء فعالًا"],
+    ["Agonist","الناهض — مادة تنشّط المستقبِل وتحدث نفس تأثير الناقل الطبيعي"],
+    ["Antagonist","الضاد — مادة تمنع المستقبِل من العمل دون أن تنشّطه"],
+    ["Receptor","المستقبِل — جزيء على الخلية يرتبط به الدواء ليحدث تأثيره"],
+    ["Side Effect","الأثر الجانبي — تأثير غير مقصود للدواء، قد يكون مقبولًا سريريًا"],
+    ["Adverse Drug Reaction (ADR)","التفاعل الدوائي الضار — أثر ضار وغير مرغوب للدواء بجرعته العادية"],
+    ["Contraindication","مانع الاستعمال — حالة يُمنع فيها إعطاء دواء معيّن"],
+    ["Drug Interaction","التداخل الدوائي — تأثير دواء على فعالية دواء آخر عند الجمع بينهما"],
+    ["Tolerance","التحمّل — حاجة لجرعة أكبر مع الوقت للحصول على نفس التأثير"],
+    ["Dependence","الاعتماد — حاجة جسدية أو نفسية مستمرة للدواء"],
+    ["Withdrawal","أعراض الانسحاب — ما يظهر عند إيقاف دواء اعتاد عليه الجسم فجأة"],
+    ["Therapeutic Window","النافذة العلاجية — المدى الآمن والفعال لتركيز الدواء في الدم"],
+    ["Loading Dose","جرعة التحميل — جرعة أولى أكبر للوصول سريعًا للتركيز العلاجي"],
+    ["Maintenance Dose","جرعة الصيانة — الجرعة المنتظمة للحفاظ على التركيز العلاجي"],
+    ["Prodrug","الدواء الأولي — مادة غير فعالة تتحول داخل الجسم إلى الشكل الفعال"],
+    ["Tablet","قرص — شكل صلب مضغوط من الدواء"],
+    ["Capsule","كبسولة — غلاف يحوي الدواء على هيئة مسحوق أو سائل"],
+    ["Suspension","معلّق — جسيمات دواء صلبة موزّعة في سائل"],
+    ["Solution","محلول — دواء مُذاب كاملًا في سائل"],
+    ["Syrup","شراب — محلول دوائي سكري القوام، شائع للأطفال"],
+    ["Suppository","تحميلة — شكل دوائي صلب يُدخَل في المستقيم أو المهبل ويذوب بحرارة الجسم"],
+    ["Ointment","مرهم — شكل دهني شبه صلب يُطبَّق على الجلد"],
+    ["Cream","كريم — شكل شبه صلب أخف من المرهم، يمتزج بالماء والدهن معًا"],
+    ["Injection","الحقن — إعطاء الدواء مباشرة عبر إبرة إلى الجسم"],
+    ["Intravenous (IV)","وريدي — يُعطى الدواء مباشرة في الوريد"],
+    ["Intramuscular (IM)","عضلي — يُعطى الدواء داخل العضلة"],
+    ["Subcutaneous (SC)","تحت الجلد — يُعطى الدواء في الطبقة الدهنية تحت الجلد"],
+    ["Oral (PO)","عن طريق الفم — يُبلَع الدواء"],
+    ["Sublingual","تحت اللسان — يُوضَع الدواء تحت اللسان ليمتص مباشرة دون المرور بالمعدة"],
+    ["Topical","موضعي — يُطبَّق الدواء على سطح الجسم مباشرة (كالجلد)"],
+    ["Enteric-Coated","مغلَّف معويًا — طلاء يمنع ذوبان القرص في المعدة الحمضية ليذوب في الأمعاء"],
+    ["Extended-Release (ER/XR)","ممتد التحرر — يُطلق الدواء تدريجيًا على ساعات طويلة بدل دفعة واحدة"],
+    ["Generic Name","الاسم العلمي — اسم المادة الفعالة الكيميائي الموحَّد عالميًا"],
+    ["Brand Name","الاسم التجاري — اسم الشركة المصنِّعة للدواء"],
+    ["Active Ingredient","المادة الفعالة — الجزء من الدواء المسؤول عن التأثير العلاجي"],
+    ["Excipient","المادة المساعدة — مكوّن غير فعال يُضاف لتشكيل الدواء (كالحشو أو اللون)"],
+    ["Formulation","التركيبة الدوائية — الشكل النهائي الذي يُصنَّع به الدواء"],
+    ["Compounding","التركيب الصيدلاني — تحضير دواء مخصَّص يدويًا داخل الصيدلية"],
+    ["Shelf Life","مدة الصلاحية — الفترة التي يبقى فيها الدواء فعالًا وآمنًا قبل انتهائه"],
+    ["Stability","الثبات — مدى محافظة الدواء على خواصه بمرور الوقت وتغيّر الظروف"],
+    ["Prescription (Rx)","الوصفة الطبية — أمر مكتوب من طبيب لصرف دواء معيّن"],
+    ["Over-the-Counter (OTC)","بلا وصفة طبية — دواء يُصرف للمريض مباشرة دون وصفة"],
+    ["Dispensing","الصرف — تسليم الصيدلي الدواء للمريض بعد التحقق من الوصفة"],
+    ["Patient Counseling","الإرشاد الدوائي — شرح الصيدلي للمريض كيفية استخدام دوائه بأمان"],
+    ["Drug Formulary","قائمة الأدوية المعتمدة — قائمة الأدوية المصرَّح بصرفها في منشأة صحية معيّنة"],
+    ["Clinical Pharmacy","الصيدلة الإكلينيكية — ممارسة صيدلانية تركّز على رعاية المريض مباشرة لا الصرف فقط"],
+    ["Pharmacovigilance","اليقظة الدوائية — مراقبة الأدوية بعد طرحها للكشف عن أي أضرار غير متوقعة"],
+    ["Therapeutic Drug Monitoring (TDM)","المراقبة العلاجية للدواء — قياس تركيز دواء في الدم لضبط جرعته بدقة"],
+    ["Polypharmacy","تعدد الأدوية — استخدام المريض لعدة أدوية في آن واحد، وما يحمله من مخاطر تداخل"],
+    ["Antibiotic Resistance","مقاومة المضادات الحيوية — فقدان دواء فعاليته ضد ميكروب كان يقتله سابقًا"],
+    ["Vaccine","اللقاح — مستحضر يحفّز مناعة الجسم ضد مرض معيّن دون التسبب فيه"],
+    ["Narrow Therapeutic Index Drug","دواء ضيق النافذة العلاجية — فارق بسيط جدًا بين جرعته الفعالة والسامة، يحتاج دقة عالية"]
+  ],
+  bus: [
+    ["Stakeholder","صاحب المصلحة — أي طرف يتأثر بقرارات الشركة (موظف، مالك، عميل، مورّد)"],
+    ["Shareholder","المساهم — مالك جزء من الشركة عبر أسهم"],
+    ["Organizational Chart","الهيكل التنظيمي — رسم يوضح من يتبع لمن في الشركة"],
+    ["Mission Statement","بيان الرسالة — لماذا توجد الشركة أصلًا"],
+    ["Vision Statement","بيان الرؤية — أين تريد الشركة أن تكون مستقبلًا"],
+    ["SWOT Analysis","تحليل سوات — نقاط القوة والضعف والفرص والتهديدات"],
+    ["Strategic Planning","التخطيط الاستراتيجي — تحديد أهداف بعيدة المدى وطريقة الوصول إليها"],
+    ["Competitive Advantage","الميزة التنافسية — ما يجعل الشركة أفضل من منافسيها"],
+    ["Market Share","الحصة السوقية — نسبة مبيعات الشركة من إجمالي السوق"],
+    ["Economies of Scale","وفورات الحجم — انخفاض التكلفة لكل وحدة كلما زاد الإنتاج"],
+    ["Supply Chain","سلسلة التوريد — رحلة المنتج من المادة الخام حتى العميل"],
+    ["Outsourcing","الاستعانة بمصادر خارجية — تكليف جهة خارجية بعمل كان يُنفَّذ داخليًا"],
+    ["Benchmarking","المقارنة المرجعية — قياس أداء شركتك بأفضل الممارسات في السوق"],
+    ["Corporate Governance","الحوكمة المؤسسية — القواعد التي تُدار بها الشركة وتُراقَب"],
+    ["Business Model","نموذج العمل — كيف تكسب الشركة المال فعليًا"],
+    ["Asset","الأصل — ما تملكه الشركة وله قيمة (نقد، مبنى، معدات)"],
+    ["Liability","الالتزام — ما على الشركة من ديون لآخرين"],
+    ["Equity","حقوق الملكية — قيمة الشركة بعد طرح الالتزامات من الأصول"],
+    ["Balance Sheet","الميزانية العمومية — صورة لحظية لأصول الشركة والتزاماتها"],
+    ["Income Statement","قائمة الدخل — الإيرادات والمصروفات خلال فترة معيّنة"],
+    ["Cash Flow Statement","قائمة التدفقات النقدية — حركة النقد الداخل والخارج فعليًا"],
+    ["Debit","مدين — الجانب الأيسر من القيد المحاسبي"],
+    ["Credit","دائن — الجانب الأيمن من القيد المحاسبي"],
+    ["Journal Entry","القيد اليومي — أول تسجيل لعملية مالية"],
+    ["Ledger","دفتر الأستاذ — تجميع كل القيود حسب الحساب"],
+    ["Trial Balance","ميزان المراجعة — تأكيد أن إجمالي المدين يساوي إجمالي الدائن"],
+    ["Depreciation","الإهلاك — تناقص قيمة أصل ملموس (كمعدة) بمرور الوقت"],
+    ["Amortization","الاستهلاك — تناقص قيمة أصل غير ملموس (كبراءة اختراع) بمرور الوقت"],
+    ["Accrual","الاستحقاق — تسجيل الإيراد أو المصروف وقت حدوثه لا وقت دفعه"],
+    ["Accounts Receivable","الذمم المدينة — مبالغ يدين بها العملاء للشركة"],
+    ["Accounts Payable","الذمم الدائنة — مبالغ تدين بها الشركة لمورّديها"],
+    ["Gross Profit","الربح الإجمالي — الإيراد ناقص تكلفة البضاعة المباعة فقط"],
+    ["Net Profit","صافي الربح — الربح بعد خصم كل المصروفات والضرائب"],
+    ["Cost of Goods Sold (COGS)","تكلفة البضاعة المباعة — التكلفة المباشرة لإنتاج ما بِيع فعلًا"],
+    ["Fiscal Year","السنة المالية — فترة ١٢ شهرًا تحتسب عليها الشركة حساباتها"],
+    ["Present Value (PV)","القيمة الحالية — كم يساوي مبلغ مستقبلي لو امتلكته اليوم"],
+    ["Future Value (FV)","القيمة المستقبلية — كم سيصبح مبلغ اليوم بعد سنوات من الفائدة"],
+    ["Net Present Value (NPV)","صافي القيمة الحالية — قيمة مشروع اليوم بعد خصم كل تدفقاته المستقبلية"],
+    ["Internal Rate of Return (IRR)","معدل العائد الداخلي — نسبة العائد التي تجعل صافي القيمة الحالية صفرًا"],
+    ["Time Value of Money","القيمة الزمنية للنقود — الريال اليوم يساوي أكثر من نفس الريال بعد سنة"],
+    ["Interest Rate","معدل الفائدة — نسبة إضافية تُدفع أو تُكتسب مقابل استخدام المال"],
+    ["Compound Interest","الفائدة المركّبة — فائدة تُحتسب على الفائدة السابقة أيضًا لا على الأصل فقط"],
+    ["Simple Interest","الفائدة البسيطة — فائدة تُحتسب على المبلغ الأصلي فقط كل مرة"],
+    ["Capital Budgeting","الموازنة الرأسمالية — قرار الشركة في أي مشاريع تستثمر أموالها"],
+    ["Working Capital","رأس المال العامل — الفرق بين الأصول المتداولة والالتزامات المتداولة"],
+    ["Liquidity","السيولة — سهولة تحويل أصل إلى نقد بسرعة دون خسارة قيمته"],
+    ["Solvency","الملاءة المالية — قدرة الشركة على سداد التزاماتها طويلة الأجل"],
+    ["Leverage","الرافعة المالية — استخدام الدَّين لتمويل نمو الشركة بدل رأس المال فقط"],
+    ["Dividend","توزيعات الأرباح — نصيب المساهم من أرباح الشركة"],
+    ["Bond","السند — قرض يقدّمه المستثمر للشركة مقابل فائدة ثابتة"],
+    ["Stock / Share","السهم — حصة ملكية صغيرة في الشركة"],
+    ["Portfolio","المحفظة الاستثمارية — مجموعة الاستثمارات التي يملكها شخص أو جهة"],
+    ["Risk Diversification","تنويع المخاطر — توزيع الاستثمار بدل تركيزه لتقليل الخسارة المحتملة"],
+    ["Return on Investment (ROI)","العائد على الاستثمار — نسبة الربح مقارنة بالمبلغ المُستثمر"],
+    ["EBITDA","الأرباح قبل الفوائد والضرائب والإهلاك والاستهلاك — مقياس لربحية التشغيل الأساسية"],
+    ["Market Segmentation","تجزئة السوق — تقسيم العملاء إلى مجموعات متشابهة الاحتياجات"],
+    ["Target Market","السوق المستهدف — الفئة التي تصمّم الشركة منتجها لأجلها تحديدًا"],
+    ["Positioning","التموضع — الصورة الذهنية التي تريد الشركة أن يحملها العميل عن منتجها"],
+    ["Marketing Mix (4Ps)","المزيج التسويقي — المنتج والسعر والمكان والترويج معًا"],
+    ["Brand Equity","القيمة العلامية — القيمة الإضافية التي يمنحها اسم العلامة التجارية للمنتج"],
+    ["Customer Lifetime Value","القيمة الدائمة للعميل — إجمالي الربح المتوقع من عميل طوال تعامله مع الشركة"],
+    ["Market Research","بحوث السوق — جمع بيانات حقيقية لفهم العملاء قبل اتخاذ القرار"],
+    ["Demand","الطلب — كمية ما يريد المستهلكون شراءه بسعر معيّن"],
+    ["Supply","العرض — كمية ما يرغب المنتجون في بيعه بسعر معيّن"],
+    ["Price Elasticity","مرونة السعر — مدى تغيّر الطلب على سلعة عند تغيّر سعرها"],
+    ["Public Relations (PR)","العلاقات العامة — إدارة صورة الشركة أمام الجمهور والإعلام"],
+    ["Digital Marketing","التسويق الرقمي — الترويج عبر الإنترنت ومنصات التواصل"],
+    ["Conversion Rate","معدل التحويل — نسبة الزوّار الذين تحوّلوا فعليًا لعملاء شارين"],
+    ["Customer Retention","الاحتفاظ بالعملاء — إبقاء العميل يشتري باستمرار بدل عميل واحد ثم يرحل"],
+    ["Unique Selling Proposition (USP)","عرض البيع الفريد — ما يميّز منتجك عن كل المنافسين تحديدًا"],
+    ["Human Resource Management (HRM)","إدارة الموارد البشرية — إدارة شؤون موظفي الشركة من التوظيف حتى المغادرة"],
+    ["Recruitment","الاستقطاب — البحث عن مرشحين لشغل وظيفة شاغرة"],
+    ["Onboarding","التهيئة الوظيفية — دمج الموظف الجديد في بيئة العمل بسلاسة"],
+    ["Performance Appraisal","تقييم الأداء — قياس إنجاز الموظف مقابل أهداف محددة"],
+    ["Organizational Behavior","السلوك التنظيمي — دراسة كيف يتصرف الأفراد والجماعات داخل الشركة"],
+    ["Leadership Style","أسلوب القيادة — الطريقة التي يدير بها المدير فريقه (توجيهي، تشاركي...)"],
+    ["Motivation Theory","نظرية التحفيز — ما الذي يدفع الموظف للعمل بجدّية أكبر"],
+    ["Job Description","الوصف الوظيفي — وثيقة تحدد مهام ومسؤوليات وظيفة معيّنة"],
+    ["Span of Control","نطاق الإشراف — عدد الموظفين الذين يُشرف عليهم مدير واحد مباشرة"],
+    ["Delegation","التفويض — إسناد المدير جزءًا من صلاحياته لموظف آخر"],
+    ["Change Management","إدارة التغيير — قيادة الشركة بسلاسة خلال تحوّل أو تطوير كبير"],
+    ["Conflict Resolution","حل النزاعات — التعامل مع الخلافات بين الموظفين بطريقة بنّاءة"],
+    ["Employee Turnover","معدل دوران الموظفين — نسبة الموظفين الذين يغادرون الشركة خلال فترة معيّنة"],
+    ["Talent Management","إدارة المواهب — استقطاب وتطوير والاحتفاظ بأفضل الموظفين"],
+    ["Succession Planning","تخطيط التعاقب الوظيفي — إعداد من يحل محل القيادات عند مغادرتها"],
+    ["Management Information System (MIS)","نظام المعلومات الإداري — نظام يجمع بيانات الشركة ليساعد في اتخاذ القرار"],
+    ["Database","قاعدة البيانات — مكان منظَّم لتخزين بيانات الشركة واسترجاعها"],
+    ["ERP (Enterprise Resource Planning)","تخطيط موارد المؤسسة — نظام واحد يربط كل أقسام الشركة (مالية، مخزون، موارد بشرية) معًا"],
+    ["CRM (Customer Relationship Management)","إدارة علاقات العملاء — نظام لتتبع تعاملات الشركة مع كل عميل"],
+    ["E-commerce","التجارة الإلكترونية — البيع والشراء عبر الإنترنت"],
+    ["B2B (Business-to-Business)","من شركة لشركة — بيع منتج أو خدمة لشركة أخرى لا لمستهلك فرد"],
+    ["B2C (Business-to-Consumer)","من شركة لمستهلك — بيع منتج أو خدمة مباشرة للفرد"],
+    ["Supply Chain Management System","نظام إدارة سلسلة التوريد — برنامج يتابع حركة البضاعة من المصدر للعميل"],
+    ["Data Analytics","تحليل البيانات — استخراج معنى ونمط مفيد من بيانات ضخمة"],
+    ["Business Intelligence (BI)","ذكاء الأعمال — أدوات تحوّل بيانات الشركة الخام إلى تقارير تدعم القرار"],
+    ["Cybersecurity","الأمن السيبراني — حماية بيانات الشركة وأنظمتها من الاختراق"],
+    ["Digital Transformation","التحوّل الرقمي — تبنّي الشركة للتقنية الحديثة بدل الطرق التقليدية"],
+    ["Cloud Computing","الحوسبة السحابية — تخزين البيانات وتشغيل البرامج عبر الإنترنت بدل أجهزة الشركة"],
+    ["Big Data","البيانات الضخمة — كميات هائلة من البيانات يصعب تحليلها بالطرق التقليدية"],
+    ["Payment Gateway","بوابة الدفع — الوسيط الإلكتروني الذي يعالج عملية الدفع الإلكتروني بأمان"]
+  ],
   prep: [
     ["Solve","حُلّ — أوجد قيمة المجهول التي تجعل المعادلة صحيحة"],
     ["Simplify","بسّط — اختصر التعبير إلى أقصر صورة مكافئة، بلا إيجاد قيمة"],
@@ -13184,6 +14004,12 @@ function refGlossaryList(student){
   if(!student) return null;
   const key = catalogKeyFor(student) || "";
   if(/-eng-5$/.test(key) && REFERENCE_GLOSSARY.prep) return REFERENCE_GLOSSARY.prep;
+  /* "sts" is an administrative college label at some universities, not a real
+     field — it quietly holds Translation (same subject as the "arts" college
+     elsewhere, same glossary should apply) alongside Digital Media (a
+     genuinely different field, its own glossary below). College id alone
+     would wrongly show one glossary — or none — to both. */
+  if(student.majorId === "sts-0" && REFERENCE_GLOSSARY.arts) return REFERENCE_GLOSSARY.arts;
   return REFERENCE_GLOSSARY[student.collegeId] || null;
 }
 const UNDERSTANDING_REASONS = [

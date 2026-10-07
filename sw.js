@@ -21,7 +21,7 @@
       nothing. A new BUILD stamp still forces a fresh copy, per rule 1.
 */
 
-const BUILD = "2026-10-04-01";
+const BUILD = "2026-10-05-02";
 const CACHE = `studymate-${BUILD}`;
 const SHELL = ["./", "./index.html", "./course-data.js"];
 
