@@ -21,9 +21,9 @@
       nothing. A new BUILD stamp still forces a fresh copy, per rule 1.
 */
 
-const BUILD = "2026-10-05-02";
+const BUILD = "2026-10-25-02";
 const CACHE = `studymate-${BUILD}`;
-const SHELL = ["./", "./index.html", "./course-data.js"];
+const SHELL = ["./", "./index.html", "./course-data.js", "./fonts/Cairo-variable.woff2"];
 
 self.addEventListener("install", (event)=>{
   event.waitUntil(
