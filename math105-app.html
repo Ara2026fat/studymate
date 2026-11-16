@@ -819,7 +819,7 @@ function shell(inner){
   <div class="tabs" role="tablist">${[['learn',u('Understand','افهم')],['write',u('Write','اكتب')],['keep',u('Keep','احفظ')],['prep',u('Prepare','استعد')]].map(([k,l])=>`<button role="tab" aria-selected="${tab===k}" data-tab="${k}">${l}</button>`).join('')}</div>`}
   ${inner}
   ${storageOK?'':`<p class="mut" style="text-align:center">${u('Saving is not possible in this browser, so what you write will not stay after you close the page.','تعذّر الحفظ في هذا المتصفح، فلن يبقى ما تكتبه بعد إغلاق الصفحة.')}</p>`}
-  <div class="foot">ARAFAT ALRAJHI © 2026 · ${u('part of StudyMate','جزء من StudyMate')}</div>`;
+  <div class="foot">ARAFAT ALRAJHI © 2026 · ${u('part of StudyMate','جزء من StudyMate')} · v7 · 16 Nov 23:40</div>`;
   const lg=document.getElementById('lgt');if(lg)lg.onclick=()=>{D.practice.lang=BO()?'ar':SL()==='ar'?'en':'both';save();if(handle){handle.destroy();handle=null}render()};
   const b=document.getElementById('back');if(b)b.onclick=()=>{if(handle){handle.destroy();handle=null}sub=null;trap=null;render()};
   app.querySelectorAll('[data-tab]').forEach(t=>t.onclick=()=>{tab=t.dataset.tab;render()});
