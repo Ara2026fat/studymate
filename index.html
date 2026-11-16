@@ -2408,6 +2408,7 @@ body[data-theme="daylight"] .segmented-active{
   <div>جميع الحقوق محفوظة — أداة أكاديمية لأغراض تعليمية</div>
 </footer>
 <script src="course-data.js"></script>
+<script src="math105.js"></script>
 <script>
 (function(){
 "use strict";
@@ -10238,6 +10239,55 @@ function tiredHtml(){
     </div>`;
 }
 
+/* ============================================================
+   MATH 105 PRACTICE — generated questions inside the course folder
+   ------------------------------------------------------------
+   The engine and the practice screens live in math105.js (shared with the
+   standalone version). This is only the host: it says where progress is
+   stored (inside DB, so backups carry it), how a miss reaches the course's
+   review list, and which exam the plan counts down to. No points, no streaks,
+   no ranks — progress here is the student's own reflection.
+   ============================================================ */
+function isMath105(name){ return /^MATH\s?105(\b|\s|-|$)/i.test((name||"").trim()); }
+let m105Handle = null;
+function renderMath105(courseId){
+  applyDir();
+  const l = lang();
+  const course = dbGet("courses", courseId);
+  if(!course || typeof Math105 === "undefined") return renderCourseView(courseId, true);
+  if(m105Handle){ try{ m105Handle.destroy(); }catch(e){} m105Handle = null; }
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="m105Back" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="${l==="ar" ? "رجوع" : "Back"}">${chevronBack()}</button>
+        <div>
+          <div class="screen-header-title" style="font-size:var(--fs-subheading);">تمرّن</div>
+          <div class="screen-header-sub">${escapeHtml(course.name)}</div>
+        </div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content" id="m105Root"></div>
+    </section>`;
+  const goBack = ()=>{ if(m105Handle){ try{ m105Handle.destroy(); }catch(e){} m105Handle = null; } navBack(()=>renderCourseView(courseId, true)); };
+  document.getElementById("m105Back").addEventListener("click", goBack);
+  if(!DB.mathPractice) DB.mathPractice = {};
+  m105Handle = Math105.mount(document.getElementById("m105Root"), {
+    load(){ if(!DB.mathPractice[courseId]) DB.mathPractice[courseId] = { v:1, skills:{}, placed:false, sessions:0 }; return DB.mathPractice[courseId]; },
+    save(){ dbSave(); },
+    back: goBack,
+    /* A miss becomes an open question in this course — the same list the exam
+       preparation screen reads — once per topic, never piling up duplicates. */
+    flag(topic, reasonId){
+      const nb = NotebookModule.get(courseId);
+      if(nb.checks.some(c=>!c.understood && c.topic === topic)) return;
+      NotebookModule.addCheck(courseId, topic, false, reasonId);
+    },
+    examInfo(){
+      const ev = AcademicEventModule.listForCourse(courseId).find(e=>e.isEvaluative && e.date && !isEventPast(e));
+      return ev ? { days:daysUntil(ev.date), title:ev.title } : null;
+    }
+  });
+}
 function renderTrapDrill(courseId, restart){
   applyDir();
   const s = t();
@@ -11030,6 +11080,15 @@ function renderCourseView(courseId, keepTab){
             </ul>
             <p class="type-caption" style="color:var(--ink-muted); margin:0; line-height:1.6;">${escapeHtml(enrichment.before.note[lang()])}</p>
           </div>` : ""}
+          ${isMath105(course.name) ? `
+          <button type="button" class="card" data-cv="m105" style="margin-bottom:var(--sp-3);">
+            <span class="card-icon">${ICON.lens}</span>
+            <span class="card-body">
+              <span class="card-title">تمرّن بأسئلة متجددة</span>
+              <span class="card-meta" style="white-space:normal;">أسئلة تتغيّر كل مرة، وتنبّهك إلى الأخطاء الشائعة وتسجّل ضعفك للمراجعة.</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>` : ""}
           ${(enrichment && enrichment.hard && enrichment.hard.some(h=>h.trap)) ? `
           <button type="button" class="card" data-cv="trap" style="margin-bottom:var(--sp-3);">
             <span class="card-icon" style="color:var(--attention); background:rgba(var(--attention-rgb),.14);">${ICON.lens}</span>
@@ -11120,6 +11179,7 @@ function renderCourseView(courseId, keepTab){
   document.querySelectorAll("[data-cv]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const what = btn.dataset.cv;
+      if(what === "m105"){ navPush(()=>renderCourseView(courseId, true)); return renderMath105(courseId); }
       if(what === "trap"){ navPush(()=>renderCourseView(courseId, true)); return renderTrapDrill(courseId, true); }
       if(what === "sheet"){ navPush(()=>renderCourseView(courseId, true)); return renderCourseSheet(courseId); }
       if(what === "add") return openAddSheet(courseId, ()=>renderCourseView(courseId, true));
@@ -11201,6 +11261,8 @@ function renderExamPrepHub(eventId){
           }).join("")}
         </div>`}
         ` : ""}
+        ${prepTab==="review" && isMath105(course.name) ? `
+        <button type="button" class="btn btn-secondary" id="prepM105" style="width:100%; margin-bottom:var(--sp-4);">${ICON.lens}<span>تمرّن على نقاط ضعفك</span></button>` : ""}
         ${prepTab==="exams" ? `
         <div class="section-label" style="margin-top:0;">${s.notebookExamsLabel}</div>
         ${nb.exams.length===0 ? `
@@ -11232,6 +11294,8 @@ function renderExamPrepHub(eventId){
     </section>
   `;
   wireSkillNudge();
+  const prepM105 = document.getElementById("prepM105");
+  if(prepM105) prepM105.addEventListener("click", ()=>{ navPush(()=>renderExamPrepHub(eventId)); renderMath105(course.id); });
   document.querySelectorAll("[data-prep-tab]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       if(btn.dataset.prepTab === prepTab) return;
