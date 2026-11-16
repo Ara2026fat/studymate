@@ -744,20 +744,22 @@ function render(){
   if(sub==='practice')return practice();if(sub==='trap')return trapDrill();
   ({learn,write,keep,prep})[tab]();window.scrollTo(0,0)}
 
-/* ---------- افهم ---------- */
+/* ---------- افهم: أربعة تبويبات داخلية، بلا تمرير طويل ---------- */
+let lsub='about';
 function learn(){
   const hasTrap=ENR.hard.some(h=>h.trap);
-  shell(`<div class="box"><h2>عن هذه المادة</h2><p>${esc(ENR.explain.ar)}</p><p class="mut"><b>ليش تهم:</b> ${esc(ENR.why.ar)}</p>
-    ${ENR.before?`<div class="before"><b style="color:var(--accent)">قبل أن تبدأ، راجع</b><ul>${ENR.before.items.map(i=>`<li>${esc(i.ar)}</li>`).join('')}</ul><p class="mut" style="margin:0">${esc(ENR.before.note.ar)}</p></div>`:''}</div>
-    <button class="go" id="gp"><span class="ic">∫</span><span><b>تمرّن بأسئلة متجددة</b><span class="d">أسئلة تتغيّر كل مرة، وتنبّهك إلى الأخطاء الشائعة وتسجّل ضعفك للمراجعة.</span></span></button>
-    ${hasTrap?`<button class="go warn" id="gt"><span class="ic">!</span><span><b>أرني خطأً شائعًا</b><span class="d">خطأ شائع في هذه المادة. هل تعرف أين يقع قبل أن تراه؟</span></span></button>`:''}
-    <div class="lab">أصعب ما في المادة</div>
-    ${ENR.hard.map((h,i)=>`<details class="hp"${i===0?' open':''}><summary><span class="n">${i+1}</span>${esc(h.title.ar)}</summary><p>${esc(h.plain.ar)}</p>${h.trap?`<p class="trap"><b>لماذا يتعثر الطلاب:</b> ${esc(h.trap.ar)}</p>`:''}</details>`).join('')}
-    <div class="lab">خريطة المواضيع</div>
-    ${ENR.topics.map(t=>`<div class="topic"><b>${esc(t.title.ar)}</b><ul>${t.points.map(p=>`<li>${esc(p.ar)}</li>`).join('')}</ul></div>`).join('')}
-    <div class="lab">مراجع قرأناها وتأكدنا منها</div>
-    ${ENR.resources.map(r=>`<a class="res" href="${esc(r.url)}" target="_blank" rel="noopener"><b>${esc(r.title.ar)}</b><span class="mut">${esc(r.reason&&r.reason.ar||'')}${r.lang==='en'?' (بالإنجليزية)':''}</span></a>`).join('')}`);
-  document.getElementById('gp').onclick=()=>{sub='practice';render()};
+  const subs=[['about','نظرة'],['hard','الأصعب'],['topics','المواضيع'],['sources','المراجع']];
+  let body='';
+  if(lsub==='about')body=`<button class="go" id="gp"><span class="ic">∫</span><span><b>تمرّن بأسئلة متجددة</b><span class="d">أسئلة تتغيّر كل مرة، وتنبّهك إلى الأخطاء الشائعة وتسجّل ضعفك للمراجعة.</span></span></button>
+    ${hasTrap?`<button class="go warn" id="gt"><span class="ic">!</span><span><b>أرني خطأً شائعًا</b><span class="d">هل تعرف أين يقع قبل أن تراه؟</span></span></button>`:''}
+    <div class="box"><h2>عن هذه المادة</h2><p>${esc(ENR.explain.ar)}</p><p class="mut"><b>ليش تهم:</b> ${esc(ENR.why.ar)}</p>
+    ${ENR.before?`<details class="before"><summary style="cursor:pointer;font-weight:700;color:var(--accent)">قبل أن تبدأ، راجع</summary><ul>${ENR.before.items.map(i=>`<li>${esc(i.ar)}</li>`).join('')}</ul><p class="mut" style="margin:0">${esc(ENR.before.note.ar)}</p></details>`:''}</div>`;
+  else if(lsub==='hard')body=ENR.hard.map((h,i)=>`<details class="hp"${i===0?' open':''}><summary><span class="n">${i+1}</span>${esc(h.title.ar)}</summary><p>${esc(h.plain.ar)}</p>${h.trap?`<p class="trap"><b>لماذا يتعثر الطلاب:</b> ${esc(h.trap.ar)}</p>`:''}</details>`).join('');
+  else if(lsub==='topics')body=ENR.topics.map(t=>`<details class="hp"><summary>${esc(t.title.ar)}</summary><ul style="margin:0 0 12px;padding-inline-start:20px">${t.points.map(p=>`<li class="mut" style="margin-bottom:5px">${esc(p.ar)}</li>`).join('')}</ul></details>`).join('');
+  else body=ENR.resources.map(r=>`<a class="res" href="${esc(r.url)}" target="_blank" rel="noopener"><b>${esc(r.title.ar)}</b><span class="mut">${esc(r.reason&&r.reason.ar||'')}${r.lang==='en'?' (بالإنجليزية)':''}</span></a>`).join('');
+  shell(`<div class="tabs" role="tablist">${subs.map(([k,l])=>`<button role="tab" aria-selected="${lsub===k}" data-sub="${k}">${l}</button>`).join('')}</div>${body}`);
+  app.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{lsub=b.dataset.sub;render()});
+  const gp=document.getElementById('gp');if(gp)gp.onclick=()=>{sub='practice';render()};
   const gt=document.getElementById('gt');if(gt)gt.onclick=()=>{trap=null;sub='trap';render()};
 }
 
