@@ -10250,6 +10250,7 @@ function tiredHtml(){
    ============================================================ */
 function isMath105(name){ return /^MATH\s?105(\b|\s|-|$)/i.test((name||"").trim()); }
 let m105Handle = null;
+let learnSub = "about";
 function renderMath105(courseId){
   applyDir();
   const l = lang();
@@ -10930,7 +10931,7 @@ function folderSnippet(text, n){
   return t2.length > n ? t2.slice(0, n) + "…" : t2;
 }
 function renderCourseView(courseId, keepTab){
-  if(!keepTab) courseTab = "learn";
+  if(!keepTab){ courseTab = "learn"; learnSub = "about"; }
   applyDir();
   const s = t();
   const course = CourseModule.get(courseId);
@@ -11067,20 +11068,17 @@ function renderCourseView(courseId, keepTab){
         <p class="type-caption" style="color:var(--ink-muted); line-height:1.7; margin-top:var(--sp-3);">${s.cvPrepEmpty}</p>`}` : ""}
 
         ${courseTab==="learn" ? `
+        ${enrichment ? (()=>{
+          const subs = [["about", lang()==="ar" ? "نظرة" : "Overview"]];
+          if(enrichment.hard && enrichment.hard.length) subs.push(["hard", lang()==="ar" ? "الأصعب" : "Hardest"]);
+          if(enrichment.topics && enrichment.topics.length) subs.push(["topics", lang()==="ar" ? "المواضيع" : "Topics"]);
+          if(enrichment.resources && enrichment.resources.length) subs.push(["sources", lang()==="ar" ? "المراجع" : "Sources"]);
+          if(!subs.some(x=>x[0]===learnSub)) learnSub = "about";
+          return subs.length > 1 ? `<div class="set-tabs" style="margin-top:0;">${subs.map(([id,label])=>`<button type="button" class="set-tab ${learnSub===id?'set-tab-active':''}" data-learn-sub="${id}">${label}</button>`).join("")}</div>` : "";
+        })() : ""}
         ${enrichment ? `
         <div class="callout" style="margin-bottom:var(--sp-4);">
-          <div class="callout-label">${s.enrichmentAboutLabel}</div>
-          <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[lang()])}</p>
-          <p class="type-body" style="color:var(--ink-muted); font-size:var(--fs-caption);"><strong>${s.enrichmentWhyLabel}</strong> ${escapeHtml(enrichment.why[lang()])}</p>
-          ${enrichment.before ? `
-          <div style="margin-top:var(--sp-4); padding:var(--sp-3); border-radius:var(--r-md); background:rgba(var(--accent-rgb),.09);">
-            <div class="type-caption" style="font-weight:700; color:var(--accent); margin-bottom:6px;">${s.beforeYouStartLabel}</div>
-            <ul style="margin:0 0 8px; padding-inline-start:18px;">
-              ${enrichment.before.items.map(it=>`<li class="type-caption" style="color:var(--ink); margin-bottom:4px; line-height:1.6;">${escapeHtml(it[lang()])}</li>`).join("")}
-            </ul>
-            <p class="type-caption" style="color:var(--ink-muted); margin:0; line-height:1.6;">${escapeHtml(enrichment.before.note[lang()])}</p>
-          </div>` : ""}
-          ${isMath105(course.name) ? `
+          ${learnSub==="about" && isMath105(course.name) ? `
           <button type="button" class="card" data-cv="m105" style="margin-bottom:var(--sp-3);">
             <span class="card-icon">${ICON.lens}</span>
             <span class="card-body">
@@ -11089,7 +11087,18 @@ function renderCourseView(courseId, keepTab){
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>` : ""}
-          ${(enrichment && enrichment.hard && enrichment.hard.some(h=>h.trap)) ? `
+          ${learnSub==="about" ? `<div class="callout-label">${s.enrichmentAboutLabel}</div>
+          <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[lang()])}</p>
+          <p class="type-body" style="color:var(--ink-muted); font-size:var(--fs-caption);"><strong>${s.enrichmentWhyLabel}</strong> ${escapeHtml(enrichment.why[lang()])}</p>` : ""}
+          ${learnSub==="about" && enrichment.before ? `
+          <details style="margin-top:var(--sp-4); padding:var(--sp-3); border-radius:var(--r-md); background:rgba(var(--accent-rgb),.09);">
+            <summary class="type-caption" style="font-weight:700; color:var(--accent); cursor:pointer;">${s.beforeYouStartLabel}</summary>
+            <ul style="margin:0 0 8px; padding-inline-start:18px;">
+              ${enrichment.before.items.map(it=>`<li class="type-caption" style="color:var(--ink); margin-bottom:4px; line-height:1.6;">${escapeHtml(it[lang()])}</li>`).join("")}
+            </ul>
+            <p class="type-caption" style="color:var(--ink-muted); margin:0; line-height:1.6;">${escapeHtml(enrichment.before.note[lang()])}</p>
+          </details>` : ""}
+          ${(learnSub==="about" && enrichment && enrichment.hard && enrichment.hard.some(h=>h.trap)) ? `
           <button type="button" class="card" data-cv="trap" style="margin-bottom:var(--sp-3);">
             <span class="card-icon" style="color:var(--attention); background:rgba(var(--attention-rgb),.14);">${ICON.lens}</span>
             <span class="card-body">
@@ -11098,19 +11107,19 @@ function renderCourseView(courseId, keepTab){
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>` : ""}
-          <button type="button" class="card" data-cv="sheet" style="margin-bottom:var(--sp-4);">
+          ${learnSub==="about" ? `<button type="button" class="card" data-cv="sheet" style="margin-bottom:var(--sp-4);">
             <span class="card-icon">${ICON.essay}</span>
             <span class="card-body">
               <span class="card-title">${s.sheetEntry}</span>
               <span class="card-meta" style="white-space:normal;">${s.sheetEntryD}</span>
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
-          </button>
-          ${speechSupported() ? `
+          </button>` : ""}
+          ${learnSub==="about" && speechSupported() ? `
           <button type="button" class="listen" id="listenBtn">${ICON.mic}<span>${s.listenBtn}</span></button>
           <p class="type-caption" style="color:var(--ink-muted); line-height:1.6; margin-top:6px;">${s.listenNote}</p>` : ""}
-          ${enrichment.hard && enrichment.hard.length ? `
-          <div class="callout-label" style="margin-top:var(--sp-4);">${s.hardPartsLabel}</div>
+          ${learnSub==="hard" && enrichment.hard && enrichment.hard.length ? `
+          <div class="callout-label" style="margin-top:0;">${s.hardPartsLabel}</div>
           <div class="stack" style="margin-top:8px;">
             ${enrichment.hard.map((h, i)=>`
               <details class="hard-part"${i===0?" open":""}>
@@ -11125,28 +11134,27 @@ function renderCourseView(courseId, keepTab){
                 </p>` : ""}
               </details>`).join("")}
           </div>` : ""}
-          ${enrichment.topics && enrichment.topics.length ? `
-          <div class="callout-label" style="margin-top:var(--sp-4);">${s.topicsMapLabel}</div>
+          ${learnSub==="topics" && enrichment.topics && enrichment.topics.length ? `
+          <div class="callout-label" style="margin-top:0;">${s.topicsMapLabel}</div>
           <div class="stack" style="margin-top:8px;">
             ${enrichment.topics.map(topic=>`
-              <div style="background:var(--surface); border-radius:var(--r-sm); padding:var(--sp-3);">
-                <div class="type-body" style="font-weight:700; margin-bottom:6px;">${escapeHtml(topic.title[lang()])}</div>
-                <ul style="margin:0; padding-inline-start:20px;">
+              <details class="hard-part">
+                <summary><span>${escapeHtml(topic.title[lang()])}</span></summary>
+                <ul style="margin:8px 0 0; padding-inline-start:20px;">
                   ${topic.points.map(p=>`<li class="type-caption" style="color:var(--ink-muted); margin-bottom:5px; line-height:1.6;">${escapeHtml(p[lang()])}</li>`).join("")}
                 </ul>
-              </div>
-            `).join("")}
+              </details>`).join("")}
           </div>` : ""}
-          ${toolsListHtml}
-          ${enrichment.connections ? `
+          ${learnSub==="about" ? toolsListHtml : ""}
+          ${learnSub==="about" && enrichment.connections ? `
           <div class="callout-label" style="margin-top:var(--sp-4);">${s.connectionsLabel}</div>
           ${enrichment.connections.requires && enrichment.connections.requires.length ? `
           <p class="type-body" style="font-size:var(--fs-caption); margin-top:6px;">${s.connectionsRequires} <strong>${enrichment.connections.requires.map(c=>escapeHtml(c[lang()])).join('، ')}</strong></p>` : ""}
           ${enrichment.connections.leadsTo && enrichment.connections.leadsTo.length ? `
           <p class="type-body" style="font-size:var(--fs-caption); margin-top:4px;">${s.connectionsLeadsTo} <strong>${enrichment.connections.leadsTo.map(c=>escapeHtml(c[lang()])).join('، ')}</strong></p>` : ""}
           ` : ""}
-          ${enrichment.resources.length ? `
-          <div class="callout-label" style="margin-top:var(--sp-4);">${s.enrichmentResourcesLabel}</div>
+          ${learnSub==="sources" && enrichment.resources.length ? `
+          <div class="callout-label" style="margin-top:0;">${s.enrichmentResourcesLabel}</div>
           ${enrichment.resources.map(r=>resourceCardHtml(r, lang())).join("")}
           ${hasContact() ? `<button type="button" class="btn btn-secondary" id="suggestResourceBtn" style="width:100%; margin-top:var(--sp-3); font-size:var(--fs-caption);">${ICON.message}<span>${s.suggestResourceBtn}</span></button>` : ""}` : ""}
         </div>` : `
@@ -11166,6 +11174,9 @@ function renderCourseView(courseId, keepTab){
   if(listenBtn && enrichment) listenBtn.addEventListener("click", ()=>speakCourse(enrichment, listenBtn));
   /* Leaving the course must silence it; nothing is worse than a voice that
      follows the student into another screen. */
+  document.querySelectorAll("[data-learn-sub]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ learnSub = btn.dataset.learnSub; stopSpeaking(); renderCourseView(courseId, true); });
+  });
   document.querySelectorAll("[data-course-tab]").forEach(btn=>{
     btn.addEventListener("click", stopSpeaking);
   });
