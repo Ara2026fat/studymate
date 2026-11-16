@@ -447,7 +447,11 @@ const CSS=`
 .m105{--m-good:var(--support,#58B690);--m-bad:var(--attention,#B4523A);color:var(--ink);line-height:1.75}
 .m105 .katex{direction:ltr;unicode-bidi:isolate;font-size:1.08em}
 .m105 .m-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md,14px);padding:16px 16px;margin-bottom:14px}
-.m105 h2{font-size:var(--fs-heading,17px);margin:0 0 6px;font-weight:700}
+.m105 h2{font-size:calc(var(--fs-heading,17px) + 6px);line-height:1.35;margin:4px 0 8px;font-weight:800}
+.m105 .sc{border-top:5px solid var(--sc)}
+.m105 div.sc[style*=padding]{border-top:0;border-inline-start:6px solid var(--sc)}
+.m105 .sc h2{color:var(--sc)}
+.m105 .chip{display:inline-block;font-size:var(--fs-caption,13px);font-weight:700;padding:1px 10px;border-radius:999px;background:var(--sc);color:#111}
 .m105 p{margin:0 0 .6em}.m105 .mut{color:var(--ink-muted);font-size:var(--fs-caption,13px)}
 .m105 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .m105 button{font-family:inherit}
@@ -510,6 +514,8 @@ function ensureKatex(){
   return kxPromise;}
 function typeset(el){ensureKatex().then(ok=>{if(ok&&el.isConnected)try{window.renderMathInElement(el,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false})}catch(e){}})}
 
+const HUES=[205,150,38,268,338,172,14];
+const sc=id=>`hsl(${HUES[id%7]} 62% 58%)`;
 const stOf=id=>STATIONS.find(s=>s.id===id);
 const idsOf=st=>Object.keys(GENS).filter(i=>GENS[i].st===st);
 const DEFAULT_PROGRESS=()=>({v:1,skills:{},placed:false,sessions:0});
@@ -576,10 +582,10 @@ function mount(root,host){
       const pace=!ex||ex.days<0?'':ex.days===0?TT('Your exam is today. Review the rules only; do not start anything new.','اختبارك اليوم. راجع القواعد فقط ولا تبدأ جديدًا.'):TT(`${ex.days} days left until “${esc(ex.title)}” and ${left} stations${ex.days>left?(ex.days/left>=2?': about one station every '+Math.floor(ex.days/left)+' days is enough.':': about one station a day is enough.'):': do more than one station today to catch up.'}`,`باقٍ ${ex.days} يومًا على «${esc(ex.title)}» و${left} محطات${ex.days>left?(ex.days/left>=2?': تكفيك محطة كل '+Math.floor(ex.days/left)+' أيام تقريبًا.':': تكفيك محطة كل يوم تقريبًا.'):': اجعل اليوم أكثر من محطة لتلحق.'}`);
       body=`<div class="m-box"><div class="row" style="margin-bottom:8px"><span class="mut">${TT(`Your journey: ${done} of ${STATIONS.length} stations`,`رحلتك: ${done} من ${STATIONS.length} محطات`)}</span><span class="bar"><i style="width:${Math.round(done/STATIONS.length*100)}%"></i></span></div>
         ${pace?`<p class="mut">${pace}</p>`:''}
-        <div style="padding:14px;border-radius:14px;background:var(--accent-soft)"><div class="mut" style="margin-bottom:2px">${TT('Your step now','خطوتك الآن')}</div><h2 style="margin:0 0 4px">${esc(st.title)}</h2><p class="mut">${esc(st.d)}</p>${ar2(BOTH?`<b>${esc(asAr(nextStep).title)}</b><br>${esc(asAr(nextStep).d)}`:'')}<button class="m-btn" id="step" style="width:100%">${st.btn}</button></div></div>
-        <div class="m-box">${STATIONS.map((s,i)=>{const ds=!!PA.done[s.id],cur=curIdx()===i;return `<div class="sk"><span class="tag ${ds?'ok':cur?'mid':''}" style="min-width:26px;text-align:center">${ds?'✓':cur?'◀':'🔒'}</span><span class="nm" style="${!ds&&!cur?'color:var(--ink-muted)':''}">${s.title}${BOTH?`<span class="mut" dir="rtl" lang="ar" style="display:block">${s._t.ar}</span>`:''}</span>${ds?`<span class="mut">${Math.round(stMastery(s.id)*100)}%</span>`:''}</div>`}).join('')}</div>`;
+        <div class="sc" style="--sc:${sc((st.st||STATIONS[Math.max(0,curIdx())]||{id:0}).id)};padding:14px;border-radius:14px;background:var(--accent-soft)"><div class="mut" style="margin-bottom:2px">${TT('Your step now','خطوتك الآن')}</div><h2 style="margin:0 0 4px">${esc(st.title)}</h2><p class="mut">${esc(st.d)}</p>${ar2(BOTH?`<b>${esc(asAr(nextStep).title)}</b><br>${esc(asAr(nextStep).d)}`:'')}<button class="m-btn" id="step" style="width:100%">${st.btn}</button></div></div>
+        <div class="m-box">${STATIONS.map((s,i)=>{const ds=!!PA.done[s.id],cur=curIdx()===i;return `<div class="sk"><span class="tag ${ds?'ok':cur?'mid':''}" style="min-width:26px;text-align:center;border-inline-start:5px solid ${sc(s.id)}">${ds?'✓':cur?'◀':'🔒'}</span><span class="nm" style="${!ds&&!cur?'color:var(--ink-muted)':''}">${s.title}${BOTH?`<span class="mut" dir="rtl" lang="ar" style="display:block">${s._t.ar}</span>`:''}</span>${ds?`<span class="mut">${Math.round(stMastery(s.id)*100)}%</span>`:''}</div>`}).join('')}</div>`;
     }else{
-      body=STATIONS.filter(s=>PA.done[s.id]||PA.seen[s.id]||curIdx()===STATIONS.indexOf(s)).map(s=>`<details class="st"><summary><b>${s.id}. ${s.title}</b></summary><div class="in"><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${s.rules}${ar2(s._r.ar)}</div></div></details>`).join('')
+      body=STATIONS.filter(s=>PA.done[s.id]||PA.seen[s.id]||curIdx()===STATIONS.indexOf(s)).map(s=>`<details class="st" style="border-inline-start:5px solid ${sc(s.id)}"><summary><b style="font-size:1.15em;color:${sc(s.id)}">${s.id+1}. ${s.title}</b></summary><div class="in"><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${s.rules}${ar2(s._r.ar)}</div></div></details>`).join('')
         +`<p class="mut">${TT('Only the rules of stations you have reached appear here.','تظهر هنا قواعد المحطات التي وصلت إليها فقط.')}</p><div class="m-box"><button class="m-btn ghost sm" id="rst">${TT('Restart the journey','إعادة الرحلة من البداية')}</button></div>`;
     }
     out(`<div class="m-tabs" role="tablist">${[['path',TT('My journey','رحلتي')],['rules',TT('Rules','القواعد')]].map(([k,l])=>`<button role="tab" aria-selected="${htab===k}" data-h="${k}">${l}</button>`).join('')}${host.noLang?'':`<button id="lgt" aria-label="Language" style="flex:none;padding:8px 12px">${LGLABEL()}</button>`}</div>${body}`);
@@ -599,9 +605,9 @@ function mount(root,host){
   let exCache={};
   function lesson(){
     const ids=idsOf(lst.id),total=ids.length+1;
-    if(lpage===0){out(`<div class="m-box"><span class="mut">${TT(`Lesson · 1 of ${total}`,`الدرس · 1 من ${total}`)}</span><h2>${lst.title}</h2><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${lst.rules}${ar2(lst._r.ar)}</div><p class="mut">${TT('You will practise: ','ما ستتدرّب عليه: ')}${ids.map(i=>GENS[i].name).join(LG==='ar'?'، ':', ')}.</p><div class="row"><button class="m-btn" id="nx">${TT('Next','التالي')}</button></div></div>`)}
+    if(lpage===0){out(`<div class="m-box sc" style="--sc:${sc(lst.id)}"><span class="chip">${TT(`Station ${lst.id+1}`,`المحطة ${lst.id+1}`)}</span> <span class="mut">${TT(`Lesson · 1 of ${total}`,`الدرس · 1 من ${total}`)}</span><h2>${lst.title}</h2><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${lst.rules}${ar2(lst._r.ar)}</div><p class="mut">${TT('You will practise: ','ما ستتدرّب عليه: ')}${ids.map(i=>GENS[i].name).join(LG==='ar'?'، ':', ')}.</p><div class="row"><button class="m-btn" id="nx">${TT('Next','التالي')}</button></div></div>`)}
     else{const id=ids[lpage-1];const e0=exCache[id]||(exCache[id]=GENS[id].make(1)),e=cp(e0);
-      out(`<div class="m-box"><span class="mut">${TT(`Lesson · ${lpage+1} of ${total}`,`الدرس · ${lpage+1} من ${total}`)}</span><h2>${GENS[id].name}</h2><p class="mut">${TT('Read the example and its solution first, then we practise it.','اقرأ المثال والحل أولًا، ثم نتدرّب عليه.')}</p><div class="qbox">${e.q}${ar2(e0.ar.q)}</div><div class="fb hint"><b>${TT('Solution:','الحل:')}</b><p>${e.sol}</p></div>${LG==='en'?`<div class="fb hint" dir="rtl" lang="ar"><b>شرح بالعربي</b>${BOTH?'':`<p>${e0.ar.q}</p>`}<p>${e0.ar.sol}</p></div>`:''}<div class="row" style="margin-top:12px"><button class="m-btn" id="nx">${lpage===ids.length?TT('Got it, start practising','فهمت، لنبدأ التدريب'):TT('Got it, next','فهمت، التالي')}</button></div></div>`)}
+      out(`<div class="m-box sc" style="--sc:${sc(lst.id)}"><span class="chip">${TT(`Station ${lst.id+1}`,`المحطة ${lst.id+1}`)}</span> <span class="mut">${TT(`Lesson · ${lpage+1} of ${total}`,`الدرس · ${lpage+1} من ${total}`)}</span><h2>${GENS[id].name}</h2><p class="mut">${TT('Read the example and its solution first, then we practise it.','اقرأ المثال والحل أولًا، ثم نتدرّب عليه.')}</p><div class="qbox">${e.q}${ar2(e0.ar.q)}</div><div class="fb hint"><b>${TT('Solution:','الحل:')}</b><p>${e.sol}</p></div>${LG==='en'?`<div class="fb hint" dir="rtl" lang="ar"><b>شرح بالعربي</b>${BOTH?'':`<p>${e0.ar.q}</p>`}<p>${e0.ar.sol}</p></div>`:''}<div class="row" style="margin-top:12px"><button class="m-btn" id="nx">${lpage===ids.length?TT('Got it, start practising','فهمت، لنبدأ التدريب'):TT('Got it, next','فهمت، التالي')}</button></div></div>`)}
     $('#nx').onclick=()=>{if(lpage>=ids.length){PA.seen[lst.id]=true;exCache={};save();htab='path';hub()}else{lpage++;lesson()}};}
 
   /* ---------- الجلسات ---------- */
@@ -617,7 +623,7 @@ function mount(root,host){
   function practice(){
     const p=cp(sess.p),g=GENS[sess.skill],test=sess.mode==='test'||sess.mode==='diag',skm=sess.mode==='skill';
     const top=skm?`<span class="mut">${TT('Correct in a row','صحيح متتالٍ')}</span><span>${[0,1,2].map(i=>`<span style="color:${i<sess.streak?'var(--accent)':'var(--line)'}">●</span>`).join(' ')}</span><span style="flex:1"></span>`:`<span class="mut">${TT(`Question ${sess.i} of ${sess.n}`,`سؤال ${sess.i} من ${sess.n}`)}</span><span class="bar"><i style="width:${(sess.i-1)/sess.n*100}%"></i></span>`;
-    out(`<div class="m-box"><div class="qhead">${top}<button class="m-btn ghost sm" id="quit">${skm?TT('Back','رجوع'):TT('End','إنهاء')}</button></div>
+    out(`<div class="m-box sc" style="--sc:${sc(g.st)}"><div class="qhead">${top}<button class="m-btn ghost sm" id="quit">${skm?TT('Back','رجوع'):TT('End','إنهاء')}</button></div>
     <p class="mut">${sess.mode==='test'?TT(`Station test: ${sess.st.title}`,`اختبار المحطة: ${sess.st.title}`):g.name+' · '+stOf(g.st).title}</p><div class="qbox">${p.q}${ar2(sess.p.ar&&sess.p.ar.q)}</div><div id="inp"></div><div id="fb"></div></div>`);
     $('#quit').onclick=()=>{save();sess=null;htab='path';hub()};
     const inp=$('#inp'),arB=LG==='en'&&!BOTH&&sess.p.ar?`<button class="m-btn ghost sm" id="arb" lang="ar">عربي</button>`:'',acts=test?(arB?`<div class="row" style="margin-top:10px">${arB}</div>`:''):`<div class="row" style="margin-top:10px"><button class="m-btn ghost sm" id="hint">${TT('Hint','تلميح')}</button><button class="m-btn ghost sm" id="ex">${TT('Worked example','مثال محلول')}</button><button class="m-btn ghost sm" id="show">${TT('Show solution','أظهر الحل')}</button>${arB}</div>`;
