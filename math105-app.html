@@ -520,6 +520,9 @@ const CSS=`
 .m105 .m-btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .m105 .m-btn.sm{padding:5px 12px;font-size:var(--fs-caption,13px)}
 .m105 .m-btn:disabled{opacity:.45}
+.m105 .m-tabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--surface);border:1px solid var(--line);margin-bottom:14px}
+.m105 .m-tabs button{flex:1;border:0;background:transparent;color:var(--ink-muted);padding:8px 4px;border-radius:10px;font-weight:600;font-size:var(--fs-body,14px);cursor:pointer}
+.m105 .m-tabs button[aria-selected=true]{background:rgba(var(--accent-rgb,201,138,46),.2);color:var(--accent)}
 .m105 .bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;flex:1;min-width:60px}
 .m105 .bar i{display:block;height:100%;background:var(--accent)}
 .m105 .qhead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
@@ -599,28 +602,37 @@ function mount(root,host){
   const back=()=>`<div class="row" style="margin-bottom:12px"><button class="m-btn ghost sm" id="mback">رجوع إلى المادة</button></div>`;
   const wireBack=()=>{const b=$('#mback');if(b)b.onclick=()=>host.back()};
 
-  /* ---------- الشاشة الرئيسية ---------- */
+  /* ---------- الشاشة الرئيسية: شاشة واحدة بثلاثة تبويبات ---------- */
+  let htab='train';
   function hub(){
     if(sess&&sess.p)return practice();if(sess&&sess.fin)return finish();if(exam)return exam.done?examResult():examRun();
     const seen=Object.keys(P.skills).filter(i=>P.skills[i].n).length;
-    const ex=host.examInfo&&host.examInfo();
-    const weakN=Object.keys(GENS).filter(i=>!sk(i).n||sk(i).ema<.7).length;
-    const plan=!ex?'':ex.days<0?'':ex.days===0?`<p><b>اختبارك اليوم.</b> راجع القواعد في المحطات ولا تبدأ موضوعًا جديدًا.</p>`:`<p><b>باقٍ ${ex.days} يومًا على «${esc(ex.title)}».</b> ${weakN?`لديك ${weakN} مهارة لم تتقنها بعد، أي نحو ${Math.max(1,Math.ceil(weakN/Math.max(1,ex.days-1)))} مهارة يوميًا، وآخر يوم للمراجعة.`:'كل مهاراتك متقنة. حافظ عليها بمراجعة قصيرة.'}</p>`;
     const wk=weakest(3);
-    out(`${back()}
-    ${!P.placed&&!seen?`<div class="m-box"><h2>ابدأ من مستواك الحقيقي</h2><p class="mut">اختبار قصير (${STATIONS.length*2} سؤالًا) يعرف أين تقف، فلا تضيع وقتك فيما تعرفه.</p><button class="m-btn" id="diag">ابدأ اختبار المستوى</button></div>`:''}
-    ${plan?`<div class="m-box">${plan}</div>`:''}
-    <div class="m-box"><h2>تمرّن اليوم</h2><p class="mut">أسئلة تتجدد في كل مرة، وتتكيّف مع ما أتقنته وما لم تتقنه. كل خطأ تُرجِع إليه تفسيرًا، ويُسجَّل نقطةً للمراجعة في المادة.</p>
-      <div class="row"><button class="m-btn" id="go">${seen?'ابدأ جلسة (8 أسئلة)':'ابدأ أول جلسة'}</button>${seen?'<button class="m-btn ghost" id="weak">قوِّ نقاط ضعفك</button>':''}<button class="m-btn ghost" id="exm">اختبار تجريبي</button></div></div>
-    ${seen?`<div class="m-box"><h2>نقاط تحتاج تقوية</h2>${wk.map(id=>`<div class="sk"><span class="nm">${GENS[id].name}</span><span class="tag ${stateOf(id)[1]}">${stateOf(id)[0]}</span></div>`).join('')}</div>`:''}
-    <h2 style="margin:16px 0 8px">المحطات</h2>
-    ${STATIONS.map(s=>`<details class="st" id="st${s.id}"><summary><span class="bar" style="flex:none;width:56px"><i style="width:${Math.round(stMastery(s.id)*100)}%"></i></span><span style="flex:1"><b>${s.id}. ${s.title}</b></span></summary><div class="in">
-      ${idsOf(s.id).map(id=>`<div class="sk"><span class="nm">${GENS[id].name}</span><span class="tag ${stateOf(id)[1]}">${stateOf(id)[0]}</span></div>`).join('')}
-      <div class="rules"><b>أهم القواعد</b>${s.rules}</div><button class="m-btn sm" data-s="${s.id}">تدرّب على هذه المحطة</button></div></details>`).join('')}
-    <div class="m-box"><button class="m-btn ghost sm" id="rst">مسح تقدّمي في التمارين</button></div>`);
-    wireBack();
+    let body='';
+    if(htab==='train'){
+      const ex=host.examInfo&&host.examInfo();
+      const weakN=Object.keys(GENS).filter(i=>!sk(i).n||sk(i).ema<.7).length;
+      const plan=!ex||ex.days<0?'':ex.days===0?`<p><b>اختبارك اليوم.</b> راجع القواعد في «المحطات» ولا تبدأ موضوعًا جديدًا.</p>`:`<p><b>باقٍ ${ex.days} يومًا على «${esc(ex.title)}».</b> ${weakN?`لديك ${weakN} مهارة لم تتقنها بعد، أي نحو ${Math.max(1,Math.ceil(weakN/Math.max(1,ex.days-1)))} مهارة يوميًا، وآخر يوم للمراجعة.`:'كل مهاراتك متقنة. حافظ عليها بمراجعة قصيرة.'}</p>`;
+      body=`${!P.placed&&!seen?`<div class="m-box"><h2>ابدأ من مستواك الحقيقي</h2><p class="mut">اختبار قصير (${STATIONS.length*2} سؤالًا) يعرف أين تقف، فلا تضيع وقتك فيما تعرفه.</p><button class="m-btn" id="diag">ابدأ اختبار المستوى</button></div>`:''}
+      ${plan?`<div class="m-box">${plan}</div>`:''}
+      <div class="m-box"><h2>تمرّن اليوم</h2><p class="mut">أسئلة تتجدد في كل مرة وتتكيّف مع مستواك. كل خطأ يأتيك بتفسيره، ويُسجَّل نقطةً للمراجعة في المادة.</p>
+        <div class="row"><button class="m-btn" id="go">${seen?'ابدأ جلسة (8 أسئلة)':'ابدأ أول جلسة'}</button>${seen?'<button class="m-btn ghost" id="weak">قوِّ نقاط ضعفك</button>':''}</div></div>
+      ${seen?`<div class="m-box"><h2>نقاط تحتاج تقوية</h2>${wk.map(id=>`<div class="sk"><span class="nm">${GENS[id].name}</span><span class="tag ${stateOf(id)[1]}">${stateOf(id)[0]}</span></div>`).join('')}</div>`:''}`;
+    }else if(htab==='path'){
+      body=STATIONS.map(s=>`<details class="st" id="st${s.id}"><summary><span class="bar" style="flex:none;width:56px"><i style="width:${Math.round(stMastery(s.id)*100)}%"></i></span><span style="flex:1"><b>${s.id}. ${s.title}</b></span></summary><div class="in">
+        ${idsOf(s.id).map(id=>`<div class="sk"><span class="nm">${GENS[id].name}</span><span class="tag ${stateOf(id)[1]}">${stateOf(id)[0]}</span></div>`).join('')}
+        <div class="rules"><b>أهم القواعد</b>${s.rules}</div><button class="m-btn sm" data-s="${s.id}">تدرّب على هذه المحطة</button></div></details>`).join('')
+        +`<div class="m-box"><button class="m-btn ghost sm" id="rst">مسح تقدّمي في التمارين</button></div>`;
+    }else{
+      body=`<div class="m-box"><h2>اختبار تجريبي</h2><p class="mut">أسئلة متجددة بلا تلميحات ولا نتيجة فورية، والتصحيح في النهاية. اكتب القيم الدقيقة لأن الآلة الحاسبة غير مسموحة.</p>
+      <p><b>المحطات المشمولة</b></p><div class="row" id="chs">${STATIONS.map(s=>`<label><input type="checkbox" value="${s.id}" ${s.id?'checked':''}> ${s.title}</label>`).join('')}</div>
+      <div class="row" style="margin-top:12px"><label>عدد الأسئلة <select id="cnt"><option>8</option><option selected>10</option><option>15</option></select></label><label>المدة <select id="min"><option value="20">20 دقيقة</option><option value="30" selected>30 دقيقة</option><option value="45">45 دقيقة</option></select></label></div>
+      <div class="row" style="margin-top:14px"><button class="m-btn" id="st">ابدأ الاختبار</button></div></div>`;
+    }
+    out(`<div class="m-tabs" role="tablist">${[['train','تمرّن'],['path','المحطات'],['exam','اختبار']].map(([k,l])=>`<button role="tab" aria-selected="${htab===k}" data-h="${k}">${l}</button>`).join('')}</div>${body}`);
+    root.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{htab=b.dataset.h;hub()});
     const g=(s,f)=>{const e=$(s);if(e)e.onclick=f};
-    g('#diag',startDiag);g('#go',()=>start({n:8}));g('#weak',()=>start({n:6,pool:wk}));g('#exm',examSetup);
+    g('#diag',startDiag);g('#go',()=>start({n:8}));g('#weak',()=>start({n:6,pool:wk}));g('#st',startExam);
     root.querySelectorAll('button[data-s]').forEach(b=>b.onclick=()=>start({n:8,pool:idsOf(+b.dataset.s)}));
     g('#rst',function(){if(this.dataset.c){P.skills={};P.placed=false;save();hub()}else{this.dataset.c=1;this.textContent='اضغط مرة أخرى للتأكيد'}});
     root.querySelectorAll('details.st').forEach(d=>d.addEventListener('toggle',()=>typeset(d)));}
@@ -669,17 +681,13 @@ function mount(root,host){
     out(`<div class="m-box"><h2>${sess.diag?'اكتمل اختبار المستوى':'انتهت الجلسة'}</h2><p>أجبت صح عن <b>${sess.ok}</b> من <b>${sess.n}</b> (${pct}%).</p>
     <p class="mut">${sess.diag?'بنينا خطتك على نتيجتك. ':''}أولى مهاراتك بالتقوية الآن: ${wk.map(i=>GENS[i].name).join('، ')}.${flagged.size?` وسجّلنا ${flagged.size} نقطة للمراجعة في تبويب «استعد» من المادة.`:''}</p>
     <div class="row"><button class="m-btn" id="again">جلسة جديدة</button><button class="m-btn ghost" id="hb">الشاشة الرئيسية</button></div></div>`);
-    $('#again').onclick=()=>start({n:8});$('#hb').onclick=()=>{sess=null;hub()}}
+    $('#again').onclick=()=>start({n:8});$('#hb').onclick=()=>{sess=null;htab='train';hub()}}
 
   /* ---------- اختبار تجريبي ---------- */
-  function examSetup(){out(`${back()}<div class="m-box"><h2>اختبار تجريبي</h2><p class="mut">أسئلة متجددة بلا تلميحات ولا نتيجة فورية، والتصحيح في النهاية. اكتب القيم الدقيقة لأن الآلة الحاسبة غير مسموحة.</p>
-    <p><b>المحطات المشمولة</b></p><div class="row" id="chs">${STATIONS.map(s=>`<label><input type="checkbox" value="${s.id}" ${s.id?'checked':''}> ${s.title}</label>`).join('')}</div>
-    <div class="row" style="margin-top:12px"><label>عدد الأسئلة <select id="cnt"><option>8</option><option selected>10</option><option>15</option></select></label><label>المدة <select id="min"><option value="20">20 دقيقة</option><option value="30" selected>30 دقيقة</option><option value="45">45 دقيقة</option></select></label></div>
-    <div class="row" style="margin-top:14px"><button class="m-btn" id="st">ابدأ الاختبار</button></div></div>`);wireBack();
-    $('#st').onclick=()=>{const chs=[...root.querySelectorAll('#chs input:checked')].map(i=>+i.value);if(!chs.length)return;
-      const pool=Object.keys(GENS).filter(id=>chs.includes(GENS[id].st)).sort(()=>Math.random()-.5),n=+$('#cnt').value,qs=[];
-      for(let i=0;i<n;i++){const id=pool[i%pool.length];qs.push({id,p:GENS[id].make(Math.max(2,Math.min(3,sk(id).lvl+1))),a:null})}
-      exam={qs,i:0,end:Date.now()+(+$('#min').value)*60000,done:false};examRun()}}
+  function startExam(){const chs=[...root.querySelectorAll('#chs input:checked')].map(i=>+i.value);if(!chs.length)return;
+    const pool=Object.keys(GENS).filter(id=>chs.includes(GENS[id].st)).sort(()=>Math.random()-.5),n=+$('#cnt').value,qs=[];
+    for(let i=0;i<n;i++){const id=pool[i%pool.length];qs.push({id,p:GENS[id].make(Math.max(2,Math.min(3,sk(id).lvl+1))),a:null})}
+    exam={qs,i:0,end:Date.now()+(+$('#min').value)*60000,done:false};examRun()}
   function examRun(){const q=exam.qs[exam.i],p=q.p;
     out(`<div class="m-box"><div class="qhead"><span class="mut">سؤال ${exam.i+1} من ${exam.qs.length}</span><span class="timer" id="tm"></span><button class="m-btn sm" id="fin">تسليم</button></div>
     <div class="dotnav">${exam.qs.map((x,i)=>`<button data-i="${i}" class="${i===exam.i?'cur':''} ${x.a!==null&&x.a!==''?'has':''}" aria-label="سؤال ${i+1}">${i+1}</button>`).join('')}</div>
@@ -699,7 +707,7 @@ function mount(root,host){
     out(`<div class="m-box"><h2>النتيجة: ${exam.score} من ${n}</h2><p class="mut">${exam.score/n>=.8?'ممتاز. حافظ على التدريب المتجدد.':exam.score/n>=.5?'جيد. راجع الأسئلة الخاطئة أدناه.':'تحتاج مراجعة. ابدأ من المحطات الأضعف.'}${flagged.size?' وأضفنا نقاط الضعف إلى قائمة المراجعة في المادة.':''}</p>
     ${exam.qs.map(q=>`<div class="res"><div class="mk ${q.ok?'g':'b'}">${q.ok?'✓':'✗'}</div><div style="min-width:0"><div class="mut">${GENS[q.id].name}</div><div>${q.p.q}</div>${q.ok?'':`<div class="fb bad"><p>جوابك: <span dir="ltr">${q.a===null||q.a===''?'(بلا جواب)':esc(q.p.kind==='mcq'?q.p.opts[q.a].replace(/\$/g,''):q.a)}</span></p><p>الصحيح: <b>${q.p.kind==='mcq'?q.p.opts[q.p.ci]:q.p.disp?(/[\\^_]/.test(q.p.disp)&&!q.p.disp.includes('$')?'$'+q.p.disp+'$':q.p.disp):q.p.ans}</b></p><div class="sol">${q.p.sol}</div></div>`}</div></div>`).join('')}
     <div class="row" style="margin-top:14px"><button class="m-btn" id="again">اختبار جديد</button><button class="m-btn ghost" id="hb">الشاشة الرئيسية</button></div></div>`);
-    $('#again').onclick=()=>{exam=null;examSetup()};$('#hb').onclick=()=>{exam=null;hub()}}
+    $('#again').onclick=()=>{exam=null;htab='exam';hub()};$('#hb').onclick=()=>{exam=null;htab='train';hub()}}
   hub();
   return {destroy(){if(timer)clearInterval(timer);root.innerHTML=''}};
 }
@@ -770,7 +778,7 @@ function trapDrill(){
 /* ---------- التمرين (الوحدة المشتركة مع التطبيق) ---------- */
 function addCheck(topic,reason){if(D.checks.some(c=>c.topic===topic))return;D.checks.unshift({id:id(),topic,reason,at:Date.now()});save()}
 function practice(){
-  shell('<div id="m105Root"></div>');const tb=document.getElementById('back');if(tb)tb.parentElement.remove();
+  shell('<div id="m105Root"></div>');
   handle=Math105.mount(document.getElementById('m105Root'),{
     load:()=>D.practice,save,
     back:()=>{if(handle){handle.destroy();handle=null}sub=null;render()},
