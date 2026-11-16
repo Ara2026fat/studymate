@@ -10262,7 +10262,7 @@ function renderMath105(courseId){
       <div class="screen-header">
         <button type="button" class="btn-icon" id="m105Back" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="${l==="ar" ? "رجوع" : "Back"}">${chevronBack()}</button>
         <div>
-          <div class="screen-header-title" style="font-size:var(--fs-subheading);">تمرّن</div>
+          <div class="screen-header-title" style="font-size:var(--fs-subheading);">رحلتك</div>
           <div class="screen-header-sub">${escapeHtml(course.name)}</div>
         </div>
         <span style="width:40px;"></span>
@@ -11082,8 +11082,8 @@ function renderCourseView(courseId, keepTab){
           <button type="button" class="card" data-cv="m105" style="margin-bottom:var(--sp-3);">
             <span class="card-icon">${ICON.lens}</span>
             <span class="card-body">
-              <span class="card-title">تمرّن بأسئلة متجددة</span>
-              <span class="card-meta" style="white-space:normal;">أسئلة تتغيّر كل مرة، وتنبّهك إلى الأخطاء الشائعة وتسجّل ضعفك للمراجعة.</span>
+              <span class="card-title">رحلتك الموجَّهة في المادة</span>
+              <span class="card-meta" style="white-space:normal;">نقودك خطوة خطوة: درس، تدريب، ثم اختبار كل محطة، وأنت تتبع الخطوة التالية فقط.</span>
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>` : ""}
@@ -11273,7 +11273,7 @@ function renderExamPrepHub(eventId){
         </div>`}
         ` : ""}
         ${prepTab==="review" && isMath105(course.name) ? `
-        <button type="button" class="btn btn-secondary" id="prepM105" style="width:100%; margin-bottom:var(--sp-4);">${ICON.lens}<span>تمرّن على نقاط ضعفك</span></button>` : ""}
+        <button type="button" class="btn btn-secondary" id="prepM105" style="width:100%; margin-bottom:var(--sp-4);">${ICON.lens}<span>تابع رحلتك في المادة</span></button>` : ""}
         ${prepTab==="exams" ? `
         <div class="section-label" style="margin-top:0;">${s.notebookExamsLabel}</div>
         ${nb.exams.length===0 ? `
