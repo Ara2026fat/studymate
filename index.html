@@ -10262,7 +10262,7 @@ function renderMath105(courseId){
       <div class="screen-header">
         <button type="button" class="btn-icon" id="m105Back" data-label="${l==="ar" ? "رجوع" : "Back"}" aria-label="${l==="ar" ? "رجوع" : "Back"}">${chevronBack()}</button>
         <div>
-          <div class="screen-header-title" style="font-size:var(--fs-subheading);">رحلتك</div>
+          <div class="screen-header-title" style="font-size:var(--fs-subheading);">${l==="ar" ? "رحلتك" : "Your journey"}</div>
           <div class="screen-header-sub">${escapeHtml(course.name)}</div>
         </div>
         <span style="width:40px;"></span>
@@ -11082,8 +11082,8 @@ function renderCourseView(courseId, keepTab){
           <button type="button" class="card" data-cv="m105" style="margin-bottom:var(--sp-3);">
             <span class="card-icon">${ICON.lens}</span>
             <span class="card-body">
-              <span class="card-title">رحلتك الموجَّهة في المادة</span>
-              <span class="card-meta" style="white-space:normal;">نقودك خطوة خطوة: درس، تدريب، ثم اختبار كل محطة، وأنت تتبع الخطوة التالية فقط.</span>
+              <span class="card-title">${lang()==="ar" ? "رحلتك الموجَّهة في المادة" : "Your guided course journey"}</span>
+              <span class="card-meta" style="white-space:normal;">${lang()==="ar" ? "نقودك خطوة خطوة: درس، تدريب، ثم اختبار كل محطة، وأنت تتبع الخطوة التالية فقط." : "We lead you step by step: lesson, practice, then a test for each station. English, with Arabic explanations on tap."}</span>
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>` : ""}
@@ -11273,7 +11273,7 @@ function renderExamPrepHub(eventId){
         </div>`}
         ` : ""}
         ${prepTab==="review" && isMath105(course.name) ? `
-        <button type="button" class="btn btn-secondary" id="prepM105" style="width:100%; margin-bottom:var(--sp-4);">${ICON.lens}<span>تابع رحلتك في المادة</span></button>` : ""}
+        <button type="button" class="btn btn-secondary" id="prepM105" style="width:100%; margin-bottom:var(--sp-4);">${ICON.lens}<span>${lang()==="ar" ? "تابع رحلتك في المادة" : "Continue your course journey"}</span></button>` : ""}
         ${prepTab==="exams" ? `
         <div class="section-label" style="margin-top:0;">${s.notebookExamsLabel}</div>
         ${nb.exams.length===0 ? `

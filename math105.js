@@ -5,7 +5,12 @@ window.Math105=(function(){
 
 /* ================= محرك التمارين: لا يعتمد على الصفحة ================= */
 const tex=String.raw;
-const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+/* اللغة: LG لغة الواجهة الحالية. TT(en,ar) يختار النص. المسائل تُولَّد بالإنجليزية والعربية معًا بنفس البذرة. */
+let LG='en',_seed=null;
+const TT=(en,ar)=>LG==='ar'?ar:en;
+const NM=(en,ar)=>({en,ar});
+const rnd=()=>{if(_seed===null)return rnd();_seed=(_seed+0x6D2B79F5)|0;let t=Math.imul(_seed^_seed>>>15,1|_seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const ri=(a,b)=>Math.floor(rnd()*(b-a+1))+a;
 const pick=a=>a[ri(0,a.length-1)];
 const nz=(a,b)=>{let v;do v=ri(a,b);while(v===0);return v};
 const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
@@ -14,7 +19,7 @@ const K=a=>String(a);
 const P=n=>n<0?`(${n})`:`${n}`;
 function poly(ts){let s='';for(const [c,f] of ts){if(!c)continue;const body=f(Math.abs(c));if(s==='')s=(c<0?'-':'')+body;else s+=(c<0?' - ':' + ')+body;}return s||'0';}
 function fr(n,d){const g=gcd(n,d)||1;n/=g;d/=g;if(d<0){n=-n;d=-d}return {n,d,str:d===1?`${n}`:`${n}/${d}`,tex:d===1?`${n}`:`${n<0?'-':''}\\frac{${Math.abs(n)}}{${d}}`};}
-const W=o=>/[\u0600-\u06FF$]/.test(o)?o:'$'+o+'$';
+const W=o=>/[\u0600-\u06FF$]|^[A-Z][a-z]+( [a-z]+)*$/.test(o)?o:'$'+o+'$';
 function mcq(opts,ci){const idx=opts.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=ri(0,i);[idx[i],idx[j]]=[idx[j],idx[i]];}return {opts:idx.map(i=>W(opts[i])),ci:idx.indexOf(ci),map:idx};}
 const sg=n=>n<0?`-${-n}`:`+${n}`;
 
@@ -31,7 +36,7 @@ function tokenize(s){
   const out=[];const re=/\s*(?:(\d+\.?\d*|\.\d+)|([a-zA-Z]+)|(.))/gy;let m;
   while(re.lastIndex<s.length&&(m=re.exec(s))){
     if(m[1]!==undefined)out.push({t:'n',v:parseFloat(m[1])});
-    else if(m[2]){let w=m[2];while(w){const hit=WORDS.find(k=>w.startsWith(k));if(!hit)throw new Error('رمز غير مفهوم: '+m[2]);out.push({t:'i',v:hit});w=w.slice(hit.length);}}
+    else if(m[2]){let w=m[2];while(w){const hit=WORDS.find(k=>w.startsWith(k));if(!hit)throw new Error(TT('Unrecognized symbol: ','رمز غير مفهوم: ')+m[2]);out.push({t:'i',v:hit});w=w.slice(hit.length);}}
     else if(m[3]!==undefined){if(/\s/.test(m[3]))continue;out.push({t:'o',v:m[3]});}
   }
   return out;
@@ -45,15 +50,15 @@ function compile(src){
   function term(){let l=unary();for(;;){if(isOp('*')){eat();const r=unary();const a=l;l=x=>a(x)*r(x);}else if(isOp('/')){eat();const r=unary();const a=l;l=x=>a(x)/r(x);}else if(startsAtom()){const r=unary();const a=l;l=x=>a(x)*r(x);}else break;}return l;}
   function unary(){if(isOp('-')){eat();const u=unary();return x=>-u(x);}if(isOp('+')){eat();return unary();}return power();}
   function power(){const b=atom();if(isOp('^')){eat();const e=unary();return x=>Math.pow(b(x),e(x));}return b;}
-  function atom(){const t=eat();if(!t)throw new Error('التعبير ناقص');
+  function atom(){const t=eat();if(!t)throw new Error(TT('The expression is incomplete','التعبير ناقص'));
     if(t.t==='n'){const v=t.v;return()=>v;}
-    if(t.t==='o'&&t.v==='('){const e=expr();if(!isOp(')'))throw new Error('قوس ناقص');eat();return e;}
+    if(t.t==='o'&&t.v==='('){const e=expr();if(!isOp(')'))throw new Error(TT('Missing bracket','قوس ناقص'));eat();return e;}
     if(t.t==='i'){
-      if(FUNCS[t.v]){if(!isOp('('))throw new Error('اكتب '+t.v+' مع أقواس مثل '+t.v+'(x)');eat();const e=expr();if(!isOp(')'))throw new Error('قوس ناقص');eat();const f=FUNCS[t.v];return x=>f(e(x));}
+      if(FUNCS[t.v]){if(!isOp('('))throw new Error(TT('Write '+t.v+' with brackets, like '+t.v+'(x)','اكتب '+t.v+' مع أقواس مثل '+t.v+'(x)'));eat();const e=expr();if(!isOp(')'))throw new Error(TT('Missing bracket','قوس ناقص'));eat();const f=FUNCS[t.v];return x=>f(e(x));}
       if(t.v==='x')return x=>x;if(t.v==='e')return()=>Math.E;if(t.v==='pi')return()=>Math.PI;if(t.v==='inf')return()=>Infinity;
     }
-    throw new Error('رمز غير متوقع');}
-  const f=expr();if(p<tk.length)throw new Error('جزء زائد في الكتابة');return f;
+    throw new Error(TT('Unexpected symbol','رمز غير متوقع'));}
+  const f=expr();if(p<tk.length)throw new Error(TT('Extra text in your answer','جزء زائد في الكتابة'));return f;
 }
 const DEF=[0.37,0.81,1.29,1.77,2.31,-0.44,-1.16];
 const POS=[0.4,0.9,1.4,2.1,2.9];
@@ -75,21 +80,21 @@ function grade0(p,raw){
   if(p.kind==='list'){return gradeList(p,raw)}
   let F;try{F=compile(raw)}catch(e){return {err:e.message}}
   const A=p.kind==='expr'?compile(p.ans):null;
-  if(p.kind==='num'){const a=compile(p.ans)(0),v=F(0);if(Number.isNaN(v))return {err:'لا يمكن حساب ما كتبته'};return {ok:(a===v)||(isFinite(a)&&isFinite(v)&&close(a,v))};}
+  if(p.kind==='num'){const a=compile(p.ans)(0),v=F(0);if(Number.isNaN(v))return {err:TT('Cannot evaluate what you typed','لا يمكن حساب ما كتبته')};return {ok:(a===v)||(isFinite(a)&&isFinite(v)&&close(a,v))};}
   return gradeExpr(p,F,A);
 }
 function gradeList(p,raw){
   {
     const parts=normalize(raw).split(/[,\s]+و?\s*/).filter(Boolean);let vals;
     try{vals=parts.map(s=>compile(s)(0))}catch(e){return {err:e.message}}
-    if(vals.some(Number.isNaN))return {err:'اكتب الأعداد مفصولة بفواصل'};
+    if(vals.some(Number.isNaN))return {err:TT('Write the numbers separated by commas','اكتب الأعداد مفصولة بفواصل')};
     const want=p.list.slice().sort((a,b)=>a-b);vals.sort((a,b)=>a-b);
     return {ok:want.length===vals.length&&want.every((w,i)=>close(w,vals[i]))};
   }
 }
 function gradeExpr(p,F,A){
   const pts=(p.pts||DEF).filter(x=>{const a=A(x);return isFinite(a)&&Math.abs(a)<1e7});
-  if(pts.length<3)return {err:'تعذّر التحقق، حاول كتابة الجواب بصيغة أخرى'};
+  if(pts.length<3)return {err:TT('Could not check this; try writing the answer in another form','تعذّر التحقق، حاول كتابة الجواب بصيغة أخرى')};
   const sv=pts.map(F);if(sv.some(v=>!isFinite(v)))return {ok:false};
   if(p.constant){const d=pts.map((x,i)=>sv[i]-A(x));return {ok:d.every(v=>close(v,d[0],1e-5))};}
   return {ok:pts.every((x,i)=>close(sv[i],A(x),1e-5))};
@@ -97,86 +102,91 @@ function gradeExpr(p,F,A){
 
 /* ---------- المولّدات ---------- */
 const GENS={};
-const def=(id,st,name,make)=>{GENS[id]={id,st,name,make};};
+const def=(id,st,name,mk)=>{const g={id,st,mk};
+  Object.defineProperty(g,'name',{get(){return typeof name==='string'?name:name[LG]},enumerable:true});
+  g.make=L=>{const sd=(Math.random()*4294967296)>>>0,keep=LG;let en,ar;
+    try{LG='en';_seed=sd;en=g.mk(L);LG='ar';_seed=sd;ar=g.mk(L);}finally{LG=keep;_seed=null}
+    en.ar=ar;return en};
+  GENS[id]=g;};
 const dn=(f,x,h=1e-5)=>(f(x+h)-f(x-h))/(2*h);
 
 /* المحطة 1: الدوال */
-def('inv',1,'الدالة العكسية',L=>{
+def('inv',1,NM('Inverse function','الدالة العكسية'),L=>{
   const a=pick(L>1?[2,3,4,5,-2,-3]:[2,3,4]),b=nz(-9,9);const f=poly([[a,V('x')],[b,K]]);
-  return {kind:'expr',q:tex`أوجد $f^{-1}(x)$ للدالة $f(x)=${f}$.`,ans:`(x-(${b}))/(${a})`,disp:tex`\frac{x${b<0?'+'+(-b):'-'+b}}{${a}}`,
-   hints:['اكتب y=f(x) ثم حلّ المعادلة لإيجاد x بدلالة y.','بعد عزل x بدّل x و y.'],
-   sol:tex`$y=${f}\Rightarrow x=\frac{y${b<0?'+'+(-b):'-'+b}}{${a}}$ ثم نبدّل: $f^{-1}(x)=\frac{x${b<0?'+'+(-b):'-'+b}}{${a}}$.`,
+  return {kind:'expr',q:TT(tex`Find $f^{-1}(x)$ for $f(x)=${f}$.`,tex`أوجد $f^{-1}(x)$ للدالة $f(x)=${f}$.`),ans:`(x-(${b}))/(${a})`,disp:tex`\frac{x${b<0?'+'+(-b):'-'+b}}{${a}}`,
+   hints:[TT('Write y=f(x), then solve for x in terms of y.','اكتب y=f(x) ثم حلّ المعادلة لإيجاد x بدلالة y.'),TT('After isolating x, swap x and y.','بعد عزل x بدّل x و y.')],
+   sol:TT(tex`$y=${f}\Rightarrow x=\frac{y${b<0?'+'+(-b):'-'+b}}{${a}}$ then swap: $f^{-1}(x)=\frac{x${b<0?'+'+(-b):'-'+b}}{${a}}$.`,tex`$y=${f}\Rightarrow x=\frac{y${b<0?'+'+(-b):'-'+b}}{${a}}$ ثم نبدّل: $f^{-1}(x)=\frac{x${b<0?'+'+(-b):'-'+b}}{${a}}$.`),
    truth:()=>{const g=compile(`(x-(${b}))/(${a})`);return [-2,0.5,3].every(t=>close(a*g(t)+b,t))}};});
-def('comp',1,'تركيب الدوال',L=>{
+def('comp',1,NM('Composition of functions','تركيب الدوال'),L=>{
   const a=ri(-5,6),b=nz(-3,4),c=ri(-5,5),k=ri(-2,3);const g=b*k-c,val=g*g+a;
-  return {kind:'num',q:tex`إذا كانت $f(x)=${poly([[1,V('x^2')],[a,K]])}$ و$g(x)=${poly([[b,V('x')],[-c,K]])}$ فاحسب $f(g(${k}))$.`,ans:`${val}`,disp:`${val}`,
-   hints:['ابدأ من الداخل: احسب g أولًا.',`$g(${k})=${g}$`],sol:tex`$g(${k})=${g}$ ثم $f(${g})=${P(g)}^2${a<0?'-':'+'}${Math.abs(a)}=${val}$.`,
+  return {kind:'num',q:TT(tex`If $f(x)=${poly([[1,V('x^2')],[a,K]])}$ and $g(x)=${poly([[b,V('x')],[-c,K]])}$, find $f(g(${k}))$.`,tex`إذا كانت $f(x)=${poly([[1,V('x^2')],[a,K]])}$ و$g(x)=${poly([[b,V('x')],[-c,K]])}$ فاحسب $f(g(${k}))$.`),ans:`${val}`,disp:`${val}`,
+   hints:[TT('Work from the inside out: compute g first.','ابدأ من الداخل: احسب g أولًا.'),`$g(${k})=${g}$`],sol:TT(tex`$g(${k})=${g}$, then $f(${g})=${P(g)}^2${a<0?'-':'+'}${Math.abs(a)}=${val}$.`,tex`$g(${k})=${g}$ ثم $f(${g})=${P(g)}^2${a<0?'-':'+'}${Math.abs(a)}=${val}$.`),
    truth:()=>((b*k-c)**2+a)===val};});
-def('shift',1,'الإزاحة والتمدد',L=>{
+def('shift',1,NM('Shifts and stretches','الإزاحة والتمدد'),L=>{
   const h=nz(-5,5),k=nz(-5,5);const o=[tex`(${h},${k})`,tex`(${-h},${k})`,tex`(${h},${-k})`,tex`(${-h},${-k})`];const m=mcq(o,0);
-  return {kind:'mcq',q:tex`رأس القطع المكافئ $y=(x${h<0?'+'+(-h):'-'+h})^2${k<0?'-'+(-k):'+'+k}$ هو:`,opts:m.opts,ci:m.ci,mtrap:{[m.map.indexOf(1)]:'الإشارة داخل القوس تعاكس اتجاه الإزاحة: (x−h) تعني h موجبة.'},disp:o[0],
-   hints:['الصورة (x−h)²+k ترفع المنحنى k وحدة وتحرّكه h يمينًا.','الإزاحة الأفقية تعاكس الإشارة داخل القوس.'],
-   sol:tex`$(x-h)^2+k$ رأسه $(h,k)$. الإشارة داخل القوس تعاكس الاتجاه، فالرأس $${o[0]}$.`,
+  return {kind:'mcq',q:TT(tex`The vertex of the parabola $y=(x${h<0?'+'+(-h):'-'+h})^2${k<0?'-'+(-k):'+'+k}$ is:`,tex`رأس القطع المكافئ $y=(x${h<0?'+'+(-h):'-'+h})^2${k<0?'-'+(-k):'+'+k}$ هو:`),opts:m.opts,ci:m.ci,mtrap:{[m.map.indexOf(1)]:TT('The sign inside the bracket is opposite to the shift direction: (x−h) means h is positive.','الإشارة داخل القوس تعاكس اتجاه الإزاحة: (x−h) تعني h موجبة.')},disp:o[0],
+   hints:[TT('The form (x−h)²+k raises the curve k units and moves it h units to the right.','الصورة (x−h)²+k ترفع المنحنى k وحدة وتحرّكه h يمينًا.'),TT('A horizontal shift is opposite to the sign inside the bracket.','الإزاحة الأفقية تعاكس الإشارة داخل القوس.')],
+   sol:TT(tex`$(x-h)^2+k$ has vertex $(h,k)$. The sign inside the bracket is opposite to the direction, so the vertex is $${o[0]}$.`,tex`$(x-h)^2+k$ رأسه $(h,k)$. الإشارة داخل القوس تعاكس الاتجاه، فالرأس $${o[0]}$.`),
    truth:()=>{const f=x=>(x-h)**2+k;return f(h)===k&&f(h+1)>k&&f(h-1)>k}};});
 const REF={sin:{30:['1/2',tex`\frac12`],45:['sqrt(2)/2',tex`\frac{\sqrt2}{2}`],60:['sqrt(3)/2',tex`\frac{\sqrt3}{2}`]},
  cos:{30:['sqrt(3)/2',tex`\frac{\sqrt3}{2}`],45:['sqrt(2)/2',tex`\frac{\sqrt2}{2}`],60:['1/2',tex`\frac12`]},
  tan:{30:['1/sqrt(3)',tex`\frac{1}{\sqrt3}`],45:['1',tex`1`],60:['sqrt(3)',tex`\sqrt3`]}};
-def('trigval',1,'قيم الزوايا الخاصة',L=>{
+def('trigval',1,NM('Special-angle values','قيم الزوايا الخاصة'),L=>{
   const fn=pick(L>1?['sin','cos','tan']:['sin','cos']),deg=pick(L>1?[120,135,150,210,225,240,300,315,330]:[30,45,60,120,135,150]);
   const r=deg%180<=90?deg%180:180-deg%180, ref=REF[fn][r];const val=Math[fn](deg*Math.PI/180);const neg=val<0;
   const g=gcd(deg,180);const ang=tex`\frac{${deg/g}\pi}{${180/g}}`;
-  return {kind:'num',q:tex`احسب $${'\\'+fn}\left(${ang}\right)$ بالقيمة الدقيقة (مثل sqrt(3)/2).`,ans:(neg?'-':'')+'('+ref[0]+')',disp:(neg?'-':'')+ref[1],
-   hints:[`الزاوية ${deg}° زاويتها المرجعية ${r}°.`,'حدّد إشارة الدالة من الربع (ASTC).'],
-   sol:tex`المرجعية $${r}^\circ$ و$${'\\'+fn}${r}^\circ=${ref[1]}$، والإشارة ${neg?'سالبة':'موجبة'} في هذا الربع. الجواب $${neg?'-':''}${ref[1]}$.`,
+  return {kind:'num',q:TT(tex`Evaluate $${'\\'+fn}\left(${ang}\right)$ exactly (like sqrt(3)/2).`,tex`احسب $${'\\'+fn}\left(${ang}\right)$ بالقيمة الدقيقة (مثل sqrt(3)/2).`),ans:(neg?'-':'')+'('+ref[0]+')',disp:(neg?'-':'')+ref[1],
+   hints:[TT(`The angle ${deg}° has reference angle ${r}°.`,`الزاوية ${deg}° زاويتها المرجعية ${r}°.`),TT('Decide the sign of the function from the quadrant (ASTC).','حدّد إشارة الدالة من الربع (ASTC).')],
+   sol:TT(tex`Reference angle $${r}^\circ$ and $${'\\'+fn}${r}^\circ=${ref[1]}$; the sign is ${neg?'negative':'positive'} in this quadrant. Answer $${neg?'-':''}${ref[1]}$.`,tex`المرجعية $${r}^\circ$ و$${'\\'+fn}${r}^\circ=${ref[1]}$، والإشارة ${neg?'سالبة':'موجبة'} في هذا الربع. الجواب $${neg?'-':''}${ref[1]}$.`),
    truth:()=>close(compile((neg?'-':'')+'('+ref[0]+')')(0),val)};});
-def('loglaw',1,'قوانين اللوغاريتم',L=>{
+def('loglaw',1,NM('Logarithm laws','قوانين اللوغاريتم'),L=>{
   const b=pick([2,3,5]),p=ri(1,4),q=ri(1,4),r=ri(1,3);
-  return {kind:'num',q:tex`احسب $\log_{${b}}${b**p}+\log_{${b}}${b**q}-\log_{${b}}${b**r}$.`,ans:`${p+q-r}`,disp:`${p+q-r}`,
-   hints:[`اكتب كل عدد كقوة للعدد ${b}.`,tex`$\log_a a^k=k$`],sol:tex`$${p}+${q}-${r}=${p+q-r}$.`,truth:()=>b**p>0};});
+  return {kind:'num',q:TT(tex`Evaluate $\log_{${b}}${b**p}+\log_{${b}}${b**q}-\log_{${b}}${b**r}$.`,tex`احسب $\log_{${b}}${b**p}+\log_{${b}}${b**q}-\log_{${b}}${b**r}$.`),ans:`${p+q-r}`,disp:`${p+q-r}`,
+   hints:[TT(`Write each number as a power of ${b}.`,`اكتب كل عدد كقوة للعدد ${b}.`),tex`$\log_a a^k=k$`],sol:tex`$${p}+${q}-${r}=${p+q-r}$.`,truth:()=>b**p>0};});
 
 /* المحطة 2: النهايات */
-def('lim_factor',2,'نهايات بالتحليل',L=>{
+def('lim_factor',2,NM('Limits by factoring','نهايات بالتحليل'),L=>{
   const m=nz(-6,6);let n;do n=nz(-6,6);while(n===m);const b=-(m+n),c=m*n;const f=x=>(x*x+b*x+c)/(x-m);
   return {kind:'num',q:tex`$\lim_{x\to ${m}}\dfrac{${poly([[1,V('x^2')],[b,V('x')],[c,K]])}}{${poly([[1,V('x')],[-m,K]])}}$`,ans:`${m-n}`,disp:`${m-n}`,
-   hints:['بالتعويض يظهر 0/0، فحلّل البسط.',`البسط يساوي $(x-${P(m)})(x-${P(n)})$.`],
+   hints:[TT('Substitution gives 0/0, so factor the numerator.','بالتعويض يظهر 0/0، فحلّل البسط.'),TT(`The numerator equals $(x-${P(m)})(x-${P(n)})$.`,`البسط يساوي $(x-${P(m)})(x-${P(n)})$.`)],
    sol:tex`$\frac{(x-${P(m)})(x-${P(n)})}{x-${P(m)}}=x-${P(n)}\to ${m}-${P(n)}=${m-n}$.`,truth:()=>close(f(m+1e-6),m-n,1e-4)&&close(f(m-1e-6),m-n,1e-4)};});
-def('lim_rat',2,'نهايات بالمرافق',L=>{
+def('lim_rat',2,NM('Limits by the conjugate','نهايات بالمرافق'),L=>{
   const s=pick([2,3,4]),d=ri(1,8),a=s*s-d;const f=x=>(Math.sqrt(x+d)-s)/(x-a);
   return {kind:'num',q:tex`$\lim_{x\to ${a}}\dfrac{\sqrt{x+${d}}-${s}}{${poly([[1,V('x')],[-a,K]])}}$`,ans:`1/${2*s}`,disp:tex`\frac1{${2*s}}`,
-   hints:['اضرب البسط والمقام في المرافق $\\sqrt{x+'+d+'}+'+s+'$.','البسط يصبح $(x+'+d+')-'+s*s+'$ وهو يساوي $x-'+P(a)+'$.'],
-   sol:tex`بعد الضرب في المرافق: $\frac{1}{\sqrt{x+${d}}+${s}}\to\frac1{${2*s}}$.`,truth:()=>close(f(a+1e-6),1/(2*s),1e-4)};});
-def('lim_inf',2,'نهايات عند اللانهاية',L=>{
+   hints:[TT('Multiply numerator and denominator by the conjugate $\\sqrt{x+','اضرب البسط والمقام في المرافق $\\sqrt{x+')+d+'}+'+s+'$.',TT('The numerator becomes $(x+','البسط يصبح $(x+')+d+')-'+s*s+TT('$ which equals $x-','$ وهو يساوي $x-')+P(a)+'$.'],
+   sol:TT(tex`After multiplying by the conjugate: $\frac{1}{\sqrt{x+${d}}+${s}}\to\frac1{${2*s}}$.`,tex`بعد الضرب في المرافق: $\frac{1}{\sqrt{x+${d}}+${s}}\to\frac1{${2*s}}$.`),truth:()=>close(f(a+1e-6),1/(2*s),1e-4)};});
+def('lim_inf',2,NM('Limits at infinity','نهايات عند اللانهاية'),L=>{
   const kind=pick(L===1?['eq']:L===2?['eq','low']:['eq','low','high']);const a=nz(-6,6),c=nz(-6,6),b=ri(-5,5),d=ri(-5,5);
   if(kind==='eq'){const f=x=>(a*x*x+b*x)/(c*x*x+d),R=fr(a,c);
     return {kind:'num',q:tex`$\lim_{x\to\infty}\dfrac{${poly([[a,V('x^2')],[b,V('x')]])}}{${poly([[c,V('x^2')],[d,K]])}}$`,ans:R.str,disp:R.tex,
-    hints:['اقسم البسط والمقام على أعلى قوة في المقام.','الدرجتان متساويتان: النهاية نسبة المعاملين القائدين.'],sol:tex`نسبة المعاملين القائدين $\frac{${a}}{${c}}=${R.tex}$.`,truth:()=>close(f(1e7),a/c,1e-4)};}
+    hints:[TT('Divide numerator and denominator by the highest power in the denominator.','اقسم البسط والمقام على أعلى قوة في المقام.'),TT('The degrees are equal: the limit is the ratio of the leading coefficients.','الدرجتان متساويتان: النهاية نسبة المعاملين القائدين.')],sol:TT(tex`Ratio of leading coefficients $\frac{${a}}{${c}}=${R.tex}$.`,tex`نسبة المعاملين القائدين $\frac{${a}}{${c}}=${R.tex}$.`),truth:()=>close(f(1e7),a/c,1e-4)};}
   if(kind==='low'){const f=x=>(a*x+b)/(c*x*x+d);
     return {kind:'num',q:tex`$\lim_{x\to\infty}\dfrac{${poly([[a,V('x')],[b,K]])}}{${poly([[c,V('x^2')],[d,K]])}}$`,ans:'0',disp:'0',
-    hints:['قارن درجة البسط بدرجة المقام.','درجة البسط أصغر.'],sol:tex`درجة البسط (1) أصغر من درجة المقام (2) فالنهاية $0$.`,truth:()=>Math.abs(f(1e7))<1e-5};}
+    hints:[TT('Compare the degree of the numerator with that of the denominator.','قارن درجة البسط بدرجة المقام.'),TT('The numerator has the smaller degree.','درجة البسط أصغر.')],sol:TT(tex`The numerator degree (1) is smaller than the denominator degree (2), so the limit is $0$.`,tex`درجة البسط (1) أصغر من درجة المقام (2) فالنهاية $0$.`),truth:()=>Math.abs(f(1e7))<1e-5};}
   const f=x=>(a*x**3+b)/(c*x*x+d),pos=a/c>0;
-  return {kind:'num',q:tex`$\lim_{x\to\infty}\dfrac{${poly([[a,V('x^3')],[b,K]])}}{${poly([[c,V('x^2')],[d,K]])}}$ (اكتب inf أو -inf)`,ans:pos?'inf':'-inf',disp:pos?tex`+\infty`:tex`-\infty`,
-   hints:['قارن الدرجتين.','درجة البسط أكبر، فالنهاية لا نهائية. الإشارة من نسبة المعاملين.'],sol:tex`درجة البسط (3) أكبر من درجة المقام (2)، وإشارة $\frac{${a}}{${c}}$ ${pos?'موجبة':'سالبة'}، فالنهاية $${pos?'+':'-'}\infty$.`,
+  return {kind:'num',q:TT(tex`$\lim_{x\to\infty}\dfrac{${poly([[a,V('x^3')],[b,K]])}}{${poly([[c,V('x^2')],[d,K]])}}$ (write inf or -inf)`,tex`$\lim_{x\to\infty}\dfrac{${poly([[a,V('x^3')],[b,K]])}}{${poly([[c,V('x^2')],[d,K]])}}$ (اكتب inf أو -inf)`),ans:pos?'inf':'-inf',disp:pos?tex`+\infty`:tex`-\infty`,
+   hints:[TT('Compare the two degrees.','قارن الدرجتين.'),TT('The numerator degree is larger, so the limit is infinite. The sign comes from the ratio of the coefficients.','درجة البسط أكبر، فالنهاية لا نهائية. الإشارة من نسبة المعاملين.')],sol:TT(tex`The numerator degree (3) is larger than the denominator degree (2), and the sign of $\frac{${a}}{${c}}$ is ${pos?'positive':'negative'}, so the limit is $${pos?'+':'-'}\infty$.`,tex`درجة البسط (3) أكبر من درجة المقام (2)، وإشارة $\frac{${a}}{${c}}$ ${pos?'موجبة':'سالبة'}، فالنهاية $${pos?'+':'-'}\infty$.`),
    truth:()=>(f(1e6)>1e3)===pos};});
-def('lim_trig',2,'نهايات مثلثية',L=>{
+def('lim_trig',2,NM('Trigonometric limits','نهايات مثلثية'),L=>{
   const a=ri(2,7);let b;do b=ri(2,7);while(b===a);const t=pick(['s/x','s/s','t/x']);
-  if(t==='s/x'){const f=x=>Math.sin(a*x)/(b*x),R=fr(a,b);return {kind:'num',q:tex`$\lim_{x\to0}\dfrac{\sin ${a}x}{${b}x}$`,ans:R.str,disp:R.tex,hints:['استخدم $\\lim \\frac{\\sin u}{u}=1$.',`اجعل داخل $\\sin$ ومقامه ${a}x.`],sol:tex`$\frac{\sin ${a}x}{${b}x}=\frac{${a}}{${b}}\cdot\frac{\sin ${a}x}{${a}x}\to\frac{${a}}{${b}}$.`,truth:()=>close(f(1e-6),a/b,1e-4)};}
-  if(t==='s/s'){const f=x=>Math.sin(a*x)/Math.sin(b*x),R=fr(a,b);return {kind:'num',q:tex`$\lim_{x\to0}\dfrac{\sin ${a}x}{\sin ${b}x}$`,ans:R.str,disp:R.tex,hints:['اقسم البسط والمقام على x.','$\\frac{\\sin ax}{x}\\to a$.'],sol:tex`$\frac{\sin ${a}x}{\sin ${b}x}=\frac{\frac{\sin ${a}x}{x}}{\frac{\sin ${b}x}{x}}\to\frac{${a}}{${b}}$.`,truth:()=>close(f(1e-6),a/b,1e-4)};}
-  const f=x=>Math.tan(a*x)/x;return {kind:'num',q:tex`$\lim_{x\to0}\dfrac{\tan ${a}x}{x}$`,ans:`${a}`,disp:`${a}`,hints:['اكتب $\\tan=\\frac{\\sin}{\\cos}$.','$\\cos 0=1$.'],sol:tex`$\frac{\sin ${a}x}{x\cos ${a}x}\to ${a}\cdot1=${a}$.`,truth:()=>close(f(1e-6),a,1e-4)};});
-def('lim_side',2,'نهايات من جهة واحدة',L=>{
+  if(t==='s/x'){const f=x=>Math.sin(a*x)/(b*x),R=fr(a,b);return {kind:'num',q:tex`$\lim_{x\to0}\dfrac{\sin ${a}x}{${b}x}$`,ans:R.str,disp:R.tex,hints:[TT('Use $\\lim \\frac{\\sin u}{u}=1$.','استخدم $\\lim \\frac{\\sin u}{u}=1$.'),TT(`Make the inside of $\\sin$ match its denominator: ${a}x.`,`اجعل داخل $\\sin$ ومقامه ${a}x.`)],sol:tex`$\frac{\sin ${a}x}{${b}x}=\frac{${a}}{${b}}\cdot\frac{\sin ${a}x}{${a}x}\to\frac{${a}}{${b}}$.`,truth:()=>close(f(1e-6),a/b,1e-4)};}
+  if(t==='s/s'){const f=x=>Math.sin(a*x)/Math.sin(b*x),R=fr(a,b);return {kind:'num',q:tex`$\lim_{x\to0}\dfrac{\sin ${a}x}{\sin ${b}x}$`,ans:R.str,disp:R.tex,hints:[TT('Divide numerator and denominator by x.','اقسم البسط والمقام على x.'),'$\\frac{\\sin ax}{x}\\to a$.'],sol:tex`$\frac{\sin ${a}x}{\sin ${b}x}=\frac{\frac{\sin ${a}x}{x}}{\frac{\sin ${b}x}{x}}\to\frac{${a}}{${b}}$.`,truth:()=>close(f(1e-6),a/b,1e-4)};}
+  const f=x=>Math.tan(a*x)/x;return {kind:'num',q:tex`$\lim_{x\to0}\dfrac{\tan ${a}x}{x}$`,ans:`${a}`,disp:`${a}`,hints:[TT('Write $\\tan=\\frac{\\sin}{\\cos}$.','اكتب $\\tan=\\frac{\\sin}{\\cos}$.'),'$\\cos 0=1$.'],sol:tex`$\frac{\sin ${a}x}{x\cos ${a}x}\to ${a}\cdot1=${a}$.`,truth:()=>close(f(1e-6),a,1e-4)};});
+def('lim_side',2,NM('One-sided limits','نهايات من جهة واحدة'),L=>{
   let a,b,p;do{a=ri(-4,4);b=ri(1,5);p=ri(-5,5);}while(a+b===0||p===a);
   const side=pick(['+','-','both']);const s=Math.sign((p-a)*(a+b));let ans;
   if(side==='both')ans=2;else ans=((side==='+')===(s>0))?0:1; // 0:+inf 1:-inf 2:dne
-  const m=mcq([tex`+\infty`,tex`-\infty`,'غير موجودة'],ans);const f=x=>(p-x)/((x-a)*(x+b));
+  const m=mcq([tex`+\infty`,tex`-\infty`,TT('Does not exist','غير موجودة')],ans);const f=x=>(p-x)/((x-a)*(x+b));
   const lim=side==='both'?tex`\lim_{x\to ${a}}`:tex`\lim_{x\to ${a}^${side}}`;
-  return {kind:'mcq',q:tex`$${lim}\dfrac{${poly([[-1,V('x')],[p,K]])}}{(${poly([[1,V('x')],[-a,K]])})(${poly([[1,V('x')],[b,K]])})}$`,opts:m.opts,ci:m.ci,disp:['$+\\infty$','$-\\infty$','غير موجودة'][ans],
-   hints:['عوّض في كل عامل ما عدا العامل الذي يصبح صفرًا.',tex`قرب $x=${a}$ يشبه المقدار $\frac{${(p-a)}}{${a+b}}\cdot\frac{1}{x-${P(a)}}$.`],
-   sol:tex`الإشارة تُحدَّد من $\frac{${p-a}}{${a+b}}$ ومن إشارة $x-${P(a)}$ في الجهة المطلوبة. إذا اختلفت الجهتان فالنهاية غير موجودة.`,
+  return {kind:'mcq',q:tex`$${lim}\dfrac{${poly([[-1,V('x')],[p,K]])}}{(${poly([[1,V('x')],[-a,K]])})(${poly([[1,V('x')],[b,K]])})}$`,opts:m.opts,ci:m.ci,disp:['$+\\infty$','$-\\infty$',TT('Does not exist','غير موجودة')][ans],
+   hints:[TT('Substitute into every factor except the one that becomes zero.','عوّض في كل عامل ما عدا العامل الذي يصبح صفرًا.'),TT(tex`Near $x=${a}$ the expression looks like $\frac{${(p-a)}}{${a+b}}\cdot\frac{1}{x-${P(a)}}$.`,tex`قرب $x=${a}$ يشبه المقدار $\frac{${(p-a)}}{${a+b}}\cdot\frac{1}{x-${P(a)}}$.`)],
+   sol:TT(tex`The sign is decided by $\frac{${p-a}}{${a+b}}$ and by the sign of $x-${P(a)}$ on the required side. If the two sides differ, the limit does not exist.`,tex`الإشارة تُحدَّد من $\frac{${p-a}}{${a+b}}$ ومن إشارة $x-${P(a)}$ في الجهة المطلوبة. إذا اختلفت الجهتان فالنهاية غير موجودة.`),
    truth:()=>{const r=f(a+1e-7),l=f(a-1e-7);if(side==='both')return r*l<0;return (side==='+'?r:l)>0===(ans===0)}};});
-def('cont_k',2,'الاتصال',L=>{
+def('cont_k',2,NM('Continuity','الاتصال'),L=>{
   const c=pick([1,2]),k=nz(-4,5),p=k*c*c-c;
-  return {kind:'num',q:tex`الدالة $f(x)=\begin{cases}${poly([[1,V('x')],[p,K]])} & x\lt ${c}\\ kx^2 & x\ge ${c}\end{cases}$ متصلة عند $x=${c}$. أوجد $k$.`,ans:`${k}`,disp:`${k}`,
-   hints:['الاتصال يعني تساوي النهاية من اليمين واليسار مع قيمة الدالة.',`عوّض $x=${c}$ في كل فرع وساوِ بينهما.`],
-   sol:tex`اليسار: $${c}${sg(p)}=${c+p}$. اليمين: $k\cdot${c*c}$. إذن $${c*c}k=${c+p}$ و$k=${k}$.`,truth:()=>c+p===k*c*c};});
+  return {kind:'num',q:TT(tex`The function $f(x)=\begin{cases}${poly([[1,V('x')],[p,K]])} & x\lt ${c}\\ kx^2 & x\ge ${c}\end{cases}$ is continuous at $x=${c}$. Find $k$.`,tex`الدالة $f(x)=\begin{cases}${poly([[1,V('x')],[p,K]])} & x\lt ${c}\\ kx^2 & x\ge ${c}\end{cases}$ متصلة عند $x=${c}$. أوجد $k$.`),ans:`${k}`,disp:`${k}`,
+   hints:[TT('Continuity means the left limit, the right limit and the function value are equal.','الاتصال يعني تساوي النهاية من اليمين واليسار مع قيمة الدالة.'),TT(`Substitute $x=${c}$ in each branch and set them equal.`,`عوّض $x=${c}$ في كل فرع وساوِ بينهما.`)],
+   sol:TT(tex`Left: $${c}${sg(p)}=${c+p}$. Right: $k\cdot${c*c}$. So $${c*c}k=${c+p}$ and $k=${k}$.`,tex`اليسار: $${c}${sg(p)}=${c+p}$. اليمين: $k\cdot${c*c}$. إذن $${c*c}k=${c+p}$ و$k=${k}$.`),truth:()=>c+p===k*c*c};});
 
 /* المحطة 3: قواعد الاشتقاق */
 const TERMS={
@@ -186,25 +196,25 @@ const TERMS={
  sqrt:()=>({tex:V('\\sqrt{x}'),f:c=>`(${c})*sqrt(x)`,d:c=>`(${c})/(2*sqrt(x))`,dtex:[c=>c,a=>tex`\frac{${a}}{2\sqrt{x}}`]}),
  inv:()=>({tex:a=>tex`\frac{${a}}{x}`,f:c=>`(${c})/x`,d:c=>`(${-c})/x^2`,dtex:[c=>-c,a=>tex`\frac{${a}}{x^2}`]}),
  exp:()=>({tex:V('e^x'),f:c=>`(${c})*e^x`,d:c=>`(${c})*e^x`,dtex:[c=>c,V('e^x')]})};
-def('d_power',3,'قاعدة القوى',L=>{
+def('d_power',3,NM('Power rule','قاعدة القوى'),L=>{
   const types=L===1?['pow','lin','con']:L===2?['pow','lin','sqrt','inv','con']:['pow','sqrt','inv','exp','lin','con'];
-  const n=Math.min(types.length,L===1?3:4);const chosen=types.slice().sort(()=>Math.random()-.5).slice(0,n);
+  const n=Math.min(types.length,L===1?3:4);const chosen=types.slice().sort(()=>rnd()-.5).slice(0,n);
   const ts=chosen.map(t=>({c:nz(-6,7),t:TERMS[t](t==='pow'?ri(2,5):0)}));
   const f=ts.map(o=>o.t.f(o.c)).join('+'),d=ts.map(o=>o.t.d(o.c)).join('+');
   const ft=poly(ts.map(o=>[o.c,o.t.tex])),dt=poly(ts.map(o=>[o.t.dtex[0](o.c),o.t.dtex[1]]));
   const F=compile(f),D=compile(d);
-  return {kind:'expr',q:tex`اشتق: $f(x)=${ft}$`,ans:d,pts:POS,disp:dt,hints:['اشتق كل حد على حدة، والثابت مشتقته صفر.','اكتب الجذر والكسر كقوى: $\\sqrt x=x^{1/2}$، $\\frac1x=x^{-1}$.'],
+  return {kind:'expr',q:TT(tex`Differentiate: $f(x)=${ft}$`,tex`اشتق: $f(x)=${ft}$`),ans:d,pts:POS,disp:dt,hints:[TT('Differentiate each term separately; the derivative of a constant is zero.','اشتق كل حد على حدة، والثابت مشتقته صفر.'),TT('Write roots and fractions as powers: $\\sqrt x=x^{1/2}$, $\\frac1x=x^{-1}$.','اكتب الجذر والكسر كقوى: $\\sqrt x=x^{1/2}$، $\\frac1x=x^{-1}$.')],
    sol:tex`$f'(x)=${dt}$`,truth:()=>POS.every(x=>close(dn(F,x),D(x),1e-5))};});
-def('d_product',3,'قاعدة الضرب',L=>{
+def('d_product',3,NM('Product rule','قاعدة الضرب'),L=>{
   const n=ri(1,L+1),a=L===1?1:nz(-3,4);
   const U=pick([{s:`x^${n}`,d:`${n}*x^${n-1}`,t:n===1?'x':`x^${n}`},{s:'e^x',d:'e^x',t:'e^x'}]);
   const Vs=[{s:'sin(x)',d:'cos(x)',t:'\\sin x'},{s:'cos(x)',d:'-sin(x)',t:'\\cos x'}];
   if(U.s!=='e^x')Vs.push({s:'e^x',d:'e^x',t:'e^x'},{s:'ln(x)',d:'1/x',t:'\\ln x'});
   const W=pick(Vs);const f=`${a}*(${U.s})*(${W.s})`,d=`${a}*((${U.d})*(${W.s})+(${U.s})*(${W.d}))`;const F=compile(f),D=compile(d);
-  return {kind:'expr',q:tex`اشتق: $f(x)=${a===1?'':a===-1?'-':a}${U.t}\,${W.t}$`,ans:d,traps:[{ans:`${a}*((${U.d})*(${W.d}))`,msg:"مشتقة الضرب ليست حاصل ضرب المشتقتين. القاعدة: (uv)′ = u′v + uv′."}],pts:POS,disp:tex`${a===1?'':a}\left(${U.t}\right)'${W.t}+\dots`,
-   hints:["قاعدة الضرب: $(uv)'=u'v+uv'$.",'اشتق كل عامل منفصلًا ثم جمّع.'],
-   sol:tex`$u=${U.t},\ v=${W.t}$ فتكون $f'=${a===1?'':a}\,(u'v+uv')$.`,truth:()=>POS.every(x=>close(dn(F,x),D(x),1e-5))};});
-def('d_quot',3,'قاعدة القسمة',L=>{
+  return {kind:'expr',q:TT(tex`Differentiate: $f(x)=${a===1?'':a===-1?'-':a}${U.t}\,${W.t}$`,tex`اشتق: $f(x)=${a===1?'':a===-1?'-':a}${U.t}\,${W.t}$`),ans:d,traps:[{ans:`${a}*((${U.d})*(${W.d}))`,msg:TT("The derivative of a product is not the product of the derivatives. The rule: (uv)′ = u′v + uv′.","مشتقة الضرب ليست حاصل ضرب المشتقتين. القاعدة: (uv)′ = u′v + uv′.")}],pts:POS,disp:tex`${a===1?'':a}\left(${U.t}\right)'${W.t}+\dots`,
+   hints:[TT("Product rule: $(uv)'=u'v+uv'$.","قاعدة الضرب: $(uv)'=u'v+uv'$."),TT('Differentiate each factor separately, then combine.','اشتق كل عامل منفصلًا ثم جمّع.')],
+   sol:TT(tex`$u=${U.t},\ v=${W.t}$ so $f'=${a===1?'':a}\,(u'v+uv')$.`,tex`$u=${U.t},\ v=${W.t}$ فتكون $f'=${a===1?'':a}\,(u'v+uv')$.`),truth:()=>POS.every(x=>close(dn(F,x),D(x),1e-5))};});
+def('d_quot',3,NM('Quotient rule','قاعدة القسمة'),L=>{
   const a=ri(1,5),b=pick([-4,-3,-2,3,4,5,6]),n=ri(1,3);
   const forms=[
    {t:tex`\frac{${poly([[1,V('x^2')],[a,K]])}}{${poly([[1,V('x')],[-b,K]])}}`,f:`(x^2+(${a}))/(x-(${b}))`,d:`(x^2+(${-2*b})*x+(${-a}))/(x-(${b}))^2`,pts:DEF},
@@ -213,10 +223,10 @@ def('d_quot',3,'قاعدة القسمة',L=>{
    {t:tex`\frac{x}{${poly([[1,V('x^2')],[a,K]])}}`,f:`x/(x^2+${a})`,d:`(${a}-x^2)/(x^2+${a})^2`,pts:DEF},
    {t:tex`\frac{\ln x}{x}`,f:`ln(x)/x`,d:`(1-ln(x))/x^2`,pts:POS}];
   const o=L===1?forms[pick([0,3])]:pick(forms);const F=compile(o.f),D=compile(o.d);
-  return {kind:'expr',q:tex`اشتق: $f(x)=${o.t}$`,ans:o.d,pts:o.pts,disp:'(مشتقة البسط × المقام − البسط × مشتقة المقام) ÷ مربع المقام',
-   hints:["$\\left(\\frac uv\\right)'=\\frac{u'v-uv'}{v^2}$",'اكتب u و v ثم اشتقهما قبل التعويض.'],sol:tex`نطبّق $\frac{u'v-uv'}{v^2}$ ثم نبسّط البسط.`,
+  return {kind:'expr',q:TT(tex`Differentiate: $f(x)=${o.t}$`,tex`اشتق: $f(x)=${o.t}$`),ans:o.d,pts:o.pts,disp:TT('(derivative of numerator × denominator − numerator × derivative of denominator) ÷ denominator squared','(مشتقة البسط × المقام − البسط × مشتقة المقام) ÷ مربع المقام'),
+   hints:["$\\left(\\frac uv\\right)'=\\frac{u'v-uv'}{v^2}$",TT('Write u and v and differentiate them before substituting.','اكتب u و v ثم اشتقهما قبل التعويض.')],sol:TT(tex`Apply $\frac{u'v-uv'}{v^2}$ then simplify the numerator.`,tex`نطبّق $\frac{u'v-uv'}{v^2}$ ثم نبسّط البسط.`),
    truth:()=>o.pts.every(x=>{const f=F(x);return !isFinite(f)||Math.abs(f)>1e5||close(dn(F,x,1e-6),D(x),1e-4)})};});
-def('d_chain',3,'قاعدة السلسلة',L=>{
+def('d_chain',3,NM('Chain rule','قاعدة السلسلة'),L=>{
   const a=ri(1,5),n=ri(2,5),k=ri(2,5);
   const all=[
    [1,tex`(${poly([[1,V('x^2')],[a,K]])})^{${n}}`,`(x^2+${a})^${n}`,`${2*n}*x*(x^2+${a})^${n-1}`,`${n}*(x^2+${a})^${n-1}`],
@@ -230,85 +240,85 @@ def('d_chain',3,'قاعدة السلسلة',L=>{
    [3,tex`\sin^2 x`,`sin(x)^2`,`2*sin(x)*cos(x)`,`2*sin(x)`],
    [3,tex`\tan(${k}x)`,`tan(${k}*x)`,`${k}*sec(${k}*x)^2`,`sec(${k}*x)^2`]];
   const o=pick(all.filter(r=>r[0]<=L));const F=compile(o[2]),D=compile(o[3]);const pts=[0.11,0.19,0.27,0.34,0.41];
-  return {kind:'expr',q:tex`اشتق: $f(x)=${o[1]}$`,ans:o[3],traps:[{ans:o[4],msg:'يبدو أنك اشتققت الدالة الخارجية فقط. لا تنسَ ضرب الناتج في مشتقة الدالة الداخلية.'}],pts:o[1].includes('tan')?pts:POS,disp:'مشتقة الخارجية × مشتقة الداخلية',
-   hints:['حدّد الدالة الخارجية والدالة الداخلية.','اشتق الخارجية وأبقِ الداخلية كما هي، ثم اضرب في مشتقة الداخلية.'],
-   sol:tex`نشتق الخارجية ونضرب في مشتقة ما بداخلها.`,truth:()=>POS.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
-def('d_trig',3,'مشتقات مثلثية',L=>{
+  return {kind:'expr',q:TT(tex`Differentiate: $f(x)=${o[1]}$`,tex`اشتق: $f(x)=${o[1]}$`),ans:o[3],traps:[{ans:o[4],msg:TT('It looks like you differentiated only the outer function. Do not forget to multiply by the derivative of the inner function.','يبدو أنك اشتققت الدالة الخارجية فقط. لا تنسَ ضرب الناتج في مشتقة الدالة الداخلية.')}],pts:o[1].includes('tan')?pts:POS,disp:TT('derivative of outer × derivative of inner','مشتقة الخارجية × مشتقة الداخلية'),
+   hints:[TT('Identify the outer function and the inner function.','حدّد الدالة الخارجية والدالة الداخلية.'),TT('Differentiate the outer and keep the inner unchanged, then multiply by the derivative of the inner.','اشتق الخارجية وأبقِ الداخلية كما هي، ثم اضرب في مشتقة الداخلية.')],
+   sol:TT(tex`We differentiate the outer function and multiply by the derivative of what is inside it.`,tex`نشتق الخارجية ونضرب في مشتقة ما بداخلها.`),truth:()=>POS.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
+def('d_trig',3,NM('Trigonometric derivatives','مشتقات مثلثية'),L=>{
   const T={tan:['tan(x)','sec(x)^2',tex`\tan x`],sec:['sec(x)','sec(x)*tan(x)',tex`\sec x`],cot:['cot(x)','-csc(x)^2',tex`\cot x`],csc:['csc(x)','-csc(x)*cot(x)',tex`\csc x`]};
   const ks=Object.keys(T);const k1=pick(ks);let k2;do k2=pick(ks);while(k2===k1);const a=nz(-4,5),b=nz(-4,5);
   const f=`(${a})*${T[k1][0]}+(${b})*${T[k2][0]}`,d=`(${a})*(${T[k1][1]})+(${b})*(${T[k2][1]})`;const F=compile(f),D=compile(d);const pts=[0.35,0.6,0.85,1.1,1.3];
-  return {kind:'expr',q:tex`اشتق: $f(x)=${poly([[a,V(T[k1][2])],[b,V(T[k2][2])]])}$`,ans:d,pts,disp:'',
-   hints:['تذكّر: $(\\tan)\'=\\sec^2$، $(\\sec)\'=\\sec\\tan$، $(\\cot)\'=-\\csc^2$، $(\\csc)\'=-\\csc\\cot$.','الدوال التي تبدأ بـ co مشتقتها سالبة.'],
-   sol:tex`نطبّق جدول مشتقات الدوال المثلثية على كل حد.`,truth:()=>pts.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
-def('d_invtrig',3,'مشتقات عكس المثلثية',L=>{
+  return {kind:'expr',q:TT(tex`Differentiate: $f(x)=${poly([[a,V(T[k1][2])],[b,V(T[k2][2])]])}$`,tex`اشتق: $f(x)=${poly([[a,V(T[k1][2])],[b,V(T[k2][2])]])}$`),ans:d,pts,disp:'',
+   hints:[TT('Remember: $(\\tan)\'=\\sec^2$, $(\\sec)\'=\\sec\\tan$, $(\\cot)\'=-\\csc^2$, $(\\csc)\'=-\\csc\\cot$.','تذكّر: $(\\tan)\'=\\sec^2$، $(\\sec)\'=\\sec\\tan$، $(\\cot)\'=-\\csc^2$، $(\\csc)\'=-\\csc\\cot$.'),TT('Functions starting with co have a negative derivative.','الدوال التي تبدأ بـ co مشتقتها سالبة.')],
+   sol:TT(tex`Apply the table of trigonometric derivatives to each term.`,tex`نطبّق جدول مشتقات الدوال المثلثية على كل حد.`),truth:()=>pts.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
+def('d_invtrig',3,NM('Inverse trigonometric derivatives','مشتقات عكس المثلثية'),L=>{
   const a=pick([2,3,5]),t=pick(['atan','asin','acos']);
   const m={atan:[tex`\tan^{-1}(${a}x)`,`atan(${a}*x)`,`${a}/(1+${a*a}*x^2)`],asin:[tex`\sin^{-1}(${a}x)`,`asin(${a}*x)`,`${a}/sqrt(1-${a*a}*x^2)`],acos:[tex`\cos^{-1}(${a}x)`,`acos(${a}*x)`,`-${a}/sqrt(1-${a*a}*x^2)`]}[t];
   const pts=[0.1,0.2,0.3,0.45,0.6].map(v=>v/a);const F=compile(m[1]),D=compile(m[2]);
-  return {kind:'expr',q:tex`اشتق: $f(x)=${m[0]}$`,ans:m[2],traps:[{ans:m[2].replace(/^(-?)\d+\//,'$11/'),msg:'نسيت ضرب الناتج في مشتقة الداخلية.'}],pts,disp:'',hints:["$(\\tan^{-1}u)'=\\frac{u'}{1+u^2}$ و$(\\sin^{-1}u)'=\\frac{u'}{\\sqrt{1-u^2}}$.",`هنا $u=${a}x$ و$u'=${a}$.`],
-   sol:tex`نطبّق القاعدة مع $u=${a}x$ ثم نضرب في $u'=${a}$.`,truth:()=>pts.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
-def('d_log',3,'الاشتقاق اللوغاريتمي',L=>{
+  return {kind:'expr',q:TT(tex`Differentiate: $f(x)=${m[0]}$`,tex`اشتق: $f(x)=${m[0]}$`),ans:m[2],traps:[{ans:m[2].replace(/^(-?)\d+\//,'$11/'),msg:TT('You forgot to multiply by the derivative of the inner function.','نسيت ضرب الناتج في مشتقة الداخلية.')}],pts,disp:'',hints:[TT("$(\\tan^{-1}u)'=\\frac{u'}{1+u^2}$ and $(\\sin^{-1}u)'=\\frac{u'}{\\sqrt{1-u^2}}$.","$(\\tan^{-1}u)'=\\frac{u'}{1+u^2}$ و$(\\sin^{-1}u)'=\\frac{u'}{\\sqrt{1-u^2}}$."),TT(`Here $u=${a}x$ and $u'=${a}$.`,`هنا $u=${a}x$ و$u'=${a}$.`)],
+   sol:TT(tex`Apply the rule with $u=${a}x$ then multiply by $u'=${a}$.`,tex`نطبّق القاعدة مع $u=${a}x$ ثم نضرب في $u'=${a}$.`),truth:()=>pts.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
+def('d_log',3,NM('Logarithmic differentiation','الاشتقاق اللوغاريتمي'),L=>{
   const forms=[[tex`x^x`,'x^x','x^x*(ln(x)+1)'],[tex`x^{2x}`,'x^(2*x)','2*x^(2*x)*(ln(x)+1)'],[tex`x^{\sin x}`,'x^sin(x)'.replace('sin(x)','(sin(x))'),'x^(sin(x))*(cos(x)*ln(x)+sin(x)/x)'],[tex`x^{\sqrt x}`,'x^(sqrt(x))','x^(sqrt(x))*(ln(x)/(2*sqrt(x))+1/sqrt(x))']];
   const o=pick(L===1?forms.slice(0,2):forms);const F=compile(o[1]),D=compile(o[2]);
-  return {kind:'expr',q:tex`اشتق بالاشتقاق اللوغاريتمي: $y=${o[0]}$`,ans:o[2],pts:POS,disp:'',hints:['خذ $\\ln$ للطرفين، فيصبح $\\ln y$ = الأس × $\\ln$ الأساس.','اشتق ضمنيًا ثم اضرب في y.'],
-   sol:tex`$\ln y$ ثم نشتق: $\frac{y'}{y}=\dots$ ثم $y'=y\cdot(\dots)$.`,truth:()=>POS.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
+  return {kind:'expr',q:TT(tex`Differentiate using logarithmic differentiation: $y=${o[0]}$`,tex`اشتق بالاشتقاق اللوغاريتمي: $y=${o[0]}$`),ans:o[2],pts:POS,disp:'',hints:[TT('Take $\\ln$ of both sides, so $\\ln y$ = exponent × $\\ln$ base.','خذ $\\ln$ للطرفين، فيصبح $\\ln y$ = الأس × $\\ln$ الأساس.'),TT('Differentiate implicitly, then multiply by y.','اشتق ضمنيًا ثم اضرب في y.')],
+   sol:TT(tex`$\ln y$ then differentiate: $\frac{y'}{y}=\dots$ then $y'=y\cdot(\dots)$.`,tex`$\ln y$ ثم نشتق: $\frac{y'}{y}=\dots$ ثم $y'=y\cdot(\dots)$.`),truth:()=>POS.every(x=>close(dn(F,x,1e-6),D(x),1e-4))};});
 
 /* المحطة 4: المماس والضمني */
-def('tangent',4,'معادلة المماس',L=>{
+def('tangent',4,NM('Tangent line equation','معادلة المماس'),L=>{
   const forms=[];
   {const b=nz(-6,6),c=ri(-5,5),x0=ri(-3,4),m=2*x0+b,y0=x0*x0+b*x0+c;forms.push({f:poly([[1,V('x^2')],[b,V('x')],[c,K]]),x0,m,y0,F:x=>x*x+b*x+c});}
   {const a=ri(1,6),x0=ri(-2,3),m=3*x0*x0-a,y0=x0**3-a*x0;forms.push({f:poly([[1,V('x^3')],[-a,V('x')]]),x0,m,y0,F:x=>x**3-a*x});}
   const o=L===1?forms[0]:pick(forms);const line=poly([[o.m,V('x')],[o.y0-o.m*o.x0,K]]);
-  return {kind:'expr',q:tex`أوجد معادلة المماس لمنحنى $f(x)=${o.f}$ عند $x=${o.x0}$. اكتب الجواب بدلالة x فقط (مثل 3x-4).`,ans:`${o.m}*(x-(${o.x0}))+(${o.y0})`,disp:`y=${line}`,
-   hints:['الميل = $f\'(x_0)$، والنقطة $(x_0,f(x_0))$.','المعادلة: $y-y_0=m(x-x_0)$.'],sol:tex`$f(${o.x0})=${o.y0}$ و$f'(${o.x0})=${o.m}$. المماس: $y=${line}$.`,
+  return {kind:'expr',q:TT(tex`Find the tangent line to $f(x)=${o.f}$ at $x=${o.x0}$. Write the answer in x only (like 3x-4).`,tex`أوجد معادلة المماس لمنحنى $f(x)=${o.f}$ عند $x=${o.x0}$. اكتب الجواب بدلالة x فقط (مثل 3x-4).`),ans:`${o.m}*(x-(${o.x0}))+(${o.y0})`,disp:`y=${line}`,
+   hints:[TT('Slope = $f\'(x_0)$, and the point is $(x_0,f(x_0))$.','الميل = $f\'(x_0)$، والنقطة $(x_0,f(x_0))$.'),TT('The equation: $y-y_0=m(x-x_0)$.','المعادلة: $y-y_0=m(x-x_0)$.')],sol:TT(tex`$f(${o.x0})=${o.y0}$ and $f'(${o.x0})=${o.m}$. The tangent: $y=${line}$.`,tex`$f(${o.x0})=${o.y0}$ و$f'(${o.x0})=${o.m}$. المماس: $y=${line}$.`),
    truth:()=>close(dn(o.F,o.x0),o.m,1e-5)&&close(o.F(o.x0),o.y0)};});
-def('impl',4,'الاشتقاق الضمني',L=>{
+def('impl',4,NM('Implicit differentiation','الاشتقاق الضمني'),L=>{
   const kind=pick(L===1?['c']:L===2?['c','h']:['c','h','q']);
   if(kind==='c'){const [x,y,r]=pick([[3,4,5],[5,12,13],[6,8,10],[8,6,10],[4,3,5],[12,5,13]]);const x0=pick([x,-x]),y0=pick([y,-y]);const R=fr(-x0,y0);
-    return {kind:'num',q:tex`$x^2+y^2=${r*r}$. أوجد $\dfrac{dy}{dx}$ عند النقطة $(${x0},${y0})$.`,ans:R.str,disp:R.tex,hints:['اشتق الطرفين: $2x+2y\\,y\'=0$.','حلّ لـ $y\'$ ثم عوّض النقطة.'],
+    return {kind:'num',q:TT(tex`$x^2+y^2=${r*r}$. Find $\dfrac{dy}{dx}$ at the point $(${x0},${y0})$.`,tex`$x^2+y^2=${r*r}$. أوجد $\dfrac{dy}{dx}$ عند النقطة $(${x0},${y0})$.`),ans:R.str,disp:R.tex,hints:[TT('Differentiate both sides: $2x+2y\\,y\'=0$.','اشتق الطرفين: $2x+2y\\,y\'=0$.'),TT('Solve for $y\'$ then substitute the point.','حلّ لـ $y\'$ ثم عوّض النقطة.')],
      sol:tex`$y'=-\frac{x}{y}=${R.tex}$.`,truth:()=>{const s=Math.sign(y0);const Y=t=>s*Math.sqrt(r*r-t*t);return close(dn(Y,x0),R.n/R.d,1e-4)}};}
   if(kind==='h'){const a=ri(1,4),y0=ri(1,6),R=fr(-y0,a);
-    return {kind:'num',q:tex`$xy=${a*y0}$. أوجد $\dfrac{dy}{dx}$ عند النقطة $(${a},${y0})$.`,ans:R.str,disp:R.tex,hints:["اشتق بقاعدة الضرب: $y+x\\,y'=0$.",'حلّ لـ $y\'$.'],sol:tex`$y'=-\frac yx=${R.tex}$.`,truth:()=>close(dn(t=>a*y0/t,a),R.n/R.d,1e-4)};}
+    return {kind:'num',q:TT(tex`$xy=${a*y0}$. Find $\dfrac{dy}{dx}$ at the point $(${a},${y0})$.`,tex`$xy=${a*y0}$. أوجد $\dfrac{dy}{dx}$ عند النقطة $(${a},${y0})$.`),ans:R.str,disp:R.tex,hints:[TT("Differentiate with the product rule: $y+x\\,y'=0$.","اشتق بقاعدة الضرب: $y+x\\,y'=0$."),TT('Solve for $y\'$.','حلّ لـ $y\'$.')],sol:tex`$y'=-\frac yx=${R.tex}$.`,truth:()=>close(dn(t=>a*y0/t,a),R.n/R.d,1e-4)};}
   let a,b;do{a=ri(1,3);b=ri(1,3);}while(a+2*b===0);const k=a*a+a*b+b*b,R=fr(-(2*a+b),a+2*b);
-  return {kind:'num',q:tex`$x^2+xy+y^2=${k}$. أوجد $\dfrac{dy}{dx}$ عند النقطة $(${a},${b})$.`,ans:R.str,disp:R.tex,hints:["اشتق: $2x+y+x\\,y'+2y\\,y'=0$.",'اجمع حدود $y\'$ في طرف.'],sol:tex`$y'=-\frac{2x+y}{x+2y}=${R.tex}$.`,
+  return {kind:'num',q:TT(tex`$x^2+xy+y^2=${k}$. Find $\dfrac{dy}{dx}$ at the point $(${a},${b})$.`,tex`$x^2+xy+y^2=${k}$. أوجد $\dfrac{dy}{dx}$ عند النقطة $(${a},${b})$.`),ans:R.str,disp:R.tex,hints:[TT("Differentiate: $2x+y+x\\,y'+2y\\,y'=0$.","اشتق: $2x+y+x\\,y'+2y\\,y'=0$."),TT('Collect the $y\'$ terms on one side.','اجمع حدود $y\'$ في طرف.')],sol:tex`$y'=-\frac{2x+y}{x+2y}=${R.tex}$.`,
    truth:()=>{const F=(x,y)=>x*x+x*y+y*y;const h=1e-6;const fx=(F(a+h,b)-F(a-h,b))/(2*h),fy=(F(a,b+h)-F(a,b-h))/(2*h);return close(-fx/fy,R.n/R.d,1e-4)}};});
 
 /* المحطة 5: تطبيقات المشتقة */
-def('crit',5,'الأعداد الحرجة',L=>{
+def('crit',5,NM('Critical numbers','الأعداد الحرجة'),L=>{
   const r1=ri(-4,4);let r2=r1+2*nz(-3,3);const A=-3*(r1+r2)/2,B=3*r1*r2;const f=x=>x**3+A*x*x+B*x;
-  return {kind:'list',q:tex`أوجد الأعداد الحرجة للدالة $f(x)=${poly([[1,V('x^3')],[A,V('x^2')],[B,V('x')]])}$ (افصل بينها بفاصلة).`,list:[r1,r2],ans:`${r1}, ${r2}`,disp:`${r1}, ${r2}`,
-   hints:['العدد الحرج حيث $f\'=0$ أو غير موجودة.',`$f'(x)=3x^2${sg(2*A)}x${sg(B)}$، حلّله إلى عاملين.`],sol:tex`$f'(x)=3(x-${P(r1)})(x-${P(r2)})=0$ فالعددان $${r1}$ و$${r2}$.`,
+  return {kind:'list',q:TT(tex`Find the critical numbers of $f(x)=${poly([[1,V('x^3')],[A,V('x^2')],[B,V('x')]])}$ (separate them with a comma).`,tex`أوجد الأعداد الحرجة للدالة $f(x)=${poly([[1,V('x^3')],[A,V('x^2')],[B,V('x')]])}$ (افصل بينها بفاصلة).`),list:[r1,r2],ans:`${r1}, ${r2}`,disp:`${r1}, ${r2}`,
+   hints:[TT('A critical number is where $f\'=0$ or $f\'$ does not exist.','العدد الحرج حيث $f\'=0$ أو غير موجودة.'),TT(`$f'(x)=3x^2${sg(2*A)}x${sg(B)}$; factor it into two factors.`,`$f'(x)=3x^2${sg(2*A)}x${sg(B)}$، حلّله إلى عاملين.`)],sol:TT(tex`$f'(x)=3(x-${P(r1)})(x-${P(r2)})=0$ so the numbers are $${r1}$ and $${r2}$.`,tex`$f'(x)=3(x-${P(r1)})(x-${P(r2)})=0$ فالعددان $${r1}$ و$${r2}$.`),
    truth:()=>close(dn(f,r1),0,1e-4)&&close(dn(f,r2),0,1e-4)};});
-def('closedint',5,'القيم القصوى على فترة',L=>{
+def('closedint',5,NM('Extreme values on an interval','القيم القصوى على فترة'),L=>{
   const c=ri(-5,8),iv=pick([[-1,3],[-1,4],[-2,3],[0,4],[-2,4]]),want=pick(['max','min']);const f=x=>x**3-3*x*x+c;
   const cand=[iv[0],iv[1]].concat([0,2].filter(t=>t>iv[0]&&t<iv[1])),vals=cand.map(f);const ans=want==='max'?Math.max(...vals):Math.min(...vals);
   const inner=[0,2].filter(t=>t>iv[0]&&t<iv[1]).map(f),ansInner=want==='max'?Math.max(...inner):Math.min(...inner);
-  return {kind:'num',traps:close(ansInner,ans)?[]:[{ans:`${ansInner}`,msg:'لا تنسَ نهايتَي الفترة: قارن مع قيمة الدالة عند a وb أيضًا.'}],q:tex`أوجد القيمة ${want==='max'?'العظمى':'الصغرى'} المطلقة للدالة $f(x)=x^3-3x^2${sg(c)}$ على $[${iv[0]},${iv[1]}]$.`,ans:`${ans}`,disp:`${ans}`,
-   hints:["$f'(x)=3x(x-2)$ فالعددان الحرجان 0 و2.",'احسب $f$ عند الأعداد الحرجة داخل الفترة وعند النهايتين، ثم قارن.'],sol:tex`نحسب القيم عند $${cand.join(',\\ ')}$ فنجد: $${vals.join(',\\ ')}$. ${want==='max'?'الأكبر':'الأصغر'} هو $${ans}$.`,
+  return {kind:'num',traps:close(ansInner,ans)?[]:[{ans:`${ansInner}`,msg:TT('Do not forget the endpoints: also compare with the function value at a and b.','لا تنسَ نهايتَي الفترة: قارن مع قيمة الدالة عند a وb أيضًا.')}],q:TT(tex`Find the absolute ${want==='max'?'maximum':'minimum'} of $f(x)=x^3-3x^2${sg(c)}$ on $[${iv[0]},${iv[1]}]$.`,tex`أوجد القيمة ${want==='max'?'العظمى':'الصغرى'} المطلقة للدالة $f(x)=x^3-3x^2${sg(c)}$ على $[${iv[0]},${iv[1]}]$.`),ans:`${ans}`,disp:`${ans}`,
+   hints:[TT("$f'(x)=3x(x-2)$ so the critical numbers are 0 and 2.","$f'(x)=3x(x-2)$ فالعددان الحرجان 0 و2."),TT('Compute $f$ at the critical numbers inside the interval and at both endpoints, then compare.','احسب $f$ عند الأعداد الحرجة داخل الفترة وعند النهايتين، ثم قارن.')],sol:TT(tex`We compute the values at $${cand.join(',\\ ')}$ and get: $${vals.join(',\\ ')}$. The ${want==='max'?'largest':'smallest'} is $${ans}$.`,tex`نحسب القيم عند $${cand.join(',\\ ')}$ فنجد: $${vals.join(',\\ ')}$. ${want==='max'?'الأكبر':'الأصغر'} هو $${ans}$.`),
    truth:()=>{let best=want==='max'?-1e9:1e9;for(let x=iv[0];x<=iv[1]+1e-9;x+=0.001)best=want==='max'?Math.max(best,f(x)):Math.min(best,f(x));return close(best,ans,1e-5)}};});
-def('mvt',5,'نظرية القيمة المتوسطة',L=>{
+def('mvt',5,NM('Mean Value Theorem','نظرية القيمة المتوسطة'),L=>{
   const t=pick(L===1?['q']:['q','c','t']);
   if(t==='q'){const p=nz(-5,5),q0=ri(-4,4),m=ri(-3,1),n=m+ri(2,6);const f=x=>x*x+p*x+q0,R=fr(m+n,2);
-    return {kind:'num',q:tex`أوجد قيمة $c$ في نظرية القيمة المتوسطة للدالة $f(x)=${poly([[1,V('x^2')],[p,V('x')],[q0,K]])}$ على $[${m},${n}]$.`,ans:R.str,disp:R.tex,
-     hints:['احسب الميل المتوسط $\\frac{f(b)-f(a)}{b-a}$.',"ثم حلّ $f'(c)=$ الميل المتوسط."],sol:tex`الميل المتوسط $=${m+n+p}$ و$f'(c)=2c${sg(p)}$. إذن $c=${R.tex}$.`,
+    return {kind:'num',q:TT(tex`Find the value $c$ in the Mean Value Theorem for $f(x)=${poly([[1,V('x^2')],[p,V('x')],[q0,K]])}$ on $[${m},${n}]$.`,tex`أوجد قيمة $c$ في نظرية القيمة المتوسطة للدالة $f(x)=${poly([[1,V('x^2')],[p,V('x')],[q0,K]])}$ على $[${m},${n}]$.`),ans:R.str,disp:R.tex,
+     hints:[TT('Compute the average slope $\\frac{f(b)-f(a)}{b-a}$.','احسب الميل المتوسط $\\frac{f(b)-f(a)}{b-a}$.'),TT("Then solve $f'(c)=$ the average slope.","ثم حلّ $f'(c)=$ الميل المتوسط.")],sol:TT(tex`The average slope $=${m+n+p}$ and $f'(c)=2c${sg(p)}$. So $c=${R.tex}$.`,tex`الميل المتوسط $=${m+n+p}$ و$f'(c)=2c${sg(p)}$. إذن $c=${R.tex}$.`),
      truth:()=>close(2*(R.n/R.d)+p,(f(n)-f(m))/(n-m),1e-6)};}
   if(t==='c'){const b=pick([3,6,9]);
-    return {kind:'num',q:tex`أوجد القيمة $c\in(0,${b})$ في نظرية القيمة المتوسطة للدالة $f(x)=x^3$ على $[0,${b}]$. اكتب الجواب (مثل 3/sqrt(2)).`,ans:`${b}/sqrt(3)`,disp:tex`\frac{${b}}{\sqrt3}`,
-     hints:[`الميل المتوسط $=\\frac{${b**3}-0}{${b}}=${b*b}$.`,`حلّ $3c^2=${b*b}$ واختر الحل الموجب.`],sol:tex`$3c^2=${b*b}\Rightarrow c=\pm\frac{${b}}{\sqrt3}$، والمقبول داخل $(0,${b})$ هو $\frac{${b}}{\sqrt3}$.`,
+    return {kind:'num',q:TT(tex`Find $c\in(0,${b})$ in the Mean Value Theorem for $f(x)=x^3$ on $[0,${b}]$. Write the answer (like 3/sqrt(2)).`,tex`أوجد القيمة $c\in(0,${b})$ في نظرية القيمة المتوسطة للدالة $f(x)=x^3$ على $[0,${b}]$. اكتب الجواب (مثل 3/sqrt(2)).`),ans:`${b}/sqrt(3)`,disp:tex`\frac{${b}}{\sqrt3}`,
+     hints:[TT(`The average slope $=\\frac{${b**3}-0}{${b}}=${b*b}$.`,`الميل المتوسط $=\\frac{${b**3}-0}{${b}}=${b*b}$.`),TT(`Solve $3c^2=${b*b}$ and choose the positive solution.`,`حلّ $3c^2=${b*b}$ واختر الحل الموجب.`)],sol:TT(tex`$3c^2=${b*b}\Rightarrow c=\pm\frac{${b}}{\sqrt3}$, and the one inside $(0,${b})$ is $\frac{${b}}{\sqrt3}$.`,tex`$3c^2=${b*b}\Rightarrow c=\pm\frac{${b}}{\sqrt3}$، والمقبول داخل $(0,${b})$ هو $\frac{${b}}{\sqrt3}$.`),
      truth:()=>close(3*(b/Math.sqrt(3))**2,b*b,1e-9)};}
-  return {kind:'list',q:tex`أوجد كل قيم $c$ في الفترة المفتوحة $(-1,2)$ للدالة $f(x)=x^3+x-4$ التي تحقق نظرية القيمة المتوسطة على $[-1,2]$.`,list:[1],traps:[{list:[-1,1],msg:'الفترة مفتوحة (−1,2): العدد −1 ليس داخلها.'}],ans:'1',disp:'1',
-   hints:['الميل المتوسط $=\\frac{6-(-6)}{3}=4$، وحلّ $3c^2+1=4$.','$c=\\pm1$. تحقق أيهما داخل $(-1,2)$.'],sol:tex`$3c^2+1=4\Rightarrow c=\pm1$، لكن $-1$ ليست داخل الفترة المفتوحة $(-1,2)$. إذن $c=1$ فقط.`,
+  return {kind:'list',q:TT(tex`Find all values $c$ in the open interval $(-1,2)$ for $f(x)=x^3+x-4$ that satisfy the Mean Value Theorem on $[-1,2]$.`,tex`أوجد كل قيم $c$ في الفترة المفتوحة $(-1,2)$ للدالة $f(x)=x^3+x-4$ التي تحقق نظرية القيمة المتوسطة على $[-1,2]$.`),list:[1],traps:[{list:[-1,1],msg:TT('The interval is open (−1,2): the number −1 is not inside it.','الفترة مفتوحة (−1,2): العدد −1 ليس داخلها.')}],ans:'1',disp:'1',
+   hints:[TT('The average slope $=\\frac{6-(-6)}{3}=4$; solve $3c^2+1=4$.','الميل المتوسط $=\\frac{6-(-6)}{3}=4$، وحلّ $3c^2+1=4$.'),TT('$c=\\pm1$. Check which one lies inside $(-1,2)$.','$c=\\pm1$. تحقق أيهما داخل $(-1,2)$.')],sol:TT(tex`$3c^2+1=4\Rightarrow c=\pm1$, but $-1$ is not inside the open interval $(-1,2)$. So $c=1$ only.`,tex`$3c^2+1=4\Rightarrow c=\pm1$، لكن $-1$ ليست داخل الفترة المفتوحة $(-1,2)$. إذن $c=1$ فقط.`),
    truth:()=>{const f=x=>x**3+x-4;return close(dn(f,1),(f(2)-f(-1))/3,1e-6)}};});
-def('inflect',5,'نقطة الانعطاف',L=>{
+def('inflect',5,NM('Inflection point','نقطة الانعطاف'),L=>{
   const k=nz(-3,3),q0=ri(-6,6),r=ri(-5,5);const f=x=>x**3+3*k*x*x+q0*x+r;
-  return {kind:'num',q:tex`أوجد قيمة $x$ عند نقطة الانعطاف للدالة $f(x)=${poly([[1,V('x^3')],[3*k,V('x^2')],[q0,V('x')],[r,K]])}$.`,ans:`${-k}`,disp:`${-k}`,
-   hints:["احسب $f''(x)$.",'نقطة الانعطاف حيث $f\'\'=0$ ويتغير التقعر.'],sol:tex`$f''(x)=6x${sg(6*k)}=0\Rightarrow x=${-k}$، وتتغير إشارة $f''$ عندها.`,
+  return {kind:'num',q:TT(tex`Find $x$ at the inflection point of $f(x)=${poly([[1,V('x^3')],[3*k,V('x^2')],[q0,V('x')],[r,K]])}$.`,tex`أوجد قيمة $x$ عند نقطة الانعطاف للدالة $f(x)=${poly([[1,V('x^3')],[3*k,V('x^2')],[q0,V('x')],[r,K]])}$.`),ans:`${-k}`,disp:`${-k}`,
+   hints:[TT("Compute $f''(x)$.","احسب $f''(x)$."),TT('An inflection point is where $f\'\'=0$ and the concavity changes.','نقطة الانعطاف حيث $f\'\'=0$ ويتغير التقعر.')],sol:TT(tex`$f''(x)=6x${sg(6*k)}=0\Rightarrow x=${-k}$, and the sign of $f''$ changes there.`,tex`$f''(x)=6x${sg(6*k)}=0\Rightarrow x=${-k}$، وتتغير إشارة $f''$ عندها.`),
    truth:()=>{const f2=x=>(f(x+1e-3)-2*f(x)+f(x-1e-3))/1e-6;return Math.abs(f2(-k))<1e-3&&f2(-k+0.5)*f2(-k-0.5)<0}};});
-def('second',5,'اختبار المشتقة الثانية',L=>{
-  const k=ri(1,3),pt=pick([k,-k]);const f=x=>x**3-3*k*k*x;const sgn=pt>0?0:1;const m=mcq(['قيمة صغرى محلية','قيمة عظمى محلية','الاختبار غير حاسم'],sgn);
-  return {kind:'mcq',q:tex`الدالة $f(x)=${poly([[1,V('x^3')],[-3*k*k,V('x')]])}$ لها عدد حرج عند $x=${pt}$. حسب اختبار المشتقة الثانية فهو:`,opts:m.opts,ci:m.ci,disp:['قيمة صغرى محلية','قيمة عظمى محلية'][sgn],
-   hints:["احسب $f''(x)=6x$.",'إذا كانت $f\'\'>0$ فصغرى، وإذا كانت $<0$ فعظمى.'],sol:tex`$f''(${pt})=${6*pt}$ ${pt>0?'أكبر':'أصغر'} من الصفر، فهي ${['صغرى','عظمى'][sgn]} محلية.`,
+def('second',5,NM('Second derivative test','اختبار المشتقة الثانية'),L=>{
+  const k=ri(1,3),pt=pick([k,-k]);const f=x=>x**3-3*k*k*x;const sgn=pt>0?0:1;const m=mcq([TT('Local minimum','قيمة صغرى محلية'),TT('Local maximum','قيمة عظمى محلية'),TT('The test is inconclusive','الاختبار غير حاسم')],sgn);
+  return {kind:'mcq',q:TT(tex`The function $f(x)=${poly([[1,V('x^3')],[-3*k*k,V('x')]])}$ has a critical number at $x=${pt}$. By the second derivative test it is:`,tex`الدالة $f(x)=${poly([[1,V('x^3')],[-3*k*k,V('x')]])}$ لها عدد حرج عند $x=${pt}$. حسب اختبار المشتقة الثانية فهو:`),opts:m.opts,ci:m.ci,disp:[TT('Local minimum','قيمة صغرى محلية'),TT('Local maximum','قيمة عظمى محلية')][sgn],
+   hints:[TT("Compute $f''(x)=6x$.","احسب $f''(x)=6x$."),TT('If $f\'\'>0$ it is a minimum; if $<0$ a maximum.','إذا كانت $f\'\'>0$ فصغرى، وإذا كانت $<0$ فعظمى.')],sol:TT(tex`$f''(${pt})=${6*pt}$ is ${pt>0?'greater':'less'} than zero, so it is a local ${['minimum','maximum'][sgn]}.`,tex`$f''(${pt})=${6*pt}$ ${pt>0?'أكبر':'أصغر'} من الصفر، فهي ${['صغرى','عظمى'][sgn]} محلية.`),
    truth:()=>Math.sign((f(pt+1e-2)-2*f(pt)+f(pt-1e-2))/1e-4)===(pt>0?1:-1)};});
-def('lhop',5,'قاعدة لوبيتال',L=>{
+def('lhop',5,NM('L\'Hôpital\'s rule','قاعدة لوبيتال'),L=>{
   const a=ri(2,6);const forms=[
    [tex`\frac{e^{${a}x}-1}{x}`,x=>(Math.exp(a*x)-1)/x,`${a}`,tex`${a}`,tex`\frac{${a}e^{${a}x}}{1}\to ${a}`],
    [tex`\frac{\ln(1+${a}x)}{x}`,x=>Math.log(1+a*x)/x,`${a}`,tex`${a}`,tex`\frac{${a}/(1+${a}x)}{1}\to ${a}`],
@@ -316,12 +326,12 @@ def('lhop',5,'قاعدة لوبيتال',L=>{
    [tex`\frac{x-\sin x}{x^3}`,x=>(x-Math.sin(x))/(x**3),'1/6',tex`\frac16`,tex`\frac{1-\cos x}{3x^2}\to\frac{\sin x}{6x}\to\frac{\cos x}{6}\to\frac16`],
    [tex`\frac{e^x-1-x}{x^2}`,x=>(Math.exp(x)-1-x)/(x*x),'1/2',tex`\frac12`,tex`\frac{e^x-1}{2x}\to\frac{e^x}{2}\to\frac12`]];
   const o=pick(L===1?forms.slice(0,2):forms);
-  return {kind:'num',q:tex`$\lim_{x\to0}${o[0]}$`,ans:o[2],disp:o[3],hints:['بالتعويض يظهر $\\frac00$، فيمكنك تطبيق لوبيتال.','اشتق البسط وحده والمقام وحده (دون قاعدة القسمة).'],sol:tex`$${o[4]}$`,
+  return {kind:'num',q:tex`$\lim_{x\to0}${o[0]}$`,ans:o[2],disp:o[3],hints:[TT('Substitution gives $\\frac00$, so you may apply L\'Hôpital.','بالتعويض يظهر $\\frac00$، فيمكنك تطبيق لوبيتال.'),TT('Differentiate the numerator alone and the denominator alone (not the quotient rule).','اشتق البسط وحده والمقام وحده (دون قاعدة القسمة).')],sol:tex`$${o[4]}$`,
    truth:()=>close(o[1](1e-3),compile(o[2])(0),5e-3)};});
 
 /* المحطة 6: التكامل */
-def('int_power',6,'التكامل بقاعدة القوى',L=>{
-  const pool=L===1?['pow','pow','lin','con']:['pow','pow','sqrt','inv2','con','lin'];const n=L===1?2:3;const chosen=pool.slice().sort(()=>Math.random()-.5).slice(0,n);
+def('int_power',6,NM('Integration by the power rule','التكامل بقاعدة القوى'),L=>{
+  const pool=L===1?['pow','pow','lin','con']:['pow','pow','sqrt','inv2','con','lin'];const n=L===1?2:3;const chosen=pool.slice().sort(()=>rnd()-.5).slice(0,n);
   const used=new Set();const parts=[];const f=[],F=[];const ft=[];const Ft=[];
   for(const t of chosen){if(used.has(t))continue;used.add(t);const c=nz(-6,7);
    if(t==='pow'){const m=ri(2,5);ft.push([c,V(`x^${m}`)]);f.push(`(${c})*x^${m}`);F.push(`(${c})*x^${m+1}/${m+1}`);Ft.push([fr(c,m+1),`x^${m+1}`]);}
@@ -331,20 +341,20 @@ def('int_power',6,'التكامل بقاعدة القوى',L=>{
    if(t==='inv2'){ft.push([c,a=>tex`\frac{${a}}{x^2}`]);f.push(`(${c})/x^2`);F.push(`(${-c})/x`);Ft.push([fr(-c,1),'x^{-1}']);}}
   const ans=F.join('+');const fs=f.join('+'),Fn=compile(ans),fn=compile(fs);
   const dt=Ft.map(([q,v])=>[0,0]);const ansTex=Ft.map(([q,v],i)=>(i&&q.n>=0?'+':'')+(q.d===1?(q.n===1&&v!=='x'?'':q.n):q.tex)+v).join('');
-  return {kind:'expr',constant:true,q:tex`أوجد $\int\left(${poly(ft)}\right)dx$ (لا تكتب C).`,ans,pts:POS,disp:ansTex+'+C',hints:['كامل كل حد: ارفع الأس واحدًا واقسم على الأس الجديد.','اكتب الجذر والكسر كقوى أولًا.'],
+  return {kind:'expr',constant:true,q:TT(tex`Find $\int\left(${poly(ft)}\right)dx$ (do not write C).`,tex`أوجد $\int\left(${poly(ft)}\right)dx$ (لا تكتب C).`),ans,pts:POS,disp:ansTex+'+C',hints:[TT('Integrate each term: raise the power by one and divide by the new power.','كامل كل حد: ارفع الأس واحدًا واقسم على الأس الجديد.'),TT('Write roots and fractions as powers first.','اكتب الجذر والكسر كقوى أولًا.')],
    sol:tex`$${ansTex}+C$`,truth:()=>POS.every(x=>close(dn(Fn,x,1e-5),fn(x),1e-4))};});
-def('int_trig',6,'تكاملات أساسية',L=>{
+def('int_trig',6,NM('Basic integrals','تكاملات أساسية'),L=>{
   const all=[[tex`A\cos x`,'A*cos(x)','A*sin(x)',tex`A\sin x`],[tex`A\sin x`,'A*sin(x)','-A*cos(x)',tex`-A\cos x`],[tex`A\sec^2 x`,'A*sec(x)^2','A*tan(x)',tex`A\tan x`],[tex`Ae^x`,'A*e^x','A*e^x',tex`Ae^x`],[tex`\frac{A}{1+x^2}`,'A/(1+x^2)','A*atan(x)',tex`A\tan^{-1}x`]];
   const A=nz(-5,6);let B=nz(-5,6);const pool=L===1?all.slice(0,2):all;const t1=pick(pool);let t2;do t2=pick(pool);while(t2===t1);
   const S=(s,a)=>s.split('A').join(String(a));const cs=(t,c)=>t.includes('frac')?String(c):(c===1?'':c===-1?'-':String(c));
   const fs=S(t1[1],`(${A})`)+'+'+S(t2[1],`(${B})`),F=S(t1[2],`(${A})`)+'+'+S(t2[2],`(${B})`);
   const fq=compile(fs),Fq=compile(F);const pts=[0.12,0.3,0.45,0.6,0.8];
   const second=B<0?' - '+S(t2[0],t2[0].includes('frac')?-B:(-B===1?'':-B)):' + '+S(t2[0],cs(t2[0],B));
-  return {kind:'expr',constant:true,q:tex`أوجد $\int\left(${S(t1[0],cs(t1[0],A))}${second}\right)dx$ (لا تكتب C).`,ans:F,pts,disp:S(t1[3],A)+'+'+S(t2[3],B)+'+C',
-   hints:['استخدم جدول التكامل: عكس جدول المشتقات.','كامل كل حد على حدة.'],sol:tex`$${S(t1[3],A)}+(${B})\cdot${S(t2[3],1)}+C$`,truth:()=>pts.every(x=>close(dn(Fq,x,1e-5),fq(x),1e-4))};});
-def('int_sub',6,'التكامل بالتعويض',L=>{
+  return {kind:'expr',constant:true,q:TT(tex`Find $\int\left(${S(t1[0],cs(t1[0],A))}${second}\right)dx$ (do not write C).`,tex`أوجد $\int\left(${S(t1[0],cs(t1[0],A))}${second}\right)dx$ (لا تكتب C).`),ans:F,pts,disp:S(t1[3],A)+'+'+S(t2[3],B)+'+C',
+   hints:[TT('Use the integral table: the reverse of the derivative table.','استخدم جدول التكامل: عكس جدول المشتقات.'),TT('Integrate each term separately.','كامل كل حد على حدة.')],sol:tex`$${S(t1[3],A)}+(${B})\cdot${S(t2[3],1)}+C$`,truth:()=>pts.every(x=>close(dn(Fq,x,1e-5),fq(x),1e-4))};});
+def('int_sub',6,NM('Integration by substitution','التكامل بالتعويض'),L=>{
   const a=nz(-3,4),n=ri(2,5),k=ri(2,5),b=ri(1,5);
-  const M='نسيت القسمة على مشتقة الدالة الداخلية.';
+  const M=TT('You forgot to divide by the derivative of the inner function.','نسيت القسمة على مشتقة الدالة الداخلية.');
   const forms=[
    [1,tex`${a===1?'':a===-1?'-':a}x(x^2+${b})^{${n}}`,`${a}*x*(x^2+${b})^${n}`,`${a}*(x^2+${b})^${n+1}/${2*(n+1)}`,tex`u=x^2+${b}`,`${a}*(x^2+${b})^${n+1}/${n+1}`],
    [1,tex`\cos ${k}x`,`cos(${k}*x)`,`sin(${k}*x)/${k}`,tex`u=${k}x`,`sin(${k}*x)`],
@@ -354,82 +364,83 @@ def('int_sub',6,'التكامل بالتعويض',L=>{
    [3,tex`\dfrac{1}{${b*b}+x^2}`,`1/(${b*b}+x^2)`,`atan(x/${b})/${b}`,tex`u=x/${b}`,`atan(x/${b})`],
    [3,tex`\dfrac{e^x}{1+e^{2x}}`,`e^x/(1+e^(2*x))`,`atan(e^x)`,tex`u=e^x`,null]];
   const o=pick(forms.filter(r=>r[0]<=L));const fq=compile(o[2]),Fq=compile(o[3]);
-  return {kind:'expr',constant:true,q:tex`أوجد $\int ${o[1]}\,dx$ (لا تكتب C).`,ans:o[3],traps:o[5]?[{ans:o[5],msg:M}]:[],pts:[0.12,0.3,0.45,0.6,0.8],disp:'',hints:['ابحث عن دالة داخلية مشتقتها موجودة في التكامل.',`جرّب $${o[4]}$.`],
-   sol:tex`نضع $${o[4]}$ فيتحول التكامل إلى تكامل مباشر في $u$ ثم نعيد $x$.`,truth:()=>[0.12,0.3,0.45,0.6,0.8].every(x=>close(dn(Fq,x,1e-5),fq(x),1e-4))};});
-def('int_def',6,'التكامل المحدد',L=>{
-  if(L===3&&Math.random()<.5){const t=pick([[tex`\int_0^{\pi/2}\left(${'A'}\cos x+${'B'}\sin x\right)dx`,0]]);const A=nz(-4,5),B=nz(-4,5);
-    return {kind:'num',q:tex`احسب $\int_0^{\pi/2}\left(${A}\cos x${sg(B)}\sin x\right)dx$.`,ans:`${A+B}`,disp:`${A+B}`,hints:['كامل كل حد: $\\int\\cos=\\sin$ و$\\int\\sin=-\\cos$.','عوّض $\\frac\\pi2$ و$0$.'],sol:tex`$[${A}\sin x-${P(B)}\cos x]_0^{\pi/2}=${A}+${B}=${A+B}$.`,
+  return {kind:'expr',constant:true,q:TT(tex`Find $\int ${o[1]}\,dx$ (do not write C).`,tex`أوجد $\int ${o[1]}\,dx$ (لا تكتب C).`),ans:o[3],traps:o[5]?[{ans:o[5],msg:M}]:[],pts:[0.12,0.3,0.45,0.6,0.8],disp:'',hints:[TT('Look for an inner function whose derivative appears in the integral.','ابحث عن دالة داخلية مشتقتها موجودة في التكامل.'),TT(`Try $${o[4]}$.`,`جرّب $${o[4]}$.`)],
+   sol:TT(tex`Let $${o[4]}$; the integral becomes a direct integral in $u$, then return to $x$.`,tex`نضع $${o[4]}$ فيتحول التكامل إلى تكامل مباشر في $u$ ثم نعيد $x$.`),truth:()=>[0.12,0.3,0.45,0.6,0.8].every(x=>close(dn(Fq,x,1e-5),fq(x),1e-4))};});
+def('int_def',6,NM('Definite integral','التكامل المحدد'),L=>{
+  if(L===3&&rnd()<.5){const t=pick([[tex`\int_0^{\pi/2}\left(${'A'}\cos x+${'B'}\sin x\right)dx`,0]]);const A=nz(-4,5),B=nz(-4,5);
+    return {kind:'num',q:TT(tex`Evaluate $\int_0^{\pi/2}\left(${A}\cos x${sg(B)}\sin x\right)dx$.`,tex`احسب $\int_0^{\pi/2}\left(${A}\cos x${sg(B)}\sin x\right)dx$.`),ans:`${A+B}`,disp:`${A+B}`,hints:[TT('Integrate each term: $\\int\\cos=\\sin$ and $\\int\\sin=-\\cos$.','كامل كل حد: $\\int\\cos=\\sin$ و$\\int\\sin=-\\cos$.'),TT('Substitute $\\frac\\pi2$ and $0$.','عوّض $\\frac\\pi2$ و$0$.')],sol:tex`$[${A}\sin x-${P(B)}\cos x]_0^{\pi/2}=${A}+${B}=${A+B}$.`,
      truth:()=>{let s=0;const n=2000,h=Math.PI/2/n;for(let i=0;i<n;i++){const x=(i+.5)*h;s+=(A*Math.cos(x)+B*Math.sin(x))*h}return close(s,A+B,1e-5)}};}
   const a=ri(-2,1),b=a+ri(1,3),p=nz(-3,4),q=ri(-4,4),r=ri(-3,5);const N=2*p*(b**3-a**3)+3*q*(b*b-a*a)+6*r*(b-a);const R=fr(N,6);
-  return {kind:'num',q:tex`احسب $\int_{${a}}^{${b}}\left(${poly([[p,V('x^2')],[q,V('x')],[r,K]])}\right)dx$ (يمكنك كتابة كسر مثل 49/3).`,ans:R.str,disp:R.tex,hints:['أوجد الدالة الأصلية $F$ أولًا.','ثم احسب $F(b)-F(a)$.'],
-   sol:tex`$F(x)=${p}\frac{x^3}{3}+${q}\frac{x^2}{2}+${r}x$ ثم $F(${b})-F(${a})=${R.tex}$.`,truth:()=>{let s=0;const n=2000,h=(b-a)/n;for(let i=0;i<n;i++){const x=a+(i+.5)*h;s+=(p*x*x+q*x+r)*h}return close(s,N/6,1e-5)}};});
-def('int_parts',6,'التكامل بالتجزئة',L=>{
+  return {kind:'num',q:TT(tex`Evaluate $\int_{${a}}^{${b}}\left(${poly([[p,V('x^2')],[q,V('x')],[r,K]])}\right)dx$ (you may write a fraction like 49/3).`,tex`احسب $\int_{${a}}^{${b}}\left(${poly([[p,V('x^2')],[q,V('x')],[r,K]])}\right)dx$ (يمكنك كتابة كسر مثل 49/3).`),ans:R.str,disp:R.tex,hints:[TT('Find the antiderivative $F$ first.','أوجد الدالة الأصلية $F$ أولًا.'),TT('Then compute $F(b)-F(a)$.','ثم احسب $F(b)-F(a)$.')],
+   sol:TT(tex`$F(x)=${p}\frac{x^3}{3}+${q}\frac{x^2}{2}+${r}x$ then $F(${b})-F(${a})=${R.tex}$.`,tex`$F(x)=${p}\frac{x^3}{3}+${q}\frac{x^2}{2}+${r}x$ ثم $F(${b})-F(${a})=${R.tex}$.`),truth:()=>{let s=0;const n=2000,h=(b-a)/n;for(let i=0;i<n;i++){const x=a+(i+.5)*h;s+=(p*x*x+q*x+r)*h}return close(s,N/6,1e-5)}};});
+def('int_parts',6,NM('Integration by parts','التكامل بالتجزئة'),L=>{
   const A=nz(-3,4);const forms=[
    [1,tex`x e^x`,'x*e^x','(x-1)*e^x','(x+1)*e^x'],[1,tex`x\cos x`,'x*cos(x)','x*sin(x)+cos(x)','x*sin(x)-cos(x)'],[1,tex`x\sin x`,'x*sin(x)','sin(x)-x*cos(x)','x*cos(x)-sin(x)'],
    [2,tex`x\ln x`,'x*ln(x)','x^2/2*ln(x)-x^2/4','x^2/2*ln(x)+x^2/4'],[2,tex`\ln x`,'ln(x)','x*ln(x)-x','x*ln(x)+x'],[3,tex`\tan^{-1}x`,'atan(x)','x*atan(x)-ln(1+x^2)/2','x*atan(x)+ln(1+x^2)/2'],[3,tex`x^2e^x`,'x^2*e^x','(x^2-2*x+2)*e^x','(x^2+2*x+2)*e^x']];
   const o=pick(forms.filter(r=>r[0]<=L));const fs=`(${A})*(${o[2]})`,Fs=`(${A})*(${o[3]})`;const fq=compile(fs),Fq=compile(Fs);
-  return {kind:'expr',constant:true,q:tex`أوجد $\int ${A===1?'':A===-1?'-':A}${o[1]}\,dx$ (لا تكتب C).`,ans:Fs,traps:[{ans:`(${A})*(${o[4]})`,msg:'راجع الإشارة: ∫u dv = uv − ∫v du، فالتكامل الثاني يُطرح.'}],pts:POS,disp:'',hints:['استخدم ILATE لاختيار $u$: عكس مثلثي، لوغاريتم، جبري، مثلثي، أسّي.','$\\int u\\,dv=uv-\\int v\\,du$. ضع $dv=dx$ إذا كانت الدالة وحيدة.'],
-   sol:tex`نطبّق $\int u\,dv=uv-\int v\,du$ باختيار $u$ بحسب ILATE.`,truth:()=>POS.every(x=>close(dn(Fq,x,1e-5),fq(x),1e-4))};});
-def('int_area',6,'المساحة تحت المنحنى',L=>{
+  return {kind:'expr',constant:true,q:TT(tex`Find $\int ${A===1?'':A===-1?'-':A}${o[1]}\,dx$ (do not write C).`,tex`أوجد $\int ${A===1?'':A===-1?'-':A}${o[1]}\,dx$ (لا تكتب C).`),ans:Fs,traps:[{ans:`(${A})*(${o[4]})`,msg:TT('Check the sign: ∫u dv = uv − ∫v du, so the second integral is subtracted.','راجع الإشارة: ∫u dv = uv − ∫v du، فالتكامل الثاني يُطرح.')}],pts:POS,disp:'',hints:[TT('Use ILATE to choose $u$: inverse trig, logarithm, algebraic, trig, exponential.','استخدم ILATE لاختيار $u$: عكس مثلثي، لوغاريتم، جبري، مثلثي، أسّي.'),TT('$\\int u\\,dv=uv-\\int v\\,du$. Take $dv=dx$ when the function stands alone.','$\\int u\\,dv=uv-\\int v\\,du$. ضع $dv=dx$ إذا كانت الدالة وحيدة.')],
+   sol:TT(tex`Apply $\int u\,dv=uv-\int v\,du$ choosing $u$ by ILATE.`,tex`نطبّق $\int u\,dv=uv-\int v\,du$ باختيار $u$ بحسب ILATE.`),truth:()=>POS.every(x=>close(dn(Fq,x,1e-5),fq(x),1e-4))};});
+def('int_area',6,NM('Area under the curve','المساحة تحت المنحنى'),L=>{
   const a=ri(1,4),h=ri(0,2),b=ri(1,3);const R=fr(a*b**3,3);
-  return {kind:'num',q:tex`أوجد المساحة تحت المنحنى $y=${a===1?'':a}(x${h?'-'+h:''})^2$ بين $x=${h}$ و$x=${h+b}$.`,ans:R.str,disp:R.tex,hints:['المساحة $=\\int_a^b y\\,dx$.',h?'يمكنك التعويض $u=x-'+h+'$.':'كامل $x^2$ مباشرة.'],
+  return {kind:'num',q:TT(tex`Find the area under the curve $y=${a===1?'':a}(x${h?'-'+h:''})^2$ between $x=${h}$ and $x=${h+b}$.`,tex`أوجد المساحة تحت المنحنى $y=${a===1?'':a}(x${h?'-'+h:''})^2$ بين $x=${h}$ و$x=${h+b}$.`),ans:R.str,disp:R.tex,hints:[TT('Area $=\\int_a^b y\\,dx$.','المساحة $=\\int_a^b y\\,dx$.'),h?TT('You may substitute $u=x-','يمكنك التعويض $u=x-')+h+'$.':TT('Integrate $x^2$ directly.','كامل $x^2$ مباشرة.')],
    sol:tex`$\int_{${h}}^{${h+b}}${a}(x${h?'-'+h:''})^2dx=\frac{${a}}{3}\,${b}^3=${R.tex}$.`,truth:()=>{let s=0;const n=2000,hh=b/n;for(let i=0;i<n;i++){const x=h+(i+.5)*hh;s+=a*(x-h)**2*hh}return close(s,a*b**3/3,1e-5)}};});
 
 
 /* المحطة 0: أساسيات الجبر والمثلثات */
-def('f_factor',0,'حل المعادلة التربيعية',L=>{
+def('f_factor',0,NM('Solving a quadratic equation','حل المعادلة التربيعية'),L=>{
   let b,c,roots,m,n;
   if(L===1){m=nz(-6,6);do n=nz(-6,6);while(n===m);b=-(m+n);c=m*n;roots=[m,n];}
   else{const p=pick([2,3]),q=nz(-5,5);do n=nz(-5,5);while(n===q/p);b=-(p*n+q);c=q*n;m=q/p;roots=[m,n];
-    return {kind:'list',list:roots,q:tex`حلّ المعادلة $${poly([[p,V('x^2')],[b,V('x')],[c,K]])}=0$ (اكتب الجذرين، ويمكن كسر مثل 1/2).`,ans:roots.join(', '),disp:`${fr(q,p).str}, ${n}`,
-     traps:[{list:[-q/p,-n],msg:'العامل (x−r) يعني الجذر x=+r. راجع الإشارات.'}],hints:['حلّل إلى عاملين: ابحث عن أعداد حاصل ضربها a·c ومجموعها b.','أو استخدم القانون العام.'],
-     sol:tex`$(${p}x${sg(-q)})(x${sg(-n)})=0$ فالجذران $${fr(q,p).tex}$ و$${n}$.`,truth:()=>roots.every(r=>Math.abs(p*r*r+b*r+c)<1e-9)};}
-  return {kind:'list',list:roots,q:tex`حلّ المعادلة $${poly([[1,V('x^2')],[b,V('x')],[c,K]])}=0$ (افصل بين الجذرين بفاصلة).`,ans:`${m}, ${n}`,disp:`${m}, ${n}`,
-   traps:[{list:[-m,-n],msg:'العامل (x−r) يعني الجذر x=+r. راجع الإشارات.'}],hints:['ابحث عن عددين حاصل ضربهما الحد الثابت ومجموعهما معامل x (بإشارة عكسية).','حلّل إلى $(x-r_1)(x-r_2)$.'],
-   sol:tex`$(x${sg(-m)})(x${sg(-n)})=0$ فالجذران $${m}$ و$${n}$.`,truth:()=>roots.every(r=>Math.abs(r*r+b*r+c)<1e-9)};});
-def('f_exp',0,'قوانين الأسس',L=>{
+    return {kind:'list',list:roots,q:TT(tex`Solve $${poly([[p,V('x^2')],[b,V('x')],[c,K]])}=0$ (write both roots; a fraction like 1/2 is fine).`,tex`حلّ المعادلة $${poly([[p,V('x^2')],[b,V('x')],[c,K]])}=0$ (اكتب الجذرين، ويمكن كسر مثل 1/2).`),ans:roots.join(', '),disp:`${fr(q,p).str}, ${n}`,
+     traps:[{list:[-q/p,-n],msg:TT('The factor (x−r) means the root is x=+r. Check the signs.','العامل (x−r) يعني الجذر x=+r. راجع الإشارات.')}],hints:[TT('Factor into two factors: look for numbers whose product is a·c and whose sum is b.','حلّل إلى عاملين: ابحث عن أعداد حاصل ضربها a·c ومجموعها b.'),TT('Or use the quadratic formula.','أو استخدم القانون العام.')],
+     sol:TT(tex`$(${p}x${sg(-q)})(x${sg(-n)})=0$ so the roots are $${fr(q,p).tex}$ and $${n}$.`,tex`$(${p}x${sg(-q)})(x${sg(-n)})=0$ فالجذران $${fr(q,p).tex}$ و$${n}$.`),truth:()=>roots.every(r=>Math.abs(p*r*r+b*r+c)<1e-9)};}
+  return {kind:'list',list:roots,q:TT(tex`Solve $${poly([[1,V('x^2')],[b,V('x')],[c,K]])}=0$ (separate the roots with a comma).`,tex`حلّ المعادلة $${poly([[1,V('x^2')],[b,V('x')],[c,K]])}=0$ (افصل بين الجذرين بفاصلة).`),ans:`${m}, ${n}`,disp:`${m}, ${n}`,
+   traps:[{list:[-m,-n],msg:TT('The factor (x−r) means the root is x=+r. Check the signs.','العامل (x−r) يعني الجذر x=+r. راجع الإشارات.')}],hints:[TT('Find two numbers whose product is the constant term and whose sum is the coefficient of x (with opposite sign).','ابحث عن عددين حاصل ضربهما الحد الثابت ومجموعهما معامل x (بإشارة عكسية).'),TT('Factor into $(x-r_1)(x-r_2)$.','حلّل إلى $(x-r_1)(x-r_2)$.')],
+   sol:TT(tex`$(x${sg(-m)})(x${sg(-n)})=0$ so the roots are $${m}$ and $${n}$.`,tex`$(x${sg(-m)})(x${sg(-n)})=0$ فالجذران $${m}$ و$${n}$.`),truth:()=>roots.every(r=>Math.abs(r*r+b*r+c)<1e-9)};});
+def('f_exp',0,NM('Laws of exponents','قوانين الأسس'),L=>{
   let a,b,c;
   if(L===1){do{a=ri(-3,6);b=ri(-3,6)}while(a+b===a*b);c=ri(-3,5);
-    return {kind:'expr',q:tex`بسّط: $\dfrac{x^{${a}}\cdot x^{${b}}}{x^{${c}}}$ واكتب الناتج على الصورة $x^n$ (مثل x^5).`,ans:`x^(${a+b-c})`,traps:[{ans:`x^(${a*b-c})`,msg:'عند ضرب قوتين بنفس الأساس نجمع الأسس ولا نضربها.'}],
-     hints:['ضرب القوى: $x^a x^b=x^{a+b}$.','القسمة: $\\frac{x^a}{x^b}=x^{a-b}$.'],disp:tex`x^{${a+b-c}}`,sol:tex`$x^{${a}+${P(b)}-${P(c)}}=x^{${a+b-c}}$.`,truth:()=>true};}
+    return {kind:'expr',q:TT(tex`Simplify: $\dfrac{x^{${a}}\cdot x^{${b}}}{x^{${c}}}$ and write the result as $x^n$ (like x^5).`,tex`بسّط: $\dfrac{x^{${a}}\cdot x^{${b}}}{x^{${c}}}$ واكتب الناتج على الصورة $x^n$ (مثل x^5).`),ans:`x^(${a+b-c})`,traps:[{ans:`x^(${a*b-c})`,msg:TT('When multiplying powers with the same base, add the exponents; do not multiply them.','عند ضرب قوتين بنفس الأساس نجمع الأسس ولا نضربها.')}],
+     hints:[TT('Multiplying powers: $x^a x^b=x^{a+b}$.','ضرب القوى: $x^a x^b=x^{a+b}$.'),TT('Dividing: $\\frac{x^a}{x^b}=x^{a-b}$.','القسمة: $\\frac{x^a}{x^b}=x^{a-b}$.')],disp:tex`x^{${a+b-c}}`,sol:tex`$x^{${a}+${P(b)}-${P(c)}}=x^{${a+b-c}}$.`,truth:()=>true};}
   do{a=ri(2,4);b=ri(2,4)}while(a+b===a*b);c=ri(-2,5);
-  return {kind:'expr',q:tex`بسّط: $\dfrac{(x^{${a}})^{${b}}}{x^{${c}}}$ واكتب الناتج على الصورة $x^n$.`,ans:`x^(${a*b-c})`,traps:[{ans:`x^(${a+b-c})`,msg:'قوة القوة: نضرب الأسس $(x^a)^b=x^{ab}$.'}],
-   hints:['قوة القوة: $(x^a)^b=x^{ab}$.','ثم اطرح أس المقام.'],disp:tex`x^{${a*b-c}}`,sol:tex`$x^{${a*b}-${P(c)}}=x^{${a*b-c}}$.`,truth:()=>true};});
-def('f_frac',0,'الكسور',L=>{
-  const b=ri(2,6);let d;do d=ri(2,7);while(d===b);const a=ri(1,b+3),c=ri(1,d+3);const sub=L>1&&Math.random()<.5;
+  return {kind:'expr',q:TT(tex`Simplify: $\dfrac{(x^{${a}})^{${b}}}{x^{${c}}}$ and write the result as $x^n$.`,tex`بسّط: $\dfrac{(x^{${a}})^{${b}}}{x^{${c}}}$ واكتب الناتج على الصورة $x^n$.`),ans:`x^(${a*b-c})`,traps:[{ans:`x^(${a+b-c})`,msg:TT('Power of a power: multiply the exponents $(x^a)^b=x^{ab}$.','قوة القوة: نضرب الأسس $(x^a)^b=x^{ab}$.')}],
+   hints:[TT('Power of a power: $(x^a)^b=x^{ab}$.','قوة القوة: $(x^a)^b=x^{ab}$.'),TT('Then subtract the exponent of the denominator.','ثم اطرح أس المقام.')],disp:tex`x^{${a*b-c}}`,sol:tex`$x^{${a*b}-${P(c)}}=x^{${a*b-c}}$.`,truth:()=>true};});
+def('f_frac',0,NM('Fractions','الكسور'),L=>{
+  const b=ri(2,6);let d;do d=ri(2,7);while(d===b);const a=ri(1,b+3),c=ri(1,d+3);const sub=L>1&&rnd()<.5;
   const n=sub?a*d-c*b:a*d+c*b,R=fr(n,b*d);const w=fr(a+(sub?-c:c),b+d);
-  return {kind:'num',q:tex`احسب $\frac{${a}}{${b}}${sub?'-':'+'}\frac{${c}}{${d}}$ واكتب الناتج كسرًا مختصرًا (مثل 7/12).`,ans:R.str,traps:w.str===R.str?[]:[{ans:w.str,msg:'لا نجمع البسطين والمقامين مباشرة. وحّد المقامات أولًا.'}],disp:R.tex,
-   hints:['وحّد المقامين: المقام المشترك $b\\cdot d$ (أو أصغر مضاعف مشترك).','اجمع أو اطرح البسطين ثم اختصر.'],sol:tex`$\frac{${a*d}${sub?'-':'+'}${c*b}}{${b*d}}=${R.tex}$.`,truth:()=>close(a/b+(sub?-1:1)*c/d,n/(b*d))};});
-def('f_ineq',0,'المتباينات',L=>{
+  return {kind:'num',q:TT(tex`Evaluate $\frac{${a}}{${b}}${sub?'-':'+'}\frac{${c}}{${d}}$ and write the result as a reduced fraction (like 7/12).`,tex`احسب $\frac{${a}}{${b}}${sub?'-':'+'}\frac{${c}}{${d}}$ واكتب الناتج كسرًا مختصرًا (مثل 7/12).`),ans:R.str,traps:w.str===R.str?[]:[{ans:w.str,msg:TT('Do not add the numerators and denominators directly. Find a common denominator first.','لا نجمع البسطين والمقامين مباشرة. وحّد المقامات أولًا.')}],disp:R.tex,
+   hints:[TT('Use a common denominator $b\\cdot d$ (or the least common multiple).','وحّد المقامين: المقام المشترك $b\\cdot d$ (أو أصغر مضاعف مشترك).'),TT('Add or subtract the numerators, then reduce.','اجمع أو اطرح البسطين ثم اختصر.')],sol:tex`$\frac{${a*d}${sub?'-':'+'}${c*b}}{${b*d}}=${R.tex}$.`,truth:()=>close(a/b+(sub?-1:1)*c/d,n/(b*d))};});
+def('f_ineq',0,NM('Inequalities','المتباينات'),L=>{
   const a=pick([2,3,4,-2,-3,-4]),r=nz(-6,6),b=-a*r;
   const o=[tex`x\gt ${r}`,tex`x\lt ${r}`,tex`x\gt ${-r}`,tex`x\lt ${-r}`];const ci0=a>0?0:1,wrong=a>0?1:0;const m=mcq(o,ci0);
-  return {kind:'mcq',q:tex`حلّ المتباينة $${poly([[a,V('x')],[b,K]])}\gt 0$:`,opts:m.opts,ci:m.ci,mtrap:{[m.map.indexOf(wrong)]:'عند القسمة على عدد سالب ينقلب اتجاه المتباينة.'},disp:o[ci0],
-   hints:['انقل الحد الثابت للطرف الآخر ثم اقسم على معامل x.','انتبه: القسمة على سالب تقلب الإشارة.'],sol:tex`$${a}x\gt ${-b}$ ثم نقسم على $${a}$ ${a<0?'(فينقلب الاتجاه)':''} فنحصل على $${o[ci0]}$.`,
+  return {kind:'mcq',q:TT(tex`Solve the inequality $${poly([[a,V('x')],[b,K]])}\gt 0$:`,tex`حلّ المتباينة $${poly([[a,V('x')],[b,K]])}\gt 0$:`),opts:m.opts,ci:m.ci,mtrap:{[m.map.indexOf(wrong)]:TT('Dividing by a negative number reverses the inequality.','عند القسمة على عدد سالب ينقلب اتجاه المتباينة.')},disp:o[ci0],
+   hints:[TT('Move the constant to the other side, then divide by the coefficient of x.','انقل الحد الثابت للطرف الآخر ثم اقسم على معامل x.'),TT('Careful: dividing by a negative flips the sign.','انتبه: القسمة على سالب تقلب الإشارة.')],sol:TT(tex`$${a}x\gt ${-b}$ then divide by $${a}$ ${a<0?'(so the direction reverses)':''} to get $${o[ci0]}$.`,tex`$${a}x\gt ${-b}$ ثم نقسم على $${a}$ ${a<0?'(فينقلب الاتجاه)':''} فنحصل على $${o[ci0]}$.`),
    truth:()=>{const x=a>0?r+1:r-1;return a*x+b>0&&a*(a>0?r-1:r+1)+b<0}};});
-def('f_domain',0,'مجال الجذر التربيعي',L=>{
+def('f_domain',0,NM('Domain of a square root','مجال الجذر التربيعي'),L=>{
   const a=pick([1,2,3,-1,-2,-3]),r=nz(-5,5),b=-a*r;const o=[tex`[${r},\infty)`,tex`(${r},\infty)`,tex`(-\infty,${r}]`,tex`(-\infty,${r})`];const ci0=a>0?0:2,wrong=a>0?1:3;const m=mcq(o,ci0);
-  return {kind:'mcq',q:tex`مجال الدالة $f(x)=\sqrt{${poly([[a,V('x')],[b,K]])}}$ هو:`,opts:m.opts,ci:m.ci,mtrap:{[m.map.indexOf(wrong)]:'الجذر يقبل الصفر، فالطرف مغلق (المقدار تحت الجذر ≥ 0).'},disp:o[ci0],
-   hints:['المقدار تحت الجذر يجب أن يكون $\\ge0$.','حلّ المتباينة وانتبه لاتجاهها.'],sol:tex`$${poly([[a,V('x')],[b,K]])}\ge0$ فالمجال $${o[ci0]}$.`,truth:()=>a*r+b===0}});
-def('f_trigid',0,'مثلثات: نسب ومتطابقات',L=>{
-  const [p0,o0,q0]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]);const sw=Math.random()<.5,p=sw?o0:p0,o=sw?p0:o0,q=q0;const th=Math.asin(p/q);
+  return {kind:'mcq',q:TT(tex`The domain of $f(x)=\sqrt{${poly([[a,V('x')],[b,K]])}}$ is:`,tex`مجال الدالة $f(x)=\sqrt{${poly([[a,V('x')],[b,K]])}}$ هو:`),opts:m.opts,ci:m.ci,mtrap:{[m.map.indexOf(wrong)]:TT('A root accepts zero, so the end is closed (the expression under the root ≥ 0).','الجذر يقبل الصفر، فالطرف مغلق (المقدار تحت الجذر ≥ 0).')},disp:o[ci0],
+   hints:[TT('The expression under the root must be $\\ge0$.','المقدار تحت الجذر يجب أن يكون $\\ge0$.'),TT('Solve the inequality and watch its direction.','حلّ المتباينة وانتبه لاتجاهها.')],sol:TT(tex`$${poly([[a,V('x')],[b,K]])}\ge0$ so the domain is $${o[ci0]}$.`,tex`$${poly([[a,V('x')],[b,K]])}\ge0$ فالمجال $${o[ci0]}$.`),truth:()=>a*r+b===0}});
+def('f_trigid',0,NM('Trigonometry: ratios and identities','مثلثات: نسب ومتطابقات'),L=>{
+  const [p0,o0,q0]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]);const sw=rnd()<.5,p=sw?o0:p0,o=sw?p0:o0,q=q0;const th=Math.asin(p/q);
   const t=pick(L===1?['cos','tan']:['cos','tan','sin2']);let R,tr,qq;
   if(t==='cos'){R=fr(o,q);tr=fr(p,q);qq=tex`$\cos\theta$`}else if(t==='tan'){R=fr(p,o);tr=fr(o,p);qq=tex`$\tan\theta$`}else{R=fr(2*p*o,q*q);tr=fr(2*p,q);qq=tex`$\sin2\theta$`}
-  return {kind:'num',q:tex`زاوية حادة $\theta$ فيها $\sin\theta=\frac{${p}}{${q}}$. احسب ${qq} (كسر مثل 3/5).`,ans:R.str,traps:tr.str===R.str?[]:[{ans:tr.str,msg:t==='sin2'?'sin 2θ = 2 sinθ cosθ وليس 2 sinθ.':'راجع تعريف النسبة: جا = المقابل÷الوتر، جتا = المجاور÷الوتر، ظا = المقابل÷المجاور.'}],disp:R.tex,
-   hints:['ارسم مثلثًا قائمًا: المقابل '+p+' والوتر '+q+'.','احسب الضلع الثالث بفيثاغورس: '+o+'.'],sol:tex`المجاور $=\sqrt{${q}^2-${p}^2}=${o}$. إذن ${qq} $=${R.tex}$.`,
+  return {kind:'num',q:TT(tex`An acute angle $\theta$ has $\sin\theta=\frac{${p}}{${q}}$. Find ${qq} (a fraction like 3/5).`,tex`زاوية حادة $\theta$ فيها $\sin\theta=\frac{${p}}{${q}}$. احسب ${qq} (كسر مثل 3/5).`),ans:R.str,traps:tr.str===R.str?[]:[{ans:tr.str,msg:t==='sin2'?TT('sin 2θ = 2 sinθ cosθ, not 2 sinθ.','sin 2θ = 2 sinθ cosθ وليس 2 sinθ.'):TT('Review the ratio definitions: sin = opposite÷hypotenuse, cos = adjacent÷hypotenuse, tan = opposite÷adjacent.','راجع تعريف النسبة: جا = المقابل÷الوتر، جتا = المجاور÷الوتر، ظا = المقابل÷المجاور.')}],disp:R.tex,
+   hints:[TT('Draw a right triangle: opposite ','ارسم مثلثًا قائمًا: المقابل ')+p+TT(' and hypotenuse ',' والوتر ')+q+'.',TT('Find the third side by Pythagoras: ','احسب الضلع الثالث بفيثاغورس: ')+o+'.'],sol:TT(tex`Adjacent $=\sqrt{${q}^2-${p}^2}=${o}$. So ${qq} $=${R.tex}$.`,tex`المجاور $=\sqrt{${q}^2-${p}^2}=${o}$. إذن ${qq} $=${R.tex}$.`),
    truth:()=>close(t==='cos'?Math.cos(th):t==='tan'?Math.tan(th):Math.sin(2*th),R.n/R.d,1e-9)};});
-function addTrap(id,fn){const g=GENS[id],m=g.make;g.make=L=>{const p=m(L);const t=fn(p);if(t)p.traps=(p.traps||[]).concat(t);return p}}
-addTrap('lim_factor',p=>[{ans:`-(${p.ans})`,msg:'عوّض x=m في العامل المتبقي (x−n): النتيجة m−n وليست n−m.'}]);
-addTrap('d_quot',p=>[{ans:`-(${p.ans})`,msg:'عكست ترتيب البسط. القاعدة: (u′v − uv′)/v²، أي مشتقة البسط أولًا.'}]);
-addTrap('impl',p=>[{ans:`-(${p.ans})`,msg:'تحقق من الإشارة: بعد عزل y′ يكون الناتج سالبًا، y′ = −(المشتقة بالنسبة لـ x)/(المشتقة بالنسبة لـ y).'}]);
-addTrap('inflect',p=>[{ans:`-(${p.ans})`,msg:'راجع الإشارة عند حل 6x + 2p = 0.'}]);
+function addTrap(id,fn){const g=GENS[id],m=g.mk;g.mk=L=>{const p=m(L);const t=fn(p);if(t)p.traps=(p.traps||[]).concat(t);return p}}
+addTrap('lim_factor',p=>[{ans:`-(${p.ans})`,msg:TT('Substitute x=m in the remaining factor (x−n): the result is m−n, not n−m.','عوّض x=m في العامل المتبقي (x−n): النتيجة m−n وليست n−m.')}]);
+addTrap('d_quot',p=>[{ans:`-(${p.ans})`,msg:TT('You reversed the numerator. The rule: (u′v − uv′)/v², i.e. the derivative of the numerator first.','عكست ترتيب البسط. القاعدة: (u′v − uv′)/v²، أي مشتقة البسط أولًا.')}]);
+addTrap('impl',p=>[{ans:`-(${p.ans})`,msg:TT('Check the sign: after isolating y′ the result is negative, y′ = −(derivative w.r.t. x)/(derivative w.r.t. y).','تحقق من الإشارة: بعد عزل y′ يكون الناتج سالبًا، y′ = −(المشتقة بالنسبة لـ x)/(المشتقة بالنسبة لـ y).')}]);
+addTrap('inflect',p=>[{ans:`-(${p.ans})`,msg:TT('Check the sign when solving 6x + 2p = 0.','راجع الإشارة عند حل 6x + 2p = 0.')}]);
 const STATIONS=[
- {id:0,title:'أساسيات الجبر والمثلثات',ch:0,rules:tex`<p>الجذور: $(x-r)=0\Rightarrow x=+r$. عند القسمة على سالب تنقلب المتباينة.</p><p>$x^ax^b=x^{a+b}$ و$(x^a)^b=x^{ab}$. الكسور: وحّد المقامات.</p><p>$\sin^2+\cos^2=1$، $\tan=\frac{\sin}{\cos}$.</p>`},
- {id:1,title:'الدوال والمثلثات',ch:1,rules:tex`<p>مجال: المقام ≠ 0، تحت الجذر $\ge0$، داخل $\ln$ أكبر من 0.</p><p>العكس: اكتب $y=f(x)$، حلّ لـ $x$، بدّل. $\ln e^x=x$.</p><p>الزوايا الخاصة: $\sin30^\circ=\frac12$، $\sin45^\circ=\frac{\sqrt2}2$، $\sin60^\circ=\frac{\sqrt3}2$.</p>`},
- {id:2,title:'النهايات والاتصال',ch:2,rules:tex`<p>$\frac00$: حلّل أو اضرب في المرافق. عند $\infty$: اقسم على أعلى قوة.</p><p>$\lim\frac{\sin ax}{x}=a$. النهاية موجودة إذا تساوت الجهتان.</p><p>الاتصال: $\lim_{x\to a}f=f(a)$.</p>`},
- {id:3,title:'قواعد الاشتقاق',ch:3,rules:tex`<p>$(x^n)'=nx^{n-1}$، $(uv)'=u'v+uv'$، $\left(\frac uv\right)'=\frac{u'v-uv'}{v^2}$.</p><p>السلسلة: $f'(g)\cdot g'$. $(\ln u)'=\frac{u'}u$، $(\tan^{-1}u)'=\frac{u'}{1+u^2}$.</p><p>الاشتقاق اللوغاريتمي لـ $x^x$ وأشباهها.</p>`},
- {id:4,title:'المماس والاشتقاق الضمني',ch:3,rules:tex`<p>المماس: $y-f(a)=f'(a)(x-a)$.</p><p>الضمني: اشتق الطرفين، كل حد فيه $y$ يُضرب في $y'$، ثم حلّ لـ $y'$.</p>`},
- {id:5,title:'تطبيقات المشتقة',ch:4,rules:tex`<p>عدد حرج: $f'=0$ أو غير موجودة. الفترة المغلقة: قارن القيم عند الأعداد الحرجة والنهايتين.</p><p>القيمة المتوسطة: $f'(c)=\frac{f(b)-f(a)}{b-a}$ بشرط $c\in(a,b)$ مفتوحة.</p><p>$f''>0$ مقعّر للأعلى. لوبيتال لـ $\frac00,\frac\infty\infty$ فقط.</p>`},
- {id:6,title:'التكامل',ch:5,rules:tex`<p>$\int x^n=\frac{x^{n+1}}{n+1}+C$، $\int\frac1x=\ln|x|+C$.</p><p>التعويض: $u=$ الجزء الداخلي. التجزئة: $\int u\,dv=uv-\int v\,du$ (ILATE).</p><p>المحدد: $\int_a^bf=F(b)-F(a)$.</p>`}];
+ {id:0,title:NM('Algebra and trigonometry basics','أساسيات الجبر والمثلثات'),ch:0,rules:NM(tex`<p>Roots: $(x-r)=0\Rightarrow x=+r$. Dividing by a negative reverses the inequality.</p><p>$x^ax^b=x^{a+b}$ and $(x^a)^b=x^{ab}$. Fractions: use a common denominator.</p><p>$\sin^2+\cos^2=1$, $\tan=\frac{\sin}{\cos}$.</p>`,tex`<p>الجذور: $(x-r)=0\Rightarrow x=+r$. عند القسمة على سالب تنقلب المتباينة.</p><p>$x^ax^b=x^{a+b}$ و$(x^a)^b=x^{ab}$. الكسور: وحّد المقامات.</p><p>$\sin^2+\cos^2=1$، $\tan=\frac{\sin}{\cos}$.</p>`)},
+ {id:1,title:NM('Functions and trigonometry','الدوال والمثلثات'),ch:1,rules:NM(tex`<p>Domain: denominator ≠ 0, under a root $\ge0$, inside $\ln$ greater than 0.</p><p>Inverse: write $y=f(x)$, solve for $x$, swap. $\ln e^x=x$.</p><p>Special angles: $\sin30^\circ=\frac12$, $\sin45^\circ=\frac{\sqrt2}2$, $\sin60^\circ=\frac{\sqrt3}2$.</p>`,tex`<p>مجال: المقام ≠ 0، تحت الجذر $\ge0$، داخل $\ln$ أكبر من 0.</p><p>العكس: اكتب $y=f(x)$، حلّ لـ $x$، بدّل. $\ln e^x=x$.</p><p>الزوايا الخاصة: $\sin30^\circ=\frac12$، $\sin45^\circ=\frac{\sqrt2}2$، $\sin60^\circ=\frac{\sqrt3}2$.</p>`)},
+ {id:2,title:NM('Limits and continuity','النهايات والاتصال'),ch:2,rules:NM(tex`<p>$\frac00$: factor or multiply by the conjugate. At $\infty$: divide by the highest power.</p><p>$\lim\frac{\sin ax}{x}=a$. A limit exists if both sides are equal.</p><p>Continuity: $\lim_{x\to a}f=f(a)$.</p>`,tex`<p>$\frac00$: حلّل أو اضرب في المرافق. عند $\infty$: اقسم على أعلى قوة.</p><p>$\lim\frac{\sin ax}{x}=a$. النهاية موجودة إذا تساوت الجهتان.</p><p>الاتصال: $\lim_{x\to a}f=f(a)$.</p>`)},
+ {id:3,title:NM('Differentiation rules','قواعد الاشتقاق'),ch:3,rules:NM(tex`<p>$(x^n)'=nx^{n-1}$, $(uv)'=u'v+uv'$, $\left(\frac uv\right)'=\frac{u'v-uv'}{v^2}$.</p><p>Chain: $f'(g)\cdot g'$. $(\ln u)'=\frac{u'}u$, $(\tan^{-1}u)'=\frac{u'}{1+u^2}$.</p><p>Logarithmic differentiation for $x^x$ and similar.</p>`,tex`<p>$(x^n)'=nx^{n-1}$، $(uv)'=u'v+uv'$، $\left(\frac uv\right)'=\frac{u'v-uv'}{v^2}$.</p><p>السلسلة: $f'(g)\cdot g'$. $(\ln u)'=\frac{u'}u$، $(\tan^{-1}u)'=\frac{u'}{1+u^2}$.</p><p>الاشتقاق اللوغاريتمي لـ $x^x$ وأشباهها.</p>`)},
+ {id:4,title:NM('Tangent lines and implicit differentiation','المماس والاشتقاق الضمني'),ch:3,rules:NM(tex`<p>Tangent: $y-f(a)=f'(a)(x-a)$.</p><p>Implicit: differentiate both sides, multiply every term containing $y$ by $y'$, then solve for $y'$.</p>`,tex`<p>المماس: $y-f(a)=f'(a)(x-a)$.</p><p>الضمني: اشتق الطرفين، كل حد فيه $y$ يُضرب في $y'$، ثم حلّ لـ $y'$.</p>`)},
+ {id:5,title:NM('Applications of the derivative','تطبيقات المشتقة'),ch:4,rules:NM(tex`<p>Critical number: $f'=0$ or does not exist. Closed interval: compare values at the critical numbers and both endpoints.</p><p>Mean value: $f'(c)=\frac{f(b)-f(a)}{b-a}$ with $c\in(a,b)$ open.</p><p>$f''>0$ concave up. L'Hôpital only for $\frac00,\frac\infty\infty$.</p>`,tex`<p>عدد حرج: $f'=0$ أو غير موجودة. الفترة المغلقة: قارن القيم عند الأعداد الحرجة والنهايتين.</p><p>القيمة المتوسطة: $f'(c)=\frac{f(b)-f(a)}{b-a}$ بشرط $c\in(a,b)$ مفتوحة.</p><p>$f''>0$ مقعّر للأعلى. لوبيتال لـ $\frac00,\frac\infty\infty$ فقط.</p>`)},
+ {id:6,title:NM('Integration','التكامل'),ch:5,rules:NM(tex`<p>$\int x^n=\frac{x^{n+1}}{n+1}+C$, $\int\frac1x=\ln|x|+C$.</p><p>Substitution: $u=$ the inner part. Parts: $\int u\,dv=uv-\int v\,du$ (ILATE).</p><p>Definite: $\int_a^bf=F(b)-F(a)$.</p>`,tex`<p>$\int x^n=\frac{x^{n+1}}{n+1}+C$، $\int\frac1x=\ln|x|+C$.</p><p>التعويض: $u=$ الجزء الداخلي. التجزئة: $\int u\,dv=uv-\int v\,du$ (ILATE).</p><p>المحدد: $\int_a^bf=F(b)-F(a)$.</p>`)}];
+STATIONS.forEach(st=>{const t=st.title,r=st.rules;Object.defineProperties(st,{title:{get:()=>t[LG],enumerable:true},rules:{get:()=>r[LG],enumerable:true}})});
 
 /* ================= الواجهة: تُركَّب داخل أي مضيف (التطبيق أو النسخة المستقلة) ================= */
 const CSS=`
@@ -507,7 +518,7 @@ function mount(root,host){
   const P=host.load();if(!P.skills)P.skills={};
   const save=()=>host.save(P);
   const sk=id=>(P.skills[id]=P.skills[id]||{ema:0,n:0,lvl:1,bad:0,last:0});
-  const stateOf=id=>{const k=P.skills[id];return !k||!k.n?['لم تبدأ','']:(k.ema>=.75&&k.n>=3)?['متقن','ok']:['قيد التقدّم','mid']};
+  const stateOf=id=>{const k=P.skills[id];return !k||!k.n?[TT('Not started','لم تبدأ'),'']:(k.ema>=.75&&k.n>=3)?[TT('Mastered','متقن'),'ok']:[TT('In progress','قيد التقدّم'),'mid']};
   const stMastery=st=>{const a=idsOf(st);return a.reduce((x,i)=>x+(P.skills[i]&&P.skills[i].n?P.skills[i].ema:0),0)/a.length};
   const weakest=n=>Object.keys(GENS).map(id=>({id,w:sk(id).n?1-sk(id).ema:.8})).sort((a,b)=>b.w-a.w).slice(0,n).map(o=>o.id);
   function pickSkill(pool,recent){const ids=pool&&pool.length?pool:Object.keys(GENS),now=Date.now();
@@ -517,13 +528,16 @@ function mount(root,host){
     if(score<.5){k.bad++;if(k.bad>=2&&k.lvl>1){k.lvl--;k.bad=0}}else k.bad=0;
     if(score>=.6&&k.ema>.75&&k.n>=3&&k.lvl<3){k.lvl++;k.ema=.5}}
   let sess=null,exam=null,timer=null,tab='learn';
+  LG=P.lang==='ar'?'ar':'en';
+  const cp=p=>LG==='ar'&&p.ar?p.ar:p;
+  const arBox=(p,withHints)=>`<div class="fb hint" dir="rtl" lang="ar"><b>شرح بالعربي</b><div class="qbox" style="margin:8px 0">${p.ar.q}</div>${withHints?p.ar.hints.map(h=>`<p>${h}</p>`).join(''):''}</div>`;
 
   const flagged=new Set();
   function flag(id){if(flagged.has(id))return;flagged.add(id);try{host.flag&&host.flag(GENS[id].name,GENS[id].st===0?'gap':'hard')}catch(e){}}
   const fb=(cls,html)=>{const f=root.querySelector('#fb');f.innerHTML=`<div class="fb ${cls}">${html}</div>`;typeset(f)};
   const $=s=>root.querySelector(s);
-  const out=(html)=>{if(timer&&!/id="tm"/.test(html)){clearInterval(timer);timer=null}root.innerHTML=html;typeset(root)};
-  const back=()=>`<div class="row" style="margin-bottom:12px"><button class="m-btn ghost sm" id="mback">رجوع إلى المادة</button></div>`;
+  const out=(html)=>{root.dir=LG==='ar'?'rtl':'ltr';if(timer&&!/id="tm"/.test(html)){clearInterval(timer);timer=null}root.innerHTML=html;typeset(root)};
+  const back=()=>`<div class="row" style="margin-bottom:12px"><button class="m-btn ghost sm" id="mback">${TT('Back to the course','رجوع إلى المادة')}</button></div>`;
   const wireBack=()=>{const b=$('#mback');if(b)b.onclick=()=>host.back()};
 
   /* ---------- المسار الموجَّه: التطبيق يقود والطالب يتبع ---------- */
@@ -533,18 +547,18 @@ function mount(root,host){
   const curIdx=()=>STATIONS.findIndex(s=>!PA.done[s.id]);
   const placedAny=()=>P.placed||Object.keys(P.skills).some(i=>P.skills[i].n);
   function nextStep(){
-    if(!placedAny())return {t:'diag',title:'ابدأ باختبار تحديد المستوى',d:`${STATIONS.length*2} سؤالًا قصيرًا نعرف بها أين تقف، فنبدأ بك من المكان الصحيح.`,btn:'ابدأ الاختبار'};
+    if(!placedAny())return {t:'diag',title:TT('Start with the placement test','ابدأ باختبار تحديد المستوى'),d:TT(`${STATIONS.length*2} short questions so we know where you stand and start you in the right place.`,`${STATIONS.length*2} سؤالًا قصيرًا نعرف بها أين تقف، فنبدأ بك من المكان الصحيح.`),btn:TT('Start the test','ابدأ الاختبار')};
     const i=curIdx();
-    if(i<0)return PA.finalPass?{t:'complete',title:'أتممت رحلة المادة',d:'اجتزت كل المحطات والاختبار الشامل. حافظ على مستواك بمراجعة قصيرة قبل الاختبار.',btn:'اختبار شامل جديد'}
-      :{t:'final',title:'الاختبار الشامل',d:'10 أسئلة من كل المحطات في 30 دقيقة. بعد اجتيازه تكون جاهزًا للاختبار الحقيقي.',btn:'ابدأ الاختبار الشامل'};
+    if(i<0)return PA.finalPass?{t:'complete',title:TT('You completed the course journey','أتممت رحلة المادة'),d:TT('You passed every station and the final exam. Keep your level with a short review before the real exam.','اجتزت كل المحطات والاختبار الشامل. حافظ على مستواك بمراجعة قصيرة قبل الاختبار.'),btn:TT('New final exam','اختبار شامل جديد')}
+      :{t:'final',title:TT('Final exam','الاختبار الشامل'),d:TT('10 questions from all stations in 30 minutes. Pass it and you are ready for the real exam.','10 أسئلة من كل المحطات في 30 دقيقة. بعد اجتيازه تكون جاهزًا للاختبار الحقيقي.'),btn:TT('Start the final exam','ابدأ الاختبار الشامل')};
     const st=STATIONS[i];
     if(!PA.seen[st.id]){
-      if(PA.skip[st.id])return {t:'test',st,title:`اختبر نفسك في «${st.title}»`,d:'أجبت جيدًا في اختبار المستوى، فجرّب 5 أسئلة؛ إن أجبت 4 صحيحة تجاوزت المحطة.',btn:'ابدأ'};
-      return {t:'lesson',st,title:`المحطة ${i+1}: ${st.title}`,d:'نبدأ بالقواعد ومثال محلول لكل مهارة، ثم تتدرّب.',btn:'ابدأ الدرس'};
+      if(PA.skip[st.id])return {t:'test',st,title:TT(`Test yourself on “${st.title}”`,`اختبر نفسك في «${st.title}»`),d:TT('You did well in the placement test. Try 5 questions; 4 correct skips this station.','أجبت جيدًا في اختبار المستوى، فجرّب 5 أسئلة؛ إن أجبت 4 صحيحة تجاوزت المحطة.'),btn:TT('Start','ابدأ')};
+      return {t:'lesson',st,title:TT(`Station ${i+1}: ${st.title}`,`المحطة ${i+1}: ${st.title}`),d:TT('We start with the rules and a worked example for each skill, then you practise.','نبدأ بالقواعد ومثال محلول لكل مهارة، ثم تتدرّب.'),btn:TT('Start the lesson','ابدأ الدرس')};
     }
     const sk0=idsOf(st.id).find(id=>!mastered(id));
-    if(sk0)return {t:'skill',id:sk0,st,title:GENS[sk0].name,d:`في ${st.title}: أجب صحيحًا 3 مرات متتالية لتنتقل. ${idsOf(st.id).filter(mastered).length} من ${idsOf(st.id).length} مهارات أتقنتها.`,btn:'تابع التدريب'};
-    return {t:'test',st,title:`اختبار المحطة: ${st.title}`,d:'5 أسئلة بلا تلميحات. أجب عن 4 صحيحة لتفتح المحطة التالية.',btn:'ابدأ اختبار المحطة'};
+    if(sk0)return {t:'skill',id:sk0,st,title:GENS[sk0].name,d:TT(`In ${st.title}: answer correctly 3 times in a row to move on. You have mastered ${idsOf(st.id).filter(mastered).length} of ${idsOf(st.id).length} skills.`,`في ${st.title}: أجب صحيحًا 3 مرات متتالية لتنتقل. ${idsOf(st.id).filter(mastered).length} من ${idsOf(st.id).length} مهارات أتقنتها.`),btn:TT('Continue practising','تابع التدريب')};
+    return {t:'test',st,title:TT(`Station test: ${st.title}`,`اختبار المحطة: ${st.title}`),d:TT('5 questions, no hints. Answer 4 correctly to unlock the next station.','5 أسئلة بلا تلميحات. أجب عن 4 صحيحة لتفتح المحطة التالية.'),btn:TT('Start the station test','ابدأ اختبار المحطة')};
   }
   let htab='path',lpage=0,lst=null;
   function hub(){
@@ -553,20 +567,20 @@ function mount(root,host){
     if(htab==='path'){
       const st=nextStep(),done=STATIONS.filter(s=>PA.done[s.id]).length,ex=host.examInfo&&host.examInfo();
       const left=STATIONS.length-done;
-      const pace=!ex||ex.days<0?'':ex.days===0?'اختبارك اليوم. راجع القواعد فقط ولا تبدأ جديدًا.':`باقٍ ${ex.days} يومًا على «${esc(ex.title)}» و${left} محطات${ex.days>left?(ex.days/left>=2?': تكفيك محطة كل '+Math.floor(ex.days/left)+' أيام تقريبًا.':': تكفيك محطة كل يوم تقريبًا.'):': اجعل اليوم أكثر من محطة لتلحق.'}`;
-      body=`<div class="m-box"><div class="row" style="margin-bottom:8px"><span class="mut">رحلتك: ${done} من ${STATIONS.length} محطات</span><span class="bar"><i style="width:${Math.round(done/STATIONS.length*100)}%"></i></span></div>
+      const pace=!ex||ex.days<0?'':ex.days===0?TT('Your exam is today. Review the rules only; do not start anything new.','اختبارك اليوم. راجع القواعد فقط ولا تبدأ جديدًا.'):TT(`${ex.days} days left until “${esc(ex.title)}” and ${left} stations${ex.days>left?(ex.days/left>=2?': about one station every '+Math.floor(ex.days/left)+' days is enough.':': about one station a day is enough.'):': do more than one station today to catch up.'}`,`باقٍ ${ex.days} يومًا على «${esc(ex.title)}» و${left} محطات${ex.days>left?(ex.days/left>=2?': تكفيك محطة كل '+Math.floor(ex.days/left)+' أيام تقريبًا.':': تكفيك محطة كل يوم تقريبًا.'):': اجعل اليوم أكثر من محطة لتلحق.'}`);
+      body=`<div class="m-box"><div class="row" style="margin-bottom:8px"><span class="mut">${TT(`Your journey: ${done} of ${STATIONS.length} stations`,`رحلتك: ${done} من ${STATIONS.length} محطات`)}</span><span class="bar"><i style="width:${Math.round(done/STATIONS.length*100)}%"></i></span></div>
         ${pace?`<p class="mut">${pace}</p>`:''}
-        <div style="padding:14px;border-radius:14px;background:var(--accent-soft)"><div class="mut" style="margin-bottom:2px">خطوتك الآن</div><h2 style="margin:0 0 4px">${esc(st.title)}</h2><p class="mut">${esc(st.d)}</p><button class="m-btn" id="step" style="width:100%">${st.btn}</button></div></div>
+        <div style="padding:14px;border-radius:14px;background:var(--accent-soft)"><div class="mut" style="margin-bottom:2px">${TT('Your step now','خطوتك الآن')}</div><h2 style="margin:0 0 4px">${esc(st.title)}</h2><p class="mut">${esc(st.d)}</p><button class="m-btn" id="step" style="width:100%">${st.btn}</button></div></div>
         <div class="m-box">${STATIONS.map((s,i)=>{const ds=!!PA.done[s.id],cur=curIdx()===i;return `<div class="sk"><span class="tag ${ds?'ok':cur?'mid':''}" style="min-width:26px;text-align:center">${ds?'✓':cur?'◀':'🔒'}</span><span class="nm" style="${!ds&&!cur?'color:var(--ink-muted)':''}">${s.title}</span>${ds?`<span class="mut">${Math.round(stMastery(s.id)*100)}%</span>`:''}</div>`}).join('')}</div>`;
     }else{
-      body=STATIONS.filter(s=>PA.done[s.id]||PA.seen[s.id]||curIdx()===STATIONS.indexOf(s)).map(s=>`<details class="st"><summary><b>${s.id}. ${s.title}</b></summary><div class="in"><div class="rules"><b>أهم القواعد</b>${s.rules}</div></div></details>`).join('')
-        +`<p class="mut">تظهر هنا قواعد المحطات التي وصلت إليها فقط.</p><div class="m-box"><button class="m-btn ghost sm" id="rst">إعادة الرحلة من البداية</button></div>`;
+      body=STATIONS.filter(s=>PA.done[s.id]||PA.seen[s.id]||curIdx()===STATIONS.indexOf(s)).map(s=>`<details class="st"><summary><b>${s.id}. ${s.title}</b></summary><div class="in"><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${s.rules}</div></div></details>`).join('')
+        +`<p class="mut">${TT('Only the rules of stations you have reached appear here.','تظهر هنا قواعد المحطات التي وصلت إليها فقط.')}</p><div class="m-box"><button class="m-btn ghost sm" id="rst">${TT('Restart the journey','إعادة الرحلة من البداية')}</button></div>`;
     }
-    out(`<div class="m-tabs" role="tablist">${[['path','رحلتي'],['rules','القواعد']].map(([k,l])=>`<button role="tab" aria-selected="${htab===k}" data-h="${k}">${l}</button>`).join('')}</div>${body}`);
+    out(`<div class="m-tabs" role="tablist">${[['path',TT('My journey','رحلتي')],['rules',TT('Rules','القواعد')]].map(([k,l])=>`<button role="tab" aria-selected="${htab===k}" data-h="${k}">${l}</button>`).join('')}${host.noLang?'':`<button id="lgt" aria-label="Language" style="flex:none;padding:8px 12px">${LG==='en'?'عربي':'English'}</button>`}</div>${body}`);
     root.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{htab=b.dataset.h;hub()});
     const g=(s,f)=>{const e=$(s);if(e)e.onclick=f};
-    g('#step',doStep);
-    g('#rst',function(){if(this.dataset.c){P.skills={};P.placed=false;Object.keys(PA).forEach(k=>delete PA[k]);Object.assign(PA,{seen:{},done:{},skip:{},finalPass:false});save();htab='path';hub()}else{this.dataset.c=1;this.textContent='اضغط مرة أخرى للتأكيد'}});
+    g('#step',doStep);g('#lgt',()=>{LG=LG==='en'?'ar':'en';P.lang=LG;save();hub()});
+    g('#rst',function(){if(this.dataset.c){P.skills={};P.placed=false;Object.keys(PA).forEach(k=>delete PA[k]);Object.assign(PA,{seen:{},done:{},skip:{},finalPass:false});save();htab='path';hub()}else{this.dataset.c=1;this.textContent=TT('Press again to confirm','اضغط مرة أخرى للتأكيد')}});
     root.querySelectorAll('details.st').forEach(d=>d.addEventListener('toggle',()=>typeset(d)));}
   function doStep(){const st=nextStep();
     if(st.t==='diag')return startDiag();
@@ -579,9 +593,9 @@ function mount(root,host){
   let exCache={};
   function lesson(){
     const ids=idsOf(lst.id),total=ids.length+1;
-    if(lpage===0){out(`<div class="m-box"><span class="mut">الدرس · 1 من ${total}</span><h2>${lst.title}</h2><div class="rules"><b>أهم القواعد</b>${lst.rules}</div><p class="mut">ما ستتدرّب عليه: ${ids.map(i=>GENS[i].name).join('، ')}.</p><div class="row"><button class="m-btn" id="nx">التالي</button></div></div>`)}
-    else{const id=ids[lpage-1];const e=exCache[id]||(exCache[id]=GENS[id].make(1));
-      out(`<div class="m-box"><span class="mut">الدرس · ${lpage+1} من ${total}</span><h2>${GENS[id].name}</h2><p class="mut">اقرأ المثال والحل أولًا، ثم نتدرّب عليه.</p><div class="qbox">${e.q}</div><div class="fb hint"><b>الحل:</b><p>${e.sol}</p></div><div class="row" style="margin-top:12px"><button class="m-btn" id="nx">${lpage===ids.length?'فهمت، لنبدأ التدريب':'فهمت، التالي'}</button></div></div>`)}
+    if(lpage===0){out(`<div class="m-box"><span class="mut">${TT(`Lesson · 1 of ${total}`,`الدرس · 1 من ${total}`)}</span><h2>${lst.title}</h2><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${lst.rules}</div><p class="mut">${TT('You will practise: ','ما ستتدرّب عليه: ')}${ids.map(i=>GENS[i].name).join(LG==='ar'?'، ':', ')}.</p><div class="row"><button class="m-btn" id="nx">${TT('Next','التالي')}</button></div></div>`)}
+    else{const id=ids[lpage-1];const e0=exCache[id]||(exCache[id]=GENS[id].make(1)),e=cp(e0);
+      out(`<div class="m-box"><span class="mut">${TT(`Lesson · ${lpage+1} of ${total}`,`الدرس · ${lpage+1} من ${total}`)}</span><h2>${GENS[id].name}</h2><p class="mut">${TT('Read the example and its solution first, then we practise it.','اقرأ المثال والحل أولًا، ثم نتدرّب عليه.')}</p><div class="qbox">${e.q}</div><div class="fb hint"><b>${TT('Solution:','الحل:')}</b><p>${e.sol}</p></div>${LG==='en'?`<div class="fb hint" dir="rtl" lang="ar"><b>شرح بالعربي</b><p>${e0.ar.q}</p><p>${e0.ar.sol}</p></div>`:''}<div class="row" style="margin-top:12px"><button class="m-btn" id="nx">${lpage===ids.length?TT('Got it, start practising','فهمت، لنبدأ التدريب'):TT('Got it, next','فهمت، التالي')}</button></div></div>`)}
     $('#nx').onclick=()=>{if(lpage>=ids.length){PA.seen[lst.id]=true;exCache={};save();htab='path';hub()}else{lpage++;lesson()}};}
 
   /* ---------- الجلسات ---------- */
@@ -595,32 +609,33 @@ function mount(root,host){
     sess.p=GENS[sess.skill].make(sess.mode==='diag'||sess.mode==='test'?(sess.level||2):sk(sess.skill).lvl);
     sess.att=0;sess.hints=0;sess.trap='';sess.done=false;sess.i++;practice()}
   function practice(){
-    const p=sess.p,g=GENS[sess.skill],test=sess.mode==='test'||sess.mode==='diag',skm=sess.mode==='skill';
-    const top=skm?`<span class="mut">صحيح متتالٍ</span><span>${[0,1,2].map(i=>`<span style="color:${i<sess.streak?'var(--accent)':'var(--line)'}">●</span>`).join(' ')}</span><span style="flex:1"></span>`:`<span class="mut">سؤال ${sess.i} من ${sess.n}</span><span class="bar"><i style="width:${(sess.i-1)/sess.n*100}%"></i></span>`;
-    out(`<div class="m-box"><div class="qhead">${top}<button class="m-btn ghost sm" id="quit">${skm?'رجوع':'إنهاء'}</button></div>
-    <p class="mut">${sess.mode==='test'?`اختبار المحطة: ${sess.st.title}`:g.name+' · '+stOf(g.st).title}</p><div class="qbox">${p.q}</div><div id="inp"></div><div id="fb"></div></div>`);
+    const p=cp(sess.p),g=GENS[sess.skill],test=sess.mode==='test'||sess.mode==='diag',skm=sess.mode==='skill';
+    const top=skm?`<span class="mut">${TT('Correct in a row','صحيح متتالٍ')}</span><span>${[0,1,2].map(i=>`<span style="color:${i<sess.streak?'var(--accent)':'var(--line)'}">●</span>`).join(' ')}</span><span style="flex:1"></span>`:`<span class="mut">${TT(`Question ${sess.i} of ${sess.n}`,`سؤال ${sess.i} من ${sess.n}`)}</span><span class="bar"><i style="width:${(sess.i-1)/sess.n*100}%"></i></span>`;
+    out(`<div class="m-box"><div class="qhead">${top}<button class="m-btn ghost sm" id="quit">${skm?TT('Back','رجوع'):TT('End','إنهاء')}</button></div>
+    <p class="mut">${sess.mode==='test'?TT(`Station test: ${sess.st.title}`,`اختبار المحطة: ${sess.st.title}`):g.name+' · '+stOf(g.st).title}</p><div class="qbox">${p.q}</div><div id="inp"></div><div id="fb"></div></div>`);
     $('#quit').onclick=()=>{save();sess=null;htab='path';hub()};
-    const inp=$('#inp'),acts=test?'':`<div class="row" style="margin-top:10px"><button class="m-btn ghost sm" id="hint">تلميح</button><button class="m-btn ghost sm" id="ex">مثال محلول</button><button class="m-btn ghost sm" id="show">أظهر الحل</button></div>`;
+    const inp=$('#inp'),arB=LG==='en'&&sess.p.ar?`<button class="m-btn ghost sm" id="arb" lang="ar">عربي</button>`:'',acts=test?(arB?`<div class="row" style="margin-top:10px">${arB}</div>`:''):`<div class="row" style="margin-top:10px"><button class="m-btn ghost sm" id="hint">${TT('Hint','تلميح')}</button><button class="m-btn ghost sm" id="ex">${TT('Worked example','مثال محلول')}</button><button class="m-btn ghost sm" id="show">${TT('Show solution','أظهر الحل')}</button>${arB}</div>`;
     if(p.kind==='mcq'){inp.innerHTML=`<div class="opts">${p.opts.map((o,i)=>`<button data-i="${i}">${/\$|\\/.test(o)?o:esc(o)}</button>`).join('')}</div>`+acts;
       inp.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{const r=grade(p,+b.dataset.i);sess.trap=r.trap||'';finishQ(r.ok,+b.dataset.i)});}
-    else{inp.innerHTML=`<div class="ansrow"><input id="ans" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="جوابك" placeholder="${p.kind==='expr'?'3x^2+2':p.kind==='list'?'-2, 3':'0.5'}"><button class="m-btn" id="chk">تحقّق</button></div>
-      <div class="keys" aria-label="رموز مساعدة">${['^','sqrt()','pi','e^','ln()','sin()','cos()','tan()','inf','/','( )'].map(k=>`<button type="button" data-k="${k}">${k}</button>`).join('')}</div>`+acts;
+    else{inp.innerHTML=`<div class="ansrow"><input id="ans" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${TT('Your answer','جوابك')}" placeholder="${p.kind==='expr'?'3x^2+2':p.kind==='list'?'-2, 3':'0.5'}"><button class="m-btn" id="chk">${TT('Check','تحقّق')}</button></div>
+      <div class="keys" aria-label="${TT('Helper symbols','رموز مساعدة')}">${['^','sqrt()','pi','e^','ln()','sin()','cos()','tan()','inf','/','( )'].map(k=>`<button type="button" data-k="${k}">${k}</button>`).join('')}</div>`+acts;
       const a=$('#ans');$('#chk').onclick=submit;a.onkeydown=e=>{if(e.key==='Enter')submit()};
       inp.querySelectorAll('.keys button').forEach(b=>b.onclick=()=>{const v=b.dataset.k,s=a.selectionStart??a.value.length,e=a.selectionEnd??s;let ins=v,cur=null;if(v.endsWith('()'))cur=v.length-1;else if(v==='( )'){ins='()';cur=1}
         a.value=a.value.slice(0,s)+ins+a.value.slice(e);const pos=s+(cur??ins.length);a.setSelectionRange(pos,pos);a.focus()});}
     if(!test){$('#hint').onclick=hint;$('#ex').onclick=example;$('#show').onclick=()=>finishQ(false,null);}
-    if(skm&&!sk(sess.skill).n&&sess.i===1)fb('hint','رأيت مثالًا في الدرس. إن احتجت تذكيرًا فاضغط «مثال محلول».');}
-  function example(){if(sess.done)return;const e=GENS[sess.skill].make(1);fb('hint',`<b>مثال محلول (غير سؤالك):</b><div class="qbox">${e.q}</div><p><b>الحل:</b> ${e.sol}</p><p class="mut">الآن جرّب سؤالك.</p>`)}
-  function hint(){const p=sess.p;if(sess.done)return;if(sess.hints>=p.hints.length)return fb('hint','لا توجد تلميحات أخرى. جرّب «أظهر الحل» لتتعلم الطريقة.');
-    sess.hints++;fb('hint',`<b>تلميح ${sess.hints} من ${p.hints.length}:</b>${p.hints.slice(0,sess.hints).map(h=>`<p>${h}</p>`).join('')}`)}
-  function submit(){if(sess.done)return;const raw=$('#ans').value;if(!raw.trim())return;const r=grade(sess.p,raw);
-    if(r.err)return fb('hint','لم أفهم الكتابة: '+esc(r.err));
+    if($('#arb'))$('#arb').onclick=()=>fb('hint',arBox(sess.p,!test));
+    if(skm&&!sk(sess.skill).n&&sess.i===1)fb('hint',TT('You saw an example in the lesson. If you need a reminder, press “Worked example”.','رأيت مثالًا في الدرس. إن احتجت تذكيرًا فاضغط «مثال محلول».'));}
+  function example(){if(sess.done)return;const e0=GENS[sess.skill].make(1),e=cp(e0);fb('hint',`<b>${TT('Worked example (not your question):','مثال محلول (غير سؤالك):')}</b><div class="qbox">${e.q}</div><p><b>${TT('Solution:','الحل:')}</b> ${e.sol}</p>${LG==='en'?`<div dir="rtl" lang="ar"><p><b>شرح بالعربي:</b> ${e0.ar.sol}</p></div>`:''}<p class="mut">${TT('Now try your own question.','الآن جرّب سؤالك.')}</p>`)}
+  function hint(){const p=cp(sess.p);if(sess.done)return;if(sess.hints>=p.hints.length)return fb('hint',TT('No more hints. Try “Show solution” to learn the method.','لا توجد تلميحات أخرى. جرّب «أظهر الحل» لتتعلم الطريقة.'));
+    sess.hints++;fb('hint',`<b>${TT(`Hint ${sess.hints} of ${p.hints.length}:`,`تلميح ${sess.hints} من ${p.hints.length}:`)}</b>${p.hints.slice(0,sess.hints).map(h=>`<p>${h}</p>`).join('')}`)}
+  function submit(){if(sess.done)return;const raw=$('#ans').value;if(!raw.trim())return;const r=grade(cp(sess.p),raw);
+    if(r.err)return fb('hint',TT('I could not read that: ','لم أفهم الكتابة: ')+esc(r.err));
     if(r.ok)return finishQ(true,raw);sess.att++;if(r.trap)sess.trap=r.trap;
     const test=sess.mode==='test'||sess.mode==='diag';
     if(test||sess.att>=2)return finishQ(false,raw);
-    fb('bad',`${r.trap?'<b>تنبيه:</b> '+r.trap+'<br>':''}ليست صحيحة بعد. راجع الخطوات وجرّب مرة أخرى${sess.hints<sess.p.hints.length?'، أو اطلب تلميحًا':''}.`)}
+    fb('bad',`${r.trap?'<b>'+TT('Note:','تنبيه:')+'</b> '+r.trap+'<br>':''}${TT('Not correct yet. Review the steps and try again','ليست صحيحة بعد. راجع الخطوات وجرّب مرة أخرى')}${sess.hints<sess.p.hints.length?TT(', or ask for a hint','، أو اطلب تلميحًا'):''}.`)}
   function finishQ(ok,given){
-    if(sess.done)return;sess.done=true;const p=sess.p,m=sess.mode;const score=ok?Math.max(.4,1-.2*sess.hints-.3*sess.att):0;
+    if(sess.done)return;sess.done=true;const p=cp(sess.p),m=sess.mode;const score=ok?Math.max(.4,1-.2*sess.hints-.3*sess.att):0;
     record(sess.skill,score,m==='diag'?.7:.4);
     if(m==='diag')sk(sess.skill).lvl=ok?(sess.att===0&&sess.hints===0?3:2):1;
     if(ok)sess.ok++;else{flag(sess.skill);sess.miss.push(sess.skill)}
@@ -632,24 +647,24 @@ function mount(root,host){
     root.querySelectorAll('#inp button,#inp input').forEach(b=>b.disabled=true);
     if(p.kind==='mcq')root.querySelectorAll('.opts button').forEach((b,i)=>{if(i===p.ci)b.classList.add('right');else if(i===given)b.classList.add('wrong')});
     const last=m!=='skill'&&sess.i>=sess.n,showSol=!ok||m==='skill';
-    const btn=masteredNow?'تابع الرحلة':last?(m==='test'?'اعرض نتيجة الاختبار':'إنهاء'):'السؤال التالي';
-    const f=$('#fb');f.innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?(masteredNow?'أتقنت هذه المهارة':'أحسنت'):'لنراجع الحل'}</b>${!ok&&sess.trap?`<p><b>سبب الخطأ المرجّح:</b> ${sess.trap}</p>`:''}${ok?'':`<p>الجواب الصحيح: <b>${ans}</b></p>`}
-      ${(!ok&&m!=='test')||(!ok&&m==='skill')?`<div class="sol"><b>طريقة الحل:</b><p>${p.sol}</p></div>`:''}<div class="row" style="margin-top:10px"><button class="m-btn" id="next">${btn}</button></div></div>`;
+    const btn=masteredNow?TT('Continue the journey','تابع الرحلة'):last?(m==='test'?TT('Show test result','اعرض نتيجة الاختبار'):TT('Finish','إنهاء')):TT('Next question','السؤال التالي');
+    const f=$('#fb');f.innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?(masteredNow?TT('You mastered this skill','أتقنت هذه المهارة'):TT('Well done','أحسنت')):TT('Let us review the solution','لنراجع الحل')}</b>${!ok&&sess.trap?`<p><b>${TT('Likely reason for the mistake:','سبب الخطأ المرجّح:')}</b> ${sess.trap}</p>`:''}${ok?'':`<p>${TT('Correct answer:','الجواب الصحيح:')} <b>${ans}</b></p>`}
+      ${(!ok&&m!=='test')||(!ok&&m==='skill')?`<div class="sol"><b>${TT('Solution:','طريقة الحل:')}</b><p>${p.sol}</p></div>${LG==='en'&&sess.p.ar?`<div class="sol" dir="rtl" lang="ar"><b>شرح بالعربي:</b><p>${sess.p.ar.sol}</p></div>`:''}`:''}<div class="row" style="margin-top:10px"><button class="m-btn" id="next">${btn}</button></div></div>`;
     $('#next').onclick=()=>{if(masteredNow){sess=null;htab='path';hub()}else next()};typeset(f)}
   function finish(){
     const m=sess.mode,pct=Math.round(sess.ok/sess.n*100);
     if(m==='diag'){P.placed=true;STATIONS.forEach(st=>{const r=sess.res[st.id]||[];if(r.length&&r.every(Boolean))PA.skip[st.id]=true});save();
       const sk0=STATIONS.filter(s=>PA.skip[s.id]).length;
-      out(`<div class="m-box"><h2>اكتمل اختبار المستوى</h2><p>أجبت صحيحًا عن <b>${sess.ok}</b> من <b>${sess.n}</b>.</p><p class="mut">${sk0?`أجدت ${sk0} محطات، فسنختبرك فيها اختبارًا قصيرًا بدل شرحها. `:''}بنينا رحلتك على نتيجتك، وخطوتك التالية جاهزة.</p><div class="row"><button class="m-btn" id="hb">إلى رحلتي</button></div></div>`);
+      out(`<div class="m-box"><h2>${TT('Placement test complete','اكتمل اختبار المستوى')}</h2><p>${TT(`You answered <b>${sess.ok}</b> of <b>${sess.n}</b> correctly.`,`أجبت صحيحًا عن <b>${sess.ok}</b> من <b>${sess.n}</b>.`)}</p><p class="mut">${sk0?TT(`You did well in ${sk0} stations, so we will test you there briefly instead of teaching them. `,`أجدت ${sk0} محطات، فسنختبرك فيها اختبارًا قصيرًا بدل شرحها. `):''}${TT('Your journey is built from your result, and your next step is ready.','بنينا رحلتك على نتيجتك، وخطوتك التالية جاهزة.')}</p><div class="row"><button class="m-btn" id="hb">${TT('Go to my journey','إلى رحلتي')}</button></div></div>`);
       $('#hb').onclick=()=>{sess=null;htab='path';hub()};return}
     if(m==='test'){const st=sess.st,pass=sess.ok>=4;
       if(pass){PA.done[st.id]=true;PA.seen[st.id]=true;idsOf(st.id).forEach(id=>{sk(id).mastered=true});PA.skip[st.id]=false}
       else{PA.skip[st.id]=false;idsOf(st.id).forEach(id=>{if(sess.miss.includes(id))sk(id).mastered=false});
         if(!idsOf(st.id).some(id=>!mastered(id)))sk(sess.miss[0]||idsOf(st.id)[0]).mastered=false}
       save();
-      out(`<div class="m-box"><h2>${pass?'اجتزت المحطة':'لم تجتز بعد'}</h2><p>أجبت صحيحًا عن <b>${sess.ok}</b> من 5.</p><p class="mut">${pass?'فُتحت لك المحطة التالية.':`سنعيدك إلى ما أخطأت فيه: ${[...new Set(sess.miss)].map(i=>GENS[i].name).join('، ')}. ثم تعيد الاختبار.`}</p><div class="row"><button class="m-btn" id="hb">تابع الرحلة</button></div></div>`);
+      out(`<div class="m-box"><h2>${pass?TT('You passed the station','اجتزت المحطة'):TT('Not passed yet','لم تجتز بعد')}</h2><p>${TT(`You answered <b>${sess.ok}</b> of 5 correctly.`,`أجبت صحيحًا عن <b>${sess.ok}</b> من 5.`)}</p><p class="mut">${pass?TT('The next station is unlocked.','فُتحت لك المحطة التالية.'):TT(`We will send you back to what you missed: ${[...new Set(sess.miss)].map(i=>GENS[i].name).join(', ')}. Then retake the test.`,`سنعيدك إلى ما أخطأت فيه: ${[...new Set(sess.miss)].map(i=>GENS[i].name).join('، ')}. ثم تعيد الاختبار.`)}</p><div class="row"><button class="m-btn" id="hb">${TT('Continue the journey','تابع الرحلة')}</button></div></div>`);
       $('#hb').onclick=()=>{sess=null;htab='path';hub()};return}
-    out(`<div class="m-box"><h2>انتهت الجلسة</h2><p>أجبت صحيحًا عن <b>${sess.ok}</b> من <b>${sess.n}</b> (${pct}%).</p><div class="row"><button class="m-btn" id="hb">إلى رحلتي</button></div></div>`);
+    out(`<div class="m-box"><h2>${TT('Session finished','انتهت الجلسة')}</h2><p>${TT(`You answered <b>${sess.ok}</b> of <b>${sess.n}</b> correctly (${pct}%).`,`أجبت صحيحًا عن <b>${sess.ok}</b> من <b>${sess.n}</b> (${pct}%).`)}</p><div class="row"><button class="m-btn" id="hb">${TT('Go to my journey','إلى رحلتي')}</button></div></div>`);
     $('#hb').onclick=()=>{sess=null;htab='path';hub()}}
 
   /* ---------- الاختبار الشامل ---------- */
@@ -658,28 +673,28 @@ function mount(root,host){
     exam={qs,i:0,end:Date.now()+30*60000,done:false};examRun()}
 
   /* ---------- شاشة الاختبار الشامل ---------- */
-  function examRun(){const q=exam.qs[exam.i],p=q.p;
-    out(`<div class="m-box"><div class="qhead"><span class="mut">سؤال ${exam.i+1} من ${exam.qs.length}</span><span class="timer" id="tm"></span><button class="m-btn sm" id="fin">تسليم</button></div>
-    <div class="dotnav">${exam.qs.map((x,i)=>`<button data-i="${i}" class="${i===exam.i?'cur':''} ${x.a!==null&&x.a!==''?'has':''}" aria-label="سؤال ${i+1}">${i+1}</button>`).join('')}</div>
-    <div class="qbox">${p.q}</div><div id="inp"></div><div class="row" style="margin-top:12px"><button class="m-btn ghost sm" id="pv" ${exam.i?'':'disabled'}>السابق</button><button class="m-btn ghost sm" id="nx" ${exam.i<exam.qs.length-1?'':'disabled'}>التالي</button></div></div>`);
+  function examRun(){const q=exam.qs[exam.i],p=cp(q.p);
+    out(`<div class="m-box"><div class="qhead"><span class="mut">${TT(`Question ${exam.i+1} of ${exam.qs.length}`,`سؤال ${exam.i+1} من ${exam.qs.length}`)}</span><span class="timer" id="tm"></span><button class="m-btn sm" id="fin">${TT('Submit','تسليم')}</button></div>
+    <div class="dotnav">${exam.qs.map((x,i)=>`<button data-i="${i}" class="${i===exam.i?'cur':''} ${x.a!==null&&x.a!==''?'has':''}" aria-label="${TT(`Question ${i+1}`,`سؤال ${i+1}`)}">${i+1}</button>`).join('')}</div>
+    <div class="qbox">${p.q}</div><div id="inp"></div><div class="row" style="margin-top:12px"><button class="m-btn ghost sm" id="pv" ${exam.i?'':'disabled'}>${TT('Previous','السابق')}</button><button class="m-btn ghost sm" id="nx" ${exam.i<exam.qs.length-1?'':'disabled'}>${TT('Next','التالي')}</button></div></div>`);
     const inp=$('#inp');
     if(p.kind==='mcq'){inp.innerHTML=`<div class="opts">${p.opts.map((o,i)=>`<button data-i="${i}" class="${q.a===i?'sel':''}">${/\$|\\/.test(o)?o:esc(o)}</button>`).join('')}</div>`;inp.querySelectorAll('button').forEach(b=>b.onclick=()=>{q.a=+b.dataset.i;examRun()})}
-    else{inp.innerHTML=`<div class="ansrow"><input id="ans" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="جوابك" value="${esc(q.a||'')}" placeholder="اكتب جوابك"></div>`;$('#ans').oninput=e=>{q.a=e.target.value;root.querySelector(`.dotnav button[data-i="${exam.i}"]`).classList.toggle('has',!!q.a.trim())}}
+    else{inp.innerHTML=`<div class="ansrow"><input id="ans" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${TT('Your answer','جوابك')}" value="${esc(q.a||'')}" placeholder="${TT('Type your answer','اكتب جوابك')}"></div>`;$('#ans').oninput=e=>{q.a=e.target.value;root.querySelector(`.dotnav button[data-i="${exam.i}"]`).classList.toggle('has',!!q.a.trim())}}
     root.querySelectorAll('.dotnav button').forEach(b=>b.onclick=()=>{exam.i=+b.dataset.i;examRun()});
     $('#pv').onclick=()=>{exam.i--;examRun()};$('#nx').onclick=()=>{exam.i++;examRun()};
-    $('#fin').onclick=function(){if(this.dataset.c)submitExam();else{this.dataset.c=1;this.textContent='اضغط للتأكيد'}};
+    $('#fin').onclick=function(){if(this.dataset.c)submitExam();else{this.dataset.c=1;this.textContent=TT('Press to confirm','اضغط للتأكيد')}};
     const tick=()=>{const t=$('#tm');if(!t||!exam||exam.done)return;const left=Math.max(0,exam.end-Date.now());t.textContent=`${Math.floor(left/60000)}:${String(Math.floor(left/1000)%60).padStart(2,'0')}`;t.classList.toggle('low',left<5*60000);if(left<=0)submitExam()};
     tick();clearInterval(timer);timer=setInterval(tick,1000)}
   function submitExam(){if(!exam||exam.done)return;clearInterval(timer);timer=null;flagged.clear();let sc=0;
-    exam.qs.forEach(q=>{let ok=false;if(q.a!==null&&q.a!==''){const r=grade(q.p,q.p.kind==='mcq'?q.a:String(q.a));ok=!!r.ok}q.ok=ok;if(ok)sc++;else flag(q.id);record(q.id,ok?1:0,.2)});
+    exam.qs.forEach(q=>{let ok=false;if(q.a!==null&&q.a!==''){const r=grade(cp(q.p),q.p.kind==='mcq'?q.a:String(q.a));ok=!!r.ok}q.ok=ok;if(ok)sc++;else flag(q.id);record(q.id,ok?1:0,.2)});
     exam.done=true;exam.score=sc;exam.pass=sc>=7;
     if(exam.pass)PA.finalPass=true;
     else exam.qs.filter(q=>!q.ok).forEach(q=>{sk(q.id).mastered=false;PA.done[GENS[q.id].st]=false;PA.finalPass=false});
     save();examResult()}
   function examResult(){const n=exam.qs.length;
-    out(`<div class="m-box"><h2>${exam.pass?'اجتزت الاختبار الشامل':'لم تجتز بعد'}: ${exam.score} من ${n}</h2><p class="mut">${exam.pass?'أتممت رحلة المادة. أحسنت.':'سنعيدك إلى المحطات التي أخطأت فيها لتقوّيها، ثم تعيد الاختبار.'}${flagged.size?' أضفنا نقاط الضعف إلى قائمة المراجعة في المادة.':''}</p>
-    ${exam.qs.map(q=>`<div class="res"><div class="mk ${q.ok?'g':'b'}">${q.ok?'✓':'✗'}</div><div style="min-width:0"><div class="mut">${GENS[q.id].name}</div><div>${q.p.q}</div>${q.ok?'':`<div class="fb bad"><p>جوابك: <span dir="ltr">${q.a===null||q.a===''?'(بلا جواب)':esc(q.p.kind==='mcq'?q.p.opts[q.a].replace(/\$/g,''):q.a)}</span></p><p>الصحيح: <b>${q.p.kind==='mcq'?q.p.opts[q.p.ci]:q.p.disp?(/[\\^_]/.test(q.p.disp)&&!q.p.disp.includes('$')?'$'+q.p.disp+'$':q.p.disp):q.p.ans}</b></p><div class="sol">${q.p.sol}</div></div>`}</div></div>`).join('')}
-    <div class="row" style="margin-top:14px"><button class="m-btn" id="hb">إلى رحلتي</button></div></div>`);
+    out(`<div class="m-box"><h2>${exam.pass?TT('You passed the final exam','اجتزت الاختبار الشامل'):TT('Not passed yet','لم تجتز بعد')}: ${TT(`${exam.score} of ${n}`,`${exam.score} من ${n}`)}</h2><p class="mut">${exam.pass?TT('You completed the course journey. Well done.','أتممت رحلة المادة. أحسنت.'):TT('We will send you back to the stations you missed to strengthen them, then you retake the exam.','سنعيدك إلى المحطات التي أخطأت فيها لتقوّيها، ثم تعيد الاختبار.')}${flagged.size?TT(' Weak points were added to the review list in the course.',' أضفنا نقاط الضعف إلى قائمة المراجعة في المادة.'):''}</p>
+    ${exam.qs.map(q0=>{const q={...q0,p:cp(q0.p)};return `<div class="res"><div class="mk ${q.ok?'g':'b'}">${q.ok?'✓':'✗'}</div><div style="min-width:0"><div class="mut">${GENS[q.id].name}</div><div>${q.p.q}</div>${q.ok?'':`<div class="fb bad"><p>${TT('Your answer:','جوابك:')} <span dir="ltr">${q.a===null||q.a===''?TT('(no answer)','(بلا جواب)'):esc(q.p.kind==='mcq'?q.p.opts[q.a].replace(/\$/g,''):q.a)}</span></p><p>${TT('Correct:','الصحيح:')} <b>${q.p.kind==='mcq'?q.p.opts[q.p.ci]:q.p.disp?(/[\\^_]/.test(q.p.disp)&&!q.p.disp.includes('$')?'$'+q.p.disp+'$':q.p.disp):q.p.ans}</b></p><div class="sol">${q.p.sol}</div></div>`}</div></div>`}).join('')}
+    <div class="row" style="margin-top:14px"><button class="m-btn" id="hb">${TT('Go to my journey','إلى رحلتي')}</button></div></div>`);
     $('#hb').onclick=()=>{exam=null;htab='path';hub()}}
   root.__m105={sess:()=>sess,exam:()=>exam,P:()=>P};
   hub();
