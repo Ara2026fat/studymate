@@ -440,7 +440,7 @@ const STATIONS=[
  {id:4,title:NM('Tangent lines and implicit differentiation','المماس والاشتقاق الضمني'),ch:3,rules:NM(tex`<p>Tangent: $y-f(a)=f'(a)(x-a)$.</p><p>Implicit: differentiate both sides, multiply every term containing $y$ by $y'$, then solve for $y'$.</p>`,tex`<p>المماس: $y-f(a)=f'(a)(x-a)$.</p><p>الضمني: اشتق الطرفين، كل حد فيه $y$ يُضرب في $y'$، ثم حلّ لـ $y'$.</p>`)},
  {id:5,title:NM('Applications of the derivative','تطبيقات المشتقة'),ch:4,rules:NM(tex`<p>Critical number: $f'=0$ or does not exist. Closed interval: compare values at the critical numbers and both endpoints.</p><p>Mean value: $f'(c)=\frac{f(b)-f(a)}{b-a}$ with $c\in(a,b)$ open.</p><p>$f''>0$ concave up. L'Hôpital only for $\frac00,\frac\infty\infty$.</p>`,tex`<p>عدد حرج: $f'=0$ أو غير موجودة. الفترة المغلقة: قارن القيم عند الأعداد الحرجة والنهايتين.</p><p>القيمة المتوسطة: $f'(c)=\frac{f(b)-f(a)}{b-a}$ بشرط $c\in(a,b)$ مفتوحة.</p><p>$f''>0$ مقعّر للأعلى. لوبيتال لـ $\frac00,\frac\infty\infty$ فقط.</p>`)},
  {id:6,title:NM('Integration','التكامل'),ch:5,rules:NM(tex`<p>$\int x^n=\frac{x^{n+1}}{n+1}+C$, $\int\frac1x=\ln|x|+C$.</p><p>Substitution: $u=$ the inner part. Parts: $\int u\,dv=uv-\int v\,du$ (ILATE).</p><p>Definite: $\int_a^bf=F(b)-F(a)$.</p>`,tex`<p>$\int x^n=\frac{x^{n+1}}{n+1}+C$، $\int\frac1x=\ln|x|+C$.</p><p>التعويض: $u=$ الجزء الداخلي. التجزئة: $\int u\,dv=uv-\int v\,du$ (ILATE).</p><p>المحدد: $\int_a^bf=F(b)-F(a)$.</p>`)}];
-STATIONS.forEach(st=>{const t=st.title,r=st.rules;Object.defineProperties(st,{title:{get:()=>t[LG],enumerable:true},rules:{get:()=>r[LG],enumerable:true}})});
+STATIONS.forEach(st=>{const t=st.title,r=st.rules;st._t=t;st._r=r;Object.defineProperties(st,{title:{get:()=>t[LG],enumerable:true},rules:{get:()=>r[LG],enumerable:true}})});
 
 /* ================= الواجهة: تُركَّب داخل أي مضيف (التطبيق أو النسخة المستقلة) ================= */
 const CSS=`
@@ -492,6 +492,8 @@ const CSS=`
 .m105 .res{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
 .m105 .res .mk{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700}
 .m105 .res .g{background:rgba(88,182,144,.2);color:var(--m-good)}.m105 .res .b{background:var(--attention-soft);color:var(--m-bad)}
+.m105 .ar2{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--ink-muted);font-size:.95em}
+.m105 .qbox .ar2{color:var(--ink)}
 .m105 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 `;
 let styled=false;
@@ -528,7 +530,11 @@ function mount(root,host){
     if(score<.5){k.bad++;if(k.bad>=2&&k.lvl>1){k.lvl--;k.bad=0}}else k.bad=0;
     if(score>=.6&&k.ema>.75&&k.n>=3&&k.lvl<3){k.lvl++;k.ema=.5}}
   let sess=null,exam=null,timer=null,tab='learn';
-  LG=P.lang==='ar'?'ar':'en';
+  let BOTH=P.lang==='both';LG=P.lang==='ar'?'ar':'en';
+  const ar2=h=>BOTH&&h?`<div class="ar2" dir="rtl" lang="ar">${h}</div>`:'';
+  const setLang=m=>{P.lang=m;BOTH=m==='both';LG=m==='ar'?'ar':'en';save()};
+  const LGLABEL=()=>BOTH?'عربي':LG==='ar'?'English':'English + عربي';
+  const asAr=f=>{const k=LG;LG='ar';try{return f()}finally{LG=k}};
   const cp=p=>LG==='ar'&&p.ar?p.ar:p;
   const arBox=(p,withHints)=>`<div class="fb hint" dir="rtl" lang="ar"><b>شرح بالعربي</b><div class="qbox" style="margin:8px 0">${p.ar.q}</div>${withHints?p.ar.hints.map(h=>`<p>${h}</p>`).join(''):''}</div>`;
 
@@ -570,16 +576,16 @@ function mount(root,host){
       const pace=!ex||ex.days<0?'':ex.days===0?TT('Your exam is today. Review the rules only; do not start anything new.','اختبارك اليوم. راجع القواعد فقط ولا تبدأ جديدًا.'):TT(`${ex.days} days left until “${esc(ex.title)}” and ${left} stations${ex.days>left?(ex.days/left>=2?': about one station every '+Math.floor(ex.days/left)+' days is enough.':': about one station a day is enough.'):': do more than one station today to catch up.'}`,`باقٍ ${ex.days} يومًا على «${esc(ex.title)}» و${left} محطات${ex.days>left?(ex.days/left>=2?': تكفيك محطة كل '+Math.floor(ex.days/left)+' أيام تقريبًا.':': تكفيك محطة كل يوم تقريبًا.'):': اجعل اليوم أكثر من محطة لتلحق.'}`);
       body=`<div class="m-box"><div class="row" style="margin-bottom:8px"><span class="mut">${TT(`Your journey: ${done} of ${STATIONS.length} stations`,`رحلتك: ${done} من ${STATIONS.length} محطات`)}</span><span class="bar"><i style="width:${Math.round(done/STATIONS.length*100)}%"></i></span></div>
         ${pace?`<p class="mut">${pace}</p>`:''}
-        <div style="padding:14px;border-radius:14px;background:var(--accent-soft)"><div class="mut" style="margin-bottom:2px">${TT('Your step now','خطوتك الآن')}</div><h2 style="margin:0 0 4px">${esc(st.title)}</h2><p class="mut">${esc(st.d)}</p><button class="m-btn" id="step" style="width:100%">${st.btn}</button></div></div>
-        <div class="m-box">${STATIONS.map((s,i)=>{const ds=!!PA.done[s.id],cur=curIdx()===i;return `<div class="sk"><span class="tag ${ds?'ok':cur?'mid':''}" style="min-width:26px;text-align:center">${ds?'✓':cur?'◀':'🔒'}</span><span class="nm" style="${!ds&&!cur?'color:var(--ink-muted)':''}">${s.title}</span>${ds?`<span class="mut">${Math.round(stMastery(s.id)*100)}%</span>`:''}</div>`}).join('')}</div>`;
+        <div style="padding:14px;border-radius:14px;background:var(--accent-soft)"><div class="mut" style="margin-bottom:2px">${TT('Your step now','خطوتك الآن')}</div><h2 style="margin:0 0 4px">${esc(st.title)}</h2><p class="mut">${esc(st.d)}</p>${ar2(BOTH?`<b>${esc(asAr(nextStep).title)}</b><br>${esc(asAr(nextStep).d)}`:'')}<button class="m-btn" id="step" style="width:100%">${st.btn}</button></div></div>
+        <div class="m-box">${STATIONS.map((s,i)=>{const ds=!!PA.done[s.id],cur=curIdx()===i;return `<div class="sk"><span class="tag ${ds?'ok':cur?'mid':''}" style="min-width:26px;text-align:center">${ds?'✓':cur?'◀':'🔒'}</span><span class="nm" style="${!ds&&!cur?'color:var(--ink-muted)':''}">${s.title}${BOTH?`<span class="mut" dir="rtl" lang="ar" style="display:block">${s._t.ar}</span>`:''}</span>${ds?`<span class="mut">${Math.round(stMastery(s.id)*100)}%</span>`:''}</div>`}).join('')}</div>`;
     }else{
-      body=STATIONS.filter(s=>PA.done[s.id]||PA.seen[s.id]||curIdx()===STATIONS.indexOf(s)).map(s=>`<details class="st"><summary><b>${s.id}. ${s.title}</b></summary><div class="in"><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${s.rules}</div></div></details>`).join('')
+      body=STATIONS.filter(s=>PA.done[s.id]||PA.seen[s.id]||curIdx()===STATIONS.indexOf(s)).map(s=>`<details class="st"><summary><b>${s.id}. ${s.title}</b></summary><div class="in"><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${s.rules}${ar2(s._r.ar)}</div></div></details>`).join('')
         +`<p class="mut">${TT('Only the rules of stations you have reached appear here.','تظهر هنا قواعد المحطات التي وصلت إليها فقط.')}</p><div class="m-box"><button class="m-btn ghost sm" id="rst">${TT('Restart the journey','إعادة الرحلة من البداية')}</button></div>`;
     }
-    out(`<div class="m-tabs" role="tablist">${[['path',TT('My journey','رحلتي')],['rules',TT('Rules','القواعد')]].map(([k,l])=>`<button role="tab" aria-selected="${htab===k}" data-h="${k}">${l}</button>`).join('')}${host.noLang?'':`<button id="lgt" aria-label="Language" style="flex:none;padding:8px 12px">${LG==='en'?'عربي':'English'}</button>`}</div>${body}`);
+    out(`<div class="m-tabs" role="tablist">${[['path',TT('My journey','رحلتي')],['rules',TT('Rules','القواعد')]].map(([k,l])=>`<button role="tab" aria-selected="${htab===k}" data-h="${k}">${l}</button>`).join('')}${host.noLang?'':`<button id="lgt" aria-label="Language" style="flex:none;padding:8px 12px">${LGLABEL()}</button>`}</div>${body}`);
     root.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{htab=b.dataset.h;hub()});
     const g=(s,f)=>{const e=$(s);if(e)e.onclick=f};
-    g('#step',doStep);g('#lgt',()=>{LG=LG==='en'?'ar':'en';P.lang=LG;save();hub()});
+    g('#step',doStep);g('#lgt',()=>{setLang(BOTH?'ar':LG==='ar'?'en':'both');hub()});
     g('#rst',function(){if(this.dataset.c){P.skills={};P.placed=false;Object.keys(PA).forEach(k=>delete PA[k]);Object.assign(PA,{seen:{},done:{},skip:{},finalPass:false});save();htab='path';hub()}else{this.dataset.c=1;this.textContent=TT('Press again to confirm','اضغط مرة أخرى للتأكيد')}});
     root.querySelectorAll('details.st').forEach(d=>d.addEventListener('toggle',()=>typeset(d)));}
   function doStep(){const st=nextStep();
@@ -593,9 +599,9 @@ function mount(root,host){
   let exCache={};
   function lesson(){
     const ids=idsOf(lst.id),total=ids.length+1;
-    if(lpage===0){out(`<div class="m-box"><span class="mut">${TT(`Lesson · 1 of ${total}`,`الدرس · 1 من ${total}`)}</span><h2>${lst.title}</h2><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${lst.rules}</div><p class="mut">${TT('You will practise: ','ما ستتدرّب عليه: ')}${ids.map(i=>GENS[i].name).join(LG==='ar'?'، ':', ')}.</p><div class="row"><button class="m-btn" id="nx">${TT('Next','التالي')}</button></div></div>`)}
+    if(lpage===0){out(`<div class="m-box"><span class="mut">${TT(`Lesson · 1 of ${total}`,`الدرس · 1 من ${total}`)}</span><h2>${lst.title}</h2><div class="rules"><b>${TT('Key rules','أهم القواعد')}</b>${lst.rules}${ar2(lst._r.ar)}</div><p class="mut">${TT('You will practise: ','ما ستتدرّب عليه: ')}${ids.map(i=>GENS[i].name).join(LG==='ar'?'، ':', ')}.</p><div class="row"><button class="m-btn" id="nx">${TT('Next','التالي')}</button></div></div>`)}
     else{const id=ids[lpage-1];const e0=exCache[id]||(exCache[id]=GENS[id].make(1)),e=cp(e0);
-      out(`<div class="m-box"><span class="mut">${TT(`Lesson · ${lpage+1} of ${total}`,`الدرس · ${lpage+1} من ${total}`)}</span><h2>${GENS[id].name}</h2><p class="mut">${TT('Read the example and its solution first, then we practise it.','اقرأ المثال والحل أولًا، ثم نتدرّب عليه.')}</p><div class="qbox">${e.q}</div><div class="fb hint"><b>${TT('Solution:','الحل:')}</b><p>${e.sol}</p></div>${LG==='en'?`<div class="fb hint" dir="rtl" lang="ar"><b>شرح بالعربي</b><p>${e0.ar.q}</p><p>${e0.ar.sol}</p></div>`:''}<div class="row" style="margin-top:12px"><button class="m-btn" id="nx">${lpage===ids.length?TT('Got it, start practising','فهمت، لنبدأ التدريب'):TT('Got it, next','فهمت، التالي')}</button></div></div>`)}
+      out(`<div class="m-box"><span class="mut">${TT(`Lesson · ${lpage+1} of ${total}`,`الدرس · ${lpage+1} من ${total}`)}</span><h2>${GENS[id].name}</h2><p class="mut">${TT('Read the example and its solution first, then we practise it.','اقرأ المثال والحل أولًا، ثم نتدرّب عليه.')}</p><div class="qbox">${e.q}${ar2(e0.ar.q)}</div><div class="fb hint"><b>${TT('Solution:','الحل:')}</b><p>${e.sol}</p></div>${LG==='en'?`<div class="fb hint" dir="rtl" lang="ar"><b>شرح بالعربي</b>${BOTH?'':`<p>${e0.ar.q}</p>`}<p>${e0.ar.sol}</p></div>`:''}<div class="row" style="margin-top:12px"><button class="m-btn" id="nx">${lpage===ids.length?TT('Got it, start practising','فهمت، لنبدأ التدريب'):TT('Got it, next','فهمت، التالي')}</button></div></div>`)}
     $('#nx').onclick=()=>{if(lpage>=ids.length){PA.seen[lst.id]=true;exCache={};save();htab='path';hub()}else{lpage++;lesson()}};}
 
   /* ---------- الجلسات ---------- */
@@ -612,11 +618,11 @@ function mount(root,host){
     const p=cp(sess.p),g=GENS[sess.skill],test=sess.mode==='test'||sess.mode==='diag',skm=sess.mode==='skill';
     const top=skm?`<span class="mut">${TT('Correct in a row','صحيح متتالٍ')}</span><span>${[0,1,2].map(i=>`<span style="color:${i<sess.streak?'var(--accent)':'var(--line)'}">●</span>`).join(' ')}</span><span style="flex:1"></span>`:`<span class="mut">${TT(`Question ${sess.i} of ${sess.n}`,`سؤال ${sess.i} من ${sess.n}`)}</span><span class="bar"><i style="width:${(sess.i-1)/sess.n*100}%"></i></span>`;
     out(`<div class="m-box"><div class="qhead">${top}<button class="m-btn ghost sm" id="quit">${skm?TT('Back','رجوع'):TT('End','إنهاء')}</button></div>
-    <p class="mut">${sess.mode==='test'?TT(`Station test: ${sess.st.title}`,`اختبار المحطة: ${sess.st.title}`):g.name+' · '+stOf(g.st).title}</p><div class="qbox">${p.q}</div><div id="inp"></div><div id="fb"></div></div>`);
+    <p class="mut">${sess.mode==='test'?TT(`Station test: ${sess.st.title}`,`اختبار المحطة: ${sess.st.title}`):g.name+' · '+stOf(g.st).title}</p><div class="qbox">${p.q}${ar2(sess.p.ar&&sess.p.ar.q)}</div><div id="inp"></div><div id="fb"></div></div>`);
     $('#quit').onclick=()=>{save();sess=null;htab='path';hub()};
-    const inp=$('#inp'),arB=LG==='en'&&sess.p.ar?`<button class="m-btn ghost sm" id="arb" lang="ar">عربي</button>`:'',acts=test?(arB?`<div class="row" style="margin-top:10px">${arB}</div>`:''):`<div class="row" style="margin-top:10px"><button class="m-btn ghost sm" id="hint">${TT('Hint','تلميح')}</button><button class="m-btn ghost sm" id="ex">${TT('Worked example','مثال محلول')}</button><button class="m-btn ghost sm" id="show">${TT('Show solution','أظهر الحل')}</button>${arB}</div>`;
+    const inp=$('#inp'),arB=LG==='en'&&!BOTH&&sess.p.ar?`<button class="m-btn ghost sm" id="arb" lang="ar">عربي</button>`:'',acts=test?(arB?`<div class="row" style="margin-top:10px">${arB}</div>`:''):`<div class="row" style="margin-top:10px"><button class="m-btn ghost sm" id="hint">${TT('Hint','تلميح')}</button><button class="m-btn ghost sm" id="ex">${TT('Worked example','مثال محلول')}</button><button class="m-btn ghost sm" id="show">${TT('Show solution','أظهر الحل')}</button>${arB}</div>`;
     if(p.kind==='mcq'){inp.innerHTML=`<div class="opts">${p.opts.map((o,i)=>`<button data-i="${i}">${/\$|\\/.test(o)?o:esc(o)}</button>`).join('')}</div>`+acts;
-      inp.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{const r=grade(p,+b.dataset.i);sess.trap=r.trap||'';finishQ(r.ok,+b.dataset.i)});}
+      inp.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{const r=grade(p,+b.dataset.i);sess.trap=r.trap||'';sess.trapAr=BOTH?(grade(sess.p.ar,+b.dataset.i).trap||''):'';finishQ(r.ok,+b.dataset.i)});}
     else{inp.innerHTML=`<div class="ansrow"><input id="ans" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${TT('Your answer','جوابك')}" placeholder="${p.kind==='expr'?'3x^2+2':p.kind==='list'?'-2, 3':'0.5'}"><button class="m-btn" id="chk">${TT('Check','تحقّق')}</button></div>
       <div class="keys" aria-label="${TT('Helper symbols','رموز مساعدة')}">${['^','sqrt()','pi','e^','ln()','sin()','cos()','tan()','inf','/','( )'].map(k=>`<button type="button" data-k="${k}">${k}</button>`).join('')}</div>`+acts;
       const a=$('#ans');$('#chk').onclick=submit;a.onkeydown=e=>{if(e.key==='Enter')submit()};
@@ -625,15 +631,15 @@ function mount(root,host){
     if(!test){$('#hint').onclick=hint;$('#ex').onclick=example;$('#show').onclick=()=>finishQ(false,null);}
     if($('#arb'))$('#arb').onclick=()=>fb('hint',arBox(sess.p,!test));
     if(skm&&!sk(sess.skill).n&&sess.i===1)fb('hint',TT('You saw an example in the lesson. If you need a reminder, press “Worked example”.','رأيت مثالًا في الدرس. إن احتجت تذكيرًا فاضغط «مثال محلول».'));}
-  function example(){if(sess.done)return;const e0=GENS[sess.skill].make(1),e=cp(e0);fb('hint',`<b>${TT('Worked example (not your question):','مثال محلول (غير سؤالك):')}</b><div class="qbox">${e.q}</div><p><b>${TT('Solution:','الحل:')}</b> ${e.sol}</p>${LG==='en'?`<div dir="rtl" lang="ar"><p><b>شرح بالعربي:</b> ${e0.ar.sol}</p></div>`:''}<p class="mut">${TT('Now try your own question.','الآن جرّب سؤالك.')}</p>`)}
+  function example(){if(sess.done)return;const e0=GENS[sess.skill].make(1),e=cp(e0);fb('hint',`<b>${TT('Worked example (not your question):','مثال محلول (غير سؤالك):')}</b><div class="qbox">${e.q}${ar2(e0.ar.q)}</div><p><b>${TT('Solution:','الحل:')}</b> ${e.sol}</p>${LG==='en'?`<div dir="rtl" lang="ar"><p><b>شرح بالعربي:</b> ${e0.ar.sol}</p></div>`:''}<p class="mut">${TT('Now try your own question.','الآن جرّب سؤالك.')}</p>`)}
   function hint(){const p=cp(sess.p);if(sess.done)return;if(sess.hints>=p.hints.length)return fb('hint',TT('No more hints. Try “Show solution” to learn the method.','لا توجد تلميحات أخرى. جرّب «أظهر الحل» لتتعلم الطريقة.'));
-    sess.hints++;fb('hint',`<b>${TT(`Hint ${sess.hints} of ${p.hints.length}:`,`تلميح ${sess.hints} من ${p.hints.length}:`)}</b>${p.hints.slice(0,sess.hints).map(h=>`<p>${h}</p>`).join('')}`)}
+    sess.hints++;fb('hint',`<b>${TT(`Hint ${sess.hints} of ${p.hints.length}:`,`تلميح ${sess.hints} من ${p.hints.length}:`)}</b>${p.hints.slice(0,sess.hints).map(h=>`<p>${h}</p>`).join('')}${ar2(BOTH?sess.p.ar.hints.slice(0,sess.hints).map(h=>`<p>${h}</p>`).join(''):'')}`)}
   function submit(){if(sess.done)return;const raw=$('#ans').value;if(!raw.trim())return;const r=grade(cp(sess.p),raw);
     if(r.err)return fb('hint',TT('I could not read that: ','لم أفهم الكتابة: ')+esc(r.err));
-    if(r.ok)return finishQ(true,raw);sess.att++;if(r.trap)sess.trap=r.trap;
+    if(r.ok)return finishQ(true,raw);sess.att++;if(r.trap){sess.trap=r.trap;sess.trapAr=BOTH?(grade(sess.p.ar,raw).trap||''):''}
     const test=sess.mode==='test'||sess.mode==='diag';
     if(test||sess.att>=2)return finishQ(false,raw);
-    fb('bad',`${r.trap?'<b>'+TT('Note:','تنبيه:')+'</b> '+r.trap+'<br>':''}${TT('Not correct yet. Review the steps and try again','ليست صحيحة بعد. راجع الخطوات وجرّب مرة أخرى')}${sess.hints<sess.p.hints.length?TT(', or ask for a hint','، أو اطلب تلميحًا'):''}.`)}
+    fb('bad',`${r.trap?'<b>'+TT('Note:','تنبيه:')+'</b> '+r.trap+ar2(sess.trapAr)+'<br>':''}${TT('Not correct yet. Review the steps and try again','ليست صحيحة بعد. راجع الخطوات وجرّب مرة أخرى')}${sess.hints<sess.p.hints.length?TT(', or ask for a hint','، أو اطلب تلميحًا'):''}.`)}
   function finishQ(ok,given){
     if(sess.done)return;sess.done=true;const p=cp(sess.p),m=sess.mode;const score=ok?Math.max(.4,1-.2*sess.hints-.3*sess.att):0;
     record(sess.skill,score,m==='diag'?.7:.4);
@@ -648,7 +654,7 @@ function mount(root,host){
     if(p.kind==='mcq')root.querySelectorAll('.opts button').forEach((b,i)=>{if(i===p.ci)b.classList.add('right');else if(i===given)b.classList.add('wrong')});
     const last=m!=='skill'&&sess.i>=sess.n,showSol=!ok||m==='skill';
     const btn=masteredNow?TT('Continue the journey','تابع الرحلة'):last?(m==='test'?TT('Show test result','اعرض نتيجة الاختبار'):TT('Finish','إنهاء')):TT('Next question','السؤال التالي');
-    const f=$('#fb');f.innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?(masteredNow?TT('You mastered this skill','أتقنت هذه المهارة'):TT('Well done','أحسنت')):TT('Let us review the solution','لنراجع الحل')}</b>${!ok&&sess.trap?`<p><b>${TT('Likely reason for the mistake:','سبب الخطأ المرجّح:')}</b> ${sess.trap}</p>`:''}${ok?'':`<p>${TT('Correct answer:','الجواب الصحيح:')} <b>${ans}</b></p>`}
+    const f=$('#fb');f.innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?(masteredNow?TT('You mastered this skill','أتقنت هذه المهارة'):TT('Well done','أحسنت')):TT('Let us review the solution','لنراجع الحل')}</b>${!ok&&sess.trap?`<p><b>${TT('Likely reason for the mistake:','سبب الخطأ المرجّح:')}</b> ${sess.trap}${ar2(sess.trapAr)}</p>`:''}${ok?'':`<p>${TT('Correct answer:','الجواب الصحيح:')} <b>${ans}</b></p>`}
       ${(!ok&&m!=='test')||(!ok&&m==='skill')?`<div class="sol"><b>${TT('Solution:','طريقة الحل:')}</b><p>${p.sol}</p></div>${LG==='en'&&sess.p.ar?`<div class="sol" dir="rtl" lang="ar"><b>شرح بالعربي:</b><p>${sess.p.ar.sol}</p></div>`:''}`:''}<div class="row" style="margin-top:10px"><button class="m-btn" id="next">${btn}</button></div></div>`;
     $('#next').onclick=()=>{if(masteredNow){sess=null;htab='path';hub()}else next()};typeset(f)}
   function finish(){
@@ -676,7 +682,7 @@ function mount(root,host){
   function examRun(){const q=exam.qs[exam.i],p=cp(q.p);
     out(`<div class="m-box"><div class="qhead"><span class="mut">${TT(`Question ${exam.i+1} of ${exam.qs.length}`,`سؤال ${exam.i+1} من ${exam.qs.length}`)}</span><span class="timer" id="tm"></span><button class="m-btn sm" id="fin">${TT('Submit','تسليم')}</button></div>
     <div class="dotnav">${exam.qs.map((x,i)=>`<button data-i="${i}" class="${i===exam.i?'cur':''} ${x.a!==null&&x.a!==''?'has':''}" aria-label="${TT(`Question ${i+1}`,`سؤال ${i+1}`)}">${i+1}</button>`).join('')}</div>
-    <div class="qbox">${p.q}</div><div id="inp"></div><div class="row" style="margin-top:12px"><button class="m-btn ghost sm" id="pv" ${exam.i?'':'disabled'}>${TT('Previous','السابق')}</button><button class="m-btn ghost sm" id="nx" ${exam.i<exam.qs.length-1?'':'disabled'}>${TT('Next','التالي')}</button></div></div>`);
+    <div class="qbox">${p.q}${ar2(q.p.ar&&q.p.ar.q)}</div><div id="inp"></div><div class="row" style="margin-top:12px"><button class="m-btn ghost sm" id="pv" ${exam.i?'':'disabled'}>${TT('Previous','السابق')}</button><button class="m-btn ghost sm" id="nx" ${exam.i<exam.qs.length-1?'':'disabled'}>${TT('Next','التالي')}</button></div></div>`);
     const inp=$('#inp');
     if(p.kind==='mcq'){inp.innerHTML=`<div class="opts">${p.opts.map((o,i)=>`<button data-i="${i}" class="${q.a===i?'sel':''}">${/\$|\\/.test(o)?o:esc(o)}</button>`).join('')}</div>`;inp.querySelectorAll('button').forEach(b=>b.onclick=()=>{q.a=+b.dataset.i;examRun()})}
     else{inp.innerHTML=`<div class="ansrow"><input id="ans" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${TT('Your answer','جوابك')}" value="${esc(q.a||'')}" placeholder="${TT('Type your answer','اكتب جوابك')}"></div>`;$('#ans').oninput=e=>{q.a=e.target.value;root.querySelector(`.dotnav button[data-i="${exam.i}"]`).classList.toggle('has',!!q.a.trim())}}
@@ -693,7 +699,7 @@ function mount(root,host){
     save();examResult()}
   function examResult(){const n=exam.qs.length;
     out(`<div class="m-box"><h2>${exam.pass?TT('You passed the final exam','اجتزت الاختبار الشامل'):TT('Not passed yet','لم تجتز بعد')}: ${TT(`${exam.score} of ${n}`,`${exam.score} من ${n}`)}</h2><p class="mut">${exam.pass?TT('You completed the course journey. Well done.','أتممت رحلة المادة. أحسنت.'):TT('We will send you back to the stations you missed to strengthen them, then you retake the exam.','سنعيدك إلى المحطات التي أخطأت فيها لتقوّيها، ثم تعيد الاختبار.')}${flagged.size?TT(' Weak points were added to the review list in the course.',' أضفنا نقاط الضعف إلى قائمة المراجعة في المادة.'):''}</p>
-    ${exam.qs.map(q0=>{const q={...q0,p:cp(q0.p)};return `<div class="res"><div class="mk ${q.ok?'g':'b'}">${q.ok?'✓':'✗'}</div><div style="min-width:0"><div class="mut">${GENS[q.id].name}</div><div>${q.p.q}</div>${q.ok?'':`<div class="fb bad"><p>${TT('Your answer:','جوابك:')} <span dir="ltr">${q.a===null||q.a===''?TT('(no answer)','(بلا جواب)'):esc(q.p.kind==='mcq'?q.p.opts[q.a].replace(/\$/g,''):q.a)}</span></p><p>${TT('Correct:','الصحيح:')} <b>${q.p.kind==='mcq'?q.p.opts[q.p.ci]:q.p.disp?(/[\\^_]/.test(q.p.disp)&&!q.p.disp.includes('$')?'$'+q.p.disp+'$':q.p.disp):q.p.ans}</b></p><div class="sol">${q.p.sol}</div></div>`}</div></div>`}).join('')}
+    ${exam.qs.map(q0=>{const q={...q0,p:cp(q0.p)};return `<div class="res"><div class="mk ${q.ok?'g':'b'}">${q.ok?'✓':'✗'}</div><div style="min-width:0"><div class="mut">${GENS[q.id].name}</div><div>${q.p.q}</div>${ar2(q0.p.ar&&q0.p.ar.q)}${q.ok?'':`<div class="fb bad"><p>${TT('Your answer:','جوابك:')} <span dir="ltr">${q.a===null||q.a===''?TT('(no answer)','(بلا جواب)'):esc(q.p.kind==='mcq'?q.p.opts[q.a].replace(/\$/g,''):q.a)}</span></p><p>${TT('Correct:','الصحيح:')} <b>${q.p.kind==='mcq'?q.p.opts[q.p.ci]:q.p.disp?(/[\\^_]/.test(q.p.disp)&&!q.p.disp.includes('$')?'$'+q.p.disp+'$':q.p.disp):q.p.ans}</b></p><div class="sol">${q.p.sol}</div></div>`}</div></div>`}).join('')}
     <div class="row" style="margin-top:14px"><button class="m-btn" id="hb">${TT('Go to my journey','إلى رحلتي')}</button></div></div>`);
     $('#hb').onclick=()=>{exam=null;htab='path';hub()}}
   root.__m105={sess:()=>sess,exam:()=>exam,P:()=>P};
