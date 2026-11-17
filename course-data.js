@@ -48998,3 +48998,41 @@ const FIELD_TOOLS = {
 /* المهارات السريرية وحاسبة الجرعات: أدوات لتخصصات عملية سريرية فقط (طب، أسنان، صيدلة،
    والعلوم الطبية التطبيقية بأقسامها — تمريض وأشعة ومختبرات وعلاج طبيعي). */
 
+
+/* Deep explanation packs: downloaded by the student from Settings (packs/<id>.json). ready=false means the file is not published yet. */
+const PACK_INDEX = {
+ "m_calc1": {
+  "title": {
+   "ar": "تفاضل وتكامل 1: التفاضل",
+   "en": "Calculus 1: Differentiation"
+  },
+  "keys": [
+   "0817144",
+   "KFUPM MATH 101",
+   "MATH 101",
+   "MATH 111",
+   "MATH 1422",
+   "MATH 211",
+   "MATH101",
+   "ريض 101",
+   "ريض211"
+  ],
+  "ready": true
+ },
+ "m_ode": {
+  "title": {
+   "ar": "المعادلات التفاضلية",
+   "en": "Differential Equations"
+  },
+  "keys": [
+   "0817240",
+   "MATH 2332",
+   "MATH 336",
+   "MATH202",
+   "MATH221",
+   "ريض 204",
+   "ريض336"
+  ],
+  "ready": true
+ }
+};

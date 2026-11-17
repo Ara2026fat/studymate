@@ -1475,6 +1475,16 @@ body[data-theme="daylight"] .card:before{
 .fold-line{ font-size:var(--fs-caption); font-weight:600; line-height:1.45; }
 .fold-sub{ font-size:12px; color:var(--ink-muted); margin-top:2px; }
 .fold-thumb{ width:34px; height:34px; border-radius:8px; object-fit:cover; flex-shrink:0; }
+.pk-title{font-size:calc(var(--fs-heading) + 4px); font-weight:800; line-height:1.35; margin:0 0 var(--sp-3);}
+.pk-h{font-size:calc(var(--fs-body) + 4px); font-weight:800; margin:var(--sp-4) 0 var(--sp-2); color:var(--accent);}
+.pk-h4{font-size:calc(var(--fs-body) + 1px); font-weight:700; margin:var(--sp-3) 0 var(--sp-1);}
+.pk-ul{margin:0 0 var(--sp-3); padding-inline-start:20px; line-height:1.8;}
+.pk2{display:block; color:var(--ink-muted); font-size:.92em; margin-top:2px;}
+.pk-both{display:flex; gap:8px; align-items:center; margin:var(--sp-3) 0; color:var(--ink-muted); font-size:var(--fs-caption);}
+.pk-n{display:inline-block; min-width:26px; text-align:center; border-radius:999px; background:var(--accent); color:#fff; margin-inline-end:8px; font-weight:700;}
+.pk-ex{background:rgba(var(--accent-rgb),.07); border-radius:var(--r-md); padding:var(--sp-3); margin:var(--sp-3) 0;}
+.pk-m{border-inline-start:4px solid var(--attention); padding:6px var(--sp-3); margin:var(--sp-2) 0; line-height:1.7;}
+.pk-t summary{font-weight:700; line-height:1.6;}
 .hard-part{
   background:var(--surface); border:1px solid var(--flat-line);
   border-radius:var(--r-sm); padding:var(--sp-3);
@@ -10248,6 +10258,145 @@ function tiredHtml(){
    review list, and which exam the plan counts down to. No points, no streaks,
    no ranks — progress here is the student's own reflection.
    ============================================================ */
+/* ============================================================
+   Deep explanation packs. Big, original study packs live in
+   packs/<id>.json and are NOT part of the app shell: the student downloads
+   each one once from Settings, and it is then kept on the device (its own
+   IndexedDB, outside the backup file) and works offline.
+   ============================================================ */
+const PackModule = (function(){
+  const DBN = "studymate-packs", ST = "packs";
+  let dbp = null; const have = {};
+  const open = ()=> dbp || (dbp = new Promise((res, rej)=>{
+    try{ const r = indexedDB.open(DBN, 1);
+      r.onupgradeneeded = ()=> r.result.createObjectStore(ST);
+      r.onsuccess = ()=> res(r.result); r.onerror = ()=> rej(r.error);
+    }catch(e){ rej(e); }
+  }));
+  const run = (mode, fn)=> open().then(db=> new Promise((res, rej)=>{
+    const tx = db.transaction(ST, mode); const q = fn(tx.objectStore(ST));
+    tx.oncomplete = ()=> res(q && q.result); tx.onerror = ()=> rej(tx.error);
+  }));
+  const index = ()=> (typeof PACK_INDEX !== "undefined" ? PACK_INDEX : {});
+  return {
+    list: ()=> Object.keys(index()).filter(id=> index()[id].ready),
+    meta: id=> index()[id],
+    idFor: name=>{ const n = (name||"").trim();
+      return Object.keys(index()).find(id=> index()[id].ready && index()[id].keys.some(k=> n.startsWith(k))) || null; },
+    has: id=> !!have[id],
+    refresh: ()=> run("readonly", s=> s.getAllKeys()).then(keys=>{ Object.keys(have).forEach(k=> delete have[k]); (keys||[]).forEach(k=> have[k] = true); }).catch(()=>{}),
+    get: id=> run("readonly", s=> s.get(id)),
+    remove: id=> run("readwrite", s=> s.delete(id)).then(()=>{ delete have[id]; }),
+    download: id=> fetch("./packs/" + id + ".json?b=" + encodeURIComponent(BUILD_ID), { cache:"no-store" })
+      .then(r=>{ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(d=>{ if(!d || d.id !== id || !Array.isArray(d.topics)) throw new Error("bad pack");
+        return run("readwrite", s=> s.put(d, id)).then(()=>{ have[id] = true; }); })
+  };
+})();
+PackModule.refresh();
+
+let packTab = "big", packBoth = false;
+try{ packBoth = localStorage.getItem("sm_pack_both") === "1"; }catch(e){}
+
+function packDlLabel(id){
+  const m = PackModule.meta(id), ar = lang()==="ar";
+  return ar ? "تحميل الشرح العميق" : "Download the deep explanation";
+}
+function packDownload(id, done){
+  const ar = lang()==="ar";
+  showToast(ar ? "جارٍ التحميل…" : "Downloading…");
+  PackModule.download(id).then(()=>{ showToast(ar ? "تم التحميل. يعمل الآن بدون إنترنت." : "Downloaded. It now works offline."); done(); })
+    .catch(()=>{ showToast(ar ? "تعذّر التحميل. تأكد من الإنترنت وحاول مرة أخرى." : "Could not download. Check your internet and try again."); done(); });
+}
+function packSettingsHtml(){
+  const ar = lang()==="ar", ids = PackModule.list();
+  if(!ids.length) return "";
+  return `
+        <div class="card" style="cursor:default; align-items:flex-start; margin-bottom:var(--sp-4);">
+          <span class="card-icon">${ICON.book}</span>
+          <span class="card-body" style="width:100%;">
+            <span class="card-title">${ar ? "الشرح العميق للمواد الصعبة" : "Deep explanations for hard subjects"}</span>
+            <span class="card-meta" style="white-space:normal;">${ar ? "حمّل المادة التي تحتاجها مرة واحدة، ثم تعمل على جهازك بدون إنترنت. لا تدخل في النسخة الاحتياطية." : "Download the subject you need once; it then works on your device offline. It is not part of the backup file."}</span>
+            <div class="stack" style="margin-top:var(--sp-3);">
+              ${ids.map(id=>{ const m = PackModule.meta(id), on = PackModule.has(id); return `
+              <div style="display:flex; align-items:center; gap:var(--sp-3); justify-content:space-between;">
+                <span class="type-body" style="font-weight:600;">${escapeHtml(m.title[lang()])}</span>
+                <button type="button" class="btn ${on ? "btn-secondary" : "btn-primary"}" data-pack-${on ? "rm" : "dl"}="${id}" style="padding:8px 14px;">${on ? (ar ? "حذف" : "Remove") : (ar ? "تحميل" : "Download")}</button>
+              </div>`; }).join("")}
+            </div>
+          </span>
+        </div>`;
+}
+function bindPackSettings(){
+  document.querySelectorAll("[data-pack-dl]").forEach(b=> b.addEventListener("click", ()=>{ b.disabled = true; packDownload(b.dataset.packDl, ()=>renderSettings()); }));
+  document.querySelectorAll("[data-pack-rm]").forEach(b=> b.addEventListener("click", ()=>{ PackModule.remove(b.dataset.packRm).then(()=>renderSettings()); }));
+}
+function packCardHtml(courseName){
+  const id = PackModule.idFor(courseName); if(!id) return "";
+  const ar = lang()==="ar", on = PackModule.has(id);
+  return `
+          <button type="button" class="card" data-cv="pack" data-pack-id="${id}" style="margin-bottom:var(--sp-3);">
+            <span class="card-icon">${on ? ICON.book : ICON.download}</span>
+            <span class="card-body">
+              <span class="card-title">${on ? (ar ? "الشرح العميق للمادة" : "Deep explanation") : packDlLabel(id)}</span>
+              <span class="card-meta" style="white-space:normal;">${on ? (ar ? "أفكار، أمثلة محلولة، أخطاء شائعة، وتدريب." : "Ideas, worked examples, common mistakes and practice.") : (ar ? "مرة واحدة بالإنترنت، ثم يعمل بدونه. يمكنك أيضًا تحميله من الإعدادات." : "Needs internet once, then works offline. You can also download it from Settings.")}</span>
+            </span>
+            <span class="card-chevron">${chevronFwd()}</span>
+          </button>`;
+}
+function packX(o){
+  if(!o) return "";
+  const l = lang(), a = escapeHtml(o[l]), b = escapeHtml(o[l==="ar" ? "en" : "ar"]);
+  return packBoth ? `${a}<span class="pk2" dir="${l==="ar" ? "ltr" : "rtl"}">${b}</span>` : a;
+}
+function packP(arr){ return (arr||[]).map(x=>`<p class="type-body" style="margin:0 0 var(--sp-3);">${packX(x)}</p>`).join(""); }
+function renderPack(courseId, id){
+  applyDir();
+  const l = lang(), ar = l==="ar";
+  const course = dbGet("courses", courseId);
+  app.innerHTML = `
+    <section class="screen no-tabbar">
+      <div class="screen-header">
+        <button type="button" class="btn-icon" id="packBack" data-label="${ar ? "رجوع" : "Back"}" aria-label="${ar ? "رجوع" : "Back"}">${chevronBack()}</button>
+        <div>
+          <div class="screen-header-title" style="font-size:var(--fs-subheading);">${ar ? "الشرح العميق" : "Deep explanation"}</div>
+          <div class="screen-header-sub">${escapeHtml(course ? course.name : "")}</div>
+        </div>
+        <span style="width:40px;"></span>
+      </div>
+      <div class="screen-content" id="packRoot"></div>
+    </section>`;
+  document.getElementById("packBack").addEventListener("click", ()=>navBack(()=>renderCourseView(courseId, true)));
+  const root = document.getElementById("packRoot");
+  PackModule.get(id).then(d=>{
+    if(!d){ root.innerHTML = `<p class="type-body">${ar ? "لم يُحمَّل بعد." : "Not downloaded yet."}</p>`; return; }
+    const tabs = [["big", ar ? "الصورة" : "Overview"], ["topics", ar ? "المواضيع" : "Topics"], ["practice", ar ? "تدريب" : "Practice"], ["review", ar ? "مراجعة" : "Review"]];
+    const mist = m=>`<div class="pk-m"><div><b>${ar ? "الخطأ:" : "Mistake:"}</b> ${packX(m.wrong)}</div><div><b>${ar ? "لماذا يحدث:" : "Why it happens:"}</b> ${packX(m.cause)}</div><div><b>${ar ? "الصحيح:" : "Correct:"}</b> ${packX(m.right)}</div></div>`;
+    const body = {
+      big: ()=> `<h3 class="pk-h">${ar ? "لماذا هذه المادة" : "Why this subject"}</h3>${packP(d.big.why)}<h3 class="pk-h">${ar ? "أين تُستخدم" : "Where it is used"}</h3>${packP(d.big.where)}<h3 class="pk-h">${ar ? "رحلتك فيها" : "Your journey through it"}</h3>${packP(d.big.journey)}
+        <h3 class="pk-h">${ar ? "خريطة المفاهيم" : "Concept map"}</h3><ul class="pk-ul">${d.map.map(x=>`<li>${packX(x)}</li>`).join("")}</ul>
+        <h3 class="pk-h">${ar ? "قبلها وبعدها" : "Before and after"}</h3><p class="type-caption"><b>${ar ? "راجع قبلها:" : "Review first:"}</b></p><ul class="pk-ul">${d.links.before.map(x=>`<li>${packX(x)}</li>`).join("")}</ul><p class="type-caption"><b>${ar ? "تحتاجها بعدها في:" : "You will need it in:"}</b></p><ul class="pk-ul">${d.links.after.map(x=>`<li>${packX(x)}</li>`).join("")}</ul>`,
+      topics: ()=> d.topics.map((t,i)=>`<details class="hard-part pk-t"><summary><span class="pk-n">${i+1}</span> ${packX(t.title)}</summary>
+        <h4 class="pk-h4">${ar ? "الفكرة" : "The idea"}</h4>${packP(t.idea)}<h4 class="pk-h4">${ar ? "القاعدة" : "The rule"}</h4>${packP(t.rule)}<h4 class="pk-h4">${ar ? "لماذا هي صحيحة" : "Why it is true"}</h4>${packP(t.why)}
+        ${t.examples.map((e,j)=>`<div class="pk-ex"><h4 class="pk-h4">${ar ? "مثال" : "Example"} ${j+1}</h4><p class="type-body">${packX(e.q)}</p><ol class="pk-ul">${e.steps.map(x=>`<li>${packX(x)}</li>`).join("")}</ol><p class="type-body"><b>${ar ? "الجواب:" : "Answer:"}</b> ${packX(e.ans)}</p></div>`).join("")}
+        <h4 class="pk-h4">${ar ? "أخطاء شائعة" : "Common mistakes"}</h4>${t.mistakes.map(mist).join("")}</details>`).join(""),
+      practice: ()=> [1,2,3].map(lv=>`<h3 class="pk-h">${[ar?"سهل":"Easy", ar?"متوسط":"Medium", ar?"صعب":"Hard"][lv-1]}</h3>${d.practice.filter(q=>q.level===lv).map((q,i)=>`<details class="hard-part pk-t"><summary>${packX(q.q)}</summary><p class="type-body"><b>${ar ? "الجواب:" : "Answer:"}</b> ${packX(q.ans)}</p><ol class="pk-ul">${q.sol.map(x=>`<li>${packX(x)}</li>`).join("")}</ol></details>`).join("")}`).join(""),
+      review: ()=> `<h3 class="pk-h">${ar ? "كيف تُسأل في الاختبار" : "How it is asked in exams"}</h3><ul class="pk-ul">${d.exam.map(x=>`<li>${packX(x)}</li>`).join("")}</ul><h3 class="pk-h">${ar ? "ورقة المراجعة" : "Cheat sheet"}</h3><ul class="pk-ul">${d.cheat.map(x=>`<li>${packX(x)}</li>`).join("")}</ul>`
+    };
+    const draw = ()=>{
+      root.innerHTML = `<h2 class="pk-title">${packX(d.title)}</h2>
+        <div class="set-tabs" style="margin-top:0;">${tabs.map(([k,lb])=>`<button type="button" class="set-tab ${packTab===k?'set-tab-active':''}" data-pk="${k}">${lb}</button>`).join("")}</div>
+        <label class="pk-both"><input type="checkbox" id="pkBoth" ${packBoth?"checked":""}> ${ar ? "اعرض اللغتين معًا" : "Show both languages"}</label>
+        <div class="pk-body">${body[packTab]()}</div>`;
+      root.querySelectorAll("[data-pk]").forEach(b=> b.addEventListener("click", ()=>{ packTab = b.dataset.pk; draw(); }));
+      document.getElementById("pkBoth").addEventListener("change", e=>{ packBoth = e.target.checked; try{ localStorage.setItem("sm_pack_both", packBoth ? "1" : "0"); }catch(x){} draw(); });
+      root.querySelectorAll("details").forEach(dt=> dt.addEventListener("toggle", ()=>{ if(typeof Math105 !== "undefined") Math105.typeset(dt); }));
+      if(typeof Math105 !== "undefined") Math105.typeset(root);
+    };
+    draw();
+  }).catch(()=>{ root.innerHTML = `<p class="type-body">${ar ? "تعذّر فتح الشرح." : "Could not open the explanation."}</p>`; });
+}
+
 function isMath105(name){ return /^MATH\s?105(\b|\s|-|$)/i.test((name||"").trim()); }
 let m105Handle = null;
 let learnSub = "about";
@@ -11087,6 +11236,7 @@ function renderCourseView(courseId, keepTab){
             </span>
             <span class="card-chevron">${chevronFwd()}</span>
           </button>` : ""}
+          ${learnSub==="about" ? packCardHtml(course.name) : ""}
           ${learnSub==="about" ? `<div class="callout-label">${s.enrichmentAboutLabel}</div>
           <p class="type-body" style="margin-bottom:var(--sp-3);">${escapeHtml(enrichment.explain[lang()])}</p>
           <p class="type-body" style="color:var(--ink-muted); font-size:var(--fs-caption);"><strong>${s.enrichmentWhyLabel}</strong> ${escapeHtml(enrichment.why[lang()])}</p>` : ""}
@@ -11191,6 +11341,9 @@ function renderCourseView(courseId, keepTab){
     btn.addEventListener("click", ()=>{
       const what = btn.dataset.cv;
       if(what === "m105"){ navPush(()=>renderCourseView(courseId, true)); return renderMath105(courseId); }
+      if(what === "pack"){ const pid = btn.dataset.packId;
+        if(PackModule.has(pid)){ navPush(()=>renderCourseView(courseId, true)); return renderPack(courseId, pid); }
+        btn.disabled = true; return packDownload(pid, ()=>renderCourseView(courseId, true)); }
       if(what === "trap"){ navPush(()=>renderCourseView(courseId, true)); return renderTrapDrill(courseId, true); }
       if(what === "sheet"){ navPush(()=>renderCourseView(courseId, true)); return renderCourseSheet(courseId); }
       if(what === "add") return openAddSheet(courseId, ()=>renderCourseView(courseId, true));
@@ -16557,6 +16710,7 @@ ${hasContact() ? `
             ${(!on && deferredInstallPrompt) ? `<button type="button" class="btn btn-primary" id="settingsInstallBtn" style="margin-top:var(--sp-3); padding:10px;">${ICON.download}<span>${s.installNowBtn}</span></button>` : ""}
           </span>
         </div>`; })()}
+        ${packSettingsHtml()}
         <div class="stack">
           
           <div class="card" style="cursor:default;">
@@ -16608,6 +16762,7 @@ ${hasContact() ? `
     devTapCount = 0;
     openDevLock(()=>{ settingsTab = "app"; renderSettings(); });
   });
+  bindPackSettings();
   document.querySelectorAll("[data-set-tab]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       if(btn.dataset.setTab === settingsTab) return;
