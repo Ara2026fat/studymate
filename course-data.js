@@ -49034,5 +49034,152 @@ const PACK_INDEX = {
    "ريض336"
   ],
   "ready": true
+ },
+ "m_calc2": {
+  "title": {
+   "en": "Calculus 2: Integration, Sequences and Series",
+   "ar": "حساب التفاضل والتكامل 2: التكامل والمتتاليات والمتسلسلات"
+  },
+  "keys": [
+   "0817145",
+   "KFUPM MATH 102",
+   "MATH 106",
+   "MATH 121",
+   "MATH 1423",
+   "MATH 228",
+   "MATH102",
+   "ريض 106",
+   "ريض228"
+  ],
+  "ready": true
+ },
+ "m_linalg": {
+  "title": {
+   "en": "Linear Algebra and Matrices",
+   "ar": "الجبر الخطي والمصفوفات (Linear Algebra and Matrices)"
+  },
+  "keys": [
+   "MATH203",
+   "ريض 107"
+  ],
+  "ready": true
+ },
+ "m_calc3": {
+  "title": {
+   "en": "Multivariable Calculus",
+   "ar": "التفاضل والتكامل متعدد المتغيرات (Multivariable Calculus)"
+  },
+  "keys": [
+   "0817244",
+   "KFUPM MATH 201",
+   "MATH 1324",
+   "MATH 319",
+   "MATH201",
+   "ريض319"
+  ],
+  "ready": true
+ },
+ "e_statics": {
+  "title": {
+   "en": "Engineering Statics",
+   "ar": "الستاتيكا الهندسية (Engineering Statics)"
+  },
+  "keys": [
+   "2200201",
+   "CE 111",
+   "EGR201",
+   "GEEN 2311",
+   "KFUPM CE 202",
+   "هعم 201",
+   "همد111"
+  ],
+  "ready": true
+ },
+ "e_dynamics": {
+  "title": {
+   "en": "Engineering Dynamics",
+   "ar": "ديناميكا الهندسة (Engineering Dynamics)"
+  },
+  "keys": [
+   "2200203",
+   "KFUPM ME 201",
+   "MEEN 2312",
+   "MEEN 4351",
+   "هعم 202",
+   "همك133"
+  ],
+  "ready": true
+ },
+ "e_fluid": {
+  "title": {
+   "en": "Fluid Mechanics",
+   "ar": "ميكانيكا الموائع (Fluid Mechanics)"
+  },
+  "keys": [
+   "2200309",
+   "2204204",
+   "CHE202",
+   "EN7917",
+   "GEEN 3311",
+   "KFUPM CHE 204",
+   "KFUPM ME 311",
+   "MEEN 4312",
+   "همد 320",
+   "همك 384",
+   "همك313"
+  ],
+  "ready": true
+ },
+ "e_circuits": {
+  "title": {
+   "en": "Electric Circuits",
+   "ar": "الدارات الكهربائية (Electric Circuits)"
+  },
+  "keys": [
+   "2200206",
+   "2202241",
+   "2202242",
+   "CE6105",
+   "EEEN 2312",
+   "EEEN 2411",
+   "GEEN 3314",
+   "IELT 1428",
+   "KFUPM EE 201"
+  ],
+  "ready": true
+ },
+ "e_control": {
+  "title": {
+   "en": "Automatic Control Systems",
+   "ar": "أنظمة التحكم الآلي"
+  },
+  "keys": [
+   "2201441",
+   "2202430",
+   "2202483",
+   "2202485",
+   "EEEN 4451",
+   "EN7230",
+   "EN8231",
+   "KFUPM EE 380",
+   "KFUPM ME 401",
+   "MEEN 4392",
+   "MEEN 4394",
+   "همك 366",
+   "همك474"
+  ],
+  "ready": true
+ },
+ "e_signals": {
+  "title": {
+   "en": "Signals and Systems",
+   "ar": "الإشارات والأنظمة"
+  },
+  "keys": [
+   "2202330",
+   "EEEN 3341",
+   "KFUPM EE 207"
+  ],
+  "ready": true
  }
 };
