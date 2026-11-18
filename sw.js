@@ -21,7 +21,7 @@
       nothing. A new BUILD stamp still forces a fresh copy, per rule 1.
 */
 
-const BUILD = "2026-11-18-01";
+const BUILD = "2026-11-18-02";
 const CACHE = `studymate-${BUILD}`;
 const SHELL = ["./", "./index.html", "./course-data.js", "./math105.js", "./vendor/katex/katex.min.css", "./vendor/katex/katex.min.js", "./vendor/katex/auto-render.min.js", "./fonts/Cairo-variable.woff2"];
 

@@ -49181,5 +49181,25 @@ const PACK_INDEX = {
    "KFUPM EE 207"
   ],
   "ready": true
+ },
+ "e_heat": {
+  "title": {
+   "en": "Heat Transfer",
+   "ar": "انتقال الحرارة (Heat Transfer)"
+  },
+  "keys": [
+   "2201325",
+   "2204302",
+   "CHE 232",
+   "CHE302",
+   "CHEN 3333",
+   "EN8918",
+   "KFUPM CHE 300",
+   "KFUPM ME 315",
+   "MEEN 3333",
+   "همك 378",
+   "همك314"
+  ],
+  "ready": true
  }
 };
