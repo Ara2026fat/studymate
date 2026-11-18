@@ -49201,5 +49201,144 @@ const PACK_INDEX = {
    "همك314"
   ],
   "ready": true
+ },
+ "m_calc_comb": {
+  "title": {
+   "en": "Calculus: one-semester course (limits, derivatives, applications, integrals)",
+   "ar": "تفاضل وتكامل (مقرر واحد): النهايات والمشتقات والتطبيقات والتكامل"
+  },
+  "keys": [
+   "0817111",
+   "MATH 105",
+   "MATH 110",
+   "MATH241"
+  ],
+  "ready": true
+ },
+ "m_engmath": {
+  "title": {
+   "en": "Engineering Mathematics",
+   "ar": "الرياضيات الهندسية"
+  },
+  "keys": [
+   "0817215",
+   "BSTM 2503",
+   "CE6101"
+  ],
+  "ready": true
+ },
+ "m_numeric": {
+  "title": {
+   "en": "Numerical Methods",
+   "ar": "الطرق العددية"
+  },
+  "keys": [
+   "KFUPM CHE 360",
+   "KFUPM MATH 371",
+   "MATH 410",
+   "ريض 254",
+   "ريض410"
+  ],
+  "ready": true
+ },
+ "e_thermo1": {
+  "title": {
+   "en": "Engineering Thermodynamics I",
+   "ar": "الديناميكا الحرارية الهندسية 1"
+  },
+  "keys": [
+   "2201202",
+   "2204203",
+   "EN7919",
+   "EN8912",
+   "GEEN 2313",
+   "KFUPM ME 203",
+   "ME 211",
+   "همك 371",
+   "همك211"
+  ],
+  "ready": true
+ },
+ "e_thermo2": {
+  "title": {
+   "en": "Thermodynamics II",
+   "ar": "الديناميكا الحرارية 2"
+  },
+  "keys": [
+   "2201203",
+   "2204301",
+   "CHEN 3322",
+   "KFUPM ME 204",
+   "MEEN 3322",
+   "همك 377",
+   "همك212"
+  ],
+  "ready": true
+ },
+ "e_mom": {
+  "title": {
+   "en": "Mechanics of Materials (Strength of Materials)",
+   "ar": "ميكانيكا المواد (مقاومة المواد)"
+  },
+  "keys": [
+   "CE 213",
+   "همد 302",
+   "همك 352",
+   "همك263"
+  ],
+  "ready": true
+ },
+ "e_materials": {
+  "title": {
+   "en": "Materials Science and Engineering",
+   "ar": "علم وهندسة المواد (Materials Science and Engineering)"
+  },
+  "keys": [
+   "CHE 215",
+   "CHEN 2312",
+   "KFUPM ME 207",
+   "KFUPM MSE 201",
+   "ME 268",
+   "MEEN 2311",
+   "MEEN 4344",
+   "همك 254"
+  ],
+  "ready": true
+ },
+ "e_em": {
+  "title": {
+   "en": "Electromagnetics",
+   "ar": "الكهرومغناطيسية (Electromagnetics)"
+  },
+  "keys": [
+   "2202331",
+   "EEEN 3361",
+   "KFUPM EE 340"
+  ],
+  "ready": true
+ },
+ "e_electronics": {
+  "title": {
+   "en": "Electronic Circuits",
+   "ar": "الدارات الإلكترونية"
+  },
+  "keys": [
+   "EN7061",
+   "EN8007",
+   "IENX 1211"
+  ],
+  "ready": true
+ },
+ "e_sysdyn": {
+  "title": {
+   "en": "System Dynamics and Modelling",
+   "ar": "ديناميكا النظم والنمذجة"
+  },
+  "keys": [
+   "2201333",
+   "همك 365",
+   "همك372"
+  ],
+  "ready": true
  }
 };
