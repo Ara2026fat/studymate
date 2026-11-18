@@ -49340,5 +49340,106 @@ const PACK_INDEX = {
    "همك372"
   ],
   "ready": true
+ },
+ "m_prep": {
+  "title": {
+   "en": "Preparatory Mathematics (Introduction to Mathematics)",
+   "ar": "الرياضيات التحضيرية (مقدمة في الرياضيات)"
+  },
+  "keys": [
+   "MATH 001",
+   "MATH 021",
+   "MATH 022",
+   "MATH001",
+   "MATH003",
+   "ريض 001"
+  ],
+  "ready": true
+ },
+ "m_ode_la": {
+  "title": {
+   "en": "Differential Equations and Linear Algebra",
+   "ar": "المعادلات التفاضلية والجبر الخطي"
+  },
+  "keys": [
+   "KFUPM MATH 208",
+   "MATH 222"
+  ],
+  "ready": true
+ },
+ "e_mmach": {
+  "title": {
+   "en": "Mechanics of Machines",
+   "ar": "ميكانيكا الآلات (Mechanics of Machines)"
+  },
+  "keys": [
+   "همك 363"
+  ],
+  "ready": true
+ },
+ "e_chem_thermo": {
+  "title": {
+   "en": "Chemical Engineering Thermodynamics",
+   "ar": "الديناميكا الحرارية للهندسة الكيميائية"
+  },
+  "keys": [
+   "CHE 216",
+   "CHE 318",
+   "CHE301",
+   "EN8701",
+   "KFUPM CHE 303"
+  ],
+  "ready": true
+ },
+ "e_machine": {
+  "title": {
+   "en": "Machine Design",
+   "ar": "تصميم الآلات (Machine Design)"
+  },
+  "keys": [
+   "KFUPM ME 301",
+   "KFUPM ME 302",
+   "ME 335",
+   "MEEN 4393"
+  ],
+  "ready": true
+ },
+ "e_masst": {
+  "title": {
+   "en": "Mass Transfer",
+   "ar": "انتقال المادة"
+  },
+  "keys": [
+   "CHE 333",
+   "KFUPM CHE 304"
+  ],
+  "ready": true
+ },
+ "e_pcontrol": {
+  "title": {
+   "en": "Process Dynamics and Control",
+   "ar": "ديناميكا العمليات والتحكم (Process Dynamics and Control)"
+  },
+  "keys": [
+   "2204404",
+   "CHE 443",
+   "CHE402",
+   "CHEN 4492",
+   "KFUPM CHE 401",
+   "PROS 2108"
+  ],
+  "ready": true
+ },
+ "e_reactor": {
+  "title": {
+   "en": "Chemical Reaction Kinetics and Reactor Design",
+   "ar": "الحركية الكيميائية وتصميم المفاعلات"
+  },
+  "keys": [
+   "CHE 351",
+   "CHEN 4493",
+   "KFUPM CHE 402"
+  ],
+  "ready": true
  }
 };
